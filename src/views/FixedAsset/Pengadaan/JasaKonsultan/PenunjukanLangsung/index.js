@@ -33,7 +33,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class Lelang extends Component {
+class PenunjukanLangsung extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -150,7 +150,7 @@ class Lelang extends Component {
       },
     ]
 
-    const pageName = 'Lelang'
+    const pageName = 'Penunjukan Langsung'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -291,42 +291,6 @@ class Lelang extends Component {
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Aanwijzing" name="aanwijzing" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Pemasukan Sampul Proposal Teknis"
-                            name="pemasukanSampulProposalTeknis"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Penilaian Proposal Teknis"
-                            name="penilaianProposalTeknis"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Pembukuan Proposal Financial"
-                            name="pembukuanProposalFinancial"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Pembukuan Proposal Financial"
-                            name="pembukuanProposalFinancial"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
                           <Field
                             label="Klarifikasi dan negosiasi"
                             name="klarifikasi"
@@ -338,14 +302,6 @@ class Lelang extends Component {
                           <Field
                             label="Izin Hasil Pengadaan"
                             name="izinHasilPengadaan"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Pengumuman Pemenang"
-                            name="pengumumanPemenang"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -362,6 +318,17 @@ class Lelang extends Component {
                           name="jenisAnggaran"
                           placeholder="Pilih atau Cari Jenis Anggaran"
                           component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Biaya Putusan"
+                          type="number"
+                          name="biayaPutusan"
+                          isRequired
+                          placeholder="Masukkan Biaya Putusan"
+                          component={CfInput}
                         />
                       </FormGroup>
 
@@ -522,7 +489,7 @@ class Lelang extends Component {
   }
 }
 
-Lelang.propTypes = {
+PenunjukanLangsung.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -553,7 +520,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Lelang,
+      Component: PenunjukanLangsung,
       toggles: {
         modalForm: false,
       },

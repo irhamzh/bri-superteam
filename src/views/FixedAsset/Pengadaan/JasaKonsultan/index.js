@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
 import classnames from 'classnames'
+import PenunjukanLangsung from './PenunjukanLangsung'
+import SeleksiLangsung from './SeleksiLangsung'
 
 const JasaKonsultan = (props) => {
   const [activeTab, setActiveTab] = useState('1')
@@ -37,14 +39,14 @@ const JasaKonsultan = (props) => {
         <TabPane tabId="1" style={{ height: '100vh' }}>
           <Row>
             <Col sm="12">
-              <h4>Tab 1 Contents</h4>
+              <SeleksiLangsung />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="2" style={{ height: '100vh' }}>
           <Row>
-            <Col sm="6">
-              <h4>Tab 1 Contents</h4>
+            <Col sm="12">
+              <PenunjukanLangsung />
             </Col>
           </Row>
         </TabPane>

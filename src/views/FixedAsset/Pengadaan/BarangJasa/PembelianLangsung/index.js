@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -233,33 +233,144 @@ class PembelianLangsung extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Nama Role"
-                          type="text"
-                          name="nama"
+                          label="Jenis Pengadaan"
+                          options={[{ value: 'Pembelian Langsung', label: 'Pembelian Langsung' }]}
                           isRequired
-                          placeholder="Masukkan nama role"
-                          component={CfInput}
+                          name="jenisPengadaan"
+                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Kadaluarsa"
-                          name="tanggalKadaluarsa"
+                          label="Tanggal Pengadaan"
+                          name="tanggalPengadaan"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Tanggal Kadaluarsa"
+                          placeholder="Pilih Tanggal Pengadaan"
                           component={CfInputDate}
                         />
                       </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Pengadaan"
+                          type="text"
+                          name="namaPengadaan"
+                          isRequired
+                          placeholder="Masukkan Nama Pengadaan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+                      <div style={{ marginLeft: '20px' }}>
+                        <FormGroup>
+                          <Field
+                            label="Izin Prinsip User"
+                            name="izinPrinsipUser"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Izin Prinsip Pengadaan"
+                            name="izinPrinsipPengadaan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Izin Hasil Pengadaan"
+                            name="izinHasilPengadaan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+                      </div>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Anggaran"
+                          options={[
+                            { value: 'Investasi', label: 'Investasi' },
+                            { value: 'Epsloitasi', label: 'Eksploitasi' },
+                          ]}
+                          isRequired
+                          name="jenisAnggaran"
+                          placeholder="Pilih atau Cari Jenis Anggaran"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Biaya Putusan"
+                          type="number"
+                          name="biayaPutusan"
+                          isRequired
+                          placeholder="Masukkan Biaya Putusan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <div style={{ marginLeft: '20px' }}>
+                        <FormGroup>
+                          <Field
+                            label="Menggunakan Pihak Ketiga"
+                            name="pihakKetiga"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+                      </div>
+
+                      {values.pihakKetiga && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Nama Provider"
+                              options={[
+                                { value: 'PT. XXXX', label: 'PT. XXXX' },
+                                { value: 'PT. YYYY', label: 'PT. YYYY' },
+                              ]}
+                              isRequired
+                              name="namaProvider"
+                              placeholder="Pilih atau Cari Nama Provider"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Alamat Provider"
+                              type="text"
+                              name="alamatProvider"
+                              isRequired
+                              placeholder="Masukkan Alamat Provider"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="No. Kontak Provider"
+                              type="text"
+                              name="kontakProvider"
+                              isRequired
+                              placeholder="Masukkan No. Kontak Provider"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -280,7 +391,7 @@ class PembelianLangsung extends Component {
                             &nbsp;Loading...
                           </>
                         ) : (
-                          'Save Changes'
+                          'Submit'
                         )}
                       </Button>
                     </ModalFooter>

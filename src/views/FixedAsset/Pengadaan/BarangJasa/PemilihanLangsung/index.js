@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -230,31 +230,239 @@ class PemilihanLangsung extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Nama Role"
-                          type="text"
-                          name="nama"
+                          label="Jenis Pengadaan"
+                          options={[
+                            { value: 'Penunjukkan Langsung', label: 'Penunjukkan Langsung' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan nama role"
+                          name="jenisPengadaan"
+                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Tanggal Pengadaan"
+                          name="tanggalPengadaan"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
+                          isRequired
+                          placeholder="Pilih Tanggal Pengadaan"
+                          component={CfInputDate}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Pengadaan"
+                          type="text"
+                          name="namaPengadaan"
+                          isRequired
+                          placeholder="Masukkan Nama Pengadaan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <div style={{ marginLeft: '20px' }}>
+                        <FormGroup>
+                          <Field
+                            label="Izin Prinsip User"
+                            name="izinPrinsipUser"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Izin Prinsip Pengadaan"
+                            name="izinPrinsipPengadaan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Undangan" name="undangan" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Aanwijzing" name="aanwijzing" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Pemasukan Sampul Proposal Teknis"
+                            name="pemasukanSampulProposalTeknis"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Klarifikasi dan negosiasi"
+                            name="klarifikasi"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Izin Hasil Pengadaan"
+                            name="izinHasilPengadaan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Pengumuman Pemenang"
+                            name="pengumumanPemenang"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+                      </div>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Anggaran"
+                          options={[
+                            { value: 'Investasi', label: 'Investasi' },
+                            { value: 'Epsloitasi', label: 'Eksploitasi' },
+                          ]}
+                          isRequired
+                          name="jenisAnggaran"
+                          placeholder="Pilih atau Cari Jenis Anggaran"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <h6>Pembuatan SPK/PKS</h6>
+
+                      <FormGroup>
+                        <Field
+                          label="Tanggal SPK"
+                          name="tanggalSPK"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
+                          isRequired
+                          placeholder="Pilih Tanggal SPK"
+                          component={CfInputDate}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nomor SPK"
+                          type="text"
+                          name="nomorSPK"
+                          isRequired
+                          placeholder="Masukkan Nomor SPK"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Kadaluarsa"
-                          name="tanggalKadaluarsa"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Nama Provider"
+                          options={[
+                            { value: 'PT. XXXX', label: 'PT. XXXX' },
+                            { value: 'PT. YYYY', label: 'PT. YYYY' },
+                          ]}
                           isRequired
-                          placeholder="Tanggal Kadaluarsa"
-                          component={CfInputDate}
+                          name="namaProvider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          component={CfSelect}
                         />
                       </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Alamat Provider"
+                          type="text"
+                          name="alamatProvider"
+                          isRequired
+                          placeholder="Masukkan Alamat Provider"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="No. Kontak Provider"
+                          type="text"
+                          name="kontakProvider"
+                          isRequired
+                          placeholder="Masukkan No. Kontak Provider"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Pekerjaan"
+                          type="text"
+                          name="jenisPekerjaan"
+                          isRequired
+                          placeholder="Masukkan Jenis Pekerjaan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jumlah Biaya"
+                          type="text"
+                          name="jumlahBiaya"
+                          isRequired
+                          placeholder="Masukkan Jumlah Biaya"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Barang"
+                          type="text"
+                          name="jenisBarang"
+                          isRequired
+                          placeholder="Masukkan Jenis Barang"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <Row>
+                        <Col sm="6">
+                          <Field
+                            label="Masa Berlaku"
+                            name="tanggalAwalBerlaku"
+                            classIcon="fa fa-calendar"
+                            blockLabel
+                            minDate={new Date()}
+                            isRequired
+                            placeholder="Pilih Tanggal Masa Awal Berlaku"
+                            component={CfInputDate}
+                          />
+                        </Col>
+
+                        <Col sm="6">
+                          <Field
+                            label="Sampai"
+                            name="tanggalAkhirBerlaku"
+                            classIcon="fa fa-calendar"
+                            blockLabel
+                            minDate={new Date()}
+                            isRequired
+                            placeholder="Pilih Tanggal Masa Akhir Berlaku"
+                            component={CfInputDate}
+                          />
+                        </Col>
+                      </Row>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -275,7 +483,7 @@ class PemilihanLangsung extends Component {
                             &nbsp;Loading...
                           </>
                         ) : (
-                          'Save Changes'
+                          'Submit'
                         )}
                       </Button>
                     </ModalFooter>

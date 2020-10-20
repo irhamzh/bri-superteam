@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_URL } from './apiConfig'
+import firebase from './firebase'
 
 axios.defaults.baseURL = `${API_URL}`
 axios.defaults.headers.common.Authorization = localStorage.getItem('token')
@@ -7,11 +8,15 @@ axios.defaults.headers.common.Authorization = localStorage.getItem('token')
 class Service {
   // Authentication
   static signIn(values) {
-    return axios.post('/auth/sign-in', values)
+    // return axios.post('/auth/sign-in', values)
+    const { email, password } = values
+    return firebase.auth().signInWithEmailAndPassword(email, password)
   }
 
   static signUp(values) {
-    return axios.post('/auth/sign-up', values)
+    // return axios.post('/auth/sign-up', values)
+    const { email, password } = values
+    return firebase.auth().createUserWithEmailAndPassword(email, password)
   }
 
   static verifyToken() {
@@ -31,7 +36,7 @@ class Service {
   }
 
   // Role
-  static getRole(params) {
+  static getRoles(params) {
     return axios.get(`role${params}`)
   }
 

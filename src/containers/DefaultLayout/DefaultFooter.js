@@ -9,14 +9,18 @@ const DefaultFooter = (props) => {
   return (
     <>
       <span>
-        <a href="http://minangitcamp.com">Minang IT Camp</a>
+        {/* <a href="/">BRI Corpu</a>
         &nbsp;&copy;&nbsp;
-        {`2017 - ${formatYear(new Date())}. `}
-        All Right Reserved.&nbsp;
+        {`${Year}. `}
+        All Right Reserved.&nbsp; */}
       </span>
       <span className="ml-auto">
-        Powered by &nbsp;
-        <a href="https://coreui.io/react">CoreUI for React</a>
+        {/* Powered by &nbsp;
+        <a href="https://coreui.io/react">CoreUI for React</a> */}
+        <a href="/">BRI Corpu</a>
+        &nbsp;&copy;&nbsp;
+        {`${formatYear(new Date())}. `}
+        All Right Reserved.&nbsp;
       </span>
     </>
   )

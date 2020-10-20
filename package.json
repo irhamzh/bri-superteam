@@ -26,6 +26,7 @@
     "date-fns": "^2.16.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.4",
+    "firebase": "^7.24.0",
     "flag-icon-css": "^3.3.0",
     "font-awesome": "^4.7.0",
     "formik": "^2.1.5",

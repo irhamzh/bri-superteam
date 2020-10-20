@@ -25,18 +25,20 @@ export const signIn = (credentials) => async (dispatch) => {
     dispatch({ type: SIGNIN_LOADING, isLoading: true })
     // Call API
     const res = await Service.signIn(credentials)
-    localStorage.setItem('token', res.data.token)
-    localStorage.setItem('uid', res.data.uid)
-    localStorage.setItem('rid', res.data.rid)
+    console.log(res, 'ini response')
+    // localStorage.setItem('token', res.data.token)
+    // localStorage.setItem('uid', res.data.uid)
+    // localStorage.setItem('rid', res.data.rid)
     dispatch({ type: AUTHENTICATED, isLoading: false })
   } catch (err) {
-    const errMsg = err.response ? err.response.data.message : 'Internal Server Error'
+    const errMsg = err.message ? err.message : 'Internal Server Error'
 
     dispatch({
       type: AUTHENTICATION_ERROR,
       payload: errMsg,
       isLoading: false,
     })
+    AlertMessage.custom({ title: 'Oops!', text: err.message, icon: 'error' })
   }
 }
 
@@ -48,16 +50,17 @@ export const signUp = (rowData) => async (dispatch) => {
     dispatch({ type: SIGNUP_LOADING, isLoading: true })
     // Call API
     const res = await Service.signUp(rowData)
+    console.log(res, 'ini response')
     dispatch({ type: SIGNUP_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'
-    paramsResponse.text = res.data.message
+    paramsResponse.text = 'Registrasi Berhasil'
     AlertMessage.success(paramsResponse).then(() => window.location.reload())
   } catch (err) {
-    ObjError = err.response.data
+    ObjError = err.error
 
     dispatch({ type: SIGNUP_ERROR, payload: ObjError, isLoading: false })
-    AlertMessage.error(err)
+    AlertMessage.custom({ title: 'Oops!', text: err.message, icon: 'error' })
   }
 }
 

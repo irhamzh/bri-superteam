@@ -4,10 +4,10 @@ export default {
       name: 'Dashboard',
       url: '/dashboard',
       icon: 'icon-speedometer',
-      badge: {
-        variant: 'info',
-        text: 'NEW',
-      },
+      // badge: {
+      //   variant: 'info',
+      //   text: 'NEW',
+      // },
     },
     {
       title: true,
@@ -18,14 +18,103 @@ export default {
       },
     },
     {
-      name: 'Colors',
-      url: '/theme/colors',
-      icon: 'icon-drop',
+      name: 'Fixed Asset',
+      url: '/fixed-asset',
+      icon: 'icon-layers',
+      children: [
+        {
+          name: 'Anggaran',
+          url: '/fixed-asset/anggaran',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pengadaan',
+          url: '/fixed-asset/pengadaan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Aset',
+          url: '/fixed-asset/aset',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Vendor',
+          url: '/fixed-asset/vendor',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Persediaan',
+          url: '/fixed-asset/persediaan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Persekot',
+          url: '/fixed-asset/persekot',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Working Order',
+          url: '/fixed-asset/working-order',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Peralatan IT',
+          url: '/fixed-asset/peralatan-it',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Reporting',
+          url: '/fixed-asset/reporting',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
     },
     {
-      name: 'Typography',
-      url: '/theme/typography',
-      icon: 'icon-pencil',
+      name: 'Pengelola Gedung',
+      url: '/pengelola-gedung',
+      icon: 'icon-layers',
+      children: [
+        {
+          name: 'Engineer',
+          url: '/pengelola-gedung/engineer',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Peralatan IT',
+          url: '/pengelola-gedung/peralatan-it',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Kebersihan',
+          url: '/pengelola-gedung/kebersihan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Peralatan Kerja',
+          url: '/pengelola-gedung/peralatan-kerja',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Reporting',
+          url: '/pengelola-gedung/reporting',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
+    },
+    {
+      name: 'Procurement',
+      url: '/procurement',
+      icon: 'icon-layers',
+    },
+    {
+      name: 'General Affair',
+      url: '/general-affair',
+      icon: 'icon-layers',
+    },
+    {
+      name: 'Financial Adm',
+      url: '/financial-admin',
+      icon: 'icon-layers',
     },
     {
       title: true,

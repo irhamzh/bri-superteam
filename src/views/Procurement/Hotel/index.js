@@ -4,7 +4,7 @@ import { Redirect, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-const Persediaan = (props) => {
+const Hotel = (props) => {
   const { auth } = props
 
   if (!auth) return <Redirect to="/login" />
@@ -13,20 +13,30 @@ const Persediaan = (props) => {
     <div className="animated fadeIn">
       <Row>
         <Col xs="8">
-          <Link to="/fixed-asset/persediaan/aktivitas" style={{ textDecoration: 'none' }}>
+          <Link to="/procurement/hotel/klasifikasi" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Aktivitas Persediaan</div>
+                <div className="text-value">Klasifikasi</div>
               </CardBody>
             </Card>
           </Link>
         </Col>
 
         <Col xs="8">
-          <Link to="/fixed-asset/persediaan/rekapitulasi" style={{ textDecoration: 'none' }}>
+          <Link to="/procurement/hotel/aktivitas" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Rekapitulasi Persediaan</div>
+                <div className="text-value">Aktivitas</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
+          <Link to="/procurement/hotel/evaluasi" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Evaluasi</div>
               </CardBody>
             </Card>
           </Link>
@@ -36,7 +46,7 @@ const Persediaan = (props) => {
   )
 }
 
-Persediaan.propTypes = {
+Hotel.propTypes = {
   auth: PropTypes.bool.isRequired,
 }
 
@@ -44,4 +54,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
 })
 
-export default connect(mapStateToProps)(Persediaan)
+export default connect(mapStateToProps)(Hotel)

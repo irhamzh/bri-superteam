@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
 import classnames from 'classnames'
-import Swakelola from './Swakelola'
-import PembelianLangsung from './PembelianLangsung'
-import PenunjukanLangsung from './PenunjukanLangsung'
-import PemilihanLangsung from './PemilihanLangsung'
-import Lelang from './Lelang'
+import Bintang3 from './Bintang3'
+import Bintang4 from './Bintang4'
+import Bintang5 from './Bintang5'
 
-const BarangJasa = (props) => {
+const Klasifikasi = () => {
   const [activeTab, setActiveTab] = useState('1')
 
   const toggle = (tab) => {
@@ -24,7 +22,7 @@ const BarangJasa = (props) => {
               toggle('1')
             }}
           >
-            Swakelola
+            Bintang 3
           </NavLink>
         </NavItem>
         <NavItem>
@@ -34,7 +32,7 @@ const BarangJasa = (props) => {
               toggle('2')
             }}
           >
-            Pembelian Langsung
+            Bintang 4
           </NavLink>
         </NavItem>
         <NavItem>
@@ -44,63 +42,29 @@ const BarangJasa = (props) => {
               toggle('3')
             }}
           >
-            Penunjukan Langsung
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink
-            className={classnames({ active: activeTab === '4' })}
-            onClick={() => {
-              toggle('4')
-            }}
-          >
-            Pemilihan Langsung
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink
-            className={classnames({ active: activeTab === '5' })}
-            onClick={() => {
-              toggle('5')
-            }}
-          >
-            Lelang
+            Bintang 5
           </NavLink>
         </NavItem>
       </Nav>
       <TabContent activeTab={activeTab}>
-        <TabPane tabId="1" style={{ height: '100%' }}>
+        <TabPane tabId="1" style={{ height: '100vh' }}>
           <Row>
             <Col sm="12">
-              <Swakelola />
+              <Bintang3 />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="2" style={{ height: '100vh' }}>
           <Row>
             <Col sm="12">
-              <PembelianLangsung />
+              <Bintang4 />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="3" style={{ height: '100vh' }}>
           <Row>
             <Col sm="12">
-              <PenunjukanLangsung />
-            </Col>
-          </Row>
-        </TabPane>
-        <TabPane tabId="4" style={{ height: '100vh' }}>
-          <Row>
-            <Col sm="12">
-              <PemilihanLangsung />
-            </Col>
-          </Row>
-        </TabPane>
-        <TabPane tabId="5" style={{ height: '100vh' }}>
-          <Row>
-            <Col sm="12">
-              <Lelang />
+              <Bintang5 />
             </Col>
           </Row>
         </TabPane>
@@ -109,4 +73,4 @@ const BarangJasa = (props) => {
   )
 }
 
-export default BarangJasa
+export default Klasifikasi

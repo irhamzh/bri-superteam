@@ -105,6 +105,38 @@ export default {
       name: 'Procurement',
       url: '/procurement',
       icon: 'icon-layers',
+      children: [
+        {
+          name: 'Working Order',
+          url: '/procurement/working-order',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pengadaan',
+          url: '/procurement/pengadaan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Hotel',
+          url: '/procurement/hotel',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Catering',
+          url: '/procurement/catering',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'ATK',
+          url: '/procurement/atk',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Persekot',
+          url: '/procurement/persekot',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
     },
     {
       name: 'General Affair',

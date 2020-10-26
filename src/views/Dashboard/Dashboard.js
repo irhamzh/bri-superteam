@@ -533,7 +533,7 @@ class Dashboard extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-info">
+            {/* <Card className="text-white bg-info">
               <CardBody className="pb-0">
                 <ButtonGroup className="float-right">
                   <ButtonDropdown
@@ -1277,7 +1277,7 @@ class Dashboard extends Component {
                   </tbody>
                 </Table>
               </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
       </div>

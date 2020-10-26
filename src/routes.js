@@ -28,6 +28,27 @@ const Persekot = React.lazy(() => import('./views/FixedAsset/Persekot'))
 const InputPersekot = React.lazy(() => import('./views/FixedAsset/Persekot/Input'))
 const PenihilanPersekot = React.lazy(() => import('./views/FixedAsset/Persekot/Penihilan'))
 
+// Procurement
+// Procurement / Working Order
+const WorkingOrder = React.lazy(() => import('./views/Procurement/WorkingOrder'))
+const KegiatanLain = React.lazy(() => import('./views/Procurement/WorkingOrder/KegiatanLain'))
+const KegiatanPendidikan = React.lazy(() =>
+  import('./views/Procurement/WorkingOrder/KegiatanPendidikan')
+)
+// Procurement / Pengadaan
+const PengadaanProcurement = React.lazy(() => import('./views/Procurement/Pengadaan'))
+const BarangJasaProcurement = React.lazy(() => import('./views/Procurement/Pengadaan/BarangJasa'))
+const PurchaseOrderProcurement = React.lazy(() =>
+  import('./views/Procurement/Pengadaan/PurchaseOrder')
+)
+const TandaTerimaProcurement = React.lazy(() => import('./views/Procurement/Pengadaan/TandaTerima'))
+const EvaluasiProcurement = React.lazy(() => import('./views/Procurement/Pengadaan/Evaluasi'))
+// Procurement / Hotel
+const HotelProcurement = React.lazy(() => import('./views/Procurement/Hotel'))
+const KlasifikasiHotel = React.lazy(() => import('./views/Procurement/Hotel/Klasifikasi'))
+const AktivitasHotel = React.lazy(() => import('./views/Procurement/Hotel/Aktivitas'))
+const EvaluasiHotel = React.lazy(() => import('./views/Procurement/Hotel/Evaluasi'))
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   {
@@ -166,6 +187,89 @@ const routes = [
     exact: true,
     name: 'Penihilan Persekot',
     component: PenihilanPersekot,
+  },
+
+  // Procurement / Working Order
+  {
+    path: '/procurement',
+    exact: true,
+    name: 'Procurement',
+    component: WorkingOrder,
+  },
+  {
+    path: '/procurement/working-order',
+    exact: true,
+    name: 'Working Order',
+    component: WorkingOrder,
+  },
+  {
+    path: '/procurement/working-order/kegiatan-pendidikan',
+    exact: true,
+    name: 'Kegiatan Pendidikan',
+    component: KegiatanPendidikan,
+  },
+  {
+    path: '/procurement/working-order/kegiatan-lain',
+    exact: true,
+    name: 'Kegiatan Lain',
+    component: KegiatanLain,
+  },
+
+  // Procurement / Pengadaan
+  {
+    path: '/procurement/pengadaan',
+    exact: true,
+    name: 'Pengadaan',
+    component: PengadaanProcurement,
+  },
+  {
+    path: '/procurement/pengadaan/barang-jasa',
+    exact: true,
+    name: 'Pengadaan Barang dan Jasa',
+    component: BarangJasaProcurement,
+  },
+  {
+    path: '/procurement/pengadaan/purchase-order',
+    exact: true,
+    name: 'Purchase Order',
+    component: PurchaseOrderProcurement,
+  },
+  {
+    path: '/procurement/pengadaan/tanda-terima',
+    exact: true,
+    name: 'Tanda Terima',
+    component: TandaTerimaProcurement,
+  },
+  {
+    path: '/procurement/pengadaan/evaluasi',
+    exact: true,
+    name: 'Evaluasi',
+    component: EvaluasiProcurement,
+  },
+  // Procurement / Hotel
+  {
+    path: '/procurement/hotel',
+    exact: true,
+    name: 'Hotel',
+    component: HotelProcurement,
+  },
+  {
+    path: '/procurement/hotel/klasifikasi',
+    exact: true,
+    name: 'Klasifikasi',
+    component: KlasifikasiHotel,
+  },
+  {
+    path: '/procurement/hotel/aktivitas',
+    exact: true,
+    name: 'Aktivitas',
+    component: AktivitasHotel,
+  },
+  {
+    path: '/procurement/hotel/evaluasi',
+    exact: true,
+    name: 'Evaluasi',
+    component: EvaluasiHotel,
   },
   {
     path: '/akun',

@@ -48,6 +48,11 @@ const HotelProcurement = React.lazy(() => import('./views/Procurement/Hotel'))
 const KlasifikasiHotel = React.lazy(() => import('./views/Procurement/Hotel/Klasifikasi'))
 const AktivitasHotel = React.lazy(() => import('./views/Procurement/Hotel/Aktivitas'))
 const EvaluasiHotel = React.lazy(() => import('./views/Procurement/Hotel/Evaluasi'))
+// Procurement / Catering
+const CateringProcurement = React.lazy(() => import('./views/Procurement/Catering'))
+const KlasifikasiCatering = React.lazy(() => import('./views/Procurement/Catering/Klasifikasi'))
+const AktivitasCatering = React.lazy(() => import('./views/Procurement/Catering/Aktivitas'))
+const EvaluasiCatering = React.lazy(() => import('./views/Procurement/Catering/Evaluasi'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -270,6 +275,31 @@ const routes = [
     exact: true,
     name: 'Evaluasi',
     component: EvaluasiHotel,
+  },
+  // Procurement / Catering
+  {
+    path: '/procurement/catering',
+    exact: true,
+    name: 'Catering',
+    component: CateringProcurement,
+  },
+  {
+    path: '/procurement/catering/klasifikasi',
+    exact: true,
+    name: 'Klasifikasi',
+    component: KlasifikasiCatering,
+  },
+  {
+    path: '/procurement/catering/aktivitas',
+    exact: true,
+    name: 'Aktivitas',
+    component: AktivitasCatering,
+  },
+  {
+    path: '/procurement/catering/evaluasi',
+    exact: true,
+    name: 'Evaluasi',
+    component: EvaluasiCatering,
   },
   {
     path: '/akun',

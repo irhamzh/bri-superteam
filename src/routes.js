@@ -1,4 +1,5 @@
 import React from 'react'
+import ATK from './views/Procurement/ATK'
 
 const Dashboard = React.lazy(() => import('./views/Dashboard'))
 const Role = React.lazy(() => import('./views/Master/Role'))
@@ -53,6 +54,12 @@ const CateringProcurement = React.lazy(() => import('./views/Procurement/Caterin
 const KlasifikasiCatering = React.lazy(() => import('./views/Procurement/Catering/Klasifikasi'))
 const AktivitasCatering = React.lazy(() => import('./views/Procurement/Catering/Aktivitas'))
 const EvaluasiCatering = React.lazy(() => import('./views/Procurement/Catering/Evaluasi'))
+// Procurement / ATK
+const ATKProcurement = React.lazy(() => import('./views/Procurement/ATK'))
+const KlasifikasiATK = React.lazy(() => import('./views/Procurement/ATK/Klasifikasi'))
+const AktivitasATK = React.lazy(() => import('./views/Procurement/ATK/Aktivitas'))
+const StockOpnameATK = React.lazy(() => import('./views/Procurement/ATK/StockOpname'))
+const EvaluasiATK = React.lazy(() => import('./views/Procurement/ATK/Evaluasi'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -300,6 +307,37 @@ const routes = [
     exact: true,
     name: 'Evaluasi',
     component: EvaluasiCatering,
+  },
+  // Procurement / ATK
+  {
+    path: '/procurement/atk',
+    exact: true,
+    name: 'Catering',
+    component: ATKProcurement,
+  },
+  {
+    path: '/procurement/atk/klasifikasi',
+    exact: true,
+    name: 'Klasifikasi',
+    component: KlasifikasiATK,
+  },
+  {
+    path: '/procurement/atk/aktivitas',
+    exact: true,
+    name: 'Aktivitas',
+    component: AktivitasATK,
+  },
+  {
+    path: '/procurement/atk/stock-opname',
+    exact: true,
+    name: 'Stock Opname',
+    component: StockOpnameATK,
+  },
+  {
+    path: '/procurement/atk/evaluasi',
+    exact: true,
+    name: 'Evaluasi',
+    component: EvaluasiATK,
   },
   {
     path: '/akun',

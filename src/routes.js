@@ -60,6 +60,12 @@ const KlasifikasiATK = React.lazy(() => import('./views/Procurement/ATK/Klasifik
 const AktivitasATK = React.lazy(() => import('./views/Procurement/ATK/Aktivitas'))
 const StockOpnameATK = React.lazy(() => import('./views/Procurement/ATK/StockOpname'))
 const EvaluasiATK = React.lazy(() => import('./views/Procurement/ATK/Evaluasi'))
+// Procurement / Persekot
+const PersekotProcurement = React.lazy(() => import('./views/Procurement/Persekot'))
+const InputPersekotProcurement = React.lazy(() => import('./views/Procurement/Persekot/Input'))
+const PenihilanPersekotProcurement = React.lazy(() =>
+  import('./views/Procurement/Persekot/Penihilan')
+)
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -338,6 +344,25 @@ const routes = [
     exact: true,
     name: 'Evaluasi',
     component: EvaluasiATK,
+  },
+  // Procurement / Persekot
+  {
+    path: '/procurement/persekot',
+    exact: true,
+    name: 'Persekot',
+    component: PersekotProcurement,
+  },
+  {
+    path: '/procurement/persekot/input',
+    exact: true,
+    name: 'Input Persekot',
+    component: InputPersekotProcurement,
+  },
+  {
+    path: '/procurement/persekot/penihilan',
+    exact: true,
+    name: 'Penihilan Persekot',
+    component: PenihilanPersekotProcurement,
   },
   {
     path: '/akun',

@@ -66,6 +66,10 @@ const InputPersekotProcurement = React.lazy(() => import('./views/Procurement/Pe
 const PenihilanPersekotProcurement = React.lazy(() =>
   import('./views/Procurement/Persekot/Penihilan')
 )
+// Pengelola Gedung
+const EngineerPG = React.lazy(() => import('./views/PengelolaGedung/Engineer'))
+const BasementEngineerPG = React.lazy(() => import('./views/PengelolaGedung/Engineer/Basement'))
+const GedungEngineerPG = React.lazy(() => import('./views/PengelolaGedung/Engineer/Gedung'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -363,6 +367,32 @@ const routes = [
     exact: true,
     name: 'Penihilan Persekot',
     component: PenihilanPersekotProcurement,
+  },
+  // Pengelola Gedung
+  {
+    path: '/pengelola-gedung',
+    exact: true,
+    name: 'Pengelola Gedung',
+    component: Pengadaan,
+  },
+  // Pengelola Gedung / Engineer
+  {
+    path: '/pengelola-gedung/engineer',
+    exact: true,
+    name: 'Engineer',
+    component: EngineerPG,
+  },
+  {
+    path: '/pengelola-gedung/engineer/basement',
+    exact: true,
+    name: 'Basement',
+    component: BasementEngineerPG,
+  },
+  {
+    path: '/pengelola-gedung/engineer/gedung',
+    exact: true,
+    name: 'Gedung',
+    component: GedungEngineerPG,
   },
   {
     path: '/akun',

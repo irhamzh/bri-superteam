@@ -11,7 +11,7 @@ import {
 } from 'reactstrap'
 import PropTypes from 'prop-types'
 import { AppNavbarBrand, AppSidebarToggler } from '@coreui/react'
-import logo from '../../assets/img/brand/logo.svg'
+import logo from '../../assets/img/brand/bri-logo.png'
 import sygnet from '../../assets/img/brand/sygnet.svg'
 import withToggle, { WithToggleProps } from '../../HOC/withToggle'
 import ModalForm from './ModalForm/ModalForm'
@@ -24,8 +24,8 @@ function DefaultHeader(props) {
     <>
       <AppSidebarToggler className="d-lg-none" display="md" mobile />
       <AppNavbarBrand
-        full={{ src: logo, width: 89, height: 25, alt: 'BRI Corpu' }}
-        minimized={{ src: sygnet, width: 30, height: 30, alt: 'BRI Corpu' }}
+        full={{ src: logo, width: 'auto', height: 50, alt: 'BRI Corpu' }}
+        minimized={{ src: logo, width: 30, height: 30, alt: 'BRI Corpu' }}
       />
       <AppSidebarToggler className="d-md-down-none" display="lg" />
 

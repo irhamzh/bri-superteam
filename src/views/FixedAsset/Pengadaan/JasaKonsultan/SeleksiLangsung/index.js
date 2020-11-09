@@ -128,8 +128,8 @@ class SeleksiLangsung extends Component {
         filterable: false,
       },
       {
-        Header: 'Pemilihan Pemenang',
-        accessor: 'pemilihanPemenang',
+        Header: 'Pengumuman Pemenang',
+        accessor: 'pengumumanPemenang',
         filterable: true,
       },
       {

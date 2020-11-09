@@ -41,6 +41,36 @@ const Aset = (props) => {
             </Card>
           </Link>
         </Col>
+
+        <Col xs="8">
+          <Link to="/fixed-asset/vendor/tanaman-hias" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Monitoring Tanaman Hias</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
+          <Link to="/fixed-asset/vendor/lift" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Monitoring Lift</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
+          <Link to="/fixed-asset/vendor/gondola" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Monitoring Gondola</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
       </Row>
     </div>
   )

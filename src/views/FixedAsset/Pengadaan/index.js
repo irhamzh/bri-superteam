@@ -15,6 +15,16 @@ const Pengadaan = (props) => {
     <div className="animated fadeIn">
       <Row>
         <Col xs="8">
+          <Link to="/fixed-asset/pengadaan/working-order" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Working Order</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
           <Link to="/fixed-asset/pengadaan/barang-jasa" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>

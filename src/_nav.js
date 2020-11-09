@@ -53,11 +53,6 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
-          name: 'Working Order',
-          url: '/fixed-asset/working-order',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
           name: 'Peralatan IT',
           url: '/fixed-asset/peralatan-it',
           icon: 'fa fa-angle-double-right',
@@ -67,6 +62,11 @@ export default {
           url: '/fixed-asset/reporting',
           icon: 'fa fa-angle-double-right',
         },
+        // {
+        //   name: 'Working Order',
+        //   url: '/fixed-asset/working-order',
+        //   icon: 'fa fa-angle-double-right',
+        // },
       ],
     },
     {

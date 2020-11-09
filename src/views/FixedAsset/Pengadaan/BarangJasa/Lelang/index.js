@@ -35,8 +35,7 @@ const roleSchema = Yup.object().shape({
 
 class Lelang extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    jenisPengadaan: 'Lelang',
   }
 
   doRefresh = () => {
@@ -270,10 +269,9 @@ class Lelang extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis Pengadaan"
-                          options={[
-                            { value: 'Penunjukkan Langsung', label: 'Penunjukkan Langsung' },
-                          ]}
+                          options={[{ value: 'Lelang', label: 'Lelang' }]}
                           isRequired
+                          isDisabled
                           name="jenisPengadaan"
                           placeholder="Pilih atau Cari Jenis Pengadaan"
                           component={CfSelect}

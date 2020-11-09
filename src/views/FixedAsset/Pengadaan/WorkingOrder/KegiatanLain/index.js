@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -31,7 +31,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class TanamanHias extends Component {
+class KegiatanLain extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -81,50 +81,46 @@ class TanamanHias extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tanggal',
-        width: 100,
+        Header: 'Nama Kegiatan',
+        accessor: 'namaKegiatan',
+        filterable: true,
+      },
+      {
+        Header: 'Jenis',
+        accessor: 'jenis',
+        filterable: true,
+      },
+      {
+        Header: 'Kode Pelatihan',
+        accessor: 'kode',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 1',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
+        Header: 'Tanggal Terima',
+        accessor: 'tanggalTerima',
+        filterable: false,
+        Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 2',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
+        Header: 'Tanggal Konfirmasi',
+        accessor: 'tanggalKonfirmasi',
+        filterable: false,
+        Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 3',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
+        Header: 'Tanggal Revisi',
+        accessor: 'tanggalRevisi',
+        filterable: false,
+        Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 4',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 5',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 6',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
+        Header: 'Kebutuhan',
+        accessor: 'kebutuhan',
+        filterable: false,
       },
       {
         Header: 'Aksi',
@@ -154,8 +150,8 @@ class TanamanHias extends Component {
       },
     ]
 
-    const pageName = 'Tanaman Hias'
-    const isIcon = { paddingRight: '7px' }
+    const pageName = 'Kegiatan Lain'
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -178,7 +174,7 @@ class TanamanHias extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Input Data
+                        Tambah Data
                       </Button>
                     </div>
                   </Col>
@@ -186,8 +182,7 @@ class TanamanHias extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="6">Rekanan: PT. ABC (bisa diedit)</Col>
-                  <Col sm="6">
+                  <Col sm="12">
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -234,48 +229,90 @@ class TanamanHias extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Tanaman Hias</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Kegiatan Lain</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Tanggal"
-                          name="tanggal"
+                          label="Nama Kegiatan"
+                          type="text"
+                          name="namaKegiatan"
+                          isRequired
+                          placeholder="Masukkan nama kegiatan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis"
+                          type="text"
+                          name="jenis"
+                          isRequired
+                          placeholder="Masukkan jenis kegiatan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kode Kegiatan"
+                          type="text"
+                          name="kodeKegiatan"
+                          isRequired
+                          placeholder="Masukkan kode kegiatan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Tanggal Terima"
+                          name="tanggalTerima"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Tanggal"
+                          placeholder="Tanggal Terima"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
-                      <h6>Monitoring Tanaman Hias</h6>
-                      <br />
-                      <div style={{ marginLeft: '40px' }}>
-                        <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
-                        </FormGroup>
+                      <FormGroup>
+                        <Field
+                          label="Tanggal Konfirmasi"
+                          name="tanggalKonfirmasi"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
+                          isRequired
+                          placeholder="Tanggal Konfirmasi"
+                          component={CfInputDate}
+                        />
+                      </FormGroup>
 
-                        <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
-                        </FormGroup>
+                      <FormGroup>
+                        <Field
+                          label="Tanggal Revisi"
+                          name="tanggalRevisi"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
+                          isRequired
+                          placeholder="Tanggal Revisi"
+                          component={CfInputDate}
+                        />
+                      </FormGroup>
 
-                        <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
-                        </FormGroup>
-                      </div>
+                      <FormGroup>
+                        <Field
+                          label="Kebutuhan"
+                          options={[{ value: 'ATK', label: 'ATK' }]}
+                          isRequired
+                          name="kebutuhan"
+                          placeholder="Pilih atau Cari Kebutuhan"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -296,7 +333,7 @@ class TanamanHias extends Component {
                             &nbsp;Loading...
                           </>
                         ) : (
-                          'Save Changes'
+                          'Submit'
                         )}
                       </Button>
                     </ModalFooter>
@@ -311,7 +348,7 @@ class TanamanHias extends Component {
   }
 }
 
-TanamanHias.propTypes = {
+KegiatanLain.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -342,7 +379,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: TanamanHias,
+      Component: KegiatanLain,
       toggles: {
         modalForm: false,
       },

@@ -57,14 +57,9 @@ export default {
           url: '/fixed-asset/peralatan-it',
           icon: 'fa fa-angle-double-right',
         },
-        {
-          name: 'Reporting',
-          url: '/fixed-asset/reporting',
-          icon: 'fa fa-angle-double-right',
-        },
         // {
-        //   name: 'Working Order',
-        //   url: '/fixed-asset/working-order',
+        //   name: 'Reporting',
+        //   url: '/fixed-asset/reporting',
         //   icon: 'fa fa-angle-double-right',
         // },
       ],
@@ -143,42 +138,42 @@ export default {
       url: '/financial-admin',
       icon: 'icon-layers',
     },
-    {
-      title: true,
-      name: 'M A S T E R',
-      wrapper: {
-        element: '',
-        attributes: {},
-      },
-    },
-    {
-      name: 'Account',
-      url: '/akun',
-      icon: 'icon-people',
-      children: [
-        {
-          name: 'Role',
-          url: '/akun/role',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'User',
-          url: '/akun/user',
-          icon: 'fa fa-angle-double-right',
-        },
-      ],
-    },
-    {
-      name: 'Data Master',
-      url: '/master',
-      icon: 'fa fa-tasks',
-      children: [
-        {
-          name: 'Position',
-          url: '/master/position',
-          icon: 'fa fa-angle-double-right',
-        },
-      ],
-    },
+    // {
+    //   title: true,
+    //   name: 'M A S T E R',
+    //   wrapper: {
+    //     element: '',
+    //     attributes: {},
+    //   },
+    // },
+    // {
+    //   name: 'Account',
+    //   url: '/akun',
+    //   icon: 'icon-people',
+    //   children: [
+    //     {
+    //       name: 'Role',
+    //       url: '/akun/role',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'User',
+    //       url: '/akun/user',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //   ],
+    // },
+    // {
+    //   name: 'Data Master',
+    //   url: '/master',
+    //   icon: 'fa fa-tasks',
+    //   children: [
+    //     {
+    //       name: 'Position',
+    //       url: '/master/position',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //   ],
+    // },
   ],
 }

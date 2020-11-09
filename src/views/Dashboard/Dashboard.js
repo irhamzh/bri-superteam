@@ -26,6 +26,7 @@ import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import background from './underconstruction.png'
 
 const Widget03 = lazy(() => import('../Widgets/Widget03'))
 
@@ -533,6 +534,9 @@ class Dashboard extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12" sm="6" lg="3">
+            <div className="text-center mx-auto w-100">
+              <img src={background} alt="underconstruction" />
+            </div>
             {/* <Card className="text-white bg-info">
               <CardBody className="pb-0">
                 <ButtonGroup className="float-right">

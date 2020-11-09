@@ -31,7 +31,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class TanamanHias extends Component {
+class Gondola extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -91,38 +91,26 @@ class TanamanHias extends Component {
         Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 1',
-        accessor: 'status',
+        Header: 'Sistem Kerja Tali Baja',
+        accessor: 'sistemKerjaTaliBaja',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 2',
-        accessor: 'status',
+        Header: 'Panel Kelistrikan',
+        accessor: 'panelKelistrikan',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 3',
-        accessor: 'status',
+        Header: 'Perangkat Kerja Gondola',
+        accessor: 'perangkatKerja',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Penggantian Tanaman - Lantai 4',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 5',
-        accessor: 'status',
-        filterable: true,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 6',
-        accessor: 'status',
+        Header: 'Keterangan',
+        accessor: 'keterangan',
         filterable: true,
         headerClassName: 'wordwrap',
       },
@@ -186,8 +174,7 @@ class TanamanHias extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="6">Rekanan: PT. ABC (bisa diedit)</Col>
-                  <Col sm="6">
+                  <Col sm="12">
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -234,7 +221,7 @@ class TanamanHias extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Tanaman Hias</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Gondola</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -249,31 +236,31 @@ class TanamanHias extends Component {
                         />
                       </FormGroup>
 
-                      <h6>Monitoring Tanaman Hias</h6>
+                      <h6>Monitoring Gondola</h6>
                       <br />
                       <div style={{ marginLeft: '40px' }}>
                         <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
+                          <Field
+                            label="Sistem Kerja Tali Baja"
+                            name="sistemKerjaTaliBaja"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
+                          <Field
+                            label="Panel Kelistrikan"
+                            name="panelKelistrikan"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
+                          <Field
+                            label="Perangkat Kerja Gondola"
+                            name="perangkatKerja"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
                       </div>
 
@@ -311,7 +298,7 @@ class TanamanHias extends Component {
   }
 }
 
-TanamanHias.propTypes = {
+Gondola.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -342,7 +329,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: TanamanHias,
+      Component: Gondola,
       toggles: {
         modalForm: false,
       },

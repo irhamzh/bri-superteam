@@ -10,6 +10,7 @@ const JasaKonsultan = React.lazy(() => import('./views/FixedAsset/Pengadaan/Jasa
 const PurchaseOrder = React.lazy(() => import('./views/FixedAsset/Pengadaan/PurchaseOrder'))
 const TandaTerima = React.lazy(() => import('./views/FixedAsset/Pengadaan/TandaTerima'))
 const EvaluasiSupplier = React.lazy(() => import('./views/FixedAsset/Pengadaan/EvaluasiSupplier'))
+const WorkingOrderFO = React.lazy(() => import('./views/FixedAsset/Pengadaan/WorkingOrder'))
 // Fixed Asset / Aset
 const Aset = React.lazy(() => import('./views/FixedAsset/Aset'))
 const DaftarAset = React.lazy(() => import('./views/FixedAsset/Aset/DaftarAset'))
@@ -20,6 +21,9 @@ const Vendor = React.lazy(() => import('./views/FixedAsset/Vendor'))
 const PengangkutanSampah = React.lazy(() => import('./views/FixedAsset/Vendor/PengangkutanSampah'))
 const PestControl = React.lazy(() => import('./views/FixedAsset/Vendor/PestControl'))
 const PewangiRuangan = React.lazy(() => import('./views/FixedAsset/Vendor/PewangiRuangan'))
+const TanamanHias = React.lazy(() => import('./views/FixedAsset/Vendor/TanamanHias'))
+const Lift = React.lazy(() => import('./views/FixedAsset/Vendor/Lift'))
+const Gandola = React.lazy(() => import('./views/FixedAsset/Vendor/Gondola'))
 // Fixed Asset / Persediaan
 const Persediaan = React.lazy(() => import('./views/FixedAsset/Persediaan'))
 const Aktivitas = React.lazy(() => import('./views/FixedAsset/Persediaan/Aktivitas'))
@@ -139,6 +143,12 @@ const routes = [
     name: 'Evaluasi Supplier',
     component: EvaluasiSupplier,
   },
+  {
+    path: '/fixed-asset/pengadaan/working-order',
+    exact: true,
+    name: 'Working Order',
+    component: WorkingOrderFO,
+  },
   // Fixed Asset / Aset
   {
     path: '/fixed-asset/aset',
@@ -188,6 +198,24 @@ const routes = [
     exact: true,
     name: 'Monitoring Pewangi Ruangan',
     component: PewangiRuangan,
+  },
+  {
+    path: '/fixed-asset/vendor/tanaman-hias',
+    exact: true,
+    name: 'Monitoring Tanaman Hias',
+    component: TanamanHias,
+  },
+  {
+    path: '/fixed-asset/vendor/lift',
+    exact: true,
+    name: 'Monitoring Lift',
+    component: Lift,
+  },
+  {
+    path: '/fixed-asset/vendor/gandola',
+    exact: true,
+    name: 'Monitoring Gandola',
+    component: Gandola,
   },
   // Fixed Asset / Persediaan
   {

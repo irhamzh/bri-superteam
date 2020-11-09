@@ -35,8 +35,7 @@ const roleSchema = Yup.object().shape({
 
 class PenunjukanLangsung extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    jenisPengadaan: 'Penunjukkan Langsung',
   }
 
   doRefresh = () => {
@@ -286,6 +285,7 @@ class PenunjukanLangsung extends Component {
                             { value: 'Penunjukkan Langsung', label: 'Penunjukkan Langsung' },
                           ]}
                           isRequired
+                          isDisabled
                           name="jenisPengadaan"
                           placeholder="Pilih atau Cari Jenis Pengadaan"
                           component={CfSelect}

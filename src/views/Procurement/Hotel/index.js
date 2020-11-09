@@ -22,7 +22,7 @@ const Hotel = (props) => {
           </Link>
         </Col>
 
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/procurement/hotel/aktivitas" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -30,7 +30,7 @@ const Hotel = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
         <Col xs="8">
           <Link to="/procurement/hotel/evaluasi" style={{ textDecoration: 'none' }}>

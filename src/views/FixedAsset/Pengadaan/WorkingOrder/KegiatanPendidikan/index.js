@@ -20,16 +20,49 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
-import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
-import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import Service from '../../../../../config/services'
+import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
+import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
+import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import withTableFetchQuery, {
+  WithTableFetchQueryProp,
+} from '../../../../../HOC/withTableFetchQuery'
+import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
+
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    workingOrderCode: 123456,
+    namaKegiatan: 'Kegiatan 1',
+    kodePelatihan: 9987,
+    tanggalTerima: '12/12/2020',
+    tanggalRevisi: '14/12/2020',
+    tanggalKonfirmasi: '16/12/2020',
+    kebutuhanCatering: 'lorem ipsum',
+    kebutuhanATK: 'lorem ipsum',
+    kebutuhanHotel: 'lorem ipsum',
+    kebutuhanAkomodasi: 'lorem ipsum',
+    kebutuhanPengajarEksternal: 'lorem ipsum',
+  },
+  {
+    tanggal: '12/12/2020',
+    workingOrderCode: 123456,
+    namaKegiatan: 'Kegiatan 2',
+    kodePelatihan: 3245,
+    tanggalTerima: '12/12/2020',
+    tanggalRevisi: '14/12/2020',
+    tanggalKonfirmasi: '16/12/2020',
+    kebutuhanCatering: 'lorem ipsum',
+    kebutuhanATK: 'lorem ipsum',
+    kebutuhanHotel: 'lorem ipsum',
+    kebutuhanAkomodasi: 'lorem ipsum',
+    kebutuhanPengajarEksternal: 'lorem ipsum',
+  },
+]
 
 class KegiatanPendidikan extends Component {
   initialValues = {
@@ -85,42 +118,70 @@ class KegiatanPendidikan extends Component {
 
     const columns = [
       {
+        header: 'Kode Working Order',
+        accessor: 'workingOrderCode',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
         filterable: true,
       },
       {
-        Header: 'Jenis',
-        accessor: 'jenis',
-        filterable: false,
-      },
-      {
         Header: 'Kode Pelatihan',
-        accessor: 'kode',
+        accessor: 'kodePelatihan',
         filterable: false,
       },
       {
         Header: 'Tanggal Terima',
         accessor: 'tanggalTerima',
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
-      },
-      {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: 'Tanggal Revisi',
         accessor: 'tanggalRevisi',
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Kebutuhan',
-        accessor: 'kebutuhan',
+        Header: 'Tanggal Konfirmasi',
+        accessor: 'tanggalKonfirmasi',
         filterable: false,
+      },
+      {
+        Header: 'SLA',
+        accessor: 'sla',
+        filterable: false,
+      },
+      {
+        Header: 'Kebutuhan - Catering',
+        accessor: 'kebutuhanCatering',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Kebutuhan - ATK',
+        accessor: 'kebutuhanATK',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Kebutuhan - Hotel',
+        accessor: 'kebutuhanHotel',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Kebutuhan - Akomodasi',
+        accessor: 'kebutuhanAkomodasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Kebutuhan - Pengajar Eksternal',
+        accessor: 'kebutuhanPengajarEksternal',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Aksi',
@@ -203,10 +264,11 @@ class KegiatanPendidikan extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -233,22 +295,22 @@ class KegiatanPendidikan extends Component {
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Nama Kegiatan"
+                          label="Kode Working Order"
                           type="text"
-                          name="namaKegiatan"
+                          name="codeWorkingOrder"
                           isRequired
-                          placeholder="Masukkan nama kegiatan"
+                          placeholder="Masukkan Kode Working Order"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Jenis"
+                          label="Nama Kegiatan"
                           type="text"
-                          name="jenis"
+                          name="namaKegiatan"
                           isRequired
-                          placeholder="Masukkan jenis kegiatan"
+                          placeholder="Masukkan nama kegiatan"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -279,19 +341,6 @@ class KegiatanPendidikan extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
                           label="Tanggal Revisi"
                           name="tanggalRevisi"
                           classIcon="fa fa-calendar"
@@ -305,12 +354,69 @@ class KegiatanPendidikan extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Kebutuhan"
-                          options={[{ value: 'ATK', label: 'ATK' }]}
+                          label="Tanggal Konfirmasi"
+                          name="tanggalKonfirmasi"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          name="kebutuhan"
-                          placeholder="Pilih atau Cari Kebutuhan"
-                          component={CfSelect}
+                          placeholder="Tanggal Konfirmasi"
+                          component={CfInputDate}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kebutuhan - Catering"
+                          type="text"
+                          name="kebutuhanCatering"
+                          isRequired
+                          placeholder="Masukkan Kebutuhan Catering"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kebutuhan - ATK"
+                          type="text"
+                          name="kebutuhanATK"
+                          isRequired
+                          placeholder="Masukkan Kebutuhan ATK"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kebutuhan - Hotel"
+                          type="text"
+                          name="kebutuhanHotel"
+                          isRequired
+                          placeholder="Masukkan Kebutuhan Hotel"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kebutuhan - Akomodasi"
+                          type="text"
+                          name="kebutuhanAkomodasi"
+                          isRequired
+                          placeholder="Masukkan Kebutuhan Akomodasi"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kebutuhan - Pengajar Eksternal"
+                          type="text"
+                          name="kebutuhanPengajarEksternal"
+                          isRequired
+                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
+                          component={CfInput}
                         />
                       </FormGroup>
 

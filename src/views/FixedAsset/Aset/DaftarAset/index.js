@@ -31,6 +31,17 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    code: 1234567,
+    nama: 'Elektronik',
+  },
+  {
+    code: 989667,
+    nama: 'Perkakas',
+  },
+]
+
 class DaftarAset extends Component {
   initialValues = {
     nama: '',
@@ -86,8 +97,8 @@ class DaftarAset extends Component {
     const columns = [
       {
         Header: 'Kode',
+        accessor: 'code',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Aset',
@@ -109,12 +120,12 @@ class DaftarAset extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -162,10 +173,11 @@ class DaftarAset extends Component {
               <CardBody>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -194,7 +206,7 @@ class DaftarAset extends Component {
                         <Field
                           label="Kode Aset"
                           type="text"
-                          name="kode"
+                          name="code"
                           isRequired
                           placeholder="Masukkan kode aset"
                           component={CfInput}
@@ -205,7 +217,7 @@ class DaftarAset extends Component {
                         <Field
                           label="Nama Aset"
                           type="text"
-                          name="name"
+                          name="nama"
                           isRequired
                           placeholder="Masukkan nama aset"
                           component={CfInput}

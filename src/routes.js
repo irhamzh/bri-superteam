@@ -1,5 +1,4 @@
 import React from 'react'
-import ATK from './views/Procurement/ATK'
 
 const Dashboard = React.lazy(() => import('./views/Dashboard'))
 const Role = React.lazy(() => import('./views/Master/Role'))
@@ -51,12 +50,10 @@ const EvaluasiProcurement = React.lazy(() => import('./views/Procurement/Pengada
 // Procurement / Hotel
 const HotelProcurement = React.lazy(() => import('./views/Procurement/Hotel'))
 const KlasifikasiHotel = React.lazy(() => import('./views/Procurement/Hotel/Klasifikasi'))
-const AktivitasHotel = React.lazy(() => import('./views/Procurement/Hotel/Aktivitas'))
 const EvaluasiHotel = React.lazy(() => import('./views/Procurement/Hotel/Evaluasi'))
 // Procurement / Catering
 const CateringProcurement = React.lazy(() => import('./views/Procurement/Catering'))
 const KlasifikasiCatering = React.lazy(() => import('./views/Procurement/Catering/Klasifikasi'))
-const AktivitasCatering = React.lazy(() => import('./views/Procurement/Catering/Aktivitas'))
 const EvaluasiCatering = React.lazy(() => import('./views/Procurement/Catering/Evaluasi'))
 // Procurement / ATK
 const ATKProcurement = React.lazy(() => import('./views/Procurement/ATK'))
@@ -212,7 +209,7 @@ const routes = [
     component: Lift,
   },
   {
-    path: '/fixed-asset/vendor/gandola',
+    path: '/fixed-asset/vendor/gondola',
     exact: true,
     name: 'Monitoring Gandola',
     component: Gandola,
@@ -326,12 +323,7 @@ const routes = [
     name: 'Klasifikasi',
     component: KlasifikasiHotel,
   },
-  {
-    path: '/procurement/hotel/aktivitas',
-    exact: true,
-    name: 'Aktivitas',
-    component: AktivitasHotel,
-  },
+
   {
     path: '/procurement/hotel/evaluasi',
     exact: true,
@@ -350,12 +342,6 @@ const routes = [
     exact: true,
     name: 'Klasifikasi',
     component: KlasifikasiCatering,
-  },
-  {
-    path: '/procurement/catering/aktivitas',
-    exact: true,
-    name: 'Aktivitas',
-    component: AktivitasCatering,
   },
   {
     path: '/procurement/catering/evaluasi',

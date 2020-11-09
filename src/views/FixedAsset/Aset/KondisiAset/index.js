@@ -22,7 +22,7 @@ import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Select from 'react-select'
 import Service from '../../../../config/services'
-import { CfInput } from '../../../../components'
+import { CfInput, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -31,6 +31,19 @@ import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
+
+const dataDummy = [
+  {
+    code: 1234567,
+    nama: 'Elektronik',
+    kondisi: 'Baik',
+  },
+  {
+    code: 989667,
+    nama: 'Perkakas',
+    kondisi: 'Tidak Baik',
+  },
+]
 
 class KondisiAset extends Component {
   state = {
@@ -117,27 +130,19 @@ class KondisiAset extends Component {
         filterable: true,
       },
       {
-        Header: 'Aksi',
+        Header: 'Kondisi',
+        accessor: 'kondisi',
         filterable: false,
         Cell: (props) => (
           <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
+            <Select
+              className="select2"
+              clearable
+              onChange={(v) => this.handleChangeSelect('kondisi', v)}
+              options={optKondisiAset}
+              name="kondisi"
+              value={props.value}
+            />
           </>
         ),
       },
@@ -179,10 +184,11 @@ class KondisiAset extends Component {
                 <br />
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

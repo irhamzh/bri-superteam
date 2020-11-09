@@ -142,7 +142,7 @@ class Gondola extends Component {
       },
     ]
 
-    const pageName = 'Tanaman Hias'
+    const pageName = 'Gondola'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />

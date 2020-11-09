@@ -33,6 +33,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    namaPengadaan: 'Pengadaan 1',
+    izinPrinsipUser: true,
+    izinPrinsiPengadaan: false,
+    izinHasilPengadaan: true,
+    jenisAnggaran: 'Investasi',
+    biayaPutusan: 100000,
+  },
+  {
+    tanggal: '12/12/2020',
+    namaPengadaan: 'Pengadaan 2',
+    izinPrinsipUser: true,
+    izinPrinsiPengadaan: true,
+    izinHasilPengadaan: true,
+    jenisAnggaran: 'Eksploitasi',
+    biayaPutusan: 10000000,
+  },
+]
+
 class Swakelola extends Component {
   initialValues = {
     jenisPengadaan: 'Swakelola',
@@ -88,8 +109,8 @@ class Swakelola extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Pengadaan',
@@ -98,18 +119,48 @@ class Swakelola extends Component {
       },
       {
         Header: 'Izin Prinsip User',
-        accessor: 'izinPrinsiUser',
+        accessor: 'izinPrinsipUser',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsiPengadaan',
+        accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Jenis Anggaran',
@@ -137,12 +188,12 @@ class Swakelola extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -203,10 +254,11 @@ class Swakelola extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -246,7 +298,7 @@ class Swakelola extends Component {
                       <FormGroup>
                         <Field
                           label="Tanggal Pengadaan"
-                          name="tanggalPengadaan"
+                          name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}

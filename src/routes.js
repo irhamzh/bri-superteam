@@ -75,12 +75,18 @@ const GedungEngineerPG = React.lazy(() => import('./views/PengelolaGedung/Engine
 const PeralatanITPG = React.lazy(() => import('./views/PengelolaGedung/PeralatanIT'))
 const PeralatanFisik = React.lazy(() => import('./views/PengelolaGedung/PeralatanIT/Fisik'))
 const PeralatanJaringan = React.lazy(() => import('./views/PengelolaGedung/PeralatanIT/Jaringan'))
-// Pengelola Gedung / Kebersihamn
+// Pengelola Gedung / Kebersihan
 const KebersihanPG = React.lazy(() => import('./views/PengelolaGedung/Kebersihan'))
 const InnovationKB = React.lazy(() => import('./views/PengelolaGedung/Kebersihan/Innovation'))
 const SmartKB = React.lazy(() => import('./views/PengelolaGedung/Kebersihan/Smart'))
 const HalamanKB = React.lazy(() => import('./views/PengelolaGedung/Kebersihan/Halaman'))
 const SaranaPendukungKB = React.lazy(() => import('./views/PengelolaGedung/Kebersihan/Pendukung'))
+// Pengelola Gedung / Peralatan Kerja
+const PeralatanKerjaPG = React.lazy(() => import('./views/PengelolaGedung/PeralatanKerja'))
+const TeknisiPK = React.lazy(() => import('./views/PengelolaGedung/PeralatanKerja/Teknisi'))
+const CleaningServicePK = React.lazy(() =>
+  import('./views/PengelolaGedung/PeralatanKerja/CleaningService')
+)
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -454,6 +460,25 @@ const routes = [
     exact: true,
     name: 'Sarana Pendukung',
     component: SaranaPendukungKB,
+  },
+  // Pengelola Gedung / Peralatan Kerja
+  {
+    path: '/pengelola-gedung/peralatan-kerja',
+    exact: true,
+    name: 'Peralatan Kerja',
+    component: PeralatanKerjaPG,
+  },
+  {
+    path: '/pengelola-gedung/peralatan-kerja/teknisi',
+    exact: true,
+    name: 'Peralatan Teknisi',
+    component: TeknisiPK,
+  },
+  {
+    path: '/pengelola-gedung/peralatan-kerja/cleaning-service',
+    exact: true,
+    name: 'Peralatan Cleaning Service',
+    component: CleaningServicePK,
   },
   {
     path: '/akun',

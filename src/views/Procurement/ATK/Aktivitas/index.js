@@ -21,13 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import {
-  CfInput,
-  CfInputCheckbox,
-  CfInputDate,
-  CfInputRadio,
-  CfSelect,
-} from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'

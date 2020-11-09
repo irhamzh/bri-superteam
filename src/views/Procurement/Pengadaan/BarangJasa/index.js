@@ -47,21 +47,21 @@ const BarangJasa = () => {
         </NavItem>
       </Nav>
       <TabContent activeTab={activeTab}>
-        <TabPane tabId="1" style={{ height: '100vh' }}>
+        <TabPane tabId="1">
           <Row>
             <Col sm="12">
               <PembelianLangsung />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="2" style={{ height: '100vh' }}>
+        <TabPane tabId="2">
           <Row>
             <Col sm="12">
               <PenunjukanLangsung />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="3" style={{ height: '100vh' }}>
+        <TabPane tabId="3">
           <Row>
             <Col sm="12">
               <PemilihanLangsung />

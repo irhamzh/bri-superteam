@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -31,7 +31,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class PewangiRuangan extends Component {
+class Halaman extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -91,33 +91,73 @@ class PewangiRuangan extends Component {
         Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
-        Header: 'Lantai 1',
-        accessor: 'lantai1',
+        Header: 'Rumput',
+        accessor: 'rumput',
         filterable: false,
       },
       {
-        Header: 'Lantai 2',
-        accessor: 'lantai2',
+        Header: 'Pohon',
+        accessor: 'pohon',
         filterable: false,
       },
       {
-        Header: 'Lantai 3',
-        accessor: 'lantai3',
+        Header: 'Kolam Ikan',
+        accessor: 'kolamIkan',
         filterable: false,
       },
       {
-        Header: 'Lantai 4',
-        accessor: 'lantai4',
+        Header: 'Air Mancur',
+        accessor: 'airMancur',
         filterable: false,
       },
       {
-        Header: 'Lantai 5',
-        accessor: 'lantai5',
+        Header: 'Paving Block',
+        accessor: 'pavingBlock',
         filterable: false,
       },
       {
-        Header: 'Lantai 6',
-        accessor: 'lantai6',
+        Header: 'Sampah Dan Gulma',
+        accessor: 'sampahGulma',
+        filterable: false,
+      },
+      {
+        Header: 'Penyiraman',
+        accessor: 'penyiraman',
+        filterable: false,
+      },
+      {
+        Header: 'Pendangiran',
+        accessor: 'pendangiran',
+        filterable: false,
+      },
+      {
+        Header: 'Pemupukan',
+        accessor: 'pemupukan',
+        filterable: false,
+      },
+      {
+        Header: 'Pemangkas',
+        accessor: 'pemangkas',
+        filterable: false,
+      },
+      {
+        Header: 'Pengendalian Hama',
+        accessor: 'pengendalianHama',
+        filterable: false,
+      },
+      {
+        Header: 'Penyulaman Tanaman',
+        accessor: 'penyulamanTanaman',
+        filterable: false,
+      },
+      {
+        Header: 'Penambahan Media Tanam',
+        accessor: 'penambahanMediaTanam',
+        filterable: false,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'keterangan',
         filterable: false,
       },
       {
@@ -148,7 +188,7 @@ class PewangiRuangan extends Component {
       },
     ]
 
-    const pageName = 'Pewangi Ruangan'
+    const pageName = 'Halaman'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -172,7 +212,7 @@ class PewangiRuangan extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Input Data
+                        Tambah Data
                       </Button>
                     </div>
                   </Col>
@@ -227,7 +267,7 @@ class PewangiRuangan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Halaman</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -242,44 +282,100 @@ class PewangiRuangan extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Rekanan"
-                          type="text"
-                          name="rekanan"
-                          isRequired
-                          placeholder="Masukkan Rekanan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <b>Monitoring Pewangi Ruangan</b>
+                      <strong>Kondisi</strong>
                       <br />
                       <div style={{ marginLeft: '40px' }}>
                         <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
+                          <Field label="Rumput" name="rumput" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
+                          <Field label="Pohon" name="pohon" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
+                          <Field label="Kolam Ikan" name="kolamIkan" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
+                          <Field label="Air Mancur" name="airMancur" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
+                          <Field
+                            label="Paving Block"
+                            name="pavingBlock"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+                        <FormGroup>
+                          <Field
+                            label="Sampah dan Gulma"
+                            name="sampahGulma"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
+                          <Field label="Penyiraman" name="penyiraman" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Pendangiran"
+                            name="pendangiran"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Pemupukan" name="pemupukan" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Pemangkasan"
+                            name="pemangkasan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Pengendalian Hama"
+                            name="pengendalianHama"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Penyulaman Tanaman"
+                            name="penyulamanTanaman"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Penambahan Media Tanam"
+                            name="penambahanMediaTanam"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
                       </div>
+
+                      <br />
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="keterangan"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -315,7 +411,7 @@ class PewangiRuangan extends Component {
   }
 }
 
-PewangiRuangan.propTypes = {
+Halaman.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -346,7 +442,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: PewangiRuangan,
+      Component: Halaman,
       toggles: {
         modalForm: false,
       },

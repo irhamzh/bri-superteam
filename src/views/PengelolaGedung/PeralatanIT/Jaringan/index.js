@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { CfInput, CfInputRadio, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -31,7 +31,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class PewangiRuangan extends Component {
+class PeralatanJaringan extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -81,44 +81,33 @@ class PewangiRuangan extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
+        Header: 'Lantai',
+        accessor: 'lantai',
+        filterable: true,
       },
+
       {
-        Header: 'Lantai 1',
-        accessor: 'lantai1',
-        filterable: false,
-      },
-      {
-        Header: 'Lantai 2',
-        accessor: 'lantai2',
+        Header: 'Ruangan',
+        accessor: 'ruangan',
         filterable: false,
       },
       {
-        Header: 'Lantai 3',
-        accessor: 'lantai3',
-        filterable: false,
+        Header: 'Item',
+        accessor: 'item',
       },
       {
-        Header: 'Lantai 4',
-        accessor: 'lantai4',
-        filterable: false,
+        Header: 'Status',
+        accessor: 'status',
+        filterable: true,
       },
       {
-        Header: 'Lantai 5',
-        accessor: 'lantai5',
-        filterable: false,
-      },
-      {
-        Header: 'Lantai 6',
-        accessor: 'lantai6',
-        filterable: false,
+        Header: 'Keterangan',
+        accessor: 'keterangan',
+        filterable: true,
       },
       {
         Header: 'Aksi',
@@ -148,7 +137,7 @@ class PewangiRuangan extends Component {
       },
     ]
 
-    const pageName = 'Pewangi Ruangan'
+    const pageName = 'Teknisi IT - Jaringan'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -172,33 +161,14 @@ class PewangiRuangan extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Input Data
+                        <i className="fa fa-plus" style={isIcon} />
+                        &nbsp;Tambah Data
                       </Button>
                     </div>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Row>
-                  <Col sm="12">
-                    <div style={{ textAlign: 'right' }}>
-                      <Button
-                        className="mr-3 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Show
-                      </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Export
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
                 <ReactTable
                   filterable
                   columns={columns}
@@ -225,61 +195,93 @@ class PewangiRuangan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Lantai"
+                          options={[
+                            { value: 'Lantai 1', label: 'Lantai 1' },
+                            { value: 'Lantai 2', label: 'Lantai 2' },
+                            { value: 'Lantai 3', label: 'Lantai 3' },
+                            { value: 'Lantai 4', label: 'Lantai 4' },
+                            { value: 'Lantai 5', label: 'Lantai 5' },
+                            { value: 'Lantai 6', label: 'Lantai 6' },
+                          ]}
                           isRequired
-                          placeholder="Tanggal"
-                          component={CfInputDate}
+                          name="lantai"
+                          placeholder="Pilih atau Cari Lantai"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Rekanan"
-                          type="text"
-                          name="rekanan"
+                          label="Ruangan"
+                          options={[
+                            { value: 'Ruangan X', label: 'Ruangan X' },
+                            { value: 'Ruangan Y', label: 'Ruangan Y' },
+                            { value: 'Ruangan Z', label: 'Ruangan Z' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Rekanan"
-                          component={CfInput}
+                          name="ruangan"
+                          placeholder="Pilih atau Cari Ruangan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
-                      <b>Monitoring Pewangi Ruangan</b>
-                      <br />
-                      <div style={{ marginLeft: '40px' }}>
-                        <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
-                        </FormGroup>
+                      <FormGroup>
+                        <Field
+                          label="Item"
+                          options={[
+                            { value: 'Antivirus', label: 'Antivirus' },
+                            { value: 'Koneksi', label: 'Koneksi' },
+                          ]}
+                          isRequired
+                          name="item"
+                          placeholder="Pilih atau Cari item"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
 
-                        <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
-                        </FormGroup>
+                      <Row>
+                        <Col>
+                          <h6>Status Item</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label={values.item === 'Antivirus' ? 'Update' : 'Connected'}
+                              name="statusItem"
+                              id={values.item === 'Antivirus' ? 'Update' : 'Connected'}
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
+                              name="statusItem"
+                              id={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                        <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
-                        </FormGroup>
-                      </div>
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="keterangan"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -300,7 +302,7 @@ class PewangiRuangan extends Component {
                             &nbsp;Loading...
                           </>
                         ) : (
-                          'Save Changes'
+                          'Submit'
                         )}
                       </Button>
                     </ModalFooter>
@@ -315,7 +317,7 @@ class PewangiRuangan extends Component {
   }
 }
 
-PewangiRuangan.propTypes = {
+PeralatanJaringan.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -346,7 +348,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: PewangiRuangan,
+      Component: PeralatanJaringan,
       toggles: {
         modalForm: false,
       },

@@ -21,7 +21,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  CfInputRadio,
+  CfSelect,
+} from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -33,7 +39,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class Ruangan extends Component {
+class Toilet extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -87,28 +93,33 @@ class Ruangan extends Component {
 
     const columns = [
       {
-        Header: 'Gedung',
-        accessor: 'gedung',
+        Header: 'Tanggal',
+        accessor: 'tanggal',
         filterable: false,
       },
       {
-        Header: 'Jenis Ruangan',
-        accessor: 'jenisRuangan',
+        Header: 'Lokasi',
+        accessor: 'lokasi',
         filterable: false,
       },
       {
-        Header: 'Ruangan',
-        accessor: 'Ruangan',
+        Header: 'Wastafel',
+        accessor: 'wastafel',
         filterable: false,
       },
       {
-        Header: 'Plafond',
-        accessor: 'plafond',
+        Header: 'Kloset',
+        accessor: 'kloset',
         filterable: false,
       },
       {
-        Header: 'Dinding',
-        accessor: 'dinding',
+        Header: 'Urinoir',
+        accessor: 'urinoir',
+        filterable: false,
+      },
+      {
+        Header: 'Kaca',
+        accessor: 'kaca',
         filterable: false,
       },
       {
@@ -117,53 +128,33 @@ class Ruangan extends Component {
         filterable: false,
       },
       {
-        Header: 'Pintu',
-        accessor: 'pintu',
+        Header: 'Dinding',
+        accessor: 'dinding',
         filterable: false,
       },
       {
-        Header: 'Espresso',
-        accessor: 'espresso',
+        Header: 'Tempat Sampah',
+        accessor: 'tempatSampah',
         filterable: false,
       },
       {
-        Header: 'Jendela',
-        accessor: 'jendela',
+        Header: 'Hand Dryer',
+        accessor: 'handDryer',
         filterable: false,
       },
       {
-        Header: 'Kursi',
-        accessor: 'kursi',
+        Header: 'Hand Soap',
+        accessor: 'handSoap',
         filterable: false,
       },
       {
-        Header: 'Meja',
-        accessor: 'meja',
+        Header: 'Tissue',
+        accessor: 'tissue',
         filterable: false,
       },
       {
-        Header: 'Lampu',
-        accessor: 'lampu',
-        filterable: false,
-      },
-      {
-        Header: 'Kasur',
-        accessor: 'kasur',
-        filterable: false,
-      },
-      {
-        Header: 'Lemari',
-        accessor: 'lemari',
-        filterable: false,
-      },
-      {
-        Header: 'Toilet',
-        accessor: 'toilet',
-        filterable: false,
-      },
-      {
-        Header: 'Peralatan Lainnya',
-        accessor: 'lainnya',
+        Header: 'Pengharum',
+        accessor: 'pengharum',
         filterable: false,
       },
       {
@@ -199,7 +190,7 @@ class Ruangan extends Component {
       },
     ]
 
-    const pageName = 'Evaluasi Ruangan'
+    const pageName = 'Toilet'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -267,7 +258,7 @@ class Ruangan extends Component {
               toggle={modalForm.toggle}
               backdrop="static"
               className={className}
-              size="lg"
+              // size="lg"
             >
               <Formik
                 initialValues={modalForm.prop.data}
@@ -284,7 +275,7 @@ class Ruangan extends Component {
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
                       <Row>
-                        <Col sm="6">
+                        <Col sm="12">
                           <FormGroup>
                             <Field
                               label="Tanggal"
@@ -299,49 +290,17 @@ class Ruangan extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm="6">
+                        <Col sm="12">
                           <FormGroup>
                             <Field
-                              label="Jenis Gedung"
+                              label="Lokasi"
                               options={[
-                                { value: 'Innovation Building', label: 'Innovation Building' },
-                                { value: 'Smart Building', label: 'Smart Building' },
+                                { value: 'Lantai 1 - Pria', label: 'Lantai 1 - Pria' },
+                                { value: 'Lantai 1 - Wanita', label: 'Lantai 1 - Wanita' },
                               ]}
                               isRequired
-                              name="jenisGedung"
-                              placeholder="Pilih atau Cari Jenis Gedung"
-                              component={CfSelect}
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col sm="6">
-                          <FormGroup>
-                            <Field
-                              label="Jenis Ruangan"
-                              options={[
-                                { value: 'Ruang Pendidikan', label: 'Ruang Pendidikan' },
-                                { value: 'Ruang Kerja', label: 'Ruang Kerja' },
-                              ]}
-                              isRequired
-                              name="jenisRuangan"
-                              placeholder="Pilih atau Cari Jenis Ruangan"
-                              component={CfSelect}
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col sm="6">
-                          <FormGroup>
-                            <Field
-                              label="Ruangan"
-                              options={[
-                                { value: '101', label: '101' },
-                                { value: '102', label: '102' },
-                              ]}
-                              isRequired
-                              name="ruangan"
-                              placeholder="Pilih atau Cari Ruangan"
+                              name="lokasi"
+                              placeholder="Pilih atau Cari Lokasi"
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -350,20 +309,73 @@ class Ruangan extends Component {
 
                       <strong>Kondisi</strong>
                       <br />
-                      <Row style={{ paddingLeft: '15px' }}>
+                      <div style={{ marginLeft: '40px' }}>
+                        <FormGroup>
+                          <Field label="Wastafel" name="wastafel" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Kloaset" name="kloset" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Urinoir" name="urinoir" component={CfInputCheckbox} />
+                        </FormGroup>
+                        <FormGroup>
+                          <Field label="Kaca" name="kaca" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Lantai" name="lantai" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Dinding" name="dinding" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Tempat Sampah"
+                            name="tempatSampah"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Hand Dryer" name="handDryer" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Hand Soap" name="handSoap" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Tissue" name="tissue" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Pengharum" name="pengharum" component={CfInputCheckbox} />
+                        </FormGroup>
+                      </div>
+                      {/* <Row style={{ paddingLeft: '15px' }}>
                         <Col>
-                          <em>Plafond</em>
+                          <em>Wastafel</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="plafond" id="Baik" component={CfInputRadio} />
+                            <Field
+                              label="Baik"
+                              name="wastafel"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="plafond"
+                              name="wastafel"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -371,18 +383,58 @@ class Ruangan extends Component {
                         </Col>
 
                         <Col>
-                          <em>Dinding</em>
+                          <em>Kloset</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="dinding" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="kloset" id="Baik" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="dinding"
+                              name="kloset"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Urinoir</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="urinoir" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="urinoir"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Kaca</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="kaca" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="kaca"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -411,18 +463,18 @@ class Ruangan extends Component {
                         </Col>
 
                         <Col>
-                          <em>Pintu</em>
+                          <em>Dinding</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="pintu" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="dinding" id="Baik" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="pintu"
+                              name="dinding"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -432,13 +484,13 @@ class Ruangan extends Component {
 
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
-                          <em>Espresso</em>
+                          <em>Tempat Sampah</em>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="espresso"
+                              name="tempatSampah"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -448,7 +500,7 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="espresso"
+                              name="tempatSampah"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -456,18 +508,23 @@ class Ruangan extends Component {
                         </Col>
 
                         <Col>
-                          <em>Jendela</em>
+                          <em>Hand Dryer</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="jendela" id="Baik" component={CfInputRadio} />
+                            <Field
+                              label="Baik"
+                              name="handDryer"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="jendela"
+                              name="handDryer"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -477,18 +534,23 @@ class Ruangan extends Component {
 
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
-                          <em>Kursi</em>
+                          <em>Hand Soap</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="kursi" id="Baik" component={CfInputRadio} />
+                            <Field
+                              label="Baik"
+                              name="handSoap"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kursi"
+                              name="handSoap"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -496,18 +558,18 @@ class Ruangan extends Component {
                         </Col>
 
                         <Col>
-                          <em>Meja</em>
+                          <em>Tissue</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="meja" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="tissue" id="Baik" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="meja"
+                              name="tissue"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -517,111 +579,37 @@ class Ruangan extends Component {
 
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
-                          <em>Lampu</em>
+                          <em>Pengharum</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="lampu" id="Baik" component={CfInputRadio} />
+                            <Field
+                              label="Baik"
+                              name="pengharum"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="lampu"
+                              name="pengharum"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
                           </FormGroup>
                         </Col>
 
-                        <Col>
-                          <em>Kasur</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="kasur" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="kasur"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ paddingLeft: '15px' }}>
-                        <Col>
-                          <em>Lemari</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="lemari" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="lemari"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col>
-                          <em>Toilet</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="toilet" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="toilet"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ paddingLeft: '15px' }}>
-                        <Col>
-                          <em>Peralatan Lainnya</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="lainnya" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="lainnya"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
                         <Col />
                         <Col />
                         <Col />
-                      </Row>
+                      </Row> */}
 
                       <br />
                       <Row>
-                        <Col sm="6">
+                        <Col sm="12">
                           <FormGroup>
                             <Field
                               label="Keterangan"
@@ -669,7 +657,7 @@ class Ruangan extends Component {
   }
 }
 
-Ruangan.propTypes = {
+Toilet.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -700,7 +688,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Ruangan,
+      Component: Toilet,
       toggles: {
         modalForm: false,
       },

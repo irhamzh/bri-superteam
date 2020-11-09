@@ -108,11 +108,6 @@ class PembelianLangsung extends Component {
         filterable: false,
       },
       {
-        Header: 'Klarifikasi dan Negosiasi',
-        accessor: 'klarifikasiDanNegosiasi',
-        filterable: false,
-      },
-      {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,

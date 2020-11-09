@@ -36,14 +36,14 @@ const Gedung = () => {
         </NavItem>
       </Nav>
       <TabContent activeTab={activeTab}>
-        <TabPane tabId="1" style={{ height: '100vh' }}>
+        <TabPane tabId="1">
           <Row>
             <Col sm="12">
               <ME />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="2" style={{ height: '100vh' }}>
+        <TabPane tabId="2">
           <Row>
             <Col sm="12">
               <Ruangan />

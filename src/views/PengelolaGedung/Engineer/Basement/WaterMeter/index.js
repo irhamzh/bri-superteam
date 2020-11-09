@@ -271,17 +271,6 @@ class WaterMeter extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Penggunaan"
-                          type="text"
-                          name="penggunaan"
-                          isRequired
-                          placeholder="Masukkan Penggunaan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
                       {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>

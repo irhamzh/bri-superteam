@@ -108,9 +108,29 @@ class SeleksiLangsung extends Component {
         filterable: false,
       },
       {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: true,
+      },
+      {
+        Header: 'Aanwijzing',
+        accessor: 'aanwijzing',
+        filterable: true,
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
+        filterable: true,
+      },
+      {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+      },
+      {
+        Header: 'Pemilihan Pemenang',
+        accessor: 'pemilihanPemenang',
+        filterable: true,
       },
       {
         Header: 'Jenis Anggaran',

@@ -109,6 +109,11 @@ class Plumbing extends Component {
         filterable: false,
       },
       {
+        Header: 'Kondisi Valve',
+        accessor: 'kondisiValve',
+        filterable: false,
+      },
+      {
         Header: 'Kondisi Bearing',
         accessor: 'kondisiBearing',
         filterable: false,
@@ -285,6 +290,32 @@ class Plumbing extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
+
+                      <Row>
+                        <Col>
+                          <h6>Kondisi Valve</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="kondisiValve"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="kondisiValve"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
                       <Row>
                         <Col>

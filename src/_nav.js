@@ -94,11 +94,6 @@ export default {
           url: '/pengelola-gedung/peralatan-kerja',
           icon: 'fa fa-angle-double-right',
         },
-        {
-          name: 'Reporting',
-          url: '/pengelola-gedung/reporting',
-          icon: 'fa fa-angle-double-right',
-        },
       ],
     },
     {

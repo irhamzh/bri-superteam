@@ -47,21 +47,21 @@ const Klasifikasi = () => {
         </NavItem>
       </Nav>
       <TabContent activeTab={activeTab}>
-        <TabPane tabId="1" style={{ height: '100vh' }}>
+        <TabPane tabId="1">
           <Row>
             <Col sm="12">
               <Bintang3 />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="2" style={{ height: '100vh' }}>
+        <TabPane tabId="2">
           <Row>
             <Col sm="12">
               <Bintang4 />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="3" style={{ height: '100vh' }}>
+        <TabPane tabId="3">
           <Row>
             <Col sm="12">
               <Bintang5 />

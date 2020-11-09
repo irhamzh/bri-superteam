@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
+import { CfInput, CfInputDate } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -92,11 +92,6 @@ class Listrik extends Component {
         width: 100,
         filterable: false,
         Cell: (props) => <span>{props.value}</span>,
-      },
-      {
-        Header: 'Jenis',
-        accessor: 'jenis',
-        filterable: false,
       },
       {
         Header: 'Meter Awal',
@@ -240,17 +235,6 @@ class Listrik extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Jenis"
-                          options={[{ value: 'Trafo 1', label: 'Trafo 1' }]}
-                          isRequired
-                          name="workingOrder"
-                          placeholder="Pilih atau Cari Jenis"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
                           label="Meter Awal"
                           type="text"
                           name="meterAwal"
@@ -267,17 +251,6 @@ class Listrik extends Component {
                           name="meterAkhir"
                           isRequired
                           placeholder="Masukkan Meter Akhir"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Penggunaan"
-                          type="text"
-                          name="penggunaan"
-                          isRequired
-                          placeholder="Masukkan Penggunaan"
                           component={CfInput}
                         />
                       </FormGroup>

@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
+import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -321,80 +321,523 @@ class ME extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Mechanical Electrical</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Pilih Tanggal"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <FormGroup>
+                            <Field
+                              label="Jenis Gedung"
+                              options={[
+                                { value: 'Innovation Building', label: 'Innovation Building' },
+                                { value: 'Smart Building', label: 'Smart Building' },
+                              ]}
+                              isRequired
+                              name="jenisGedung"
+                              placeholder="Pilih atau Cari Jenis Gedung"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col sm="6">
+                          <FormGroup>
+                            <Field
+                              label="Lantai"
+                              options={[
+                                { value: '1', label: 'Lantai 1' },
+                                { value: '2', label: 'Lantai 2' },
+                                { value: '3', label: 'Lantai 3' },
+                                { value: '4', label: 'Lantai 4' },
+                                { value: '5', label: 'Lantai 5' },
+                                { value: '6', label: 'Lantai 6' },
+                              ]}
+                              isRequired
+                              name="lantai"
+                              placeholder="Pilih atau Cari Lantai"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Working Order"
-                          options={[{ value: '12345', label: '12345' }]}
-                          isRequired
-                          name="workingOrder"
-                          placeholder="Pilih atau Cari Working Order"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                      <strong>Kondisi</strong>
+                      <br />
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Smoke Detector</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="smokeDetector"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="smokeDetector"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
 
-                      <FormGroup>
-                        <Field
-                          label="Nama Pendidikan"
-                          options={[{ value: 'Nama Pendidikan', label: 'Nama Pendidikan' }]}
-                          isRequired
-                          name="namaPendidikan"
-                          placeholder="Pilih atau Cari Nama Pendidikan"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                        <Col>
+                          <em>AC System</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="acSystem"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="acSystem"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Nama Vendor"
-                          options={[{ value: 'Vendor A', label: 'Vendor A' }]}
-                          isRequired
-                          name="Vendor.nama"
-                          placeholder="Pilih atau Cari Nama Vendor"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Thermostat</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="thermostat"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="thermostat"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
 
-                      <FormGroup>
-                        <Field
-                          label="Performance"
-                          options={[
-                            { value: '1', label: '1' },
-                            { value: '2', label: '2' },
-                            { value: '3', label: '3' },
-                            { value: '4', label: '4' },
-                          ]}
-                          isRequired
-                          name="performance"
-                          placeholder="Pilih atau Cari Performance"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                        <Col>
+                          <em>Telephone</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="telephone"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="telephone"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Remark"
-                          type="text"
-                          name="remark"
-                          isRequired
-                          placeholder="Masukkan Remark"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Fire Alarm</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="fireAlarm"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="fireAlarm"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Exhaust</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="exhaust" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="exhaust"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Ceiling Speaker</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="ceilingSpeaker"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="ceilingSpeaker"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Head Sprinkler</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="headSprinkler"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="headSprinkler"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>CCTV</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="cctv" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="cctv"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>MCCB</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="mccb" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="mccb"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <strong>Hydrant Box</strong>
+                      <br />
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Valves</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="valve" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="valve"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Apar</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="apar" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="apar"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Segel</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="segel" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="segel"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>PIN</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="pin" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="pin"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Selang</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="selang" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="selang"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Nozle</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="nozle" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="nozle"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Hose</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="hose" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="hose"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Valves</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="valves" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="valves"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Pintu/Engsel</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="pintuEngsel"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="pintuEngsel"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          <em>Lampu Indikator</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Baik"
+                              name="lampuIndikator"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="lampuIndikator"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <br />
+                      <Row>
+                        <Col sm="6">
+                          <FormGroup>
+                            <Field
+                              label="Expired Tabung"
+                              name="expiredTabung"
+                              classIcon="fa fa-calendar"
+                              blockLabel
+                              minDate={new Date()}
+                              isRequired
+                              placeholder="Pilih Tanggal"
+                              component={CfInputDate}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col sm="6">
+                          <FormGroup>
+                            <Field
+                              label="Keterangan"
+                              type="text"
+                              name="keterangan"
+                              isRequired
+                              placeholder="Masukkan Keterangan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
                       {ErrorMessage(message)}
                     </ModalBody>

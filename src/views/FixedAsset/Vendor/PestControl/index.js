@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -178,7 +178,7 @@ class PestControl extends Component {
       },
     ]
 
-    const pageName = 'PestControl'
+    const pageName = 'Pest Control'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -258,31 +258,115 @@ class PestControl extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Pest Control</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Nama Role"
-                          type="text"
-                          name="nama"
+                          label="Tanggal"
+                          name="tanggal"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          placeholder="Masukkan nama role"
-                          component={CfInput}
+                          placeholder="Tanggal"
+                          component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Kadaluarsa"
-                          name="tanggalKadaluarsa"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Rekanan"
+                          type="text"
+                          name="rekanan"
                           isRequired
-                          placeholder="Tanggal Kadaluarsa"
-                          component={CfInputDate}
+                          placeholder="Masukkan Rekanan"
+                          component={CfInput}
                         />
                       </FormGroup>
+
+                      <b>Monitoring</b>
+                      <br />
+                      <div style={{ marginLeft: '40px' }}>
+                        <FormGroup>
+                          <Field label="Toilet" name="toilet" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Musholla" name="musholla" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Lobby Lounge"
+                            name="lobbyLounge"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Meeting"
+                            name="ruangMeeting"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Kelas"
+                            name="ruangKelas"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Kerja"
+                            name="ruangKerja"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Corridor" name="corridor" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Tangga Darurat"
+                            name="tanggaDarurat"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Sampah"
+                            name="ruangSampah"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Shaft"
+                            name="ruangShaft"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Parkir Motor"
+                            name="parkirMotor"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Halaman" name="halaman" component={CfInputCheckbox} />
+                        </FormGroup>
+                      </div>
 
                       {ErrorMessage(message)}
                     </ModalBody>

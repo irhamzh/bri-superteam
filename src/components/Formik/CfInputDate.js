@@ -18,11 +18,7 @@ const DateCustomInput = ({ classGroup, classIcon, value, onClick, ...props }) =>
         <i className={classIcon} />
       </InputGroupText>
     </InputGroupAddon>
-    <Input
-      {...props}
-      value={value ? moment(value).format('DD MMMM YYYY') : undefined}
-      onClick={onClick}
-    />
+    <Input {...props} value={value || undefined} onClick={onClick} />
   </InputGroup>
 )
 
@@ -35,6 +31,7 @@ const CfInputDate = ({
   field,
   form: { setFieldValue, setFieldTouched },
   placeholder,
+  dateFormat,
   ...props
 }) => {
   return (
@@ -48,7 +45,7 @@ const CfInputDate = ({
       <DatePicker
         {...field}
         {...props}
-        dateFormat="MM/dd/yyyy"
+        dateFormat={dateFormat || 'MM/dd/yyyy'}
         dropdownMode="select"
         locale={id}
         minDate={minDate}

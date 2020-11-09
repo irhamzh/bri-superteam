@@ -108,6 +108,31 @@ class PemilihanLangsung extends Component {
         filterable: false,
       },
       {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: false,
+      },
+      {
+        Header: 'Aanwijzing',
+        accessor: 'aanwijzing',
+        filterable: false,
+      },
+      {
+        Header: 'Pemasukan Sampul Proposal Teknis',
+        accessor: 'sampulProposalTeknis',
+        filterable: false,
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
+        filterable: false,
+      },
+      {
+        Header: 'Pengumuman Pemenang',
+        accessor: 'pengumumanPemenang',
+        filterable: false,
+      },
+      {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
@@ -235,9 +260,7 @@ class PemilihanLangsung extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis Pengadaan"
-                          options={[
-                            { value: 'Penunjukkan Langsung', label: 'Penunjukkan Langsung' },
-                          ]}
+                          options={[{ value: 'Pemilihan Langsung', label: 'Pemilihan Langsung' }]}
                           isRequired
                           name="jenisPengadaan"
                           placeholder="Pilih atau Cari Jenis Pengadaan"

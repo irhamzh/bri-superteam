@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
 import classnames from 'classnames'
-import AC from './AC'
-import WaterMeter from './WaterMeter'
-import Listrik from './Listrik'
-import Plumbing from './Plumbing'
-import STP from './STP'
+import RuangPendidikan from './RuangPendidikan'
+import RuangKerja from './RuangKerja'
+import Toilet from './Toilet'
+import TanggaDarurat from './TanggaDarurat'
+import SelasarLobby from './SelasarLobby'
+import RuangLain from './RuangLain'
 
-const Basement = () => {
+const Innovation = () => {
   const [activeTab, setActiveTab] = useState('1')
 
   const toggle = (tab) => {
@@ -24,7 +25,7 @@ const Basement = () => {
               toggle('1')
             }}
           >
-            Water Meter
+            Ruang Pendidikan
           </NavLink>
         </NavItem>
         <NavItem>
@@ -34,7 +35,7 @@ const Basement = () => {
               toggle('2')
             }}
           >
-            Listrik
+            Ruang Kerja
           </NavLink>
         </NavItem>
         <NavItem>
@@ -44,7 +45,7 @@ const Basement = () => {
               toggle('3')
             }}
           >
-            AC
+            Toilet
           </NavLink>
         </NavItem>
         <NavItem>
@@ -54,7 +55,7 @@ const Basement = () => {
               toggle('4')
             }}
           >
-            Plumbing
+            Tangga Darurat
           </NavLink>
         </NavItem>
         <NavItem>
@@ -64,7 +65,17 @@ const Basement = () => {
               toggle('5')
             }}
           >
-            STP
+            Selasar Dan Lobby
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: activeTab === '6' })}
+            onClick={() => {
+              toggle('6')
+            }}
+          >
+            Ruang Lain
           </NavLink>
         </NavItem>
       </Nav>
@@ -72,35 +83,42 @@ const Basement = () => {
         <TabPane tabId="1">
           <Row>
             <Col sm="12">
-              <WaterMeter />
+              <RuangPendidikan />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="2">
           <Row>
             <Col sm="12">
-              <Listrik />
+              <RuangKerja />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="3">
           <Row>
             <Col sm="12">
-              <AC />
+              <Toilet />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="4">
           <Row>
             <Col sm="12">
-              <Plumbing />
+              <TanggaDarurat />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="5">
           <Row>
             <Col sm="12">
-              <STP />
+              <SelasarLobby />
+            </Col>
+          </Row>
+        </TabPane>
+        <TabPane tabId="6">
+          <Row>
+            <Col sm="12">
+              <RuangLain />
             </Col>
           </Row>
         </TabPane>
@@ -109,4 +127,4 @@ const Basement = () => {
   )
 }
 
-export default Basement
+export default Innovation

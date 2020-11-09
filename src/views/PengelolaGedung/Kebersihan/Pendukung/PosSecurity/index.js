@@ -20,18 +20,26 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
-import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
-import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import Service from '../../../../../config/services'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  CfInputRadio,
+  CfSelect,
+} from '../../../../../components'
+import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
+import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import withTableFetchQuery, {
+  WithTableFetchQueryProp,
+} from '../../../../../HOC/withTableFetchQuery'
+import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class PewangiRuangan extends Component {
+class PosSecurity extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -73,7 +81,7 @@ class PewangiRuangan extends Component {
         }
       })
       .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
+        AlertMessage.error(err) // Ruangan Server Error
       })
   }
 
@@ -81,43 +89,62 @@ class PewangiRuangan extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
-      },
-      {
-        Header: 'Lantai 1',
-        accessor: 'lantai1',
+        accessor: 'tanggal',
         filterable: false,
       },
       {
-        Header: 'Lantai 2',
-        accessor: 'lantai2',
+        Header: 'Lokasi',
+        accessor: 'lokasi',
         filterable: false,
       },
       {
-        Header: 'Lantai 3',
-        accessor: 'lantai3',
+        Header: 'Plafond',
+        accessor: 'plafond',
         filterable: false,
       },
       {
-        Header: 'Lantai 4',
-        accessor: 'lantai4',
+        Header: 'Dinding',
+        accessor: 'dinding',
         filterable: false,
       },
       {
-        Header: 'Lantai 5',
-        accessor: 'lantai5',
+        Header: 'Lantai',
+        accessor: 'lantai',
         filterable: false,
       },
       {
-        Header: 'Lantai 6',
-        accessor: 'lantai6',
+        Header: 'Pintu',
+        accessor: 'pintu',
+        filterable: false,
+      },
+      {
+        Header: 'Jendela',
+        accessor: 'jendela',
+        filterable: false,
+      },
+      {
+        Header: 'Kursi',
+        accessor: 'kursi',
+        filterable: false,
+      },
+      {
+        Header: 'Meja',
+        accessor: 'meja',
+        filterable: false,
+      },
+      {
+        Header: 'Lampu',
+        accessor: 'lampu',
+        filterable: false,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'keterangan',
         filterable: false,
       },
       {
@@ -148,8 +175,8 @@ class PewangiRuangan extends Component {
       },
     ]
 
-    const pageName = 'Pewangi Ruangan'
-    const isIcon = { paddingRight: '7px' }
+    const pageName = 'Pos Security'
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -172,7 +199,9 @@ class PewangiRuangan extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Input Data
+                        {/* <i className="fa fa-plus" style={isIcon} /> */}
+                        {/* &nbsp; */}
+                        Tambah Data
                       </Button>
                     </div>
                   </Col>
@@ -214,6 +243,7 @@ class PewangiRuangan extends Component {
               toggle={modalForm.toggle}
               backdrop="static"
               className={className}
+              // size="lg"
             >
               <Formik
                 initialValues={modalForm.prop.data}
@@ -227,59 +257,91 @@ class PewangiRuangan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="12">
+                          <FormGroup>
+                            <Field
+                              label="Tanggal"
+                              name="tanggal"
+                              classIcon="fa fa-calendar"
+                              blockLabel
+                              minDate={new Date()}
+                              isRequired
+                              placeholder="Pilih Tanggal"
+                              component={CfInputDate}
+                            />
+                          </FormGroup>
+                        </Col>
 
-                      <FormGroup>
-                        <Field
-                          label="Rekanan"
-                          type="text"
-                          name="rekanan"
-                          isRequired
-                          placeholder="Masukkan Rekanan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                        <Col sm="6">
+                          <FormGroup>
+                            <Field
+                              label="Lokasi"
+                              options={[
+                                { value: 'Pos 1', label: 'Pos 1' },
+                                { value: 'Pos 2', label: 'Pos 2' },
+                              ]}
+                              isRequired
+                              name="lokasi"
+                              placeholder="Pilih atau Cari Lokasi"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <b>Monitoring Pewangi Ruangan</b>
+                      <strong>Kondisi</strong>
                       <br />
                       <div style={{ marginLeft: '40px' }}>
                         <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
+                          <Field label="Plafond" name="plafond" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
+                          <Field label="Dinding" name="dinding" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
+                          <Field label="Lantai" name="lantai" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
+                          <Field label="Pintu" name="pintu" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
+                          <Field label="Jendela" name="jendela" component={CfInputCheckbox} />
+                        </FormGroup>
+                        <FormGroup>
+                          <Field label="Kursi" name="kursi" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
+                          <Field label="Meja" name="meja" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Lampu" name="lampu" component={CfInputCheckbox} />
                         </FormGroup>
                       </div>
+
+                      <br />
+                      <Row>
+                        <Col sm="12">
+                          <FormGroup>
+                            <Field
+                              label="Keterangan"
+                              type="text"
+                              name="keterangan"
+                              isRequired
+                              placeholder="Masukkan Keterangan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -300,7 +362,7 @@ class PewangiRuangan extends Component {
                             &nbsp;Loading...
                           </>
                         ) : (
-                          'Save Changes'
+                          'Submit'
                         )}
                       </Button>
                     </ModalFooter>
@@ -315,7 +377,7 @@ class PewangiRuangan extends Component {
   }
 }
 
-PewangiRuangan.propTypes = {
+PosSecurity.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -346,7 +408,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: PewangiRuangan,
+      Component: PosSecurity,
       toggles: {
         modalForm: false,
       },

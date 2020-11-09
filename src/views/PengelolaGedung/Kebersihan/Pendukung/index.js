@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
 import classnames from 'classnames'
-import PenunjukanLangsung from './PenunjukanLangsung'
-import SeleksiLangsung from './SeleksiLangsung'
+import Musholla from './Musholla'
+import PosSecurity from './PosSecurity'
 
-const JasaKonsultan = () => {
+const SaranaPendukung = () => {
   const [activeTab, setActiveTab] = useState('1')
 
   const toggle = (tab) => {
@@ -21,7 +21,7 @@ const JasaKonsultan = () => {
               toggle('1')
             }}
           >
-            Seleksi Langsung
+            Musholla
           </NavLink>
         </NavItem>
         <NavItem>
@@ -31,7 +31,7 @@ const JasaKonsultan = () => {
               toggle('2')
             }}
           >
-            Penunjukan Langsung
+            Pos security
           </NavLink>
         </NavItem>
       </Nav>
@@ -39,14 +39,14 @@ const JasaKonsultan = () => {
         <TabPane tabId="1">
           <Row>
             <Col sm="12">
-              <SeleksiLangsung />
+              <Musholla />
             </Col>
           </Row>
         </TabPane>
         <TabPane tabId="2">
           <Row>
             <Col sm="12">
-              <PenunjukanLangsung />
+              <PosSecurity />
             </Col>
           </Row>
         </TabPane>
@@ -55,4 +55,4 @@ const JasaKonsultan = () => {
   )
 }
 
-export default JasaKonsultan
+export default SaranaPendukung

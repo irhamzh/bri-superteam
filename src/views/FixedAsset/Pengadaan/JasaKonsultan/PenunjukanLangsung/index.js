@@ -108,6 +108,16 @@ class PenunjukanLangsung extends Component {
         filterable: false,
       },
       {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: true,
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'Klarifikasi dan negosiasi',
+        filterable: true,
+      },
+      {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,

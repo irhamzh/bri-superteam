@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -31,7 +31,7 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
-class PewangiRuangan extends Component {
+class SmartBuilding extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -91,33 +91,68 @@ class PewangiRuangan extends Component {
         Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
-        Header: 'Lantai 1',
-        accessor: 'lantai1',
+        Header: 'Lokasi',
+        accessor: 'lokasi',
         filterable: false,
       },
       {
-        Header: 'Lantai 2',
-        accessor: 'lantai2',
+        Header: 'Ruangan',
+        accessor: 'Ruangan',
         filterable: false,
       },
       {
-        Header: 'Lantai 3',
-        accessor: 'lantai3',
+        Header: 'Plafond',
+        accessor: 'plafond',
         filterable: false,
       },
       {
-        Header: 'Lantai 4',
-        accessor: 'lantai4',
+        Header: 'Dinding',
+        accessor: 'dinding',
         filterable: false,
       },
       {
-        Header: 'Lantai 5',
-        accessor: 'lantai5',
+        Header: 'Lantai',
+        accessor: 'lantai',
         filterable: false,
       },
       {
-        Header: 'Lantai 6',
-        accessor: 'lantai6',
+        Header: 'Pintu',
+        accessor: 'pintu',
+        filterable: false,
+      },
+      {
+        Header: 'Jendela',
+        accessor: 'jendela',
+        filterable: false,
+      },
+      {
+        Header: 'Kursi',
+        accessor: 'kursi',
+        filterable: false,
+      },
+      {
+        Header: 'Meja',
+        accessor: 'meja',
+        filterable: false,
+      },
+      {
+        Header: 'Lampu',
+        accessor: 'lampu',
+        filterable: false,
+      },
+      {
+        Header: 'BKS',
+        accessor: 'bks',
+        filterable: false,
+      },
+      {
+        Header: 'LH',
+        accessor: 'lh',
+        filterable: false,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'keterangan',
         filterable: false,
       },
       {
@@ -148,7 +183,7 @@ class PewangiRuangan extends Component {
       },
     ]
 
-    const pageName = 'Pewangi Ruangan'
+    const pageName = 'Smart Building'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -172,7 +207,7 @@ class PewangiRuangan extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Input Data
+                        Tambah Data
                       </Button>
                     </div>
                   </Col>
@@ -227,7 +262,7 @@ class PewangiRuangan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Smart Building</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -244,42 +279,100 @@ class PewangiRuangan extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Rekanan"
-                          type="text"
-                          name="rekanan"
+                          label="Lokasi"
+                          options={[
+                            { value: 'Lantai 1', label: 'Lantai 1' },
+                            { value: 'Lantai 2', label: 'Lantai 2' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Rekanan"
+                          name="lokasi"
+                          placeholder="Pilih atau Cari Lokasi"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Ruangan"
+                          options={[
+                            { value: 'Asrama 1', label: 'Asrama 1' },
+                            { value: 'Ruang Rapat', label: 'Ruang Rapat' },
+                          ]}
+                          isRequired
+                          name="ruangan"
+                          placeholder="Pilih atau Cari Ruangan"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <strong>Kondisi</strong>
+                      <br />
+                      <div style={{ marginLeft: '40px' }}>
+                        <FormGroup>
+                          <Field label="Plafond" name="plafond" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Dinding" name="dinding" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Lantai" name="lantai" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Pintu" name="pintu" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Jendela" name="jendela" component={CfInputCheckbox} />
+                        </FormGroup>
+                        <FormGroup>
+                          <Field label="Kursi" name="kursi" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Meja" name="meja" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Lampu" name="lampu" component={CfInputCheckbox} />
+                        </FormGroup>
+                      </div>
+
+                      <br />
+                      <FormGroup>
+                        <Field
+                          label="BKS"
+                          type="text"
+                          name="bks"
+                          isRequired
+                          placeholder="Masukkan BKS"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      <b>Monitoring Pewangi Ruangan</b>
-                      <br />
-                      <div style={{ marginLeft: '40px' }}>
-                        <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
-                        </FormGroup>
+                      <FormGroup>
+                        <Field
+                          label="LH"
+                          type="text"
+                          name="lh"
+                          isRequired
+                          placeholder="Masukkan LH"
+                          component={CfInput}
+                        />
+                      </FormGroup>
 
-                        <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
-                        </FormGroup>
-                      </div>
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="keterangan"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -315,7 +408,7 @@ class PewangiRuangan extends Component {
   }
 }
 
-PewangiRuangan.propTypes = {
+SmartBuilding.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -346,7 +439,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: PewangiRuangan,
+      Component: SmartBuilding,
       toggles: {
         modalForm: false,
       },

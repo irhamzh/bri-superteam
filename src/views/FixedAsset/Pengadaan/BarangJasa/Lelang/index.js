@@ -108,6 +108,41 @@ class Lelang extends Component {
         filterable: false,
       },
       {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: true,
+      },
+      {
+        Header: 'Aanwijzing',
+        accessor: 'aanwijzing',
+        filterable: true,
+      },
+      {
+        Header: 'Pemasukan Sampul Proposal Teknis',
+        accessor: 'sampulProposalTeknis',
+        filterable: true,
+      },
+      {
+        Header: 'Penilaian Proposal Teknis',
+        accessor: 'penilaianProposalTeknis',
+        filterable: true,
+      },
+      {
+        Header: 'Pebukuan Proposal Financial',
+        accessor: 'pembukuanProposalFinancial',
+        filterable: true,
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
+        filterable: true,
+      },
+      {
+        Header: 'Pengumuman Pemenang',
+        accessor: 'pengumumanPemenang',
+        filterable: true,
+      },
+      {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
@@ -306,14 +341,6 @@ class Lelang extends Component {
                           <Field
                             label="Penilaian Proposal Teknis"
                             name="penilaianProposalTeknis"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Pembukuan Proposal Financial"
-                            name="pembukuanProposalFinancial"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>

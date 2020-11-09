@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect, CfTextQuil } from '../../../../../components'
+import { CfInputDate, CfInputRadio, CfTextQuil } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -99,12 +99,13 @@ class STP extends Component {
         filterable: false,
       },
       {
-        Header: 'Bersihkan dan Cek Valve',
-        accessor: 'kondisiValve',
+        Header: 'Kondisi Oli',
+        accessor: 'kondisiOli',
         filterable: false,
       },
+
       {
-        Header: 'Bersihkan Water Level Kontrol',
+        Header: 'Kondisi Water Level Kontrol',
         accessor: 'kondisiWaterLevel',
         filterable: false,
       },
@@ -246,6 +247,7 @@ class STP extends Component {
                           placeholder="Pilih Tanggal"
                           showMonthYearPicker
                           showFullMonthYearPicker
+                          dateFormat="MM/yyyy"
                           component={CfInputDate}
                         />
                       </FormGroup>
@@ -278,13 +280,13 @@ class STP extends Component {
 
                       <Row>
                         <Col>
-                          <h6>Kondisi Valve</h6>
+                          <h6>Kondisi Oli</h6>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="kondisiValve"
+                              name="kondisiOli"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -294,7 +296,7 @@ class STP extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kondisiValve"
+                              name="kondisiOli"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -356,7 +358,7 @@ class STP extends Component {
 
                       <Row>
                         <Col>
-                          <h6>Kondisi Sampah Limbah</h6>
+                          <h6>Kondisi Limbah</h6>
                         </Col>
                         <Col>
                           <FormGroup>

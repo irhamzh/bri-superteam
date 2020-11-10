@@ -35,13 +35,14 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '12/12/2020',
+    tanggal: '08/12/2020',
     workingOrderCode: 123456,
     namaKegiatan: 'Kegiatan 1',
     kodePelatihan: 9987,
-    tanggalTerima: '12/12/2020',
-    tanggalRevisi: '14/12/2020',
-    tanggalKonfirmasi: '16/12/2020',
+    tanggalTerima: '08/12/2020',
+    tanggalRevisi: '10/12/2020',
+    tanggalKonfirmasi: '12/12/2020',
+    sla: 4,
     kebutuhanCatering: 'lorem ipsum',
     kebutuhanATK: 'lorem ipsum',
     kebutuhanHotel: 'lorem ipsum',
@@ -49,13 +50,14 @@ const dataDummy = [
     kebutuhanPengajarEksternal: 'lorem ipsum',
   },
   {
-    tanggal: '12/12/2020',
+    tanggal: '06/12/2020',
     workingOrderCode: 123456,
     namaKegiatan: 'Kegiatan 2',
     kodePelatihan: 3245,
-    tanggalTerima: '12/12/2020',
-    tanggalRevisi: '14/12/2020',
-    tanggalKonfirmasi: '16/12/2020',
+    tanggalTerima: '06/12/2020',
+    tanggalRevisi: '08/12/2020',
+    tanggalKonfirmasi: '10/12/2020',
+    sla: 4,
     kebutuhanCatering: 'lorem ipsum',
     kebutuhanATK: 'lorem ipsum',
     kebutuhanHotel: 'lorem ipsum',
@@ -118,7 +120,7 @@ class KegiatanLain extends Component {
 
     const columns = [
       {
-        header: 'Kode Working Order',
+        Header: 'Kode Working Order',
         accessor: 'workingOrderCode',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -127,16 +129,19 @@ class KegiatanLain extends Component {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Kode Pelatihan',
-        accessor: 'code',
+        accessor: 'kodePelatihan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Tanggal Terima',
         accessor: 'tanggalTerima',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Tanggal Revisi',
@@ -147,6 +152,7 @@ class KegiatanLain extends Component {
         Header: 'Tanggal Konfirmasi',
         accessor: 'tanggalKonfirmasi',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'SLA',
@@ -199,12 +205,12 @@ class KegiatanLain extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -297,7 +303,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kode Working Order"
                           type="text"
-                          name="codeWorkingOrder"
+                          name="workingOrderCode"
                           isRequired
                           placeholder="Masukkan Kode Working Order"
                           component={CfInput}
@@ -317,11 +323,11 @@ class KegiatanLain extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Kode Kegiatan"
+                          label="Kode Pelatihan"
                           type="text"
-                          name="kodeKegiatan"
+                          name="kodePelatihan"
                           isRequired
-                          placeholder="Masukkan kode kegiatan"
+                          placeholder="Masukkan kode Pelatihan"
                           component={CfInput}
                         />
                       </FormGroup>

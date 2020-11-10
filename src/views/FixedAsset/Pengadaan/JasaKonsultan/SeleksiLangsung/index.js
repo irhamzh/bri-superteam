@@ -45,7 +45,8 @@ const dataDummy = [
     klasifikasiNotifikasi: false,
     jenisAnggaran: 'Investasi',
     biayaPutusan: 100000,
-    nomorSpk: 123456,
+    nomorSPK: 123456,
+    tanggalSPK: '12/12/2020',
     namaProvider: 'PT. XXX',
     alamatProvider: 'Alamat 1',
     contactProvider: '08XXXXX',
@@ -65,7 +66,8 @@ const dataDummy = [
     klasifikasiNotifikasi: true,
     jenisAnggaran: 'Eksploitasi',
     biayaPutusan: 10000000,
-    nomorSpk: 98776554,
+    nomorSPK: 98776554,
+    tanggalSPK: '12/12/2020',
     namaProvider: 'PT. YYY',
     alamatProvider: 'Alamat 2',
     contactProvider: '08XXXXX',
@@ -132,18 +134,21 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Prinsip User',
         accessor: 'izinPrinsipUser',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -159,6 +164,8 @@ class SeleksiLangsung extends Component {
         Header: 'Izin Prinsip Pengadaan',
         accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -174,6 +181,8 @@ class SeleksiLangsung extends Component {
         Header: 'Undangan',
         accessor: 'undangan',
         filterable: true,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -189,6 +198,8 @@ class SeleksiLangsung extends Component {
         Header: 'Aanwijzing',
         accessor: 'aanwijzing',
         filterable: true,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -204,6 +215,8 @@ class SeleksiLangsung extends Component {
         Header: 'Klarifikasi dan negosiasi',
         accessor: 'klarifikasiNegosiasi',
         filterable: true,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -219,6 +232,8 @@ class SeleksiLangsung extends Component {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -234,6 +249,8 @@ class SeleksiLangsung extends Component {
         Header: 'Pengumuman Pemenang',
         accessor: 'pengumumanPemenang',
         filterable: true,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -249,11 +266,25 @@ class SeleksiLangsung extends Component {
         Header: 'Jenis Anggaran',
         accessor: 'jenisAnggaran',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Biaya Putusan',
         accessor: 'biayaPutusan',
         filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Tanggal SPK',
+        accessor: 'tanggalSPK',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'No. SPK',
+        accessor: 'nomorSPK',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Aksi',

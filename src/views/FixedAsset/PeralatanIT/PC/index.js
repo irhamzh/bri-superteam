@@ -20,14 +20,12 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
-import withTableFetchQuery, {
-  WithTableFetchQueryProp,
-} from '../../../../../HOC/withTableFetchQuery'
-import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
+import Service from '../../../../config/services'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
+import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
@@ -35,38 +33,40 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '08/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    kodePelatihan: 9987,
-    tanggalTerima: '08/12/2020',
-    tanggalRevisi: '10/12/2020',
-    tanggalKonfirmasi: '12/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
+    tanggal: '12/12/2020',
+    namaPengguna: 'Parksis',
+    merk: 'HP',
+    model: 'Standard',
+    serialNumberPC: 1234556677,
+    jumlahPC: 1,
+    jenisPC: 'HIGH END',
+    jumlahMonitor: 1,
+    serialNumberMonitor: 2987592375,
+    ruangan: '101',
+    kondisi: 'Baik',
+    lampTimer: '30 Hari',
+    gantiLampu: true,
+    keterangan: 'Lorem Ipsum',
   },
   {
-    tanggal: '06/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    kodePelatihan: 3245,
-    tanggalTerima: '06/12/2020',
-    tanggalRevisi: '08/12/2020',
-    tanggalKonfirmasi: '10/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
+    tanggal: '12/12/2020',
+    namaPengguna: 'Semongko',
+    merk: 'Samsung',
+    model: 'Standard',
+    serialNumberPC: 1234556677,
+    jumlahPC: 1,
+    jumlahMonitor: 1,
+    serialNumberMonitor: 2987592375,
+    ruangan: '101',
+    kondisi: 'Baik',
+    jenisPC: 'HIGH END',
+    lampTimer: '30 Hari',
+    gantiLampu: false,
+    keterangan: 'Lorem Ipsum',
   },
 ]
 
-class KegiatanPendidikan extends Component {
+class PersonalComputer extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -120,75 +120,49 @@ class KegiatanPendidikan extends Component {
 
     const columns = [
       {
-        Header: 'Kode Working Order',
-        accessor: 'workingOrderCode',
+        Header: 'Nama Pengguna',
+        accessor: 'namaPengguna',
         filterable: false,
-        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Nama Kegiatan',
-        accessor: 'namaKegiatan',
+        Header: 'Ruangan',
+        accessor: 'ruangan',
         filterable: true,
-        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kode Pelatihan',
-        accessor: 'kodePelatihan',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Merk',
+        accessor: 'merk',
+        filterable: true,
       },
       {
-        Header: 'Tanggal Terima',
-        accessor: 'tanggalTerima',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'SN PC',
+        accessor: 'serialNumberPC',
+        filterable: true,
       },
       {
-        Header: 'Tanggal Revisi',
-        accessor: 'tanggalRevisi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'SLA',
-        accessor: 'sla',
+        Header: 'Jenis PC',
+        accessor: 'jenisPC',
         filterable: false,
       },
       {
-        Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
+        Header: 'Jumlah PC',
+        accessor: 'jumlahPC',
         filterable: false,
-        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'SN Monitor',
+        accessor: 'serialNumberMonitor',
+        filterable: true,
       },
       {
-        Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
+        Header: 'Jumlah Monitor',
+        accessor: 'jumlahPC',
         filterable: false,
-        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Keterangan',
+        accessor: 'keterangan',
+        filterable: true,
       },
       {
         Header: 'Aksi',
@@ -218,8 +192,8 @@ class KegiatanPendidikan extends Component {
       },
     ]
 
-    const pageName = 'Kegiatan Pendidikan'
-    // const isIcon = { paddingRight: '7px' }
+    const pageName = 'Personal Computer'
+    const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -242,33 +216,14 @@ class KegiatanPendidikan extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Tambah Data
+                        <i className="fa fa-plus" style={isIcon} />
+                        &nbsp;Tambah Data
                       </Button>
                     </div>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Row>
-                  <Col sm="12">
-                    <div style={{ textAlign: 'right' }}>
-                      <Button
-                        className="mr-3 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Show
-                      </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Export
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
                 <ReactTable
                   filterable
                   data={dataDummy}
@@ -298,131 +253,114 @@ class KegiatanPendidikan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Kegiatan Pendidikan</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Kode Working Order"
-                          type="text"
-                          name="workingOrderCode"
+                          label="Jenis PC"
+                          options={[
+                            { value: 'HPPRO XP', label: 'HPPRO XP' },
+                            { value: 'CBT', label: 'CBT' },
+                            { value: 'HPDX', label: 'HPDX' },
+                            { value: 'Acer', label: 'Acer' },
+                            { value: 'HPPROP W7', label: 'HPPROP W7' },
+                            { value: 'HPPRO WIN10', label: 'HPPRO WIN10' },
+                            { value: 'HIGH END', label: 'HIGH END' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Kode Working Order"
+                          name="jenisPC"
+                          placeholder="Pilih atau Cari Jenis PC"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Pengguna"
+                          type="text"
+                          name="namaPengguna"
+                          isRequired
+                          placeholder="Masukkan Nama Pengguna"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Nama Kegiatan"
+                          label="Merk"
                           type="text"
-                          name="namaKegiatan"
+                          name="merk"
                           isRequired
-                          placeholder="Masukkan nama kegiatan"
+                          placeholder="Masukkan Merk"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kode Pelatihan"
+                          label="SN PC"
+                          type="text"
+                          name="serialNumberPC"
+                          isRequired
+                          placeholder="Masukkan Serial Number PC"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jumlah PC"
                           type="number"
-                          name="kodePelatihan"
+                          name="jumlahPC"
                           isRequired
-                          placeholder="Masukkan kode Pelatihan"
+                          placeholder="Masukkan Jumlah PC"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Terima"
-                          name="tanggalTerima"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Terima"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Revisi"
-                          name="tanggalRevisi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Revisi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
+                          label="SN Monitor"
                           type="text"
-                          name="kebutuhanCatering"
+                          name="serialNumberMonitor"
                           isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
+                          placeholder="Masukkan Serial Number Monitor"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="kebutuhanATK"
+                          label="Jumlah Monitor"
+                          type="number"
+                          name="jumlahMonitor"
                           isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
+                          placeholder="Masukkan Jumlah Monitor"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="kebutuhanHotel"
+                          label="Ruangan"
+                          options={[
+                            { value: '101', label: '1010' },
+                            { value: '102', label: '102' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
+                          name="ruangan"
+                          placeholder="Pilih atau Cari Ruangan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kebutuhan - Akomodasi"
+                          label="Keterangan"
                           type="text"
-                          name="kebutuhanAkomodasi"
+                          name="keterangan"
                           isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="kebutuhanPengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
+                          placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -461,7 +399,7 @@ class KegiatanPendidikan extends Component {
   }
 }
 
-KegiatanPendidikan.propTypes = {
+PersonalComputer.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -492,7 +430,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: KegiatanPendidikan,
+      Component: PersonalComputer,
       toggles: {
         modalForm: false,
       },

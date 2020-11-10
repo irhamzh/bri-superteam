@@ -230,7 +230,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Tanda Terima', label: 'Tanda Terima' }]}
+                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
                           isRequired
                           name="namaPengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
@@ -253,7 +253,7 @@ class TandaTerima extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamatdProvider"
+                          name="alamat"
                           isRequired
                           placeholder="Masukkan alamat provider"
                           component={CfInput}
@@ -264,7 +264,7 @@ class TandaTerima extends Component {
                         <Field
                           label="Kontak"
                           type="text"
-                          name="kontakProvider"
+                          name="contact"
                           isRequired
                           placeholder="Masukkan No. Kontak provider"
                           component={CfInput}
@@ -275,7 +275,7 @@ class TandaTerima extends Component {
                         <Field
                           label="Jumlah"
                           type="text"
-                          name="jumlah"
+                          name="jumlahBarang"
                           isRequired
                           placeholder="Masukkan Jumlah"
                           component={CfInput}

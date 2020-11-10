@@ -40,6 +40,7 @@ const dataDummy = [
     namaPengadaan: 'Pengadaan 1',
     jumlahBarang: 10,
     hargaBarang: 200000,
+    total: 2000000,
   },
   {
     tanggal: '12/12/2020',
@@ -49,6 +50,7 @@ const dataDummy = [
     namaPengadaan: 'Pengadaan 1',
     jumlahBarang: 50,
     hargaBarang: 20000000,
+    total: 1000000000,
   },
 ]
 
@@ -115,6 +117,7 @@ class PurchaseOrder extends Component {
         Header: 'Nama Provider',
         accessor: 'namaProvider',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
 
       {
@@ -130,16 +133,25 @@ class PurchaseOrder extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Barang',
         accessor: 'jumlahBarang',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Harga Barang',
         accessor: 'hargaBarang',
         filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Total Harga',
+        accessor: 'total',
+        filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Aksi',
@@ -235,7 +247,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Purchase Order', label: 'Purchase Order' }]}
+                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
                           isRequired
                           name="namaPengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
@@ -258,7 +270,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamatdProvider"
+                          name="alamat"
                           isRequired
                           placeholder="Masukkan alamat provider"
                           component={CfInput}
@@ -267,9 +279,9 @@ class PurchaseOrder extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Kontak"
+                          label="No. Kontak Provider"
                           type="text"
-                          name="kontakProvider"
+                          name="contact"
                           isRequired
                           placeholder="Masukkan No. Kontak provider"
                           component={CfInput}
@@ -280,7 +292,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Jumlah"
                           type="text"
-                          name="jumlah"
+                          name="jumlahBarang"
                           isRequired
                           placeholder="Masukkan Jumlah PO"
                           component={CfInput}
@@ -289,11 +301,22 @@ class PurchaseOrder extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Harga"
+                          label="Harga Satuan"
                           type="text"
-                          name="harga"
+                          name="hargaBarang"
                           isRequired
                           placeholder="Masukkan harga"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Total Harga"
+                          type="text"
+                          name="total"
+                          isRequired
+                          placeholder="Masukkan Total Harga"
                           component={CfInput}
                         />
                       </FormGroup>

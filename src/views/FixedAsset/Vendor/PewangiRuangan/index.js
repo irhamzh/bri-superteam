@@ -33,7 +33,7 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '12/12/2020',
+    tanggal: '07/12/2020',
     lantai1: true,
     lantai2: false,
     lantai3: true,
@@ -42,7 +42,7 @@ const dataDummy = [
     lantai6: true,
   },
   {
-    tanggal: '13/12/2020',
+    tanggal: '08/12/2020',
     lantai1: true,
     lantai2: false,
     lantai3: false,

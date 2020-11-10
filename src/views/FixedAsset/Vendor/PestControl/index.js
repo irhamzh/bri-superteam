@@ -46,6 +46,7 @@ const dataDummy = [
     rShaft: false,
     parkirMotor: true,
     halaman: false,
+    rekanan: 'PT. ABC',
   },
   {
     tanggal: '12/12/2020',
@@ -61,6 +62,7 @@ const dataDummy = [
     rShaft: false,
     parkirMotor: true,
     halaman: false,
+    rekanan: 'PT. ABC',
   },
 ]
 

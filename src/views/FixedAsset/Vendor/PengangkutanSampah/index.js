@@ -259,7 +259,7 @@ class PengangkutanSampah extends Component {
                         <FormGroup>
                           <Field
                             label="Pengangkutan Sampah"
-                            name="pengangkutanSampah"
+                            name="status"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>

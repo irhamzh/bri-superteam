@@ -35,6 +35,8 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
+    jenisPengadaan: 'Pembelian Langsung',
+
     tanggal: '12/12/2020',
     namaPengadaan: 'Pengadaan 1',
     izinPrinsipUser: true,
@@ -55,6 +57,8 @@ const dataDummy = [
     masaBerlaku: '12/12/2020',
   },
   {
+    jenisPengadaan: 'Pembelian Langsung',
+
     tanggal: '12/12/2020',
     namaPengadaan: 'Pengadaan 2',
     izinPrinsipUser: true,
@@ -138,11 +142,14 @@ class PembelianLangsung extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Prinsip User',
         accessor: 'izinPrinsiUser',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -158,6 +165,8 @@ class PembelianLangsung extends Component {
         Header: 'Izin Prinsip Pengadaan',
         accessor: 'izinPrinsiPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -173,6 +182,8 @@ class PembelianLangsung extends Component {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -188,11 +199,13 @@ class PembelianLangsung extends Component {
         Header: 'Jenis Anggaran',
         accessor: 'jenisAnggaran',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Biaya Putusan',
         accessor: 'biayaPutusan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Aksi',

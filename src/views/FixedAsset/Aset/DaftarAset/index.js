@@ -35,10 +35,12 @@ const dataDummy = [
   {
     code: 1234567,
     nama: 'Elektronik',
+    keterangan: 'Lorem Ipsum',
   },
   {
     code: 989667,
     nama: 'Perkakas',
+    keterangan: 'Lorem Ipsum',
   },
 ]
 
@@ -103,6 +105,11 @@ class DaftarAset extends Component {
       {
         Header: 'Nama Aset',
         accessor: 'nama',
+        filterable: true,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'keterangan',
         filterable: true,
       },
       {
@@ -220,6 +227,17 @@ class DaftarAset extends Component {
                           name="nama"
                           isRequired
                           placeholder="Masukkan nama aset"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="keterangan"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>

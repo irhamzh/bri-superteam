@@ -35,6 +35,7 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
+    jenisPengadaan: 'Penunjukkan Langsung',
     tanggal: '12/12/2020',
     namaPengadaan: 'Pengadaan 1',
     izinPrinsipUser: true,
@@ -54,6 +55,7 @@ const dataDummy = [
     masaBerlaku: '12/12/2020',
   },
   {
+    jenisPengadaan: 'Penunjukkan Langsung',
     tanggal: '12/12/2020',
     namaPengadaan: 'Pengadaan 2',
     izinPrinsipUser: true,
@@ -136,11 +138,14 @@ class PenunjukanLangsung extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Prinsip User',
         accessor: 'izinPrinsipUser',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -156,6 +161,8 @@ class PenunjukanLangsung extends Component {
         Header: 'Izin Prinsip Pengadaan',
         accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -186,6 +193,8 @@ class PenunjukanLangsung extends Component {
         Header: 'Klarifikasi dan Negosiasi',
         accessor: 'klarifikasiNegosiasi',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -201,6 +210,8 @@ class PenunjukanLangsung extends Component {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -217,6 +228,7 @@ class PenunjukanLangsung extends Component {
         Header: 'Jenis Anggaran',
         accessor: 'jenisAnggaran',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Pembuatan SPK / PKS',
@@ -228,34 +240,42 @@ class PenunjukanLangsung extends Component {
           {
             Header: 'Nomor SPK',
             accessor: 'nomorSpk',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Nama Provider',
             accessor: 'namaProvider',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Alamat Provider',
             accessor: 'alamatProvider',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'No. Contact Provider',
             accessor: 'contactProvider',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Jenis Pekerjaan',
             accessor: 'jenisPekerjaan',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Jumlah Biaya',
             accessor: 'jumlahBiaya',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Jenis Barang',
             accessor: 'jenisBarang',
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Masa Berlaku',
             accessor: 'masaBerlaku',
+            headerClassName: 'wordwrap',
           },
         ],
       },

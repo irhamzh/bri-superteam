@@ -31,6 +31,13 @@ const Rekapitulasi = React.lazy(() => import('./views/FixedAsset/Persediaan/Reka
 const Persekot = React.lazy(() => import('./views/FixedAsset/Persekot'))
 const InputPersekot = React.lazy(() => import('./views/FixedAsset/Persekot/Input'))
 const PenihilanPersekot = React.lazy(() => import('./views/FixedAsset/Persekot/Penihilan'))
+// Fixed Asset / Peralatan It
+const PeralatanITFA = React.lazy(() => import('./views/FixedAsset/PeralatanIT'))
+const SoundFA = React.lazy(() => import('./views/FixedAsset/PeralatanIT/Sound'))
+const PrinterScannerFA = React.lazy(() => import('./views/FixedAsset/PeralatanIT/PrinterScanner'))
+const InfokusFA = React.lazy(() => import('./views/FixedAsset/PeralatanIT/Infokus'))
+const LaptopFA = React.lazy(() => import('./views/FixedAsset/PeralatanIT/Laptop'))
+const PCFA = React.lazy(() => import('./views/FixedAsset/PeralatanIT/PC'))
 
 // Procurement
 // Procurement / Working Order
@@ -252,7 +259,43 @@ const routes = [
     name: 'Penihilan Persekot',
     component: PenihilanPersekot,
   },
-
+  // Fixed Asset / Peralatan IT
+  {
+    path: '/fixed-asset/peralatan-it',
+    exact: true,
+    name: 'Peralatan IT',
+    component: PeralatanITFA,
+  },
+  {
+    path: '/fixed-asset/peralatan-it/sound',
+    exact: true,
+    name: 'Sound',
+    component: SoundFA,
+  },
+  {
+    path: '/fixed-asset/peralatan-it/printer-scanner',
+    exact: true,
+    name: 'Printer & Scanner',
+    component: PrinterScannerFA,
+  },
+  {
+    path: '/fixed-asset/peralatan-it/laptop',
+    exact: true,
+    name: 'Laptop',
+    component: LaptopFA,
+  },
+  {
+    path: '/fixed-asset/peralatan-it/infokus',
+    exact: true,
+    name: 'Peralatan IT',
+    component: InfokusFA,
+  },
+  {
+    path: '/fixed-asset/peralatan-it/pc',
+    exact: true,
+    name: 'PC',
+    component: PCFA,
+  },
   // Procurement / Working Order
   {
     path: '/procurement',

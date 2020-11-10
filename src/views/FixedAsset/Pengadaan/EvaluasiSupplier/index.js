@@ -112,11 +112,10 @@ class EvaluasiSupplier extends Component {
         accessor: 'namaProvider',
         filterable: true,
       },
-
       {
         Header: 'Alamat',
-        filterable: false,
         accessor: 'alamat',
+        filterable: false,
       },
       {
         Header: 'Kontak',
@@ -226,7 +225,7 @@ class EvaluasiSupplier extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Tanda Terima', label: 'Tanda Terima' }]}
+                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
                           isRequired
                           name="namaPengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
@@ -249,7 +248,7 @@ class EvaluasiSupplier extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamatdProvider"
+                          name="alamat"
                           isRequired
                           placeholder="Masukkan alamat provider"
                           component={CfInput}
@@ -260,7 +259,7 @@ class EvaluasiSupplier extends Component {
                         <Field
                           label="No. Kontak Provider"
                           type="text"
-                          name="kontakProvider"
+                          name="contact"
                           isRequired
                           placeholder="Masukkan No. Kontak provider"
                           component={CfInput}

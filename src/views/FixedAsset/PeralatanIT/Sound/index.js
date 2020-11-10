@@ -20,14 +20,12 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
-import withTableFetchQuery, {
-  WithTableFetchQueryProp,
-} from '../../../../../HOC/withTableFetchQuery'
-import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
+import Service from '../../../../config/services'
+import { CfInput, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
+import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
@@ -35,38 +33,26 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '08/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    kodePelatihan: 9987,
-    tanggalTerima: '08/12/2020',
-    tanggalRevisi: '10/12/2020',
-    tanggalKonfirmasi: '12/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
+    tanggal: '12/12/2020',
+    merk: 'JBL',
+    model: 'Mini Compact',
+    serialNumber: 1234556677,
+    ruangan: 101,
+    kondisi: 'Baik',
+    keterangan: 'Lorem Ipsum',
   },
   {
-    tanggal: '06/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    kodePelatihan: 3245,
-    tanggalTerima: '06/12/2020',
-    tanggalRevisi: '08/12/2020',
-    tanggalKonfirmasi: '10/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
+    tanggal: '12/12/2020',
+    merk: 'Audio Technica',
+    model: 'Stereo',
+    serialNumber: 1234556677,
+    ruangan: 101,
+    kondisi: 'Baik',
+    keterangan: 'Lorem Ipsum',
   },
 ]
 
-class KegiatanPendidikan extends Component {
+class Sound extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -120,75 +106,34 @@ class KegiatanPendidikan extends Component {
 
     const columns = [
       {
-        Header: 'Kode Working Order',
-        accessor: 'workingOrderCode',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Nama Kegiatan',
-        accessor: 'namaKegiatan',
+        Header: 'Merk',
+        accessor: 'merk',
         filterable: true,
-        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kode Pelatihan',
-        accessor: 'kodePelatihan',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Model',
+        accessor: 'model',
+        filterable: true,
       },
       {
-        Header: 'Tanggal Terima',
-        accessor: 'tanggalTerima',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'SN',
+        accessor: 'serialNumber',
+        filterable: true,
       },
       {
-        Header: 'Tanggal Revisi',
-        accessor: 'tanggalRevisi',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Ruangan',
+        accessor: 'ruangan',
+        filterable: true,
       },
       {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Kondisi',
+        accessor: 'kondisi',
+        filterable: true,
       },
       {
-        Header: 'SLA',
-        accessor: 'sla',
-        filterable: false,
-      },
-      {
-        Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Keterangan',
+        accessor: 'keterangan',
+        filterable: true,
       },
       {
         Header: 'Aksi',
@@ -218,8 +163,8 @@ class KegiatanPendidikan extends Component {
       },
     ]
 
-    const pageName = 'Kegiatan Pendidikan'
-    // const isIcon = { paddingRight: '7px' }
+    const pageName = 'Sound'
+    const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -242,33 +187,14 @@ class KegiatanPendidikan extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        Tambah Data
+                        <i className="fa fa-plus" style={isIcon} />
+                        &nbsp;Tambah Data
                       </Button>
                     </div>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Row>
-                  <Col sm="12">
-                    <div style={{ textAlign: 'right' }}>
-                      <Button
-                        className="mr-3 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Show
-                      </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Export
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
                 <ReactTable
                   filterable
                   data={dataDummy}
@@ -298,131 +224,73 @@ class KegiatanPendidikan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Kegiatan Pendidikan</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Kode Working Order"
+                          label="Merk"
                           type="text"
-                          name="workingOrderCode"
+                          name="merk"
                           isRequired
-                          placeholder="Masukkan Kode Working Order"
+                          placeholder="Masukkan Merk"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Nama Kegiatan"
+                          label="Model"
                           type="text"
-                          name="namaKegiatan"
+                          name="model"
                           isRequired
-                          placeholder="Masukkan nama kegiatan"
+                          placeholder="Masukkan Model"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kode Pelatihan"
-                          type="number"
-                          name="kodePelatihan"
+                          label="SN"
+                          type="text"
+                          name="serialNumber"
                           isRequired
-                          placeholder="Masukkan kode Pelatihan"
+                          placeholder="Masukkan Serial Number"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Terima"
-                          name="tanggalTerima"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Ruangan"
+                          options={[{ value: '101', label: '101' }]}
                           isRequired
-                          placeholder="Tanggal Terima"
-                          component={CfInputDate}
+                          name="ruangan"
+                          placeholder="Pilih atau Cari Ruangan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Revisi"
-                          name="tanggalRevisi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Kondisi"
+                          options={[
+                            { value: 'Baik', label: 'Baik' },
+                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                          ]}
                           isRequired
-                          placeholder="Tanggal Revisi"
-                          component={CfInputDate}
+                          name="kondisi"
+                          placeholder="Pilih atau Cari Kondisi"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
+                          label="Keterangan"
                           type="text"
-                          name="kebutuhanCatering"
+                          name="keterangan"
                           isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="kebutuhanATK"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="kebutuhanHotel"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Akomodasi"
-                          type="text"
-                          name="kebutuhanAkomodasi"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="kebutuhanPengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
+                          placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -461,7 +329,7 @@ class KegiatanPendidikan extends Component {
   }
 }
 
-KegiatanPendidikan.propTypes = {
+Sound.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -492,7 +360,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: KegiatanPendidikan,
+      Component: Sound,
       toggles: {
         modalForm: false,
       },

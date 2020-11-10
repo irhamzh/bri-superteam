@@ -20,14 +20,12 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import Service from '../../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
-import withTableFetchQuery, {
-  WithTableFetchQueryProp,
-} from '../../../../../HOC/withTableFetchQuery'
-import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
+import Service from '../../../../config/services'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
+import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
@@ -35,30 +33,33 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    jenisPengadaan: 'Swakelola',
     tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 1',
-    izinPrinsipUser: true,
-    izinPrinsiPengadaan: false,
-    izinHasilPengadaan: true,
-    jenisAnggaran: 'Investasi',
-    biayaPutusan: 100000,
+    merk: 'HP',
+    model: 'Standard',
+    serialNumber: 1234556677,
+    ruangan: 101,
+    kondisi: 'Baik',
+    lampTimer: '30 Hari',
+    gantiLampu: true,
+    keterangan: 'Lorem Ipsum',
   },
   {
-    jenisPengadaan: 'Swakelola',
     tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 2',
-    izinPrinsipUser: true,
-    izinPrinsiPengadaan: true,
-    izinHasilPengadaan: true,
-    jenisAnggaran: 'Eksploitasi',
-    biayaPutusan: 10000000,
+    merk: 'Samsung',
+    model: 'Standard',
+    serialNumber: 1234556677,
+    ruangan: 101,
+    kondisi: 'Baik',
+    lampTimer: '30 Hari',
+    gantiLampu: false,
+    keterangan: 'Lorem Ipsum',
   },
 ]
 
-class Swakelola extends Component {
+class Infokus extends Component {
   initialValues = {
-    jenisPengadaan: 'Swakelola',
+    nama: '',
+    id: '',
   }
 
   doRefresh = () => {
@@ -105,27 +106,39 @@ class Swakelola extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Tanggal',
         width: 100,
+        filterable: false,
         accessor: 'tanggal',
-        filterable: false,
       },
       {
-        Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
+        Header: 'Merk',
+        accessor: 'merk',
         filterable: true,
-        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Izin Prinsip User',
-        accessor: 'izinPrinsipUser',
+        Header: 'Model',
+        accessor: 'model',
+        filterable: true,
+      },
+      {
+        Header: 'SN',
+        accessor: 'serialNumber',
+        filterable: true,
+      },
+      {
+        Header: 'Lamp Timer',
+        accessor: 'lampTimer',
         filterable: false,
-        headerClassName: 'wordwrap',
-
+      },
+      {
+        Header: 'Ganti Lampu',
+        accessor: 'gantiLampu',
+        filterable: false,
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -138,50 +151,19 @@ class Swakelola extends Component {
           ),
       },
       {
-        Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsipPengadaan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Header: 'Ruangan',
+        accessor: 'ruangan',
+        filterable: true,
       },
+      // {
+      //   Header: 'Kondisi',
+      //   accessor: 'kondisi',
+      //   filterable: true,
+      // },
       {
-        Header: 'Izin Hasil Pengadaan',
-        accessor: 'izinHasilPengadaan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Jenis Anggaran',
-        accessor: 'jenisAnggaran',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Biaya Putusan',
-        accessor: 'biayaPutusan',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Keterangan',
+        accessor: 'keterangan',
+        filterable: true,
       },
       {
         Header: 'Aksi',
@@ -211,7 +193,7 @@ class Swakelola extends Component {
       },
     ]
 
-    const pageName = 'Swakelola'
+    const pageName = 'Infokus'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -236,33 +218,13 @@ class Swakelola extends Component {
                         className="mr-1"
                       >
                         <i className="fa fa-plus" style={isIcon} />
-                        &nbsp;Tambah Pengadaan
+                        &nbsp;Tambah Data
                       </Button>
                     </div>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <Row>
-                  <Col sm="12">
-                    <div style={{ textAlign: 'right' }}>
-                      <Button
-                        className="mr-3 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Show
-                      </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
-                      >
-                        Export
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
                 <ReactTable
                   filterable
                   data={dataDummy}
@@ -290,145 +252,105 @@ class Swakelola extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Jenis Pengadaan"
-                          options={[{ value: 'Swakelola', label: 'Swakelola' }]}
-                          isRequired
-                          name="jenisPengadaan"
-                          isDisabled
-                          placeholder="Pilih atau Cari Jenis Pengadaan"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Pengadaan"
+                          label="Tanggal"
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Pilih Tanggal Pengadaan"
+                          placeholder="Pilih Tanggal"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Nama Pengadaan"
+                          label="Merk"
                           type="text"
-                          name="namaPengadaan"
+                          name="merk"
                           isRequired
-                          placeholder="Masukkan Nama Pengadaan"
+                          placeholder="Masukkan Merk"
                           component={CfInput}
                         />
                       </FormGroup>
-                      <div style={{ marginLeft: '20px' }}>
-                        <FormGroup>
-                          <Field
-                            label="Izin Prinsip User"
-                            name="izinPrinsipUser"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Izin Prinsip Pengadaan"
-                            name="izinPrinsipPengadaan"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Izin Hasil Pengadaan"
-                            name="izinHasilPengadaan"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-                      </div>
 
                       <FormGroup>
                         <Field
-                          label="Jenis Anggaran"
+                          label="Model"
+                          type="text"
+                          name="model"
+                          isRequired
+                          placeholder="Masukkan Model"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="SN"
+                          type="text"
+                          name="serialNumber"
+                          isRequired
+                          placeholder="Masukkan Serial Number"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Lamp Timer"
+                          type="text"
+                          name="lampTimer"
+                          isRequired
+                          placeholder="Masukkan Lamp Timer"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Ganti Lampu"
                           options={[
-                            { value: 'Investasi', label: 'Investasi' },
-                            { value: 'Epsloitasi', label: 'Eksploitasi' },
+                            { value: true, label: 'Ya' },
+                            { value: false, label: 'Tidak' },
                           ]}
                           isRequired
-                          name="jenisAnggaran"
-                          placeholder="Pilih atau Cari Jenis Anggaran"
+                          name="gantiLampu"
+                          placeholder="Pilih atau Cari Ganti Lampu"
                           component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Biaya Putusan"
-                          type="number"
-                          name="biayaPutusan"
+                          label="Kondisi"
+                          options={[
+                            { value: 'Baik', label: 'Baik' },
+                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Biaya Putusan"
-                          component={CfInput}
+                          name="kondisi"
+                          placeholder="Pilih atau Cari Kondisi"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
-                      <div style={{ marginLeft: '20px' }}>
-                        <FormGroup>
-                          <Field
-                            label="Menggunakan Pihak Ketiga"
-                            name="pihakKetiga"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-                      </div>
-
-                      {values.pihakKetiga && (
-                        <>
-                          <FormGroup>
-                            <Field
-                              label="Nama Provider"
-                              options={[
-                                { value: 'PT. XXXX', label: 'PT. XXXX' },
-                                { value: 'PT. YYYY', label: 'PT. YYYY' },
-                              ]}
-                              isRequired
-                              name="namaProvider"
-                              placeholder="Pilih atau Cari Nama Provider"
-                              component={CfSelect}
-                            />
-                          </FormGroup>
-
-                          <FormGroup>
-                            <Field
-                              label="Alamat Provider"
-                              type="text"
-                              name="alamatProvider"
-                              isRequired
-                              placeholder="Masukkan Alamat Provider"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-
-                          <FormGroup>
-                            <Field
-                              label="No. Kontak Provider"
-                              type="text"
-                              name="kontakProvider"
-                              isRequired
-                              placeholder="Masukkan No. Kontak Provider"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </>
-                      )}
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="keterangan"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -464,7 +386,7 @@ class Swakelola extends Component {
   }
 }
 
-Swakelola.propTypes = {
+Infokus.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -495,7 +417,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Swakelola,
+      Component: Infokus,
       toggles: {
         modalForm: false,
       },

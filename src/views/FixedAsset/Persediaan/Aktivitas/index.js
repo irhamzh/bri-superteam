@@ -33,20 +33,22 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
+    tanggal: '06/12/2020',
     jenisBarang: 'Pupuk',
     namaBarang: 'Pupuk Urea',
-    stockAwal: 100,
+    stokAwal: 100,
     penambahan: 10,
     pengurangan: 20,
-    stockAkhir: 90,
+    stokAkhir: 90,
   },
   {
+    tanggal: '08/12/2020',
     jenisBarang: 'Kertas',
     namaBarang: 'Kertas',
-    stockAwal: 100,
+    stokAwal: 100,
     penambahan: 20,
     pengurangan: 40,
-    stockAkhir: 80,
+    stokAkhir: 80,
   },
 ]
 
@@ -106,8 +108,8 @@ class Aktivitas extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Jenis Barang',

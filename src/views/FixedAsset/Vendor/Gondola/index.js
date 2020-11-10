@@ -312,6 +312,17 @@ class Gondola extends Component {
                         </FormGroup>
                       </div>
 
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="keterangan"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
                       {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>

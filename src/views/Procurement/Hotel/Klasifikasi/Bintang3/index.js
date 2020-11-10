@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../../components'
+import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -94,13 +94,24 @@ class Bintang3 extends Component {
         Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Nama Hotel',
-        accessor: 'namaHotel',
+        Header: 'No. WO',
+        accessor: 'nomorWorkingOrder',
         filterable: true,
+      },
+      {
+        Header: 'No. Surat Pesanan',
+        accessor: 'fasilitas',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Fasilitas',
         accessor: 'fasilitas',
+        filterable: false,
+      },
+      {
+        Header: 'Kedudukan Jabatan',
+        accessor: 'kedudukanJabatan',
         filterable: false,
       },
       {
@@ -234,17 +245,54 @@ class Bintang3 extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Hotel"
-                          type="text"
-                          name="namaHotel"
+                          label="Working Order"
+                          options={[
+                            { value: '123456 - X', label: '123456 - X' },
+                            { value: '000000 - Y', label: '000000 - Y' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Nama Hotel"
+                          name="nomorWorkingOrder"
+                          placeholder="Pilih atau Cari Working Order"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="No. Surat Pesanan"
+                          type="text"
+                          name="nomorSuratPesanan"
+                          isRequired
+                          placeholder="Masukkan No. Surat Pesanan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kedudukan Jabatan"
+                          type="text"
+                          name="kedudukanJabatan"
+                          isRequired
+                          placeholder="Masukkan No. Kedudukan Jabatan"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <Row>
-                        <Col sm="6">
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Nama Hotel"
+                              type="text"
+                              name="namaHotel"
+                              isRequired
+                              placeholder="Masukkan Nama Hotel"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
                           <FormGroup>
                             <Field
                               label="Fasilitas"
@@ -256,14 +304,14 @@ class Bintang3 extends Component {
                             />
                           </FormGroup>
                         </Col>
-                        <Col sm="6">
+                        <Col>
                           <FormGroup>
                             <Field
                               label="Biaya"
                               type="text"
-                              name="fasilitas"
+                              name="biaya"
                               isRequired
-                              placeholder="Masukkan Fasilitas"
+                              placeholder="Masukkan Biaya"
                               component={CfInput}
                             />
                           </FormGroup>

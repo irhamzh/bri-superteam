@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -306,6 +306,11 @@ class PestControl extends Component {
           ),
       },
       {
+        Header: 'Rekanan',
+        accessor: 'rekanan',
+        filterable: false,
+      },
+      {
         Header: 'Aksi',
         width: 150,
         filterable: false,
@@ -365,8 +370,7 @@ class PestControl extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="6">Rekanan: PT. ABC (bisa diedit)</Col>
-                  <Col sm="6">
+                  <Col sm="12">
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -432,11 +436,11 @@ class PestControl extends Component {
                       <FormGroup>
                         <Field
                           label="Rekanan"
-                          type="text"
-                          name="rekanan"
+                          options={[{ value: 'PT. ABC', label: 'PT. ABC' }]}
                           isRequired
-                          placeholder="Masukkan Rekanan"
-                          component={CfInput}
+                          name="rekanan"
+                          placeholder="Pilih atau Cari Rekanan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 

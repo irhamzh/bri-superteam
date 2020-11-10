@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -85,41 +85,69 @@ class KegiatanLain extends Component {
 
     const columns = [
       {
+        Header: 'Kode Working Order',
+        accessor: 'workingOrderCode',
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
         filterable: true,
-      },
-      {
-        Header: 'Jenis',
-        accessor: 'jenis',
-        filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Kode Pelatihan',
-        accessor: 'kode',
+        accessor: 'kodePelatihan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Tanggal Terima',
         accessor: 'tanggalTerima',
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
-      },
-      {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Tanggal Revisi',
         accessor: 'tanggalRevisi',
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kebutuhan',
-        accessor: 'kebutuhan',
+        Header: 'Tanggal Konfirmasi',
+        accessor: 'tanggalKonfirmasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'SLA',
+        accessor: 'sla',
+        filterable: false,
+      },
+      {
+        Header: 'Kebutuhan - Catering',
+        accessor: 'kebutuhanCatering',
+        filterable: false,
+      },
+      {
+        Header: 'Kebutuhan - Hotel',
+        accessor: 'kebutuhanHotel',
+        filterable: false,
+      },
+      {
+        Header: 'Kebutuhan - ATK',
+        accessor: 'kebutuhanATK',
+        filterable: false,
+      },
+      {
+        Header: 'Kebutuhan - Akomodasi',
+        accessor: 'kebutuhanAkomodasi',
+        filterable: false,
+      },
+      {
+        Header: 'Kebutuhan - Pengajar Eksternal',
+        accessor: 'kebutuhanPengajarEksternal',
         filterable: false,
       },
       {
@@ -244,22 +272,11 @@ class KegiatanLain extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Jenis"
+                          label="Kode Pelatihan"
                           type="text"
-                          name="jenis"
+                          name="kodePelatihan"
                           isRequired
-                          placeholder="Masukkan jenis kegiatan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kode Kegiatan"
-                          type="text"
-                          name="kodeKegiatan"
-                          isRequired
-                          placeholder="Masukkan kode kegiatan"
+                          placeholder="Masukkan kode Pelatihan"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -279,19 +296,6 @@ class KegiatanLain extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
                           label="Tanggal Revisi"
                           name="tanggalRevisi"
                           classIcon="fa fa-calendar"
@@ -305,14 +309,149 @@ class KegiatanLain extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Kebutuhan"
-                          options={[{ value: 'ATK', label: 'ATK' }]}
+                          label="Tanggal Konfirmasi"
+                          name="tanggalKonfirmasi"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          name="kebutuhan"
-                          placeholder="Pilih atau Cari Kebutuhan"
-                          component={CfSelect}
+                          placeholder="Tanggal Konfirmasi"
+                          component={CfInputDate}
                         />
                       </FormGroup>
+
+                      <strong>Kebutuhan :</strong>
+                      <br />
+                      <br />
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Catering</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="kebutuhanCatering"
+                              id="Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="kebutuhanCatering"
+                              id="Tidak Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Hotel (Nama Hotel)</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="kebutuhanHotel"
+                              id="Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="kebutuhanHotel"
+                              id="Tidak Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">ATK</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="kebutuhanATK"
+                              id="Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="kebutuhanATK"
+                              id="Tidak Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Akomodasi</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="kebutuhanAkomodasi"
+                              id="Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="kebutuhanAkomodasi"
+                              id="Tidak Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Pengajar Eksternal</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="kebutuhanPengajarEksternal"
+                              id="Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="kebutuhanPengajarEksternal"
+                              id="Tidak Ada"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
                       {ErrorMessage(message)}
                     </ModalBody>

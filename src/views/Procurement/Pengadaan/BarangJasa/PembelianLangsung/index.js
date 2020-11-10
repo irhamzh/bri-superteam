@@ -87,15 +87,25 @@ class PembelianLangsung extends Component {
 
     const columns = [
       {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
+        Header: 'Tanggal Awal',
+        accessor: 'tanggalAwal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+      },
+      {
+        Header: 'Tanggal Akhir',
+        accessor: 'tanggalAkhir',
+        width: 100,
+        filterable: false,
+      },
+      {
+        Header: 'Jenis Pengadaan',
+        accessor: 'jenisPengadaan',
+        filterable: true,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'nama',
+        accessor: 'namaPengadaan',
         filterable: true,
       },
       {
@@ -110,7 +120,12 @@ class PembelianLangsung extends Component {
       },
       {
         Header: 'Anggaran Biaya',
-        accessor: 'anggaran',
+        accessor: 'anggaranBiaya',
+        filterable: false,
+      },
+      {
+        Header: 'Surat Pemesanan',
+        accessor: 'suratPemesanan',
         filterable: false,
       },
       {
@@ -125,7 +140,7 @@ class PembelianLangsung extends Component {
       },
       {
         Header: 'Nomor Contact Provider',
-        accessor: 'namaKontak',
+        accessor: 'nomorKontakProvider',
         filterable: false,
       },
       {
@@ -240,31 +255,47 @@ class PembelianLangsung extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Jenis Pengadaan"
-                          options={[{ value: 'Pembelian Langsung', label: 'Pembelian Langsung' }]}
+                          label="Tanggal Awal"
+                          name="tanggalAwal"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          name="jenisPengadaan"
-                          placeholder="Pilih atau Cari Jenis Pengadaan"
-                          component={CfSelect}
+                          placeholder="Pilih Tanggal Awal"
+                          component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Pengadaan"
-                          name="tanggalPengadaan"
+                          label="Tanggal Akhir"
+                          name="tanggalAkhir"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Pilih Tanggal Pengadaan"
+                          placeholder="Pilih Tanggal Akhir"
                           component={CfInputDate}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Pengadaan"
+                          options={[
+                            { value: 'Barang', label: 'Barang' },
+                            { value: 'Jasa', label: 'Jasa' },
+                          ]}
+                          isRequired
+                          name="jenisPengadaan"
+                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -278,6 +309,7 @@ class PembelianLangsung extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
+
                       <div style={{ marginLeft: '20px' }}>
                         <FormGroup>
                           <Field
@@ -287,39 +319,39 @@ class PembelianLangsung extends Component {
                           />
                         </FormGroup>
 
+                        <Row>
+                          <Col>
+                            <FormGroup>
+                              <Field
+                                label="Izin Hasil Pengadaan"
+                                name="izinHasilPengadaan"
+                                component={CfInputCheckbox}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col>
+                            <FormGroup>
+                              <Field
+                                label="Anggaran Biaya"
+                                name="anggaranBiaya"
+                                component={CfInputCheckbox}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+
                         <FormGroup>
                           <Field
-                            label="Izin Hasil Pengadaan"
-                            name="izinHasilPengadaan"
+                            label="Surat Pemesanan"
+                            name="suratPesanan"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
                       </div>
 
-                      <FormGroup>
-                        <Field
-                          label="Anggaran Biaya"
-                          type="number"
-                          name="anggaran"
-                          isRequired
-                          placeholder="Masukkan Anggaran Biaya"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      {/* <FormGroup>
-                        <Field
-                          label="Nama Provider"
-                          options={[
-                            { value: 'PT. XXXX', label: 'PT. XXXX' },
-                            { value: 'PT. YYYY', label: 'PT. YYYY' },
-                          ]}
-                          isRequired
-                          name="namaProvider"
-                          placeholder="Pilih atau Cari Nama Provider"
-                          component={CfSelect}
-                        />
-                      </FormGroup> */}
                       <h6>Pembuatan SPK/PKS</h6>
                       <div style={{ marginLeft: '2rem' }}>
                         <FormGroup>
@@ -348,7 +380,7 @@ class PembelianLangsung extends Component {
                           <Field
                             label="No. Kontak Provider"
                             type="text"
-                            name="kontakProvider"
+                            name="nomorKontakProvider"
                             isRequired
                             placeholder="Masukkan No. Kontak Provider"
                             component={CfInput}

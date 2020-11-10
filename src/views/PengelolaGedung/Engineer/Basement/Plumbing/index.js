@@ -33,6 +33,31 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    pompa: 'Pompa Riser',
+    unit: 'Riser 1',
+    voltase: 100,
+    kondisiValve: 'Baik',
+    kondisiBearing: 'Tidak Baik',
+    oli: 'Baik',
+    kebocoran: 'Tidak Ada Kebocoran',
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: '08/06/2020',
+    pompa: 'Pompa Booster',
+    unit: 'Booster 3',
+    voltase: 100,
+    kondisiValve: 'Baik',
+    kondisiBearing: 'Baik',
+    oli: 'Baik',
+    kebocoran: 'Tidak Ada Kebocoran',
+    keterangan: 'Lorem Ipsum',
+  },
+]
+
 class Plumbing extends Component {
   initialValues = {
     nama: '',
@@ -91,7 +116,6 @@ class Plumbing extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: 'Pompa',
@@ -112,11 +136,13 @@ class Plumbing extends Component {
         Header: 'Kondisi Valve',
         accessor: 'kondisiValve',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Kondisi Bearing',
         accessor: 'kondisiBearing',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Oli',
@@ -149,12 +175,12 @@ class Plumbing extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -216,10 +242,11 @@ class Plumbing extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -380,7 +407,6 @@ class Plumbing extends Component {
                           label="Keterangan"
                           type="text"
                           name="keterangan"
-                          isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfTextQuil}
                         />

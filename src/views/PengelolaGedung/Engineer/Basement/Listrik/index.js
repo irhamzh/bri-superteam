@@ -35,14 +35,14 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '12/12/2020',
+    tanggal: '05/12/2020',
     jenis: 'PDAM',
     meterAwal: 100,
     meterAkhir: 120,
     penggunaan: 20,
   },
   {
-    tanggal: '13/12/2020',
+    tanggal: '06/12/2020',
     jenis: 'Deep Well',
     meterAwal: 100,
     meterAkhir: 120,
@@ -268,6 +268,17 @@ class Listrik extends Component {
                           name="meterAkhir"
                           isRequired
                           placeholder="Masukkan Meter Akhir"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Penggunaan"
+                          type="text"
+                          name="penggunaan"
+                          isRequired
+                          placeholder="Masukkan Penggunaan"
                           component={CfInput}
                         />
                       </FormGroup>

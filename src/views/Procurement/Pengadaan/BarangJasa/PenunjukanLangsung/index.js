@@ -87,25 +87,47 @@ class PenunjukanLangsung extends Component {
 
     const columns = [
       {
-        Header: 'Tanggal',
+        Header: 'Tanggal Awal',
         width: 100,
+        accessor: 'tanggalAwal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Tanggal Akhir',
+        width: 100,
+        accessor: 'tanggalAkhir',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Jenis Pengadaan',
+        accessor: 'jenisPengadaan',
+        filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'nama',
+        accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsiPengadaan',
+        accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'TOR',
         accessor: 'tor',
         filterable: false,
+      },
+      {
+        Header: 'Proposal Penawaran',
+        accessor: 'proposalPenawaran',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Undangan',
@@ -116,42 +138,56 @@ class PenunjukanLangsung extends Component {
         Header: 'Klarifikasi dan Negosiasi',
         accessor: 'klarifikasiDanNegosiasi',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Surat Pemesanan',
+        accessor: 'suratPemesanan',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
 
       {
         Header: 'Nomor SPK',
         accessor: 'nomorSPK',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Provider',
-        accessor: 'Vendor.nama',
+        accessor: 'namaProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Alamat Provider',
-        accessor: 'Vendor.alamat',
+        accessor: 'alamatProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'No. Contact Provider',
-        accessor: 'Vendor.nomorKontak',
+        accessor: 'nomorKontakProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Peserta',
         accessor: 'jumlahPeserta',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Durasi',
@@ -162,11 +198,13 @@ class PenunjukanLangsung extends Component {
         Header: 'Jumlah Biaya',
         accessor: 'jumlahBiaya',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Masa Berlaku',
         accessor: 'masaBerlaku',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
@@ -286,27 +324,41 @@ class PenunjukanLangsung extends Component {
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Jenis Pengadaan"
-                          options={[
-                            { value: 'Penunjukkan Langsung', label: 'Penunjukkan Langsung' },
-                          ]}
+                          label="Tanggal Awal"
+                          name="tanggalAwal"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          name="jenisPengadaan"
-                          placeholder="Pilih atau Cari Jenis Pengadaan"
-                          component={CfSelect}
+                          placeholder="Pilih Tanggal Awal"
+                          component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Pengadaan"
-                          name="tanggalPengadaan"
+                          label="Tanggal Akhir"
+                          name="tanggalAkhir"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Pilih Tanggal Pengadaan"
+                          placeholder="Pilih Tanggal Akhir"
                           component={CfInputDate}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Pengadaan"
+                          options={[
+                            { value: 'Barang', label: 'Barang' },
+                            { value: 'Jasa', label: 'Jasa' },
+                          ]}
+                          isRequired
+                          name="jenisPengadaan"
+                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -335,6 +387,14 @@ class PenunjukanLangsung extends Component {
                         </FormGroup>
 
                         <FormGroup>
+                          <Field
+                            label="Proposal Penawaran"
+                            name="proposalPenawaran"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
                           <Field label="Undangan" name="undangan" component={CfInputCheckbox} />
                         </FormGroup>
 
@@ -353,6 +413,14 @@ class PenunjukanLangsung extends Component {
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Surat Pemesanan"
+                            name="suratPemesanan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
                       </div>
 
                       <FormGroup>
@@ -366,7 +434,7 @@ class PenunjukanLangsung extends Component {
                         />
                       </FormGroup>
 
-                      <h6>Pembuatan SPK/PKS</h6>
+                      <h6>Pembuatan SPK/PKS/Surat Pemesanan</h6>
                       <div style={{ marginLeft: '1rem' }}>
                         <FormGroup>
                           <Field
@@ -430,8 +498,8 @@ class PenunjukanLangsung extends Component {
                           <Field
                             label="Nama Pendidikan"
                             options={[
-                              { value: 'SMA', label: 'SMA' },
-                              { value: 'S1', label: 'S1' },
+                              { value: 'Pendidikan 1', label: 'Pendidikan 1' },
+                              { value: 'Pendidikan 2', label: 'Pendidikan 2' },
                             ]}
                             isRequired
                             name="namaPendidikan"

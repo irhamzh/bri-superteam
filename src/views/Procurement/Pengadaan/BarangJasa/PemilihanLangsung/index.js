@@ -89,27 +89,35 @@ class PemilihanLangsung extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
+      },
+      {
+        Header: 'Jenis Pengadaan',
+        accessor: 'jenisPengadaan',
+        filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'nama',
+        accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsiPengadaan',
+        accessor: 'izinPrinsipPengadaan',
         filterable: false,
-      },
-      {
-        Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsiPengadaan',
-        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'TOR',
         accessor: 'tor',
+        filterable: false,
+      },
+      {
+        Header: 'Proposal Penawaran',
+        accessor: 'proposalPenawaran',
         filterable: false,
       },
       {
@@ -121,41 +129,49 @@ class PemilihanLangsung extends Component {
         Header: 'Klarifikasi dan Negosiasi',
         accessor: 'klarifikasiDanNegosiasi',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nomor SPK',
         accessor: 'nomorSPK',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Provider',
         accessor: 'namaProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Alamat Provider',
         accessor: 'alamatProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'No. Contact',
         accessor: 'nomorKontak',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Peserta',
         accessor: 'jumlahPeserta',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Durasi',
@@ -166,11 +182,13 @@ class PemilihanLangsung extends Component {
         Header: 'Jumlah Biaya',
         accessor: 'jumlahBiaya',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Masa Berlaku',
         accessor: 'masaBerlaku',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
@@ -290,25 +308,28 @@ class PemilihanLangsung extends Component {
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Jenis Pengadaan"
-                          options={[{ value: 'Pemilihan Langsung', label: 'Pemilihan Langsung' }]}
+                          label="Tanggal"
+                          name="tanggal"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          name="jenisPengadaan"
-                          placeholder="Pilih atau Cari Jenis Pengadaan"
-                          component={CfSelect}
+                          placeholder="Pilih Tanggal"
+                          component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Pengadaan"
-                          name="tanggalPengadaan"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Jenis Pengadaan"
+                          options={[
+                            { value: 'Barang', label: 'Barang' },
+                            { value: 'Jasa', label: 'Jasa' },
+                          ]}
                           isRequired
-                          placeholder="Pilih Tanggal Pengadaan"
-                          component={CfInputDate}
+                          name="jenisPengadaan"
+                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -337,13 +358,21 @@ class PemilihanLangsung extends Component {
                         </FormGroup>
 
                         <FormGroup>
+                          <Field
+                            label="Proposal Penawaran"
+                            name="proposalPenawaran"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
                           <Field label="Undangan" name="undangan" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
                           <Field
-                            label="Klarifikasi dan negosiasi"
-                            name="klarifikasi"
+                            label="Klarifikasi dan Negosiasi"
+                            name="klarifikasiNegosiasi"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -352,6 +381,14 @@ class PemilihanLangsung extends Component {
                           <Field
                             label="Izin Hasil Pengadaan"
                             name="izinHasilPengadaan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Surat Pemesanan"
+                            name="suratPemesanan"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -368,7 +405,7 @@ class PemilihanLangsung extends Component {
                         />
                       </FormGroup>
 
-                      <h6>Pembuatan SPK/PKS</h6>
+                      <h6>Pembuatan SPK/PKS/Surat Pemesanan</h6>
 
                       <div style={{ marginLeft: '1rem' }}>
                         <FormGroup>
@@ -382,7 +419,7 @@ class PemilihanLangsung extends Component {
                           />
                         </FormGroup>
 
-                        <FormGroup>
+                        {/* <FormGroup>
                           <Field
                             label="Nama Provider"
                             options={[
@@ -393,6 +430,17 @@ class PemilihanLangsung extends Component {
                             name="namaProvider"
                             placeholder="Pilih atau Cari Nama Provider"
                             component={CfSelect}
+                          />
+                        </FormGroup> */}
+
+                        <FormGroup>
+                          <Field
+                            label="Nama Provider"
+                            type="text"
+                            name="namaProvider"
+                            isRequired
+                            placeholder="Masukkan Nama Provider"
+                            component={CfInput}
                           />
                         </FormGroup>
 
@@ -422,8 +470,8 @@ class PemilihanLangsung extends Component {
                           <Field
                             label="Nama Pendidikan"
                             options={[
-                              { value: 'SMA', label: 'SMA' },
-                              { value: 'S1', label: 'S1' },
+                              { value: 'Pendidikan 1', label: 'Pendidikan 1' },
+                              { value: 'Pendidikan 2', label: 'Pendidikan 2' },
                             ]}
                             isRequired
                             name="namaPendidikan"

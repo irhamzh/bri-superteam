@@ -33,6 +33,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: 'Desember 2020',
+    kondisiPompa: 'Baik',
+    kondisiOli: 'Tidak Baik',
+    kondisiWaterLevel: 'Baik',
+    testOperasional: 'Baik',
+    kondisiSampahLimbah: 'Tidak Baik',
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: 'November 2020',
+    kondisiPompa: 'Baik',
+    kondisiOli: 'Baik',
+    kondisiWaterLevel: 'Baik',
+    testOperasional: 'Baik',
+    kondisiSampahLimbah: 'Baik',
+    keterangan: 'Lorem Ipsum',
+  },
+]
+
 class STP extends Component {
   initialValues = {
     nama: '',
@@ -91,33 +112,37 @@ class STP extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: 'Kondisi Pompa',
         accessor: 'kondisiPompa',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Kondisi Oli',
         accessor: 'kondisiOli',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
 
       {
         Header: 'Kondisi Water Level Kontrol',
         accessor: 'kondisiWaterLevel',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Test Operasional',
         accessor: 'testOperasional',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Pengecekan Sampah Limbah',
         accessor: 'kondisiSampahLimbah',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
@@ -140,12 +165,12 @@ class STP extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -207,10 +232,11 @@ class STP extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -238,7 +264,7 @@ class STP extends Component {
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Tanggal"
+                          label="Bulan/Tahun"
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel

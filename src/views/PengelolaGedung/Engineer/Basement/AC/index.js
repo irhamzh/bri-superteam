@@ -35,7 +35,7 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '12/12/2020',
+    tanggal: '09/12/2020',
     gedung: 'Smart Building',
     lantai: 'Lantai 1',
     compressor: 'Compressor 1',
@@ -44,7 +44,7 @@ const dataDummy = [
     ampereT: 20,
   },
   {
-    tanggal: '12/12/2020',
+    tanggal: '09/12/2020',
     gedung: 'Innovation Building',
     lantai: 'Lantai 3',
     compressor: 'Compressor 2',

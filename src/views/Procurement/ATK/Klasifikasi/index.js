@@ -97,8 +97,8 @@ class Klasifikasi extends Component {
         filterable: true,
       },
       {
-        Header: 'Nama Pendidikan',
-        accessor: 'pendidikan',
+        Header: 'Nomor Surat',
+        accessor: 'nomorSurat',
         filterable: false,
       },
       {
@@ -254,26 +254,29 @@ class Klasifikasi extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Pendidikan"
-                          options={[{ value: 'Nama Pendidikan', label: 'Nama Pendidikan' }]}
+                          label="Nomor Surat"
+                          type="text"
+                          name="nomorSurat"
                           isRequired
-                          name="namaPendidikan"
-                          placeholder="Pilih atau Cari Nama Pendidikan"
-                          component={CfSelect}
+                          placeholder="Masukkan Nomor Surat"
+                          component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Kebutuhan"
-                          options={[{ value: 'kebutuhan', label: 'kebutuhan' }]}
-                          isRequired
+                          type="text"
                           name="kebutuhan"
-                          placeholder="Pilih atau Cari Kebutuhan"
-                          component={CfSelect}
+                          isRequired
+                          placeholder="Masukkan Kebutuhan"
+                          component={CfInput}
                         />
                       </FormGroup>
 
+                      <strong>Detail Barang:</strong>
+                      <br />
+                      <br />
                       <Row>
                         <Col sm="4">
                           <FormGroup>

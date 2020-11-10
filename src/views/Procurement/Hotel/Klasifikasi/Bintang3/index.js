@@ -279,6 +279,8 @@ class Bintang3 extends Component {
                         />
                       </FormGroup>
 
+                      <strong>Detail Hotel</strong>
+                      <br />
                       <Row>
                         <Col>
                           <FormGroup>

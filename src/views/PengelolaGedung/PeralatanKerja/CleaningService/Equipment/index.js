@@ -94,14 +94,16 @@ class Equipment extends Component {
         Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Ember 15 lt',
+        Header: 'Double Bucket',
         accessor: 'doubleBucket',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Single Bucket',
         accessor: 'singleBucket',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Lobby Duster-stick',
@@ -118,26 +120,31 @@ class Equipment extends Component {
         Header: 'Window Squeeze',
         accessor: 'windowSqueeze',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Window Washer',
         accessor: 'windowWasher',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Teleskop Pool 6',
         accessor: 'teleskopPool6',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Floor Squeeze',
         accessor: 'floorSqueeze',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Ember 15 lt',
         accessor: 'ember15lt',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Gayung',
@@ -147,6 +154,12 @@ class Equipment extends Component {
       {
         Header: 'Tangga Alumunium 2 M',
         accessor: 'tanggaAlumunium2M',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'keterangan',
         filterable: false,
       },
       {

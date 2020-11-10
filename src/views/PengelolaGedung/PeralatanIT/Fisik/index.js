@@ -158,14 +158,6 @@ class PeralatanFisik extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        // onClick={() => modalForm.show({ data: this.initialValues })}
-                        className="mr-1"
-                      >
-                        Upload
-                      </Button>
-                      &nbsp; &nbsp;
-                      <Button
-                        color="primary"
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >

@@ -245,32 +245,35 @@ class PeralatanJaringan extends Component {
                           component={CfSelect}
                         />
                       </FormGroup>
-
-                      <Row>
-                        <Col>
-                          <h6>Status Item</h6>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label={values.item === 'Antivirus' ? 'Update' : 'Connected'}
-                              name="statusItem"
-                              id={values.item === 'Antivirus' ? 'Update' : 'Connected'}
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
-                              name="statusItem"
-                              id={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                      {values.item && (
+                        <Row>
+                          <Col>
+                            <h6>Status Item</h6>
+                          </Col>
+                          <Col>
+                            <FormGroup>
+                              <Field
+                                label={values.item === 'Antivirus' ? 'Update' : 'Connected'}
+                                name="statusItem"
+                                id={values.item === 'Antivirus' ? 'Update' : 'Connected'}
+                                component={CfInputRadio}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col>
+                            <FormGroup>
+                              <Field
+                                label={
+                                  values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'
+                                }
+                                name="statusItem"
+                                id={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
+                                component={CfInputRadio}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
 
                       <FormGroup>
                         <Field

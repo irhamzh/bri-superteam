@@ -122,11 +122,6 @@ class Ruangan extends Component {
         filterable: false,
       },
       {
-        Header: 'Espresso',
-        accessor: 'espresso',
-        filterable: false,
-      },
-      {
         Header: 'Jendela',
         accessor: 'jendela',
         filterable: false,
@@ -432,30 +427,6 @@ class Ruangan extends Component {
 
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
-                          <em>Espresso</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="espresso"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="espresso"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col>
                           <em>Jendela</em>
                         </Col>
                         <Col>
@@ -473,9 +444,6 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
-
-                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Kursi</em>
                         </Col>
@@ -494,7 +462,9 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
+                      </Row>
 
+                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Meja</em>
                         </Col>
@@ -513,9 +483,6 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
-
-                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Lampu</em>
                         </Col>
@@ -534,7 +501,9 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
+                      </Row>
 
+                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Kasur</em>
                         </Col>
@@ -553,9 +522,7 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
 
-                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Lemari</em>
                         </Col>
@@ -574,7 +541,9 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
+                      </Row>
 
+                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Toilet</em>
                         </Col>
@@ -593,9 +562,7 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
 
-                      <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Peralatan Lainnya</em>
                         </Col>
@@ -614,9 +581,6 @@ class Ruangan extends Component {
                             />
                           </FormGroup>
                         </Col>
-                        <Col />
-                        <Col />
-                        <Col />
                       </Row>
 
                       <br />

@@ -139,12 +139,6 @@ class STP extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Pengecekan Sampah Limbah',
-        accessor: 'kondisiSampahLimbah',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
         Header: 'Keterangan',
         accessor: 'keterangan',
         filterable: false,
@@ -375,32 +369,6 @@ class STP extends Component {
                             <Field
                               label="Tidak Baik"
                               name="testOperasional"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-
-                      <Row>
-                        <Col>
-                          <h6>Kondisi Limbah</h6>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="kondisiSampahLimbah"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="kondisiSampahLimbah"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />

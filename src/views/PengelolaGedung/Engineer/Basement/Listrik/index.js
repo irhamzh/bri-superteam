@@ -33,6 +33,23 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    jenis: 'PDAM',
+    meterAwal: 100,
+    meterAkhir: 120,
+    penggunaan: 20,
+  },
+  {
+    tanggal: '13/12/2020',
+    jenis: 'Deep Well',
+    meterAwal: 100,
+    meterAkhir: 120,
+    penggunaan: 20,
+  },
+]
+
 class Listrik extends Component {
   initialValues = {
     nama: '',
@@ -91,7 +108,6 @@ class Listrik extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: 'Meter Awal',
@@ -124,12 +140,12 @@ class Listrik extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -191,10 +207,11 @@ class Listrik extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

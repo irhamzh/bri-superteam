@@ -31,6 +31,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    lantai1: true,
+    lantai2: false,
+    lantai3: true,
+    lantai4: true,
+    lantai5: true,
+    lantai6: true,
+  },
+  {
+    tanggal: '13/12/2020',
+    lantai1: true,
+    lantai2: false,
+    lantai3: false,
+    lantai4: true,
+    lantai5: false,
+    lantai6: true,
+  },
+]
+
 class TanamanHias extends Component {
   initialValues = {
     nama: '',
@@ -87,44 +108,104 @@ class TanamanHias extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Penggantian Tanaman - Lantai 1',
-        accessor: 'status',
-        filterable: true,
+        accessor: 'lantai1',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Penggantian Tanaman - Lantai 2',
-        accessor: 'status',
-        filterable: true,
+        accessor: 'lantai2',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Penggantian Tanaman - Lantai 3',
-        accessor: 'status',
-        filterable: true,
+        accessor: 'lantai3',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Penggantian Tanaman - Lantai 4',
-        accessor: 'status',
-        filterable: true,
+        accessor: 'lantai4',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Penggantian Tanaman - Lantai 5',
-        accessor: 'status',
-        filterable: true,
+        accessor: 'lantai5',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Penggantian Tanaman - Lantai 6',
-        accessor: 'status',
-        filterable: true,
+        accessor: 'lantai6',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Aksi',
@@ -142,12 +223,12 @@ class TanamanHias extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -208,10 +289,11 @@ class TanamanHias extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

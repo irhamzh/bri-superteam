@@ -33,6 +33,49 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    namaPengadaan: 'Pengadaan 1',
+    izinPrinsipUser: true,
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: true,
+    undangan: true,
+    aanwijzing: false,
+    klasifikasiNotifikasi: false,
+    jenisAnggaran: 'Investasi',
+    biayaPutusan: 100000,
+    nomorSpk: 123456,
+    namaProvider: 'PT. XXX',
+    alamatProvider: 'Alamat 1',
+    contactProvider: '08XXXXX',
+    jenisPekerjaan: 'Pegawai',
+    jumlahBiaya: 12345,
+    jenisBarang: 'Perkakas',
+    masaBerlaku: '12/12/2020',
+  },
+  {
+    tanggal: '12/12/2020',
+    namaPengadaan: 'Pengadaan 2',
+    izinPrinsipUser: true,
+    undangan: false,
+    aanwijzing: true,
+    izinPrinsiPengadaan: true,
+    izinHasilPengadaan: true,
+    klasifikasiNotifikasi: true,
+    jenisAnggaran: 'Eksploitasi',
+    biayaPutusan: 10000000,
+    nomorSpk: 98776554,
+    namaProvider: 'PT. YYY',
+    alamatProvider: 'Alamat 2',
+    contactProvider: '08XXXXX',
+    jenisPekerjaan: 'Kontraktor',
+    jumlahBiaya: 12345,
+    jenisBarang: 'Elektronik',
+    masaBerlaku: '12/12/2020',
+  },
+]
+
 class PenunjukanLangsung extends Component {
   initialValues = {
     nama: '',
@@ -89,38 +132,88 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'nama',
+        accessor: 'namaPengadaan',
         filterable: true,
       },
       {
         Header: 'Izin Prinsip User',
-        accessor: 'izinPrinsiUser',
+        accessor: 'izinPrinsipUser',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsiPengadaan',
+        accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Undangan',
         accessor: 'undangan',
         filterable: true,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Klarifikasi dan negosiasi',
-        accessor: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
         filterable: true,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Jenis Anggaran',
@@ -148,12 +241,12 @@ class PenunjukanLangsung extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -214,10 +307,11 @@ class PenunjukanLangsung extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

@@ -31,6 +31,39 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    toilet: true,
+    musholla: true,
+    lobbyLounge: false,
+    rMeeting: true,
+    rKelas: true,
+    rKerja: false,
+    koridor: true,
+    tanggaDarurat: false,
+    rSampah: true,
+    rShaft: false,
+    parkirMotor: true,
+    halaman: false,
+  },
+  {
+    tanggal: '12/12/2020',
+    toilet: true,
+    musholla: true,
+    lobbyLounge: false,
+    rMeeting: true,
+    rKelas: false,
+    rKerja: true,
+    koridor: true,
+    tanggaDarurat: true,
+    rSampah: true,
+    rShaft: false,
+    parkirMotor: true,
+    halaman: false,
+  },
+]
+
 class PestControl extends Component {
   initialValues = {
     nama: '',
@@ -87,68 +120,188 @@ class PestControl extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Toilet',
         accessor: 'toilet',
-        filterable: true,
+        filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Musholla',
         accessor: 'musholla',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Lobby Lounge',
         accessor: 'lobbyLounge',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'R. Meeting',
-        accessor: 'R.Meeting',
+        accessor: 'rMeeting',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'R. Kelas',
-        accessor: 'R.Kelas',
+        accessor: 'rKelas',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'R. Kerja',
-        accessor: 'R.Kerja',
+        accessor: 'rKerja',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Koridor',
         accessor: 'koridor',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Tangga Darurat',
-        accessor: 'TanggaDarurat',
+        accessor: 'tanggaDarurat',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'R. Sampah',
-        accessor: 'R.Sampah',
+        accessor: 'rSampah',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'R. Shaft',
-        accessor: 'R.Shaft',
+        accessor: 'rShaft',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Parkir Motor',
-        accessor: 'ParkirMotor',
+        accessor: 'parkirMotor',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Halaman',
         accessor: 'halaman',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Aksi',
@@ -166,12 +319,12 @@ class PestControl extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -232,10 +385,11 @@ class PestControl extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -306,29 +460,21 @@ class PestControl extends Component {
                         <FormGroup>
                           <Field
                             label="Ruang Meeting"
-                            name="ruangMeeting"
+                            name="rMeeting"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field
-                            label="Ruang Kelas"
-                            name="ruangKelas"
-                            component={CfInputCheckbox}
-                          />
+                          <Field label="Ruang Kelas" name="rKelas" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field
-                            label="Ruang Kerja"
-                            name="ruangKerja"
-                            component={CfInputCheckbox}
-                          />
+                          <Field label="Ruang Kerja" name="rKerja" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Corridor" name="corridor" component={CfInputCheckbox} />
+                          <Field label="Corridor" name="koridor" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
@@ -340,19 +486,11 @@ class PestControl extends Component {
                         </FormGroup>
 
                         <FormGroup>
-                          <Field
-                            label="Ruang Sampah"
-                            name="ruangSampah"
-                            component={CfInputCheckbox}
-                          />
+                          <Field label="Ruang Sampah" name="rSampah" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field
-                            label="Ruang Shaft"
-                            name="ruangShaft"
-                            component={CfInputCheckbox}
-                          />
+                          <Field label="Ruang Shaft" name="rShaft" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>

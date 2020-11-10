@@ -31,6 +31,43 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    lantai1: true,
+    lantai2: false,
+    lantai3: true,
+    lantai4: true,
+    lantai5: true,
+    lantai6: true,
+    oliPacking: true,
+    taliSeling: false,
+    brakeSystem: true,
+    exhaustFan: true,
+    panelDriveUnit: false,
+    mesinMotor: true,
+    powerListrik: true,
+    keterangan: 'Lorem ipsum',
+  },
+  {
+    tanggal: '13/12/2020',
+    lantai1: true,
+    lantai2: false,
+    lantai3: false,
+    lantai4: true,
+    lantai5: false,
+    lantai6: true,
+    oliPacking: false,
+    taliSeling: true,
+    brakeSystem: true,
+    exhaustFan: false,
+    panelDriveUnit: true,
+    mesinMotor: true,
+    powerListrik: true,
+    keterangan: 'Lorem ipsum',
+  },
+]
+
 class Lift extends Component {
   initialValues = {
     nama: '',
@@ -87,86 +124,216 @@ class Lift extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 1',
-        accessor: 'cleaningLantai1',
+        accessor: 'lantai1',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 2',
-        accessor: 'cleaningLantai2',
+        accessor: 'lantai2',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 3',
-        accessor: 'cleaningLantai3',
+        accessor: 'lantai3',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 4',
-        accessor: 'cleaningLantai4',
+        accessor: 'lantai4',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 5',
-        accessor: 'cleaningLantai5',
+        accessor: 'lantai5',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 6',
-        accessor: 'cleaningLantai6',
+        accessor: 'lantai6',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Oli di Sangkar Lift dan Packing di Mesin Lift',
         accessor: 'oliPacking',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Tali Seling Lift',
         accessor: 'taliSeling',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Cek Brake System atau Pengereman Lift',
         accessor: 'brakeSystem',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Exhaust Fan Lift',
         accessor: 'exhaustFan',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Panel atau Drive Unit Lift',
         accessor: 'panelDriveUnit',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Mesin Motor Lift',
         accessor: 'mesinMotor',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Power Listrik Lift',
         accessor: 'powerListrik',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Keterangan',
@@ -190,12 +357,12 @@ class Lift extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -255,10 +422,11 @@ class Lift extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

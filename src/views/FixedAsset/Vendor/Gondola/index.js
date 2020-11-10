@@ -31,6 +31,23 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    sistemKerjaTaliBaja: true,
+    panelKelistrikan: true,
+    perangkatKerja: true,
+    keterangan: 'Lorem ipsum',
+  },
+  {
+    tanggal: '13/12/2020',
+    sistemKerjaTaliBaja: false,
+    panelKelistrikan: true,
+    perangkatKerja: false,
+    keterangan: 'Lorem ipsum',
+  },
+]
+
 class Gondola extends Component {
   initialValues = {
     nama: '',
@@ -87,26 +104,56 @@ class Gondola extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Sistem Kerja Tali Baja',
         accessor: 'sistemKerjaTaliBaja',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Panel Kelistrikan',
         accessor: 'panelKelistrikan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Perangkat Kerja Gondola',
         accessor: 'perangkatKerja',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Keterangan',
@@ -130,12 +177,12 @@ class Gondola extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -195,10 +242,11 @@ class Gondola extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

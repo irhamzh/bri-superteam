@@ -31,6 +31,25 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    jenisBarang: 'Pupuk',
+    namaBarang: 'Pupuk Urea',
+    stockAwal: 100,
+    penambahan: 10,
+    pengurangan: 20,
+    stockAkhir: 90,
+  },
+  {
+    jenisBarang: 'Kertas',
+    namaBarang: 'Kertas',
+    stockAwal: 100,
+    penambahan: 20,
+    pengurangan: 40,
+    stockAkhir: 80,
+  },
+]
+
 class Aktivitas extends Component {
   initialValues = {
     nama: '',
@@ -136,12 +155,12 @@ class Aktivitas extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -202,10 +221,11 @@ class Aktivitas extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

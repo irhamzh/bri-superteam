@@ -534,8 +534,8 @@ class Dashboard extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12" sm="6" lg="3">
-            <div className="text-center mx-auto w-100">
-              <img src={background} alt="underconstruction" />
+            <div className="text-center mx-auto">
+              <img src={background} alt="underconstruction" style={{ maxWidth: '900px' }} />
             </div>
             {/* <Card className="text-white bg-info">
               <CardBody className="pb-0">

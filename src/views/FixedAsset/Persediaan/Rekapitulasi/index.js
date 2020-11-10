@@ -31,6 +31,25 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    jenisBarang: 'Pupuk',
+    namaBarang: 'Pupuk Urea',
+    stockAwal: 100,
+    penambahan: 10,
+    pengurangan: 20,
+    stockAkhir: 90,
+  },
+  {
+    jenisBarang: 'Kertas',
+    namaBarang: 'Kertas',
+    stockAwal: 100,
+    penambahan: 20,
+    pengurangan: 40,
+    stockAkhir: 80,
+  },
+]
+
 class Rekapitulasi extends Component {
   initialValues = {
     nama: '',
@@ -96,7 +115,7 @@ class Rekapitulasi extends Component {
       },
       {
         Header: 'Posisi Terakhir Stok',
-        accessor: 'stokAkhir',
+        accessor: 'stockAkhir',
         filterable: false,
       },
     ]
@@ -140,10 +159,11 @@ class Rekapitulasi extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

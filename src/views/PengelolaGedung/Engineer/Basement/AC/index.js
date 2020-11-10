@@ -33,6 +33,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    gedung: 'Smart Building',
+    lantai: 'Lantai 1',
+    compressor: 'Compressor 1',
+    ampereR: 100,
+    ampereS: 30,
+    ampereT: 20,
+  },
+  {
+    tanggal: '12/12/2020',
+    gedung: 'Innovation Building',
+    lantai: 'Lantai 3',
+    compressor: 'Compressor 2',
+    ampereR: 100,
+    ampereS: 30,
+    ampereT: 20,
+  },
+]
+
 class AC extends Component {
   initialValues = {
     nama: '',
@@ -105,7 +126,7 @@ class AC extends Component {
       },
       {
         Header: 'Compressor',
-        accessor: 'Compressor',
+        accessor: 'compressor',
         filterable: false,
       },
       {
@@ -139,12 +160,12 @@ class AC extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -206,10 +227,11 @@ class AC extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

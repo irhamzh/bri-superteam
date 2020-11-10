@@ -33,6 +33,19 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    code: 1234567,
+    nama: 'Elektronik',
+    kondisi: 'Baik',
+  },
+  {
+    code: 989667,
+    nama: 'Perkakas',
+    kondisi: 'Tidak Baik',
+  },
+]
+
 class Penghapusbukuan extends Component {
   state = {}
 
@@ -101,7 +114,7 @@ class Penghapusbukuan extends Component {
 
     const columns = [
       {
-        Header: '',
+        Header: 'Pilih',
         filterable: false,
         Cell: (props) => (
           <span>
@@ -111,8 +124,8 @@ class Penghapusbukuan extends Component {
       },
       {
         Header: 'Kode',
+        accessor: 'code',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Aset',
@@ -146,7 +159,7 @@ class Penghapusbukuan extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        // onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
                         Submit
@@ -157,10 +170,11 @@ class Penghapusbukuan extends Component {
                 <br />
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

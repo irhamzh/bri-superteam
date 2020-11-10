@@ -32,6 +32,19 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '12/12/2020',
+    namaKegiatan: 'Kegiatan 1',
+    nominalBiaya: 10000000,
+  },
+  {
+    tanggal: '12/12/2020',
+    namaKegiatan: 'Kegiatan 1',
+    nominalBiaya: 20000000,
+  },
+]
+
 class PenihilanPersekot extends Component {
   initialValues = {
     nama: '',
@@ -98,8 +111,8 @@ class PenihilanPersekot extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Kegiatan',
@@ -134,7 +147,7 @@ class PenihilanPersekot extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        // onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
                         Submit
@@ -146,10 +159,11 @@ class PenihilanPersekot extends Component {
               <CardBody>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

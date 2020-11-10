@@ -121,8 +121,8 @@ class KondisiAset extends Component {
     const columns = [
       {
         Header: 'Kode',
+        accessor: 'code',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Aset',
@@ -133,16 +133,20 @@ class KondisiAset extends Component {
         Header: 'Kondisi',
         accessor: 'kondisi',
         filterable: false,
+      },
+      {
+        Header: 'Aksi',
+        filterable: false,
         Cell: (props) => (
           <>
-            <Select
-              className="select2"
-              clearable
-              onChange={(v) => this.handleChangeSelect('kondisi', v)}
-              options={optKondisiAset}
-              name="kondisi"
-              value={props.value}
-            />
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
           </>
         ),
       },
@@ -217,7 +221,7 @@ class KondisiAset extends Component {
                         <Field
                           label="Kode Aset"
                           type="text"
-                          name="kode"
+                          name="code"
                           isRequired
                           placeholder="Masukkan kode aset"
                           component={CfInput}
@@ -228,10 +232,21 @@ class KondisiAset extends Component {
                         <Field
                           label="Nama Aset"
                           type="text"
-                          name="name"
+                          name="nama"
                           isRequired
                           placeholder="Masukkan nama aset"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kondisi Aset"
+                          options={optKondisiAset}
+                          isRequired
+                          name="kondisi"
+                          placeholder="Pilih atau Cari Kondisi"
+                          component={CfSelect}
                         />
                       </FormGroup>
 

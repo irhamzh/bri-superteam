@@ -2,6 +2,10 @@ import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/Dashboard'))
 const Role = React.lazy(() => import('./views/Master/Role'))
+// Fixed Asset / Anggaran
+const AnggaranFA = React.lazy(() => import('./views/FixedAsset/Anggaran'))
+const EksploitasiAnggaran = React.lazy(() => import('./views/FixedAsset/Anggaran/Eksploitasi'))
+const InvestasiAnggaran = React.lazy(() => import('./views/FixedAsset/Anggaran/Investasi'))
 // Fixed Asset / Pengadaan
 const Pengadaan = React.lazy(() => import('./views/FixedAsset/Pengadaan'))
 const BarangJasa = React.lazy(() => import('./views/FixedAsset/Pengadaan/BarangJasa'))
@@ -108,6 +112,25 @@ const routes = [
     exact: true,
     name: 'Fixed Asset',
     component: Pengadaan,
+  },
+  // Fixed Asset / Anggaran
+  {
+    path: '/fixed-asset/anggaran',
+    exact: true,
+    name: 'Anggaran',
+    component: AnggaranFA,
+  },
+  {
+    path: '/fixed-asset/anggaran/eksploitasi',
+    exact: true,
+    name: 'Eksploitasi',
+    component: EksploitasiAnggaran,
+  },
+  {
+    path: '/fixed-asset/anggaran/investasi',
+    exact: true,
+    name: 'Investasi',
+    component: InvestasiAnggaran,
   },
   // Fixed Asset / Pengadaan
   {

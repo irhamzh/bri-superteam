@@ -39,6 +39,41 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    lokasi: 'Lantai 1 - Pria',
+    wastafel: true,
+    kloset: true,
+    urinoir: true,
+    kaca: true,
+    lantai: true,
+    dinding: true,
+    tempatSampah: true,
+    handDryer: true,
+    handSoap: true,
+    tissue: true,
+    pengharum: true,
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: '02/06/2020',
+    lokasi: 'Lantai 1 - Wanita',
+    wastafel: true,
+    kloset: false,
+    urinoir: true,
+    kaca: false,
+    lantai: true,
+    dinding: false,
+    tempatSampah: true,
+    handDryer: true,
+    handSoap: false,
+    tissue: true,
+    pengharum: true,
+    keterangan: 'Lorem Ipsum',
+  },
+]
+
 class Toilet extends Component {
   initialValues = {
     nama: '',
@@ -106,56 +141,167 @@ class Toilet extends Component {
         Header: 'Wastafel',
         accessor: 'wastafel',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Kloset',
         accessor: 'kloset',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Urinoir',
         accessor: 'urinoir',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Kaca',
         accessor: 'kaca',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Lantai',
         accessor: 'lantai',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Dinding',
         accessor: 'dinding',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Tempat Sampah',
         accessor: 'tempatSampah',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Hand Dryer',
         accessor: 'handDryer',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Hand Soap',
         accessor: 'handSoap',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Tissue',
         accessor: 'tissue',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Pengharum',
         accessor: 'pengharum',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Keterangan',
@@ -178,12 +324,12 @@ class Toilet extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -245,10 +391,11 @@ class Toilet extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

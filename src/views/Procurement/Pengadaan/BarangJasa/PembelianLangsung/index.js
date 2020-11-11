@@ -33,6 +33,57 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    jenisPengadaan: 'Pembelian Langsung',
+
+    tanggalAwal: '06/06/2020',
+    tanggalAkhir: '08/06/2020',
+    namaPengadaan: 'Pengadaan 1',
+    izinPrinsipUser: true,
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: true,
+    undangan: true,
+    aanwijzing: false,
+    klasifikasiNotifikasi: false,
+    jenisAnggaran: 'Investasi',
+    biayaPutusan: 100000,
+    nomorSpk: 123456,
+    namaProvider: 'PT. XXX',
+    alamatProvider: 'Alamat 1',
+    contactProvider: '08XXXXX',
+    jenisPekerjaan: 'Pegawai',
+    jumlahBiaya: 12345,
+    jenisBarang: 'Perkakas',
+    masaBerlaku: '12/12/2020',
+    keterangan: 'Lorem ipsum',
+  },
+  {
+    jenisPengadaan: 'Pembelian Langsung',
+
+    tanggalAwal: '06/06/2020',
+    tanggalAkhir: '08/06/2020',
+    namaPengadaan: 'Pengadaan 2',
+    izinPrinsipUser: true,
+    undangan: false,
+    aanwijzing: true,
+    izinPrinsiPengadaan: true,
+    izinHasilPengadaan: true,
+    klasifikasiNotifikasi: true,
+    jenisAnggaran: 'Eksploitasi',
+    biayaPutusan: 10000000,
+    nomorSpk: 98776554,
+    namaProvider: 'PT. YYY',
+    alamatProvider: 'Alamat 2',
+    contactProvider: '08XXXXX',
+    jenisPekerjaan: 'Kontraktor',
+    jumlahBiaya: 12345,
+    jenisBarang: 'Elektronik',
+    masaBerlaku: '12/12/2020',
+    keterangan: 'Lorem ipsum',
+  },
+]
+
 class PembelianLangsung extends Component {
   initialValues = {
     nama: '',
@@ -102,31 +153,77 @@ class PembelianLangsung extends Component {
         Header: 'Jenis Pengadaan',
         accessor: 'jenisPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Izin Prinsip Pengadaan',
         accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Anggaran Biaya',
         accessor: 'anggaranBiaya',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Surat Pemesanan',
         accessor: 'suratPemesanan',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Nama Provider',
@@ -137,11 +234,13 @@ class PembelianLangsung extends Component {
         Header: 'Alamat Provider',
         accessor: 'alamatProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nomor Contact Provider',
-        accessor: 'nomorKontakProvider',
+        accessor: 'contactProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
@@ -164,12 +263,12 @@ class PembelianLangsung extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -231,10 +330,11 @@ class PembelianLangsung extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -380,7 +480,7 @@ class PembelianLangsung extends Component {
                           <Field
                             label="No. Kontak Provider"
                             type="text"
-                            name="nomorKontakProvider"
+                            name="contactProvider"
                             isRequired
                             placeholder="Masukkan No. Kontak Provider"
                             component={CfInput}

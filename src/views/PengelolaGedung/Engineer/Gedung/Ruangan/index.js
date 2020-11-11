@@ -33,11 +33,49 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    gedung: 'Smart Building',
+    jenisRuangan: 'Ruangan Pendidikan',
+    ruangan: '101',
+    plafond: 'Baik',
+    dinding: 'Baik',
+    lantai: 'Baik',
+    pintu: 'Baik',
+    jendela: 'Baik',
+    kursi: 'Baik',
+    meja: 'Baik',
+    lampu: 'Baik',
+    kasur: 'Baik',
+    lemari: 'Baik',
+    toilet: 'Baik',
+    peralatanLain: 'Baik',
+    keterangan: 'Lorem ipsum',
+  },
+  {
+    tanggal: '05/06/2020',
+    gedung: 'Innovation Building',
+    jenisRuangan: 'Ruangan Kerja',
+    ruangan: '101',
+    plafond: 'Baik',
+    dinding: 'Tidak Baik',
+    lantai: 'Baik',
+    pintu: 'Tidak Baik',
+    jendela: 'Baik',
+    kursi: 'Baik',
+    meja: 'Tidak Baik',
+    lampu: 'Baik',
+    kasur: 'Tidak Baik',
+    lemari: 'Baik',
+    toilet: 'Baik',
+    peralatanLain: 'Baik',
+    keterangan: 'Lorem ipsum',
+  },
+]
+
 class Ruangan extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -95,10 +133,11 @@ class Ruangan extends Component {
         Header: 'Jenis Ruangan',
         accessor: 'jenisRuangan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Ruangan',
-        accessor: 'Ruangan',
+        accessor: 'ruangan',
         filterable: false,
       },
       {
@@ -158,8 +197,9 @@ class Ruangan extends Component {
       },
       {
         Header: 'Peralatan Lainnya',
-        accessor: 'lainnya',
+        accessor: 'peralatanLain',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
@@ -182,12 +222,12 @@ class Ruangan extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -249,10 +289,11 @@ class Ruangan extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

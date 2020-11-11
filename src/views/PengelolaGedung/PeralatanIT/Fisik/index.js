@@ -31,6 +31,25 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    lantai: 'Lantai 1',
+    ruangan: 'Ruangan X',
+    item: 'Komputer 1',
+    hekonismenya: 'Baik',
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: '06/06/2020',
+    lantai: 'Lantai 3',
+    ruangan: 'Ruangan Y',
+    item: 'Komputer 2',
+    hekonismenya: 'Tidak Baik',
+    keterangan: 'Lorem Ipsum',
+  },
+]
+
 class PeralatanFisik extends Component {
   initialValues = {
     nama: '',
@@ -125,12 +144,12 @@ class PeralatanFisik extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -171,10 +190,11 @@ class PeralatanFisik extends Component {
               <CardBody>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -199,19 +219,6 @@ class PeralatanFisik extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
                       <FormGroup>
                         <Field
                           label="Lantai"

@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../../components'
+import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
 import withTableFetchQuery, {
@@ -32,6 +32,25 @@ import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
+
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 12343541,
+    nomorSuratPesanan: 23424324,
+    fasilitas: 'Room Meeting, Wifi',
+    kedudukanJabatan: 'Manager',
+    biaya: 'IDR 300.000',
+  },
+  {
+    tanggal: '05/06/2020',
+    nomorWorkingOrder: 12343541,
+    nomorSuratPesanan: 23424324,
+    fasilitas: 'Room Meeting, Wifi, Aula',
+    kedudukanJabatan: 'Direktur',
+    biaya: 'IDR 400.000',
+  },
+]
 
 class Bintang4 extends Component {
   initialValues = {
@@ -94,13 +113,24 @@ class Bintang4 extends Component {
         Cell: (props) => <span>{props.value}</span>,
       },
       {
-        Header: 'Nama Hotel',
-        accessor: 'namaHotel',
+        Header: 'No. WO',
+        accessor: 'nomorWorkingOrder',
         filterable: true,
+      },
+      {
+        Header: 'No. Surat Pesanan',
+        accessor: 'nomorSuratPesanan',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Fasilitas',
         accessor: 'fasilitas',
+        filterable: false,
+      },
+      {
+        Header: 'Kedudukan Jabatan',
+        accessor: 'kedudukanJabatan',
         filterable: false,
       },
       {
@@ -124,12 +154,12 @@ class Bintang4 extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -191,10 +221,11 @@ class Bintang4 extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -234,17 +265,56 @@ class Bintang4 extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Hotel"
-                          type="text"
-                          name="namaHotel"
+                          label="Working Order"
+                          options={[
+                            { value: '123456 - X', label: '123456 - X' },
+                            { value: '000000 - Y', label: '000000 - Y' },
+                          ]}
                           isRequired
-                          placeholder="Masukkan Nama Hotel"
+                          name="nomorWorkingOrder"
+                          placeholder="Pilih atau Cari Working Order"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="No. Surat Pesanan"
+                          type="text"
+                          name="nomorSuratPesanan"
+                          isRequired
+                          placeholder="Masukkan No. Surat Pesanan"
                           component={CfInput}
                         />
                       </FormGroup>
 
+                      <FormGroup>
+                        <Field
+                          label="Kedudukan Jabatan"
+                          type="text"
+                          name="kedudukanJabatan"
+                          isRequired
+                          placeholder="Masukkan No. Kedudukan Jabatan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <strong>Detail Hotel</strong>
+                      <br />
                       <Row>
-                        <Col sm="6">
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Nama Hotel"
+                              type="text"
+                              name="namaHotel"
+                              isRequired
+                              placeholder="Masukkan Nama Hotel"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
                           <FormGroup>
                             <Field
                               label="Fasilitas"
@@ -256,14 +326,14 @@ class Bintang4 extends Component {
                             />
                           </FormGroup>
                         </Col>
-                        <Col sm="6">
+                        <Col>
                           <FormGroup>
                             <Field
                               label="Biaya"
                               type="text"
-                              name="fasilitas"
+                              name="biaya"
                               isRequired
-                              placeholder="Masukkan Fasilitas"
+                              placeholder="Masukkan Biaya"
                               component={CfInput}
                             />
                           </FormGroup>

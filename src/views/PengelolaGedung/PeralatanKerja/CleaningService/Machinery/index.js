@@ -33,6 +33,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    polisherMachine: 'Baik',
+    vacuumCleaner: 'Baik',
+    jetSprayer: 'Baik',
+    blower: 'Baik',
+    signed: 'Baik',
+    keterangan: 'Lorem ipsum',
+  },
+  {
+    tanggal: '06/06/2020',
+    polisherMachine: 'Baik',
+    vacuumCleaner: 'Tidak Baik',
+    jetSprayer: 'Baik',
+    blower: 'Tidak Baik',
+    signed: 'Baik',
+    keterangan: 'Lorem ipsum',
+  },
+]
+
 class Machinery extends Component {
   initialValues = {
     nama: '',
@@ -91,22 +112,24 @@ class Machinery extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: 'Low Speed Polisher Machine 17"',
         accessor: 'polisherMachine',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Wet & Dry Vacuum Cleaner 20 lt',
         accessor: 'vacuumCleaner',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Jet Sprayer',
         accessor: 'jetSprayer',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Blower',
@@ -139,12 +162,12 @@ class Machinery extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -206,10 +229,11 @@ class Machinery extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

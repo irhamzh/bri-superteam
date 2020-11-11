@@ -33,6 +33,25 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 12343541,
+    nomorSuratPesanan: 23424324,
+    fasilitas: 'Room Meeting, Wifi',
+    kedudukanJabatan: 'Manager',
+    biaya: 'IDR 300.000',
+  },
+  {
+    tanggal: '05/06/2020',
+    nomorWorkingOrder: 12343541,
+    nomorSuratPesanan: 23424324,
+    fasilitas: 'Room Meeting, Wifi, Aula',
+    kedudukanJabatan: 'Direktur',
+    biaya: 'IDR 400.000',
+  },
+]
+
 class Bintang3 extends Component {
   initialValues = {
     nama: '',
@@ -100,7 +119,7 @@ class Bintang3 extends Component {
       },
       {
         Header: 'No. Surat Pesanan',
-        accessor: 'fasilitas',
+        accessor: 'nomorSuratPesanan',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -135,12 +154,12 @@ class Bintang3 extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -202,10 +221,11 @@ class Bintang3 extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

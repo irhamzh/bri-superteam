@@ -31,6 +31,25 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    lantai: 'Lantai 1',
+    ruangan: 'Ruangan X',
+    item: 'Koneksi',
+    status: 'Connected',
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: '06/06/2020',
+    lantai: 'Lantai 3',
+    ruangan: 'Ruangan Y',
+    item: 'Antivirus',
+    status: 'Tidak Update',
+    keterangan: 'Lorem Ipsum',
+  },
+]
+
 class PeralatanJaringan extends Component {
   initialValues = {
     nama: '',
@@ -125,12 +144,12 @@ class PeralatanJaringan extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -171,10 +190,11 @@ class PeralatanJaringan extends Component {
               <CardBody>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -254,7 +274,7 @@ class PeralatanJaringan extends Component {
                             <FormGroup>
                               <Field
                                 label={values.item === 'Antivirus' ? 'Update' : 'Connected'}
-                                name="statusItem"
+                                name="status"
                                 id={values.item === 'Antivirus' ? 'Update' : 'Connected'}
                                 component={CfInputRadio}
                               />
@@ -266,7 +286,7 @@ class PeralatanJaringan extends Component {
                                 label={
                                   values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'
                                 }
-                                name="statusItem"
+                                name="status"
                                 id={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
                                 component={CfInputRadio}
                               />

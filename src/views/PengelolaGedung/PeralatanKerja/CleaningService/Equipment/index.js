@@ -33,6 +33,38 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    doubleBucket: 'Baik',
+    singleBucket: 'Baik',
+    lobbyDusterStick: 'Baik',
+    mopSet: 'Baik',
+    windowSqueeze: 'Baik',
+    windowWasher: 'Baik',
+    teleskopPool6: 'Baik',
+    floorSqueeze: 'Baik',
+    ember15lt: 'Baik',
+    gayung: 'Baik',
+    tanggaAlumunium2M: 'Baik',
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: '06/06/2020',
+    doubleBucket: 'Baik',
+    singleBucket: 'Tidak Baik',
+    lobbyDusterStick: 'Baik',
+    mopSet: 'Tidak Baik',
+    windowSqueeze: 'Baik',
+    windowWasher: 'Baik',
+    teleskopPool6: 'Tidak Baik',
+    floorSqueeze: 'Baik',
+    ember15lt: 'Baik',
+    gayung: 'Baik',
+    tanggaAlumunium2M: 'Baik',
+    keterangan: 'Lorem Ipsum',
+  },
+]
 class Equipment extends Component {
   initialValues = {
     nama: '',
@@ -91,7 +123,6 @@ class Equipment extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: 'Double Bucket',
@@ -178,12 +209,12 @@ class Equipment extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -245,10 +276,11 @@ class Equipment extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -446,7 +478,7 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="teleskopicPool"
+                              name="teleskopicPool6M"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -456,7 +488,7 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="teleskopicPool"
+                              name="teleskopicPool6M"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -545,7 +577,7 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="tanggaAlumunium"
+                              name="tanggaAlumunium2M"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -555,7 +587,7 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="tanggaAlumunium"
+                              name="tanggaAlumunium2M"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />

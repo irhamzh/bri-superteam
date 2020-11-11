@@ -33,6 +33,61 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    jenisPengadaan: 'Penunjukkan Langsung',
+    tanggal: '12/12/2020',
+    namaPengadaan: 'Pengadaan 1',
+    izinPrinsipUser: true,
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: true,
+    undangan: true,
+    tor: true,
+    proposalPenawaran: true,
+    suratPemesanan: true,
+    klasifikasiNotifikasi: false,
+    jenisAnggaran: 'Investasi',
+    biayaPutusan: 100000,
+    nomorSPK: 123456,
+    namaProvider: 'PT. XXX',
+    alamatProvider: 'Alamat 1',
+    contactProvider: '08XXXXX',
+    jenisPekerjaan: 'Pegawai',
+    jumlahBiaya: 12345,
+    namaPendidikan: 'Strata',
+    jumlahPeserta: 2000,
+    durasi: 24,
+    jenisBarang: 'Perkakas',
+    masaBerlaku: '12/12/2020',
+  },
+  {
+    jenisPengadaan: 'Penunjukkan Langsung',
+    tanggal: '12/12/2020',
+    namaPengadaan: 'Pengadaan 2',
+    izinPrinsipUser: true,
+    undangan: false,
+    izinPrinsiPengadaan: true,
+    izinHasilPengadaan: true,
+    tor: true,
+    proposalPenawaran: true,
+    suratPemesanan: true,
+    klasifikasiNotifikasi: true,
+    jenisAnggaran: 'Eksploitasi',
+    biayaPutusan: 10000000,
+    nomorSPK: 98776554,
+    namaProvider: 'PT. YYY',
+    alamatProvider: 'Alamat 2',
+    contactProvider: '08XXXXX',
+    jenisPekerjaan: 'Kontraktor',
+    jumlahBiaya: 12345,
+    namaPendidikan: 'Diploma',
+    jumlahPeserta: 2034,
+    durasi: 14,
+    jenisBarang: 'Elektronik',
+    masaBerlaku: '12/12/2020',
+  },
+]
+
 class PemilihanLangsung extends Component {
   initialValues = {
     nama: '',
@@ -109,33 +164,109 @@ class PemilihanLangsung extends Component {
         accessor: 'izinPrinsipPengadaan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'TOR',
         accessor: 'tor',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Proposal Penawaran',
         accessor: 'proposalPenawaran',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Undangan',
         accessor: 'undangan',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Klarifikasi dan Negosiasi',
         accessor: 'klarifikasiDanNegosiasi',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Surat Pemesanan',
+        accessor: 'suratPemesanan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Nomor SPK',
@@ -157,7 +288,7 @@ class PemilihanLangsung extends Component {
       },
       {
         Header: 'No. Contact',
-        accessor: 'nomorKontak',
+        accessor: 'contactProvider',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -211,12 +342,12 @@ class PemilihanLangsung extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -278,10 +409,11 @@ class PemilihanLangsung extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

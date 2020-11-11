@@ -33,6 +33,61 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    gedung: 'Gedung 1',
+    lantai: 'Lantai 1',
+    smokeDetector: 'Baik',
+    sistemAC: 'Tidak Baik',
+    thermostat: 'Baik',
+    telephone: 'Tidak Baik',
+    fireAlarm: 'Baik',
+    exhaust: 'Baik',
+    ceilingSpeaker: 'Baik',
+    headSprinkler: 'Baik',
+    cctv: 'Baik',
+    mccb: 'Baik',
+    apar: 'Baik',
+    segel: 'Baik',
+    pin: 'Baik',
+    selang: 'Baik',
+    nozle: 'Baik',
+    hose: 'Baik',
+    valves: 'Baik',
+    alarm: 'Baik',
+    pintuEngsel: 'Baik',
+    lampuIndikator: 'Baik',
+    expiredTabung: '06/06/2020',
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    gedung: 'Gedung 2',
+    lantai: 'Lantai 1',
+    smokeDetector: 'Baik',
+    sistemAC: 'Tidak Baik',
+    thermostat: 'Baik',
+    telephone: 'Tidak Baik',
+    fireAlarm: 'Baik',
+    exhaust: 'Baik',
+    ceilingSpeaker: 'Tidak Baik',
+    headSprinkler: 'Baik',
+    cctv: 'Baik',
+    mccb: 'Baik',
+    apar: 'Tidak Baik',
+    segel: 'Baik',
+    pin: 'Tidak Baik',
+    selang: 'Baik',
+    nozle: 'Baik',
+    hose: 'Tidak Baik',
+    valves: 'Baik',
+    alarm: 'Baik',
+    pintuEngsel: 'Baik',
+    lampuIndikator: 'Baik',
+    expiredTabung: '06/06/2020',
+    keterangan: 'Lorem Ipsum',
+  },
+]
+
 class ME extends Component {
   initialValues = {
     nama: '',
@@ -100,26 +155,31 @@ class ME extends Component {
         Header: 'Smoke Detector',
         accessor: 'smokeDetector',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'AC System',
         accessor: 'sistemAC',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Thermostat',
         accessor: 'thermostat',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Telephone',
         accessor: 'telephone',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Fire Alarm',
         accessor: 'fireAlarm',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Exhaust',
@@ -130,21 +190,25 @@ class ME extends Component {
         Header: 'Ceiling Speaker',
         accessor: 'ceilingSpeaker',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Head Sprinkler',
         accessor: 'headSprinkler',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'CCTV',
         accessor: 'cctv',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'MCCB',
         accessor: 'mccb',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Hydrant Box',
@@ -193,16 +257,20 @@ class ME extends Component {
             Header: 'Pintu / Engsel',
             accessor: 'pintuEngsel',
             filterable: false,
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Lampu Indikator',
             accessor: 'lampuIndikator',
             filterable: false,
+
+            headerClassName: 'wordwrap',
           },
           {
             Header: 'Expired Tabung',
             accessor: 'expiredTabung',
             filterable: false,
+            headerClassName: 'wordwrap',
           },
         ],
       },
@@ -227,12 +295,12 @@ class ME extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -294,10 +362,11 @@ class ME extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -344,12 +413,12 @@ class ME extends Component {
                             <Field
                               label="Lantai"
                               options={[
-                                { value: '1', label: 'Lantai 1' },
-                                { value: '2', label: 'Lantai 2' },
-                                { value: '3', label: 'Lantai 3' },
-                                { value: '4', label: 'Lantai 4' },
-                                { value: '5', label: 'Lantai 5' },
-                                { value: '6', label: 'Lantai 6' },
+                                { value: 'Lantai 1', label: 'Lantai 1' },
+                                { value: 'Lantai 2', label: 'Lantai 2' },
+                                { value: 'Lantai 3', label: 'Lantai 3' },
+                                { value: 'Lantai 4', label: 'Lantai 4' },
+                                { value: 'Lantai 5', label: 'Lantai 5' },
+                                { value: 'Lantai 6', label: 'Lantai 6' },
                               ]}
                               isRequired
                               name="lantai"

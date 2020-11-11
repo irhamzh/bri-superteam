@@ -31,6 +31,23 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    namaPendidikan: 'Pendidikan A',
+    namaHotel: 'Hotel Mawar',
+    performance: '4',
+    remark: 'Lorem ipsum',
+  },
+  {
+    tanggal: '08/06/2020',
+    namaPendidikan: 'Pendidikan B',
+    namaHotel: 'Hotel Melati',
+    performance: '3',
+    remark: 'Lorem ipsum',
+  },
+]
+
 class Internal extends Component {
   initialValues = {
     nama: '',
@@ -127,12 +144,12 @@ class Internal extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -194,10 +211,11 @@ class Internal extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -261,8 +279,10 @@ class Internal extends Component {
                         <Field
                           label="Performance"
                           options={[
-                            { value: 'Puas', label: 'Puas' },
-                            { value: 'Tidak Puas', label: 'Tidak Puas' },
+                            { value: '1', label: '1' },
+                            { value: '2', label: '2' },
+                            { value: '3', label: '3' },
+                            { value: '4', label: '4' },
                           ]}
                           isRequired
                           name="performance"

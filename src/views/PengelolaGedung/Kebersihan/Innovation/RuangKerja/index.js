@@ -33,6 +33,35 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    ruangan: '101',
+    plafond: 'Baik',
+    dinding: 'Baik',
+    lantai: 'Baik',
+    pintu: 'Baik',
+    jendela: 'Baik',
+    kursi: 'Baik',
+    meja: 'Baik',
+    lampu: 'Baik',
+    keterangan: 'Lorem ipsum',
+  },
+  {
+    tanggal: '06/06/2020',
+    ruangan: '102',
+    plafond: 'Tidak Baik',
+    dinding: 'Baik',
+    lantai: 'Tidak Baik',
+    pintu: 'Baik',
+    jendela: 'Tidak Baik',
+    kursi: 'Baik',
+    meja: 'Tidak Baik',
+    lampu: 'Baik',
+    keterangan: 'Lorem ipsum',
+  },
+]
+
 class RuangKerja extends Component {
   initialValues = {
     nama: '',
@@ -93,7 +122,7 @@ class RuangKerja extends Component {
       },
       {
         Header: 'Ruangan',
-        accessor: 'Ruangan',
+        accessor: 'ruangan',
         filterable: false,
       },
       {
@@ -157,12 +186,12 @@ class RuangKerja extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -224,10 +253,11 @@ class RuangKerja extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

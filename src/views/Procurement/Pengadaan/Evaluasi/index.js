@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio } from '../../../../components'
+import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -30,6 +30,35 @@ import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
+
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    namaPengadaan: 'Pengadaan 1',
+    namaProvider: 'Provider 1',
+    alamatProvider: 'Jalan R. XXXX',
+    contactProvider: '087XXXXXX',
+    jumlahBarang: 23,
+    jenisPekerjaan: 'Perbankan',
+    hargaBarang: 10000,
+    totalHarga: 230000,
+    penilaian: 1,
+    keterangan: 'Lorem Ipsum',
+  },
+  {
+    tanggal: '06/06/2020',
+    namaPengadaan: 'Pengadaan 2',
+    namaProvider: 'Provider 2',
+    alamatProvider: 'Jalan R. XXXX',
+    contactProvider: '087XXXXXX',
+    jenisPekerjaan: 'Properti',
+    jumlahBarang: 23,
+    hargaBarang: 10000,
+    totalHarga: 230000,
+    penilaian: 3,
+    keterangan: 'Lorem Ipsum',
+  },
+]
 
 class Evaluasi extends Component {
   initialValues = {
@@ -89,42 +118,47 @@ class Evaluasi extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+      },
+      {
+        Header: 'Nama Pengadaan',
+        accessor: 'namaPengadaan',
+        filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Provider',
         accessor: 'namaProvider',
         filterable: true,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Alamat Provider',
         accessor: 'alamatProvider',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nomor Contact Provider',
         accessor: 'nomorKontak',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
-      {
-        Header: 'Jenis Pekerjaan',
-        accessor: 'jenisPekerjaan',
-        filterable: false,
-      },
+
       {
         Header: 'Jumlah Barang',
         accessor: 'jumlahBarang',
         filterable: false,
-      },
-      {
-        Header: 'Harga Barang',
-        accessor: 'hargaBarang',
-        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Penilaian',
         accessor: 'penilaian',
         filterable: false,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'keterangan',
+        filterable: true,
       },
       {
         Header: 'Aksi',
@@ -142,12 +176,12 @@ class Evaluasi extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -209,10 +243,11 @@ class Evaluasi extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -254,6 +289,20 @@ class Evaluasi extends Component {
 
                         <FormGroup>
                           <Field
+                            label="Nama Pengadaan"
+                            options={[
+                              { value: 'Pengadaan 1', label: 'Pengadaan 1' },
+                              { value: 'Pengadaan 2', label: 'Pengadaan 2' },
+                            ]}
+                            isRequired
+                            name="namaPengadaan"
+                            placeholder="Pilih atau Cari Nama Pengadaan"
+                            component={CfSelect}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
                             label="Nama Provider"
                             type="text"
                             name="namaProvider"
@@ -287,22 +336,11 @@ class Evaluasi extends Component {
 
                         <FormGroup>
                           <Field
-                            label="Jumlah Barang"
+                            label="Keterangan"
                             type="text"
-                            name="jumlahBarang"
+                            name="keterangan"
                             isRequired
-                            placeholder="Masukkan Jumlah Barang"
-                            component={CfInput}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Harga Barang"
-                            type="text"
-                            name="hargaBarang"
-                            isRequired
-                            placeholder="Masukkan Harga Barang"
+                            placeholder="Masukkan Keterangan"
                             component={CfInput}
                           />
                         </FormGroup>

@@ -31,6 +31,39 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '08/12/2020',
+    workingOrderCode: 123456,
+    namaKegiatan: 'Kegiatan 1',
+    kodePelatihan: 9987,
+    tanggalTerima: '08/12/2020',
+    tanggalRevisi: '10/12/2020',
+    tanggalKonfirmasi: '12/12/2020',
+    sla: 4,
+    kebutuhanCatering: 'Ada',
+    kebutuhanATK: 'Ada',
+    kebutuhanHotel: 'Ada',
+    kebutuhanAkomodasi: 'Ada',
+    kebutuhanPengajarEksternal: 'Ada',
+  },
+  {
+    tanggal: '06/12/2020',
+    workingOrderCode: 123456,
+    namaKegiatan: 'Kegiatan 2',
+    kodePelatihan: 3245,
+    tanggalTerima: '06/12/2020',
+    tanggalRevisi: '08/12/2020',
+    tanggalKonfirmasi: '10/12/2020',
+    sla: 4,
+    kebutuhanCatering: 'Tidak Ada',
+    kebutuhanATK: 'Tidak Ada',
+    kebutuhanHotel: 'Tidak Ada',
+    kebutuhanAkomodasi: 'Tidak Ada',
+    kebutuhanPengajarEksternal: 'Tidak Ada',
+  },
+]
+
 class KegiatanPendidikan extends Component {
   initialValues = {
     nama: '',
@@ -171,12 +204,12 @@ class KegiatanPendidikan extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -236,10 +269,11 @@ class KegiatanPendidikan extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

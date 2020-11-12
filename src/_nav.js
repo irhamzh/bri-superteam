@@ -132,6 +132,63 @@ export default {
       name: 'General Affair',
       url: '/general-affair',
       icon: 'icon-layers',
+      children: [
+        {
+          name: 'Formasi',
+          url: '/general-affair/formasi',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Data Pekerja',
+          url: '/general-affair/data-pekerja',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Working Order',
+          url: '/general-affair/working-order',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pengelolaan Konsumsi',
+          url: '/general-affair/pengelolaan-konsumsi',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pengelolaan Kendaraan',
+          url: '/general-affair/pengelolaan-kendaraan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Evaluasi Klinik',
+          url: '/general-affair/evaluasi-klinik',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Monitor CCTV',
+          url: '/general-affair/monitor-cctv',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Kegiatan Lainnya',
+          url: '/general-affair/kegiatan-lain',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Aktivitas',
+          url: '/general-affair/aktivitas',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Anggaran',
+          url: '/general-affair/anggaran',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Persekot',
+          url: '/general-affair/persekot',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
     },
     {
       name: 'Financial Adm',

@@ -31,6 +31,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 1234565,
+    nomorSurat: '232224',
+    namaVendor: 'Vendor A',
+    kebutuhan: 'Pengadaan Kanopi',
+    namaBarang: 'Kanopi',
+    biaya: 'IDR 1.500.000',
+  },
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 6364,
+    nomorSurat: '235466',
+    namaVendor: 'Vendor B',
+    kebutuhan: 'Renovasi Taman',
+    namaBarang: 'Tanaman',
+    biaya: 'IDR 400.000',
+  },
+]
+
 class Klasifikasi extends Component {
   initialValues = {
     nama: '',
@@ -102,13 +123,18 @@ class Klasifikasi extends Component {
         filterable: false,
       },
       {
+        Header: 'Kebutuhan',
+        accessor: 'kebutuhan',
+        filterable: false,
+      },
+      {
         Header: 'Nama Vendor',
-        accessor: 'Vendor.name',
+        accessor: 'namaVendor',
         filterable: false,
       },
       {
         Header: 'Nama Barang',
-        accessor: 'Barang.name',
+        accessor: 'namaBarang',
         filterable: false,
       },
       {
@@ -132,12 +158,12 @@ class Klasifikasi extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -199,10 +225,11 @@ class Klasifikasi extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>

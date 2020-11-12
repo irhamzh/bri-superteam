@@ -31,6 +31,21 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    namaVendor: 'Vendor 1',
+    performance: '3',
+    remark: 'Lorem ipsumaa',
+  },
+  {
+    tanggal: '06/06/2020',
+    namaVendor: 'Vendor A',
+    performance: '4',
+    remark: 'Lorem ipsumaa',
+  },
+]
+
 class Internal extends Component {
   initialValues = {
     nama: '',
@@ -93,7 +108,7 @@ class Internal extends Component {
       },
       {
         Header: 'Nama Vendor',
-        accessor: 'Vendor.nama',
+        accessor: 'namaVendor',
         filterable: false,
       },
       {
@@ -122,12 +137,12 @@ class Internal extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -189,10 +204,11 @@ class Internal extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -236,7 +252,7 @@ class Internal extends Component {
                           label="Nama Vendor"
                           options={[{ value: 'Vendor A', label: 'Vendor A' }]}
                           isRequired
-                          name="Vendor.nama"
+                          name="namaVendor"
                           placeholder="Pilih atau Cari Nama Vendor"
                           component={CfSelect}
                         />

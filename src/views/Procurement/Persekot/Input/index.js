@@ -31,6 +31,19 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    namaKegiatan: 'Kegiatan X',
+    biaya: 'IDR 500.000.000',
+  },
+  {
+    tanggal: '06/06/2020',
+    namaKegiatan: 'Kegiatan Y',
+    biaya: 'IDR 20.000.000',
+  },
+]
+
 class InputPersekot extends Component {
   initialValues = {
     nama: '',
@@ -87,8 +100,8 @@ class InputPersekot extends Component {
       {
         Header: 'Tanggal',
         width: 100,
+        accessor: 'tanggal',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
       },
       {
         Header: 'Nama Kegiatan',
@@ -97,7 +110,7 @@ class InputPersekot extends Component {
       },
       {
         Header: 'Nominal Biaya',
-        accessor: 'nominalBiaya',
+        accessor: 'biaya',
         filterable: false,
       },
     ]
@@ -155,10 +168,11 @@ class InputPersekot extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -211,7 +225,7 @@ class InputPersekot extends Component {
                         <Field
                           label="Nominal Biaya"
                           type="text"
-                          name="nominalBiaya"
+                          name="biaya"
                           isRequired
                           placeholder="Masukkan Nominal Biaya"
                           component={CfInput}

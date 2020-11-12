@@ -31,6 +31,27 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 1234565,
+    nomorSurat: '232224',
+    kebutuhan: 'Prasmanan',
+    namaCatering: 'Catering A',
+    menu: 'Ayam Taliwang',
+    biaya: 'IDR 500.000',
+  },
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 6364,
+    nomorSurat: '235466',
+    kebutuhan: 'Hajatan',
+    namaCatering: 'Catering A',
+    menu: 'Nasi Kotak',
+    biaya: 'IDR 40.000',
+  },
+]
+
 class Klasifikasi extends Component {
   initialValues = {
     nama: '',
@@ -109,7 +130,7 @@ class Klasifikasi extends Component {
       },
       {
         Header: 'Nama Catering',
-        accessor: 'Catering.nama',
+        accessor: 'namaCatering',
         filterable: false,
       },
       {
@@ -138,12 +159,12 @@ class Klasifikasi extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -205,10 +226,11 @@ class Klasifikasi extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -289,7 +311,7 @@ class Klasifikasi extends Component {
                               label="Nama Catering"
                               options={[{ value: 'Catering A', label: 'Catering A' }]}
                               isRequired
-                              name="catering"
+                              name="namaCatering"
                               placeholder="Pilih atau Cari Catering"
                               component={CfSelect}
                             />
@@ -300,7 +322,7 @@ class Klasifikasi extends Component {
                             <Field
                               label="Nama Menu"
                               type="text"
-                              name="namaMenu"
+                              name="menu"
                               isRequired
                               placeholder="Masukkan Nama Menu"
                               component={CfInput}

@@ -418,7 +418,7 @@ const routes = [
   {
     path: '/procurement/atk',
     exact: true,
-    name: 'Catering',
+    name: 'ATK',
     component: ATKProcurement,
   },
   {

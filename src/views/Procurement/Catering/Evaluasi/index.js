@@ -31,6 +31,25 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 1213456,
+    namaCatering: 'Catering A',
+    evaluasiSampel: 'Enak',
+    evaluasiPenyajian: 'Baik',
+    performance: 'Puas',
+  },
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 121233456,
+    namaCatering: 'Catering B',
+    evaluasiSampel: 'Kurang Enak',
+    evaluasiPenyajian: 'Tidak Baik',
+    performance: 'Tidak Puas',
+  },
+]
+
 class Internal extends Component {
   initialValues = {
     nama: '',
@@ -96,11 +115,6 @@ class Internal extends Component {
         filterable: false,
       },
       {
-        Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
-        filterable: false,
-      },
-      {
         Header: 'Nama Catering',
         accessor: 'namaCatering',
         filterable: false,
@@ -136,12 +150,12 @@ class Internal extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -203,10 +217,11 @@ class Internal extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -257,19 +272,11 @@ class Internal extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Pendidikan"
-                          options={[{ value: 'Nama Pendidikan', label: 'Nama Pendidikan' }]}
-                          isRequired
-                          name="namaPendidikan"
-                          placeholder="Pilih atau Cari Nama Pendidikan"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
                           label="Nama Catering"
-                          options={[{ value: 'Catering A', label: 'Catering A' }]}
+                          options={[
+                            { value: 'Catering A', label: 'Catering A' },
+                            { value: 'Catering B', label: 'Catering B' },
+                          ]}
                           isRequired
                           name="catering"
                           placeholder="Pilih atau Cari Catering"
@@ -280,9 +287,12 @@ class Internal extends Component {
                       <FormGroup>
                         <Field
                           label="Evaluasi Sampel Makanan"
-                          options={[{ value: 'Enak', label: 'Enak' }]}
+                          options={[
+                            { value: 'Enak', label: 'Enak' },
+                            { value: 'Kurang Enak', label: 'Kurang Enak' },
+                          ]}
                           isRequired
-                          name="evaluasi_sampel_makanan"
+                          name="evaluasiSampel"
                           placeholder="Pilih atau Cari Evaluasi"
                           component={CfSelect}
                         />
@@ -291,9 +301,12 @@ class Internal extends Component {
                       <FormGroup>
                         <Field
                           label="Evaluasi Penyajian di Restoran"
-                          options={[{ value: 'Baik', label: 'Baik' }]}
+                          options={[
+                            { value: 'Baik', label: 'Baik' },
+                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                          ]}
                           isRequired
-                          name="evaluasi_penyajian"
+                          name="evaluasiPenyajian"
                           placeholder="Pilih atau Cari Evaluasi"
                           component={CfSelect}
                         />

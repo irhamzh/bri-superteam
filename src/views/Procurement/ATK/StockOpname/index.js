@@ -37,6 +37,33 @@ const roleSchema = Yup.object().shape({
   nama: Yup.string().required('nama role belum diisi'),
 })
 
+const dataDummy = [
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 1234565,
+    namaPendidikan: 'X',
+    nomorSurat: '232224',
+    namaBarang: 'Kanopi',
+    stokAwal: 20,
+    jumlahMasuk: 10,
+    jumlahKeluar: 20,
+    stokAkhir: 10,
+    biaya: 'IDR 1.500.000',
+  },
+  {
+    tanggal: '06/06/2020',
+    nomorWorkingOrder: 6364,
+    nomorSurat: '235466',
+    namaPendidikan: 'X',
+    namaBarang: 'Tanaman',
+    stokAwal: 50,
+    jumlahMasuk: 10,
+    jumlahKeluar: 20,
+    stokAkhir: 40,
+    biaya: 'IDR 400.000',
+  },
+]
+
 class StockOpname extends Component {
   initialValues = {
     nama: '',
@@ -114,7 +141,7 @@ class StockOpname extends Component {
       },
       {
         Header: 'Stok Awal',
-        accessor: 'stockAwal',
+        accessor: 'stokAwal',
         filterable: false,
       },
       {
@@ -129,7 +156,7 @@ class StockOpname extends Component {
       },
       {
         Header: 'Stok Akhir',
-        accessor: 'stockAkhir',
+        accessor: 'stokAkhir',
         filterable: false,
       },
       {
@@ -148,19 +175,19 @@ class StockOpname extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
       },
     ]
 
-    const pageName = 'StockOpname'
+    const pageName = 'Stock Opname'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -215,10 +242,11 @@ class StockOpname extends Component {
                 </Row>
                 <ReactTable
                   filterable
+                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -271,7 +299,7 @@ class StockOpname extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pendidikan"
-                          options={[{ value: 'SMA', label: 'SMA' }]}
+                          options={[{ value: 'x', label: 'x' }]}
                           isRequired
                           name="namaPendidikan"
                           placeholder="Pilih atau Cari Nama Pendidikan"

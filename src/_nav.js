@@ -144,11 +144,6 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
-          name: 'Working Order',
-          url: '/general-affair/working-order',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
           name: 'Pengelolaan Konsumsi',
           url: '/general-affair/pengelolaan-konsumsi',
           icon: 'fa fa-angle-double-right',

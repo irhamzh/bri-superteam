@@ -20,6 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
@@ -34,29 +35,17 @@ const roleSchema = Yup.object().shape({
 const dataDummy = [
   {
     tanggal: '12/12/2020',
-    merk: 'HP',
-    model: 'Standard',
-    serialNumber: 1234556677,
-    ruangan: 101,
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: true,
-    keterangan: 'Lorem Ipsum',
+    namaKegiatan: 'Kegiatan 1',
+    nominalBiaya: 10000000,
   },
   {
     tanggal: '12/12/2020',
-    merk: 'Samsung',
-    model: 'Standard',
-    serialNumber: 1234556677,
-    ruangan: 101,
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: false,
-    keterangan: 'Lorem Ipsum',
+    namaKegiatan: 'Kegiatan 1',
+    nominalBiaya: 20000000,
   },
 ]
 
-class Infokus extends Component {
+class PenihilanPersekot extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -106,95 +95,39 @@ class Infokus extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tanggal',
+        Header: 'Checked',
         width: 100,
         filterable: false,
-        accessor: 'tanggal',
-      },
-      {
-        Header: 'Merk',
-        accessor: 'merk',
-        filterable: true,
-      },
-      {
-        Header: 'Model',
-        accessor: 'model',
-        filterable: true,
-      },
-      {
-        Header: 'SN',
-        accessor: 'serialNumber',
-        filterable: true,
-      },
-      {
-        Header: 'Lamp Timer',
-        accessor: 'lampTimer',
-        filterable: false,
-      },
-      {
-        Header: 'Ganti Lampu',
-        accessor: 'gantiLampu',
-        filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Ruangan',
-        accessor: 'ruangan',
-        filterable: true,
-      },
-      // {
-      //   Header: 'Kondisi',
-      //   accessor: 'kondisi',
-      //   filterable: true,
-      // },
-      {
-        Header: 'Keterangan',
-        accessor: 'keterangan',
-        filterable: true,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
         Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
+          <span>
+            <Checkbox />
+          </span>
         ),
+      },
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggal',
+        filterable: false,
+      },
+      {
+        Header: 'Nama Kegiatan',
+        accessor: 'namaKegiatan',
+        filterable: true,
+      },
+      {
+        Header: 'Nominal Biaya',
+        accessor: 'nominalBiaya',
+        filterable: false,
       },
     ]
 
-    const pageName = 'Infokus'
-    const isIcon = { paddingRight: '7px' }
+    const pageName = 'Input Persekot'
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -214,11 +147,10 @@ class Infokus extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        // onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        <i className="fa fa-plus" style={isIcon} />
-                        &nbsp;Tambah Data
+                        Submit
                       </Button>
                     </div>
                   </Col>
@@ -254,7 +186,7 @@ class Infokus extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -264,101 +196,29 @@ class Infokus extends Component {
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Pilih Tanggal"
+                          placeholder="Tanggal"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Merk"
+                          label="Nama Kegiatan"
                           type="text"
-                          name="merk"
+                          name="namaKegiatan"
                           isRequired
-                          placeholder="Masukkan Merk"
+                          placeholder="Masukkan Nama Kegiatan"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Model"
+                          label="Nominal Biaya"
                           type="text"
-                          name="model"
+                          name="nominalBiaya"
                           isRequired
-                          placeholder="Masukkan Model"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="SN"
-                          type="text"
-                          name="serialNumber"
-                          isRequired
-                          placeholder="Masukkan Serial Number"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Lamp Timer"
-                          type="text"
-                          name="lampTimer"
-                          isRequired
-                          placeholder="Masukkan Lamp Timer"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Ganti Lampu"
-                          options={[
-                            { value: true, label: 'Ya' },
-                            { value: false, label: 'Tidak' },
-                          ]}
-                          isRequired
-                          name="gantiLampu"
-                          placeholder="Pilih atau Cari Ganti Lampu"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Ruangan"
-                          type="text"
-                          name="ruangan"
-                          isRequired
-                          placeholder="Masukkan Ruangan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kondisi"
-                          options={[
-                            { value: 'Baik', label: 'Baik' },
-                            { value: 'Tidak Baik', label: 'Tidak Baik' },
-                          ]}
-                          isRequired
-                          name="kondisi"
-                          placeholder="Pilih atau Cari Kondisi"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Keterangan"
-                          type="text"
-                          name="keterangan"
-                          isRequired
-                          placeholder="Masukkan Keterangan"
+                          placeholder="Masukkan Nominal Biaya"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -397,7 +257,7 @@ class Infokus extends Component {
   }
 }
 
-Infokus.propTypes = {
+PenihilanPersekot.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -428,7 +288,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Infokus,
+      Component: PenihilanPersekot,
       toggles: {
         modalForm: false,
       },

@@ -44,6 +44,27 @@ const BahanBakar = React.lazy(() => import('./views/GeneralAffair/PengelolaanKen
 const PemesananDiluarDinas = React.lazy(() =>
   import('./views/GeneralAffair/PengelolaanKendaraan/PemesananDiluar')
 )
+// GA / Evaluasi Klinik
+const EvaluasiKlinik = React.lazy(() => import('./views/GeneralAffair/EvaluasiKlinik'))
+// GA / Monitor CCTV
+const MonitorCCTV = React.lazy(() => import('./views/GeneralAffair/MonitorCCTV'))
+// GA / Kegiatan Lain
+const KegiatanLain = React.lazy(() => import('./views/GeneralAffair/KegiatanLain'))
+const P3K = React.lazy(() => import('./views/GeneralAffair/KegiatanLain/P3K'))
+const RekreasiSiswa = React.lazy(() => import('./views/GeneralAffair/KegiatanLain/RekreasiSiswa'))
+// GA / Aktivitas
+const AktivitasGA = React.lazy(() => import('./views/GeneralAffair/Aktivitas'))
+const SecurityAkv = React.lazy(() => import('./views/GeneralAffair/Aktivitas/Security'))
+const DriverAkv = React.lazy(() => import('./views/GeneralAffair/Aktivitas/Driver'))
+const PramubaktiKurirAkv = React.lazy(() =>
+  import('./views/GeneralAffair/Aktivitas/PramubaktiKurir')
+)
+// GA / Anggaran
+const AnggaranGA = React.lazy(() => import('./views/GeneralAffair/Anggaran'))
+// GA / Persekot
+const PersekotGA = React.lazy(() => import('./views/GeneralAffair/Persekot'))
+const InputPersekot = React.lazy(() => import('./views/GeneralAffair/Persekot/Input'))
+const PenihilanPersekot = React.lazy(() => import('./views/GeneralAffair/Persekot/Penihilan'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -204,6 +225,90 @@ const routes = [
     exact: true,
     name: 'Pemesanan diluar Kendaraan Dinas',
     component: PemesananDiluarDinas,
+  },
+  // GA / Evaluasi Klinik
+  {
+    path: '/general-affair/evaluasi-klinik',
+    exact: true,
+    name: 'Evaluasi Klinik',
+    component: EvaluasiKlinik,
+  },
+  // GA / Monitor CCTV
+  {
+    path: '/general-affair/monitor-cctv',
+    exact: true,
+    name: 'Monitor CCTV',
+    component: MonitorCCTV,
+  },
+  // GA/ Kegiatan Lain
+  {
+    path: '/general-affair/kegiatan-lain',
+    exact: true,
+    name: 'Kegiatan Lainnya',
+    component: KegiatanLain,
+  },
+  {
+    path: '/general-affair/kegiatan-lain/p3k',
+    exact: true,
+    name: 'P3K',
+    component: P3K,
+  },
+  {
+    path: '/general-affair/kegiatan-lain/rekreasi-siswa',
+    exact: true,
+    name: 'Rekreasi Siswa',
+    component: RekreasiSiswa,
+  },
+  // GA / Aktivitas
+  {
+    path: '/general-affair/aktivitas',
+    exact: true,
+    name: 'Aktivitas',
+    component: AktivitasGA,
+  },
+  {
+    path: '/general-affair/aktivitas/security',
+    exact: true,
+    name: 'Security',
+    component: SecurityAkv,
+  },
+  {
+    path: '/general-affair/aktivitas/driver',
+    exact: true,
+    name: 'Driver',
+    component: DriverAkv,
+  },
+  {
+    path: '/general-affair/aktivitas/pramubakti-kurir',
+    exact: true,
+    name: 'Pramubakti Khusus Kurir',
+    component: PramubaktiKurirAkv,
+  },
+  // GA / Anggaran
+  {
+    path: '/general-affair/anggaran',
+    exact: true,
+    name: 'Anggaran',
+    component: AnggaranGA,
+  },
+  // GA / Persekot
+  {
+    path: '/general-affair/persekot',
+    exact: true,
+    name: 'Persekot',
+    component: PersekotGA,
+  },
+  {
+    path: '/general-affair/persekot/input',
+    exact: true,
+    name: 'Input Persekot',
+    component: InputPersekot,
+  },
+  {
+    path: '/general-affair/persekot/penihilan',
+    exact: true,
+    name: 'Penihilan Persekot',
+    component: PenihilanPersekot,
   },
   {
     path: '/akun',

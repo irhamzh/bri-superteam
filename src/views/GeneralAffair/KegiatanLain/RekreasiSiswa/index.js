@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -33,30 +33,26 @@ const roleSchema = Yup.object().shape({
 
 const dataDummy = [
   {
-    tanggal: '12/12/2020',
-    merk: 'HP',
-    model: 'Standard',
-    serialNumber: 1234556677,
-    ruangan: 101,
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: true,
-    keterangan: 'Lorem Ipsum',
+    tanggal: '08/12/2020',
+    namaKegiatan: 'Kegiatan A',
+    jumlahSiswa: 40,
+    formPermintaan: true,
+    izinPenugasan: true,
+    biayaRekreasi: true,
+    laporanRekreasi: true,
   },
   {
-    tanggal: '12/12/2020',
-    merk: 'Samsung',
-    model: 'Standard',
-    serialNumber: 1234556677,
-    ruangan: 101,
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: false,
-    keterangan: 'Lorem Ipsum',
+    tanggal: '06/12/2020',
+    namaKegiatan: 'Kegiatan B',
+    jumlahSiswa: 29,
+    formPermintaan: true,
+    izinPenugasan: false,
+    biayaRekreasi: false,
+    laporanRekreasi: true,
   },
 ]
 
-class Infokus extends Component {
+class RekreasiSiswa extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -111,34 +107,27 @@ class Infokus extends Component {
     const columns = [
       {
         Header: 'Tanggal',
-        width: 100,
-        filterable: false,
         accessor: 'tanggal',
-      },
-      {
-        Header: 'Merk',
-        accessor: 'merk',
-        filterable: true,
-      },
-      {
-        Header: 'Model',
-        accessor: 'model',
-        filterable: true,
-      },
-      {
-        Header: 'SN',
-        accessor: 'serialNumber',
-        filterable: true,
-      },
-      {
-        Header: 'Lamp Timer',
-        accessor: 'lampTimer',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
-        Header: 'Ganti Lampu',
-        accessor: 'gantiLampu',
+        Header: 'Nama Kegiatan',
+        accessor: 'namaKegiatan',
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Jumlah Siswa',
+        accessor: 'jumlahSiswa',
         filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Form Permintaan dari LOP',
+        accessor: 'formPermintaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -151,19 +140,52 @@ class Infokus extends Component {
           ),
       },
       {
-        Header: 'Ruangan',
-        accessor: 'ruangan',
-        filterable: true,
+        Header: 'Izin Penugasan',
+        accessor: 'izinPenugasan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
-      // {
-      //   Header: 'Kondisi',
-      //   accessor: 'kondisi',
-      //   filterable: true,
-      // },
       {
-        Header: 'Keterangan',
-        accessor: 'keterangan',
-        filterable: true,
+        Header: 'Biaya Rekreasi',
+        accessor: 'biayaRekreasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Laporan Rekreasi',
+        accessor: 'laporanRekreasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Aksi',
@@ -193,8 +215,8 @@ class Infokus extends Component {
       },
     ]
 
-    const pageName = 'Infokus'
-    const isIcon = { paddingRight: '7px' }
+    const pageName = 'Rekreasi Siswa'
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -217,14 +239,33 @@ class Infokus extends Component {
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        <i className="fa fa-plus" style={isIcon} />
-                        &nbsp;Tambah Data
+                        Tambah Data
                       </Button>
                     </div>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
+                <Row>
+                  <Col sm="12">
+                    <div style={{ textAlign: 'right' }}>
+                      <Button
+                        className="mr-3 mb-2 px-4"
+                        color="secondary"
+                        style={{ borderRadius: '20px' }}
+                      >
+                        Show
+                      </Button>
+                      <Button
+                        className="mr-1 mb-2 px-4"
+                        color="secondary"
+                        style={{ borderRadius: '20px' }}
+                      >
+                        Export
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
                 <ReactTable
                   filterable
                   data={dataDummy}
@@ -254,7 +295,7 @@ class Infokus extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Rekreasi Siswa</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -264,104 +305,66 @@ class Infokus extends Component {
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Pilih Tanggal"
+                          placeholder="Tanggal"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Merk"
+                          label="Nama Kegiatan"
                           type="text"
-                          name="merk"
+                          name="namaKegiatan"
                           isRequired
-                          placeholder="Masukkan Merk"
+                          placeholder="Masukkan Nama Kegiatan"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Model"
+                          label="Jumlah Siswa"
                           type="text"
-                          name="model"
+                          name="jumlahSiswa"
                           isRequired
-                          placeholder="Masukkan Model"
+                          placeholder="Masukkan Jumlah Siswa"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="SN"
-                          type="text"
-                          name="serialNumber"
-                          isRequired
-                          placeholder="Masukkan Serial Number"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <div style={{ marginLeft: '20px' }}>
+                        <FormGroup>
+                          <Field
+                            label="Form Permintaan Dari LOP (Learning Operator)"
+                            name="formPermintaan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Lamp Timer"
-                          type="text"
-                          name="lampTimer"
-                          isRequired
-                          placeholder="Masukkan Lamp Timer"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                        <FormGroup>
+                          <Field
+                            label="Izin Penugasan"
+                            name="izinPenugasan"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Ganti Lampu"
-                          options={[
-                            { value: true, label: 'Ya' },
-                            { value: false, label: 'Tidak' },
-                          ]}
-                          isRequired
-                          name="gantiLampu"
-                          placeholder="Pilih atau Cari Ganti Lampu"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                        <FormGroup>
+                          <Field
+                            label="Biaya Rekreasi"
+                            name="biayaRekreasi"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Ruangan"
-                          type="text"
-                          name="ruangan"
-                          isRequired
-                          placeholder="Masukkan Ruangan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kondisi"
-                          options={[
-                            { value: 'Baik', label: 'Baik' },
-                            { value: 'Tidak Baik', label: 'Tidak Baik' },
-                          ]}
-                          isRequired
-                          name="kondisi"
-                          placeholder="Pilih atau Cari Kondisi"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Keterangan"
-                          type="text"
-                          name="keterangan"
-                          isRequired
-                          placeholder="Masukkan Keterangan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                        <FormGroup>
+                          <Field
+                            label="Laporan Rekreasi"
+                            name="laporanRekreasi"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+                      </div>
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -397,7 +400,7 @@ class Infokus extends Component {
   }
 }
 
-Infokus.propTypes = {
+RekreasiSiswa.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -428,7 +431,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Infokus,
+      Component: RekreasiSiswa,
       toggles: {
         modalForm: false,
       },

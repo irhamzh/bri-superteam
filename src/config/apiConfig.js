@@ -1,7 +1,7 @@
 const BASE_URL = {
   production: 'http://localhost:8000',
   staging: 'http://localhost:8000',
-  development: 'http://localhost:8000',
+  development: 'http://localhost:5000/geochat-252415/asia-southeast2/api',
 }
 
 const ENV = process.env.REACT_APP_BUILD_ENV || 'development'

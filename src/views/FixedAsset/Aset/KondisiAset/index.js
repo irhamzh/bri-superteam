@@ -24,26 +24,10 @@ import Select from 'react-select'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { createAsset, updateAsset, deleteAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    code: 1234567,
-    nama: 'Elektronik',
-    kondisi: 'Baik',
-  },
-  {
-    code: 989667,
-    nama: 'Perkakas',
-    kondisi: 'Tidak Baik',
-  },
-]
+import { updateAssetSchema } from '../../../../validations/mvAsset'
 
 class KondisiAset extends Component {
   state = {
@@ -55,10 +39,7 @@ class KondisiAset extends Component {
     ],
   }
 
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -68,11 +49,11 @@ class KondisiAset extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createAsset, updateAsset } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateAsset(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createAsset(values, this.doRefresh)
     }
   }
 
@@ -91,13 +72,13 @@ class KondisiAset extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteDelete } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteDelete(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -188,11 +169,10 @@ class KondisiAset extends Component {
                 <br />
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -205,7 +185,7 @@ class KondisiAset extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                validationSchema={updateAssetSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -289,9 +269,9 @@ KondisiAset.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createAsset: PropTypes.func.isRequired,
+  updateAsset: PropTypes.func.isRequired,
+  deleteAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -303,9 +283,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
+  updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
+  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
 })
 
 export default connect(
@@ -313,7 +293,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getAsset(p),
     Component: withToggle({
       Component: KondisiAset,
       toggles: {

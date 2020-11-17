@@ -76,6 +76,111 @@ class Service {
   static deleteMasterProfesi(id) {
     return axios.delete(`master-profesi/${id}`)
   }
+
+  // Persekot
+  static getPersekot(params) {
+    return axios.get(`persekots${params}`)
+  }
+
+  static getPersekotById(id) {
+    return axios.get(`persekots/${id}`)
+  }
+
+  static createPersekot(values) {
+    return axios.post('persekots', values)
+  }
+
+  static updatePersekot(values, id) {
+    return axios.put(`persekots/${id}`, values)
+  }
+
+  static deletePersekot(id) {
+    return axios.delete(`persekots/${id}`)
+  }
+
+  // Asset
+  static getAsset(params) {
+    return axios.get(`assets${params}`)
+  }
+
+  static getAssetById(id) {
+    return axios.get(`assets/${id}`)
+  }
+
+  static createAsset(values) {
+    return axios.post('assets', values)
+  }
+
+  static updateAsset(values, id) {
+    return axios.put(`assets/${id}`, values)
+  }
+
+  static deleteAsset(id) {
+    return axios.delete(`assets/${id}`)
+  }
+
+  // Room
+  static getRoom(params) {
+    return axios.get(`rooms${params}`)
+  }
+
+  static getRoomById(id) {
+    return axios.get(`rooms/${id}`)
+  }
+
+  static createRoom(values) {
+    return axios.post('rooms', values)
+  }
+
+  static updateRoom(values, id) {
+    return axios.put(`rooms/${id}`, values)
+  }
+
+  static deleteRoom(id) {
+    return axios.delete(`rooms/${id}`)
+  }
+
+  // Vendor
+  static getVendor(params) {
+    return axios.get(`vendors${params}`)
+  }
+
+  static getVendorById(id) {
+    return axios.get(`vendors/${id}`)
+  }
+
+  static createVendor(values) {
+    return axios.post('vendors', values)
+  }
+
+  static updateVendor(values, id) {
+    return axios.put(`vendors/${id}`, values)
+  }
+
+  static deleteVendor(id) {
+    return axios.delete(`vendors/${id}`)
+  }
+
+  // Persediaan
+  static getPersediaan(params) {
+    return axios.get(`persediaans${params}`)
+  }
+
+  static getPersediaanById(id) {
+    return axios.get(`persediaans/${id}`)
+  }
+
+  static createPersediaan(values) {
+    return axios.post('persediaans', values)
+  }
+
+  static updatePersediaan(values, id) {
+    return axios.put(`persediaans/${id}`, values)
+  }
+
+  static deletePersediaan(id) {
+    return axios.delete(`persediaans/${id}`)
+  }
 }
 
 export default Service

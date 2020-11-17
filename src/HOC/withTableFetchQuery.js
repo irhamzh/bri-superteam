@@ -32,7 +32,7 @@ function WithTableFetchQuery(options = GET_CONFIG()) {
         loading: true,
         page: 0,
         pages: 0,
-        pageSize: 10,
+        limit: 10,
       }
       this.onFetchData = debounce(this.onFetchData.bind(this), 800)
       this.queryManager = queryManager
@@ -40,6 +40,7 @@ function WithTableFetchQuery(options = GET_CONFIG()) {
 
     onFetchData(state, instance, onFinish) {
       const { page, pageSize, sorted } = state
+      const limit = pageSize
       // show the loading overlay
       // this.setState({ loading: true })
       // fetch your data
@@ -49,8 +50,8 @@ function WithTableFetchQuery(options = GET_CONFIG()) {
 
       return API(
         `?${queryString.stringify({
-          page,
-          pageSize,
+          page: page + 1,
+          limit,
           ...this.queryManager.getStringifyQuery(),
         })}`
       )
@@ -64,7 +65,7 @@ function WithTableFetchQuery(options = GET_CONFIG()) {
           if (isError(resOrError)) {
             // AlertMessage.error(resOrError)
 
-            this.setState({ loading: false, page, pages: 0, pageSize }, () => {
+            this.setState({ loading: false, page, pages: 0, pageSize, limit }, () => {
               if (onFinish) {
                 onFinish([])
               }
@@ -75,8 +76,8 @@ function WithTableFetchQuery(options = GET_CONFIG()) {
             this.setState(
               {
                 data,
-                pages: Math.round(res.data.totalRow / pageSize, 10),
-                totalRow: res.data.totalRow,
+                pages: Math.ceil(res.data.totalCount / limit),
+                totalRow: res.data.totalCount,
                 loading: false,
                 page,
                 pageSize,

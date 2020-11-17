@@ -1,49 +1,16 @@
 import React, { Component } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Col,
-  Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  FormGroup,
-} from 'reactstrap'
+import { Button, Card, CardBody, CardHeader, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage } from '../../../../helpers'
+import { createPersekot, updatePersekot } from '../../../../modules/persekot/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaKegiatan: 'Kegiatan 1',
-    nominalBiaya: 10000000,
-  },
-  {
-    tanggal: '12/12/2020',
-    namaKegiatan: 'Kegiatan 1',
-    nominalBiaya: 20000000,
-  },
-]
 
 class PenihilanPersekot extends Component {
   initialValues = {
@@ -57,27 +24,17 @@ class PenihilanPersekot extends Component {
     fetchQueryProps.refresh()
   }
 
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
-    if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
-    } else {
-      createRole(values, this.doRefresh)
-    }
-  }
-
   handleDelete = (e, state) => {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePersekot } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePersekot(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -92,17 +49,15 @@ class PenihilanPersekot extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
-
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Checked',
         width: 100,
         filterable: false,
-        Cell: (props) => (
+        Cell: () => (
           <span>
             <Checkbox />
           </span>
@@ -110,19 +65,21 @@ class PenihilanPersekot extends Component {
       },
       {
         Header: 'Tanggal',
-        width: 100,
-        accessor: 'tanggal',
+        accessor: 'date',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Kegiatan',
-        accessor: 'namaKegiatan',
+        accessor: 'name',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nominal Biaya',
-        accessor: 'nominalBiaya',
+        accessor: 'costNominal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]
 
@@ -159,97 +116,13 @@ class PenihilanPersekot extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
-
-            <Modal
-              isOpen={modalForm.isOpen}
-              toggle={modalForm.toggle}
-              backdrop="static"
-              className={className}
-            >
-              <Formik
-                initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
-                onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    this.handleSaveChanges(values)
-                    actions.setSubmitting(false)
-                  }, 1000)
-                }}
-              >
-                {({ isSubmitting }) => (
-                  <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Kegiatan"
-                          type="text"
-                          name="namaKegiatan"
-                          isRequired
-                          placeholder="Masukkan Nama Kegiatan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nominal Biaya"
-                          type="text"
-                          name="nominalBiaya"
-                          isRequired
-                          placeholder="Masukkan Nominal Biaya"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button type="button" color="secondary" onClick={modalForm.hide}>
-                        Cancel
-                      </Button>
-                      &nbsp;
-                      <Button
-                        type="submit"
-                        color="primary"
-                        className="px-4"
-                        disabled={isSubmitting || isLoading}
-                      >
-                        {isSubmitting || isLoading ? (
-                          <>
-                            <Spinner size="sm" color="light" />
-                            &nbsp;Loading...
-                          </>
-                        ) : (
-                          'Submit'
-                        )}
-                      </Button>
-                    </ModalFooter>
-                  </Form>
-                )}
-              </Formik>
-            </Modal>
           </Col>
         </Row>
       </div>
@@ -262,9 +135,9 @@ PenihilanPersekot.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPersekot: PropTypes.func.isRequired,
+  updatePersekot: PropTypes.func.isRequired,
+  deletePersekot: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -276,9 +149,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPersekot: (formData, refresh) => dispatch(createPersekot(formData, refresh)),
+  updatePersekot: (formData, id, refresh) => dispatch(updatePersekot(formData, id, refresh)),
 })
 
 export default connect(
@@ -286,7 +158,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPersekot(p),
     Component: withToggle({
       Component: PenihilanPersekot,
       toggles: {

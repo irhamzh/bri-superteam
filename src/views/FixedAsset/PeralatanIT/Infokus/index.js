@@ -19,47 +19,39 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  createPeralatanIT,
+  updatePeralatanIT,
+  deletePeralatanIT,
+} from '../../../../modules/peralatan-it/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    merk: 'HP',
-    model: 'Standard',
-    serialNumber: 1234556677,
-    ruangan: 101,
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: true,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '12/12/2020',
-    merk: 'Samsung',
-    model: 'Standard',
-    serialNumber: 1234556677,
-    ruangan: 101,
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: false,
-    keterangan: 'Lorem Ipsum',
-  },
-]
+import { createInfokusSchema } from '../../../../validations/mvPeralatanIT'
 
 class Infokus extends Component {
+  state = {
+    optRuangan: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    jenisPeralatan: 'Infocus',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      jenisPeralatan: 'Infocus',
+    })
+
+    const resDataRuangan = await Service.getRoom()
+    const dataRuangan = resDataRuangan.data.data
+    const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
+    this.setState({
+      optRuangan,
+    })
   }
 
   doRefresh = () => {
@@ -70,11 +62,11 @@ class Infokus extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPeralatanIT, updatePeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePeralatanIT(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPeralatanIT(values, this.doRefresh)
     }
   }
 
@@ -82,13 +74,13 @@ class Infokus extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePeralatanIT } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePeralatanIT(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -105,6 +97,7 @@ class Infokus extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optRuangan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -114,33 +107,37 @@ class Infokus extends Component {
         width: 100,
         filterable: false,
         accessor: 'tanggal',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Merk',
         accessor: 'merk',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Model',
         accessor: 'model',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'SN',
-        accessor: 'serialNumber',
+        accessor: 'sn',
         filterable: true,
       },
       {
         Header: 'Lamp Timer',
         accessor: 'lampTimer',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Ganti Lampu',
         accessor: 'gantiLampu',
         filterable: false,
         Cell: (props) =>
-          props.value ? (
+          props.value === 'yes' ? (
             <div className="text-center">
               <i className="icon-check text-success" style={{ fontSize: '25px' }} />
             </div>
@@ -152,7 +149,7 @@ class Infokus extends Component {
       },
       {
         Header: 'Ruangan',
-        accessor: 'ruangan',
+        accessor: 'ruangan.name',
         filterable: true,
       },
       // {
@@ -162,7 +159,7 @@ class Infokus extends Component {
       // },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: true,
       },
       {
@@ -227,11 +224,10 @@ class Infokus extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -244,7 +240,7 @@ class Infokus extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                validationSchema={createInfokusSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -295,7 +291,7 @@ class Infokus extends Component {
                         <Field
                           label="SN"
                           type="text"
-                          name="serialNumber"
+                          name="sn"
                           isRequired
                           placeholder="Masukkan Serial Number"
                           component={CfInput}
@@ -317,8 +313,8 @@ class Infokus extends Component {
                         <Field
                           label="Ganti Lampu"
                           options={[
-                            { value: true, label: 'Ya' },
-                            { value: false, label: 'Tidak' },
+                            { value: 'yes', label: 'Ya' },
+                            { value: 'no', label: 'Tidak' },
                           ]}
                           isRequired
                           name="gantiLampu"
@@ -330,11 +326,11 @@ class Infokus extends Component {
                       <FormGroup>
                         <Field
                           label="Ruangan"
-                          type="text"
-                          name="ruangan"
+                          options={optRuangan}
                           isRequired
-                          placeholder="Masukkan Ruangan"
-                          component={CfInput}
+                          name="ruangan"
+                          placeholder="Pilih atau Cari Ruangan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -356,7 +352,7 @@ class Infokus extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
@@ -402,23 +398,23 @@ Infokus.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPeralatanIT: PropTypes.func.isRequired,
+  updatePeralatanIT: PropTypes.func.isRequired,
+  deletePeralatanIT: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanIt.isLoading,
+  message: state.peralatanIt.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPeralatanIT: (formData, refresh) => dispatch(createPeralatanIT(formData, refresh)),
+  updatePeralatanIT: (formData, id, refresh) => dispatch(updatePeralatanIT(formData, id, refresh)),
+  deletePeralatanIT: (id, refresh) => dispatch(deletePeralatanIT(id, refresh)),
 })
 
 export default connect(
@@ -426,7 +422,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPeralatanIT(p),
     Component: withToggle({
       Component: Infokus,
       toggles: {

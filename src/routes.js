@@ -4,6 +4,10 @@ import { fixedAsset, pengelolaGedung, procurement } from './navigation'
 
 const Dashboard = React.lazy(() => import('./views/Dashboard'))
 const Role = React.lazy(() => import('./views/Master/Role'))
+const Ruangan = React.lazy(() => import('./views/Master/Ruangan'))
+const JenisBarang = React.lazy(() => import('./views/Master/JenisBarang'))
+const JenisPC = React.lazy(() => import('./views/Master/JenisPC'))
+const Provider = React.lazy(() => import('./views/Master/Provider'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -317,9 +321,29 @@ const routes = [
     component: Role,
   },
   {
-    path: '/akun/role',
+    path: '/master/roles',
     name: 'Role',
     component: Role,
+  },
+  {
+    path: '/master/rooms',
+    name: 'Role',
+    component: Ruangan,
+  },
+  {
+    path: '/master/type-item',
+    name: 'Jenis Barang',
+    component: JenisBarang,
+  },
+  {
+    path: '/master/type-pc',
+    name: 'Jenis PC',
+    component: JenisPC,
+  },
+  {
+    path: '/master/providers',
+    name: 'Provider',
+    component: Provider,
   },
 ]
 

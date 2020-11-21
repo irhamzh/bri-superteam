@@ -11,48 +11,24 @@ import {
   ModalFooter,
   ModalHeader,
   Spinner,
-  FormGroup,
 } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
-import Select from 'react-select'
+import { Formik, Form } from 'formik'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { CfInput } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    code: 1234567,
-    nama: 'Elektronik',
-    kondisi: 'Baik',
-  },
-  {
-    code: 989667,
-    nama: 'Perkakas',
-    kondisi: 'Tidak Baik',
-  },
-]
-
 class Penghapusbukuan extends Component {
   state = {}
 
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -106,17 +82,16 @@ class Penghapusbukuan extends Component {
   }
 
   render() {
-    const { optKondisiAset, kondisiAsetId } = this.state
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Pilih',
         filterable: false,
-        Cell: (props) => (
+        Cell: () => (
           <span>
             <Checkbox />
           </span>
@@ -126,16 +101,18 @@ class Penghapusbukuan extends Component {
         Header: 'Kode',
         accessor: 'code',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Aset',
-        accessor: 'nama',
+        accessor: 'name',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]
 
     const pageName = 'Penghapusbukuan Aset'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -170,11 +147,10 @@ class Penghapusbukuan extends Component {
                 <br />
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -187,7 +163,7 @@ class Penghapusbukuan extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={roleSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -198,31 +174,7 @@ class Penghapusbukuan extends Component {
                 {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Kode Aset"
-                          type="text"
-                          name="kode"
-                          isRequired
-                          placeholder="Masukkan kode aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
-                    </ModalBody>
+                    <ModalBody>{ErrorMessage(message)}</ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
                         Cancel
@@ -269,8 +221,8 @@ Penghapusbukuan.propTypes = {
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.asset.isLoading,
+  message: state.asset.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -284,7 +236,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getAsset(p),
     Component: withToggle({
       Component: Penghapusbukuan,
       toggles: {

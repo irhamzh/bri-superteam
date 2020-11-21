@@ -19,57 +19,22 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputDate } from '../../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
+import {
+  createWorkingOrder,
+  updateWorkingOrder,
+  deleteWorkingOrder,
+} from '../../../../../modules/workingOrder/actions'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    kodePelatihan: 9987,
-    tanggalTerima: '08/12/2020',
-    tanggalRevisi: '10/12/2020',
-    tanggalKonfirmasi: '12/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
-  },
-  {
-    tanggal: '06/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    kodePelatihan: 3245,
-    tanggalTerima: '06/12/2020',
-    tanggalRevisi: '08/12/2020',
-    tanggalKonfirmasi: '10/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
-  },
-]
 
 class KegiatanLain extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    typeKegiatan: 'Kegiatan Lain',
   }
 
   doRefresh = () => {
@@ -80,11 +45,11 @@ class KegiatanLain extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createWorkingOrder, updateWorkingOrder } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateWorkingOrder(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createWorkingOrder(values, this.doRefresh)
     }
   }
 
@@ -92,13 +57,13 @@ class KegiatanLain extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteWorkingOrder } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteWorkingOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -121,71 +86,90 @@ class KegiatanLain extends Component {
     const columns = [
       {
         Header: 'Kode Working Order',
-        accessor: 'workingOrderCode',
+        accessor: 'kodeWorkingOrder',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kode Pelatihan',
         accessor: 'kodePelatihan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Tanggal Terima',
         accessor: 'tanggalTerima',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Tanggal Revisi',
         accessor: 'tanggalRevisi',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Tanggal Konfirmasi',
         accessor: 'tanggalKonfirmasi',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'SLA',
         accessor: 'sla',
         filterable: false,
+        Cell: (props) => (
+          <div style={{ textAlign: 'center' }}>
+            {Math.round(
+              (new Date(props.original.tanggalKonfirmasi) -
+                new Date(props.original.tanggalTerima)) /
+                (1000 * 24 * 3600)
+            )}
+          </div>
+        ),
       },
       {
         Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
+        accessor: 'catering',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
+        accessor: 'atk',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
+        accessor: 'hotel',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
+        accessor: 'akomodasi',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
+        accessor: 'pengajarEksternal',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -270,11 +254,10 @@ class KegiatanLain extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -287,7 +270,7 @@ class KegiatanLain extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -303,7 +286,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kode Working Order"
                           type="text"
-                          name="workingOrderCode"
+                          name="kodeWorkingOrder"
                           isRequired
                           placeholder="Masukkan Kode Working Order"
                           component={CfInput}
@@ -375,7 +358,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kebutuhan - Catering"
                           type="text"
-                          name="kebutuhanCatering"
+                          name="catering"
                           isRequired
                           placeholder="Masukkan Kebutuhan Catering"
                           component={CfInput}
@@ -386,7 +369,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kebutuhan - ATK"
                           type="text"
-                          name="kebutuhanATK"
+                          name="atk"
                           isRequired
                           placeholder="Masukkan Kebutuhan ATK"
                           component={CfInput}
@@ -397,7 +380,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kebutuhan - Hotel"
                           type="text"
-                          name="kebutuhanHotel"
+                          name="hotel"
                           isRequired
                           placeholder="Masukkan Kebutuhan Hotel"
                           component={CfInput}
@@ -408,7 +391,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kebutuhan - Akomodasi"
                           type="text"
-                          name="kebutuhanAkomodasi"
+                          name="akomodasi"
                           isRequired
                           placeholder="Masukkan Kebutuhan Akomodasi"
                           component={CfInput}
@@ -419,7 +402,7 @@ class KegiatanLain extends Component {
                         <Field
                           label="Kebutuhan - Pengajar Eksternal"
                           type="text"
-                          name="kebutuhanPengajarEksternal"
+                          name="pengajarEksternal"
                           isRequired
                           placeholder="Masukkan Kebutuhan Pengajar Eksternal"
                           component={CfInput}
@@ -465,23 +448,24 @@ KegiatanLain.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createWorkingOrder: PropTypes.func.isRequired,
+  updateWorkingOrder: PropTypes.func.isRequired,
+  deleteWorkingOrder: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.workingOrder.isLoading,
+  message: state.workingOrder.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createWorkingOrder: (formData, refresh) => dispatch(createWorkingOrder(formData, refresh)),
+  updateWorkingOrder: (formData, id, refresh) =>
+    dispatch(updateWorkingOrder(formData, id, refresh)),
+  deleteWorkingOrder: (id, refresh) => dispatch(deleteWorkingOrder(id, refresh)),
 })
 
 export default connect(
@@ -489,7 +473,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getWorkingOrder(p),
     Component: withToggle({
       Component: KegiatanLain,
       toggles: {

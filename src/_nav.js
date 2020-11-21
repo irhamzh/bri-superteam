@@ -57,11 +57,6 @@ export default {
           url: '/fixed-asset/peralatan-it',
           icon: 'fa fa-angle-double-right',
         },
-        // {
-        //   name: 'Reporting',
-        //   url: '/fixed-asset/reporting',
-        //   icon: 'fa fa-angle-double-right',
-        // },
       ],
     },
     {
@@ -190,14 +185,14 @@ export default {
       url: '/financial-admin',
       icon: 'icon-layers',
     },
-    // {
-    //   title: true,
-    //   name: 'M A S T E R',
-    //   wrapper: {
-    //     element: '',
-    //     attributes: {},
-    //   },
-    // },
+    {
+      title: true,
+      name: 'M A S T E R',
+      wrapper: {
+        element: '',
+        attributes: {},
+      },
+    },
     // {
     //   name: 'Account',
     //   url: '/akun',
@@ -215,17 +210,42 @@ export default {
     //     },
     //   ],
     // },
-    // {
-    //   name: 'Data Master',
-    //   url: '/master',
-    //   icon: 'fa fa-tasks',
-    //   children: [
-    //     {
-    //       name: 'Position',
-    //       url: '/master/position',
-    //       icon: 'fa fa-angle-double-right',
-    //     },
-    //   ],
-    // },
+    {
+      name: 'Data Master',
+      url: '/master',
+      icon: 'fa fa-tasks',
+      children: [
+        {
+          name: 'User',
+          url: '/master/users',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Roles',
+          url: '/master/roles',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Ruangan',
+          url: '/master/rooms',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Provider',
+          url: '/master/providers',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Barang',
+          url: '/master/type-item',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis PC',
+          url: '/master/type-pc',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
+    },
   ],
 }

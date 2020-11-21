@@ -19,46 +19,41 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createBarangSwakelola,
+  updateBarangSwakelola,
+  deleteBarangSwakelola,
+} from '../../../../../modules/pengadaan/swakelola/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    jenisPengadaan: 'Swakelola',
-    tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 1',
-    izinPrinsipUser: true,
-    izinPrinsiPengadaan: false,
-    izinHasilPengadaan: true,
-    jenisAnggaran: 'Investasi',
-    biayaPutusan: 100000,
-  },
-  {
-    jenisPengadaan: 'Swakelola',
-    tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 2',
-    izinPrinsipUser: true,
-    izinPrinsiPengadaan: true,
-    izinHasilPengadaan: true,
-    jenisAnggaran: 'Eksploitasi',
-    biayaPutusan: 10000000,
-  },
-]
-
 class Swakelola extends Component {
+  state = {
+    optProvider: [],
+  }
+
   initialValues = {
     jenisPengadaan: 'Swakelola',
+    typePengadaan: 'barang',
+    izinPrinsipUser: false,
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: false,
+  }
+
+  async componentDidMount() {
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optProvider,
+      dataProvider,
+    })
   }
 
   doRefresh = () => {
@@ -69,11 +64,11 @@ class Swakelola extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createBarangSwakelola, updateBarangSwakelola } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateBarangSwakelola(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createBarangSwakelola(values, this.doRefresh)
     }
   }
 
@@ -81,13 +76,13 @@ class Swakelola extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteBarangSwakelola } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteBarangSwakelola(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -104,21 +99,24 @@ class Swakelola extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optProvider, dataProvider } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Tanggal',
         width: 100,
-        accessor: 'tanggal',
+        accessor: 'tanggalPengadaan',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Izin Prinsip User',
@@ -265,11 +263,10 @@ class Swakelola extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -282,7 +279,7 @@ class Swakelola extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -309,7 +306,7 @@ class Swakelola extends Component {
                       <FormGroup>
                         <Field
                           label="Tanggal Pengadaan"
-                          name="tanggal"
+                          name="tanggalPengadaan"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
@@ -334,6 +331,7 @@ class Swakelola extends Component {
                           <Field
                             label="Izin Prinsip User"
                             name="izinPrinsipUser"
+                            value={!!values.izinPrinsipUser}
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -360,7 +358,7 @@ class Swakelola extends Component {
                           label="Jenis Anggaran"
                           options={[
                             { value: 'Investasi', label: 'Investasi' },
-                            { value: 'Epsloitasi', label: 'Eksploitasi' },
+                            { value: 'Eksploitasi', label: 'Eksploitasi' },
                           ]}
                           isRequired
                           name="jenisAnggaran"
@@ -395,12 +393,9 @@ class Swakelola extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Provider"
-                              options={[
-                                { value: 'PT. XXXX', label: 'PT. XXXX' },
-                                { value: 'PT. YYYY', label: 'PT. YYYY' },
-                              ]}
+                              options={optProvider}
                               isRequired
-                              name="namaProvider"
+                              name="provider"
                               placeholder="Pilih atau Cari Nama Provider"
                               component={CfSelect}
                             />
@@ -410,8 +405,12 @@ class Swakelola extends Component {
                             <Field
                               label="Alamat Provider"
                               type="text"
-                              name="alamatProvider"
+                              name="address"
                               isRequired
+                              disabled
+                              value={
+                                dataProvider.find((obj) => obj.id === values.provider)?.address
+                              }
                               placeholder="Masukkan Alamat Provider"
                               component={CfInput}
                             />
@@ -421,8 +420,12 @@ class Swakelola extends Component {
                             <Field
                               label="No. Kontak Provider"
                               type="text"
-                              name="kontakProvider"
+                              name="contact"
                               isRequired
+                              disabled
+                              value={
+                                dataProvider.find((obj) => obj.id === values.provider)?.contact
+                              }
                               placeholder="Masukkan No. Kontak Provider"
                               component={CfInput}
                             />
@@ -469,23 +472,24 @@ Swakelola.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createBarangSwakelola: PropTypes.func.isRequired,
+  updateBarangSwakelola: PropTypes.func.isRequired,
+  deleteBarangSwakelola: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.barangSwakelola.isLoading,
+  message: state.barangSwakelola.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createBarangSwakelola: (formData, refresh) => dispatch(createBarangSwakelola(formData, refresh)),
+  updateBarangSwakelola: (formData, id, refresh) =>
+    dispatch(updateBarangSwakelola(formData, id, refresh)),
+  deleteBarangSwakelola: (id, refresh) => dispatch(deleteBarangSwakelola(id, refresh)),
 })
 
 export default connect(
@@ -493,7 +497,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getBarangSwakelola(p),
     Component: withToggle({
       Component: Swakelola,
       toggles: {

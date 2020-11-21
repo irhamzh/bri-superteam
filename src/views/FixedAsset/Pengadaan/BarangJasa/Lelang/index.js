@@ -19,70 +19,45 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createBarangLelang,
+  updateBarangLelang,
+  deleteBarangLelang,
+} from '../../../../../modules/pengadaan/lelang/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    jenisPengadaan: 'Lelang',
-
-    tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 1',
-    izinPrinsipUser: true,
-    izinPrinsipPengadaan: false,
-    izinHasilPengadaan: true,
-    undangan: true,
-    aanwijzing: false,
-    klasifikasiNotifikasi: false,
-    jenisAnggaran: 'Investasi',
-    biayaPutusan: 100000,
-    nomorSpk: 123456,
-    namaProvider: 'PT. XXX',
-    alamatProvider: 'Alamat 1',
-    contactProvider: '08XXXXX',
-    jenisPekerjaan: 'Pegawai',
-    jumlahBiaya: 12345,
-    jenisBarang: 'Perkakas',
-    masaBerlaku: '12/12/2020',
-  },
-  {
-    jenisPengadaan: 'Lelang',
-
-    tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 2',
-    izinPrinsipUser: true,
-    undangan: false,
-    aanwijzing: true,
-    izinPrinsiPengadaan: true,
-    izinHasilPengadaan: true,
-    klasifikasiNotifikasi: true,
-    jenisAnggaran: 'Eksploitasi',
-    biayaPutusan: 10000000,
-    nomorSpk: 98776554,
-    namaProvider: 'PT. YYY',
-    alamatProvider: 'Alamat 2',
-    contactProvider: '08XXXXX',
-    jenisPekerjaan: 'Kontraktor',
-    jumlahBiaya: 12345,
-    jenisBarang: 'Elektronik',
-    masaBerlaku: '12/12/2020',
-  },
-]
-
 class Lelang extends Component {
+  state = {
+    optProvider: [],
+    dataProvider: [],
+  }
+
   initialValues = {
     jenisPengadaan: 'Lelang',
+    typePengadaan: 'barang',
+    izinPrinsipUser: false,
+    undangan: false,
+    aanwijzing: false,
+    izinPrinsiPengadaan: false,
+    izinHasilPengadaan: false,
+    klasifikasiNotifikasi: false,
+  }
+
+  async componentDidMount() {
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optProvider,
+      dataProvider,
+    })
   }
 
   doRefresh = () => {
@@ -93,11 +68,11 @@ class Lelang extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createBarangLelang, updateBarangLelang } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateBarangLelang(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createBarangLelang(values, this.doRefresh)
     }
   }
 
@@ -105,13 +80,13 @@ class Lelang extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteBarangLelang } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteBarangLelang(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -128,8 +103,9 @@ class Lelang extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optProvider, dataProvider } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
@@ -137,12 +113,14 @@ class Lelang extends Component {
         width: 100,
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Izin Prinsip User',
@@ -406,11 +384,10 @@ class Lelang extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -423,7 +400,7 @@ class Lelang extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -431,7 +408,7 @@ class Lelang extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
                     <ModalBody>
@@ -588,12 +565,9 @@ class Lelang extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          options={[
-                            { value: 'PT. XXXX', label: 'PT. XXXX' },
-                            { value: 'PT. YYYY', label: 'PT. YYYY' },
-                          ]}
+                          options={optProvider}
                           isRequired
-                          name="namaProvider"
+                          name="provider"
                           placeholder="Pilih atau Cari Nama Provider"
                           component={CfSelect}
                         />
@@ -603,8 +577,10 @@ class Lelang extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamatProvider"
+                          name="address"
                           isRequired
+                          disabled
+                          value={dataProvider.find((obj) => obj.id === values.provider)?.address}
                           placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
@@ -614,8 +590,10 @@ class Lelang extends Component {
                         <Field
                           label="No. Kontak Provider"
                           type="text"
-                          name="kontakProvider"
+                          name="contact"
                           isRequired
+                          disabled
+                          value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
                           placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
@@ -658,7 +636,7 @@ class Lelang extends Component {
                         <Col sm="6">
                           <Field
                             label="Masa Berlaku"
-                            name="tanggalAwalBerlaku"
+                            name="masaBerlaku"
                             classIcon="fa fa-calendar"
                             blockLabel
                             minDate={new Date()}
@@ -671,7 +649,7 @@ class Lelang extends Component {
                         <Col sm="6">
                           <Field
                             label="Sampai"
-                            name="tanggalAkhirBerlaku"
+                            name="sampai"
                             classIcon="fa fa-calendar"
                             blockLabel
                             minDate={new Date()}
@@ -721,23 +699,24 @@ Lelang.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createBarangLelang: PropTypes.func.isRequired,
+  updateBarangLelang: PropTypes.func.isRequired,
+  deleteBarangLelang: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.barangLelang.isLoading,
+  message: state.barangLelang.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createBarangLelang: (formData, refresh) => dispatch(createBarangLelang(formData, refresh)),
+  updateBarangLelang: (formData, id, refresh) =>
+    dispatch(updateBarangLelang(formData, id, refresh)),
+  deleteBarangLelang: (id, refresh) => dispatch(deleteBarangLelang(id, refresh)),
 })
 
 export default connect(
@@ -745,7 +724,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getBarangLelang(p),
     Component: withToggle({
       Component: Lelang,
       toggles: {

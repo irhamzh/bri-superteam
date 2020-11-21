@@ -19,46 +19,23 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  createPurchaseOrder,
+  updatePurchaseOrder,
+  deletePurchaseOrder,
+} from '../../../../modules/purchaseOrder/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Samsung',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 10,
-    hargaBarang: 200000,
-    total: 2000000,
-  },
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Apple',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 50,
-    hargaBarang: 20000000,
-    total: 1000000000,
-  },
-]
-
 class PurchaseOrder extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optPengadaan: [],
   }
+
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -68,11 +45,11 @@ class PurchaseOrder extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPurchaseOrder, updatePurchaseOrder } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePurchaseOrder(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPurchaseOrder(values, this.doRefresh)
     }
   }
 
@@ -80,13 +57,13 @@ class PurchaseOrder extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePurchaseOrder } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePurchaseOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -103,6 +80,7 @@ class PurchaseOrder extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optPengadaan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -115,7 +93,7 @@ class PurchaseOrder extends Component {
       },
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
+        accessor: 'provider.name',
         filterable: true,
         headerClassName: 'wordwrap',
       },
@@ -131,25 +109,25 @@ class PurchaseOrder extends Component {
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
+        accessor: 'pengadaan',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Barang',
-        accessor: 'jumlahBarang',
+        accessor: 'jumlah',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Harga Barang',
-        accessor: 'hargaBarang',
+        accessor: 'hargaSatuan',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Total Harga',
-        accessor: 'total',
+        accessor: 'totalHarga',
         filterable: true,
         headerClassName: 'wordwrap',
       },
@@ -215,11 +193,10 @@ class PurchaseOrder extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -232,7 +209,7 @@ class PurchaseOrder extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -247,7 +224,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
+                          options={optPengadaan}
                           isRequired
                           name="namaPengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
@@ -259,7 +236,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Nama Provider"
                           type="text"
-                          name="namaProvider"
+                          name="provider"
                           isRequired
                           placeholder="Masukkan nama provider"
                           component={CfInput}
@@ -292,7 +269,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Jumlah"
                           type="text"
-                          name="jumlahBarang"
+                          name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah PO"
                           component={CfInput}
@@ -303,7 +280,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Harga Satuan"
                           type="text"
-                          name="hargaBarang"
+                          name="hargaSatuan"
                           isRequired
                           placeholder="Masukkan harga"
                           component={CfInput}
@@ -314,7 +291,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Total Harga"
                           type="text"
-                          name="total"
+                          name="totalHarga"
                           isRequired
                           placeholder="Masukkan Total Harga"
                           component={CfInput}
@@ -360,23 +337,24 @@ PurchaseOrder.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPurchaseOrder: PropTypes.func.isRequired,
+  updatePurchaseOrder: PropTypes.func.isRequired,
+  deletePurchaseOrder: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.purchaseOrder.isLoading,
+  message: state.purchaseOrder.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPurchaseOrder: (formData, refresh) => dispatch(createPurchaseOrder(formData, refresh)),
+  updatePurchaseOrder: (formData, id, refresh) =>
+    dispatch(updatePurchaseOrder(formData, id, refresh)),
+  deletePurchaseOrder: (id, refresh) => dispatch(deletePurchaseOrder(id, refresh)),
 })
 
 export default connect(
@@ -384,7 +362,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPurchaseOrder(p),
     Component: withToggle({
       Component: PurchaseOrder,
       toggles: {

@@ -63,7 +63,7 @@ function WithTableFetchQuery(options = GET_CONFIG()) {
         })
         .then((resOrError) => {
           if (isError(resOrError)) {
-            // AlertMessage.error(resOrError)
+            AlertMessage.error(resOrError)
 
             this.setState({ loading: false, page, pages: 0, pageSize, limit }, () => {
               if (onFinish) {

@@ -19,44 +19,23 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createTandaTerima,
+  updateTandaTerima,
+  deleteTandaTerima,
+} from '../../../../modules/tandaTerima/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Samsung',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 10,
-    hargaBarang: 200000,
-  },
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Apple',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 50,
-    hargaBarang: 20000000,
-  },
-]
-
 class TandaTerima extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optPengadaan: [],
   }
+
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -66,11 +45,11 @@ class TandaTerima extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createTandaTerima, updateTandaTerima } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateTandaTerima(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createTandaTerima(values, this.doRefresh)
     }
   }
 
@@ -78,13 +57,13 @@ class TandaTerima extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteTandaTerima } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteTandaTerima(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,6 +80,7 @@ class TandaTerima extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optPengadaan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -110,31 +90,37 @@ class TandaTerima extends Component {
         width: 100,
         filterable: false,
         accessor: 'tanggal',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
+        accessor: 'provider.name',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
 
       {
         Header: 'Alamat',
         filterable: false,
-        accessor: 'alamat',
+        accessor: 'provider.alamat',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kontak',
-        accessor: 'contact',
+        accessor: 'provider.kontak',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
+        accessor: 'pengadaan.name',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah Barang',
-        accessor: 'jumlahBarang',
+        accessor: 'jumlah',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -198,11 +184,10 @@ class TandaTerima extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -215,7 +200,7 @@ class TandaTerima extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -230,7 +215,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
+                          options={optPengadaan}
                           isRequired
                           name="namaPengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
@@ -242,7 +227,7 @@ class TandaTerima extends Component {
                         <Field
                           label="Nama Provider"
                           type="text"
-                          name="namaProvider"
+                          name="provider.name"
                           isRequired
                           placeholder="Masukkan nama provider"
                           component={CfInput}
@@ -321,23 +306,23 @@ TandaTerima.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createTandaTerima: PropTypes.func.isRequired,
+  updateTandaTerima: PropTypes.func.isRequired,
+  deleteTandaTerima: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.tandaTerima.isLoading,
+  message: state.tandaTerima.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createTandaTerima: (formData, refresh) => dispatch(createTandaTerima(formData, refresh)),
+  updateTandaTerima: (formData, id, refresh) => dispatch(updateTandaTerima(formData, id, refresh)),
+  deleteTandaTerima: (id, refresh) => dispatch(deleteTandaTerima(id, refresh)),
 })
 
 export default connect(
@@ -345,7 +330,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getTandaTerima(p),
     Component: withToggle({
       Component: TandaTerima,
       toggles: {

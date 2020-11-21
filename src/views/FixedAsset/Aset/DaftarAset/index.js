@@ -77,7 +77,7 @@ class DaftarAset extends Component {
     const columns = [
       {
         Header: 'Kode',
-        accessor: 'id',
+        accessor: 'code',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

@@ -19,11 +19,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Select from 'react-select'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { ErrorMessage, invalidValues } from '../../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -68,52 +67,55 @@ class KondisiAset extends Component {
     )
   }
 
-  handleDelete = (e, state) => {
-    e.preventDefault()
+  // handleDelete = (e, state) => {
+  //   e.preventDefault()
 
-    const { id } = state
-    const { deleteDelete } = this.props
+  //   const { id } = state
+  //   const { deleteDelete } = this.props
 
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          console.log('delete object', id)
-          deleteDelete(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
-  }
+  //   AlertMessage.warning()
+  //     .then((result) => {
+  //       if (result.value) {
+  //         console.log('delete object', id)
+  //         deleteDelete(id, this.doRefresh)
+  //       } else {
+  //         const paramsResponse = {
+  //           title: 'Huff',
+  //           text: 'Hampir saja kamu kehilangan data ini',
+  //         }
+  //         AlertMessage.info(paramsResponse)
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       AlertMessage.error(err) // Internal Server Error
+  //     })
+  // }
 
   render() {
     const { optKondisiAset, kondisiAsetId } = this.state
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Kode',
         accessor: 'code',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Aset',
-        accessor: 'nama',
+        accessor: 'name',
         filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kondisi',
-        accessor: 'kondisi',
+        accessor: 'condition',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -134,7 +136,7 @@ class KondisiAset extends Component {
     ]
 
     const pageName = 'Kondisi Aset'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 

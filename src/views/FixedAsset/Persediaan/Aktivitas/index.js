@@ -19,43 +19,31 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  createPersediaan,
+  updatePersediaan,
+  deletePersediaan,
+} from '../../../../modules/persediaan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/12/2020',
-    jenisBarang: 'Pupuk',
-    namaBarang: 'Pupuk Urea',
-    stokAwal: 100,
-    penambahan: 10,
-    pengurangan: 20,
-    stokAkhir: 90,
-  },
-  {
-    tanggal: '08/12/2020',
-    jenisBarang: 'Kertas',
-    namaBarang: 'Kertas',
-    stokAwal: 100,
-    penambahan: 20,
-    pengurangan: 40,
-    stokAkhir: 80,
-  },
-]
-
 class Aktivitas extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optJenisBarang: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataJenisBarang = await Service.getJenisBarang()
+    const dataJenisBarang = resDataJenisBarang.data.data
+    const optJenisBarang = dataJenisBarang.map((row) => ({ label: row.name, value: row.id }))
+    this.setState({
+      optJenisBarang,
+    })
   }
 
   doRefresh = () => {
@@ -66,11 +54,11 @@ class Aktivitas extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPersediaan, updatePersediaan } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePersediaan(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPersediaan(values, this.doRefresh)
     }
   }
 
@@ -78,13 +66,13 @@ class Aktivitas extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePersediaan } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePersediaan(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,8 +89,9 @@ class Aktivitas extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optJenisBarang } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
@@ -113,12 +102,12 @@ class Aktivitas extends Component {
       },
       {
         Header: 'Jenis Barang',
-        accessor: 'jenisBarang',
+        accessor: 'jenisBarang.name',
         filterable: true,
       },
       {
         Header: 'Nama Barang',
-        accessor: 'namaBarang',
+        accessor: 'name',
         filterable: false,
       },
       {
@@ -223,11 +212,10 @@ class Aktivitas extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -240,7 +228,7 @@ class Aktivitas extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={roleSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -250,7 +238,7 @@ class Aktivitas extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Aktivitas</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -268,7 +256,7 @@ class Aktivitas extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis Barang"
-                          options={[{ value: 'Jenis Barang', label: 'Jenis Barang' }]}
+                          options={optJenisBarang}
                           isRequired
                           name="jenisBarang"
                           placeholder="Pilih atau Cari Jenis Barang"
@@ -280,7 +268,7 @@ class Aktivitas extends Component {
                         <Field
                           label="Nama Barang"
                           type="text"
-                          name="namaBarang"
+                          name="name"
                           isRequired
                           placeholder="Masukkan Nama Barang"
                           component={CfInput}
@@ -370,23 +358,23 @@ Aktivitas.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPersediaan: PropTypes.func.isRequired,
+  updatePersediaan: PropTypes.func.isRequired,
+  deletePersediaan: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.persediaan.isLoading,
+  message: state.persediaan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPersediaan: (formData, refresh) => dispatch(createPersediaan(formData, refresh)),
+  updatePersediaan: (formData, id, refresh) => dispatch(updatePersediaan(formData, id, refresh)),
+  deletePersediaan: (id, refresh) => dispatch(deletePersediaan(id, refresh)),
 })
 
 export default connect(
@@ -394,7 +382,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPersediaan(p),
     Component: withToggle({
       Component: Aktivitas,
       toggles: {

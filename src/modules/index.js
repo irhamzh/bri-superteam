@@ -24,6 +24,8 @@ import konsultanSeleksiLangsung from './pengadaan/seleksiLangsung/reducer'
 import partnerReducer from './partners/reducer'
 import peralatanKerja from './peralatankerja/reducer'
 import waterMeter from './waterMeter/reducer'
+import lantai from './lantai/reducer'
+import item from './item/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -51,6 +53,8 @@ const rootReducer = combineReducers({
   partner: partnerReducer,
   waterMeter,
   peralatanKerja,
+  lantai,
+  item,
 })
 
 export default rootReducer

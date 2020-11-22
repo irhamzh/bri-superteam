@@ -596,6 +596,48 @@ class Service {
   static deleteWaterMeter(id) {
     return axios.delete(`water-meters/${id}`)
   }
+
+  // Lantai
+  static getLantai(params) {
+    return axios.get(`floors${params}`)
+  }
+
+  static getLantaiById(id) {
+    return axios.get(`floors/${id}`)
+  }
+
+  static createLantai(values) {
+    return axios.post('floors', values)
+  }
+
+  static updateLantai(values, id) {
+    return axios.put(`floors/${id}`, values)
+  }
+
+  static deleteLantai(id) {
+    return axios.delete(`floors/${id}`)
+  }
+
+  // Item
+  static getItem(params) {
+    return axios.get(`items${params}`)
+  }
+
+  static getItemById(id) {
+    return axios.get(`items/${id}`)
+  }
+
+  static createItem(values) {
+    return axios.post('items', values)
+  }
+
+  static updateItem(values, id) {
+    return axios.put(`items/${id}`, values)
+  }
+
+  static deleteItem(id) {
+    return axios.delete(`items/${id}`)
+  }
 }
 
 export default Service

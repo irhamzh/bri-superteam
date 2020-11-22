@@ -226,6 +226,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Lantai',
+          url: '/master/lantai',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Ruangan',
           url: '/master/rooms',
           icon: 'fa fa-angle-double-right',
@@ -233,6 +238,11 @@ export default {
         {
           name: 'Provider',
           url: '/master/providers',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Item',
+          url: '/master/item',
           icon: 'fa fa-angle-double-right',
         },
         {

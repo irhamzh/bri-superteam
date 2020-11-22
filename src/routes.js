@@ -8,6 +8,8 @@ const Ruangan = React.lazy(() => import('./views/Master/Ruangan'))
 const JenisBarang = React.lazy(() => import('./views/Master/JenisBarang'))
 const JenisPC = React.lazy(() => import('./views/Master/JenisPC'))
 const Provider = React.lazy(() => import('./views/Master/Provider'))
+const Rekanan = React.lazy(() => import('./views/Master/Rekanan'))
+const WaterMeter = React.lazy(() => import('./views/Master/WaterMeter'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -344,6 +346,17 @@ const routes = [
     path: '/master/providers',
     name: 'Provider',
     component: Provider,
+  },
+
+  {
+    path: '/master/partners',
+    name: 'Rekanan',
+    component: Rekanan,
+  },
+  {
+    path: '/master/water-meter',
+    name: 'Water Meter',
+    component: WaterMeter,
   },
 ]
 

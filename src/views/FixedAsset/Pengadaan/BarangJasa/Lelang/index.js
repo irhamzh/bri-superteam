@@ -526,8 +526,8 @@ class Lelang extends Component {
                         <Field
                           label="Jenis Anggaran"
                           options={[
-                            { value: 'Investasi', label: 'Investasi' },
-                            { value: 'Epsloitasi', label: 'Eksploitasi' },
+                            { value: 'investasi', label: 'Investasi' },
+                            { value: 'epsloitasi', label: 'Eksploitasi' },
                           ]}
                           isRequired
                           name="jenisAnggaran"

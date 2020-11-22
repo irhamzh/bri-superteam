@@ -20,6 +20,10 @@ import barangPembelianLangsungReducer from './pengadaan/pembelianLangsung/reduce
 import barangPenunjukanLangsungReducer from './pengadaan/penunjukanLangsung/reducer'
 import barangPemilihanLangsungReducer from './pengadaan/pemilihanLangsung/reducer'
 import barangLelangReducer from './pengadaan/lelang/reducer'
+import konsultanSeleksiLangsung from './pengadaan/seleksiLangsung/reducer'
+import partnerReducer from './partners/reducer'
+import peralatanKerja from './peralatankerja/reducer'
+import waterMeter from './waterMeter/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -43,6 +47,10 @@ const rootReducer = combineReducers({
   barangPenunjukanLangsung: barangPenunjukanLangsungReducer,
   barangPemilihanLangsung: barangPemilihanLangsungReducer,
   barangLelang: barangLelangReducer,
+  konsultanSeleksiLangsung,
+  partner: partnerReducer,
+  waterMeter,
+  peralatanKerja,
 })
 
 export default rootReducer

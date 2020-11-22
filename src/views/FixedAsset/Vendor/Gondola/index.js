@@ -19,39 +19,26 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    sistemKerjaTaliBaja: true,
-    panelKelistrikan: true,
-    perangkatKerja: true,
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '13/12/2020',
-    sistemKerjaTaliBaja: false,
-    panelKelistrikan: true,
-    perangkatKerja: false,
-    keterangan: 'Lorem ipsum',
-  },
-]
-
 class Gondola extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    typeMonitoring: 'Gondola',
+    sistemKerjaTaliBaja: false,
+    panelKelistrikan: false,
+    perangkatKerjaGondola: false,
+  }
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeMonitoring: 'Gondola',
+    })
   }
 
   doRefresh = () => {
@@ -62,11 +49,11 @@ class Gondola extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createVendor, updateVendor } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateVendor(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createVendor(values, this.doRefresh)
     }
   }
 
@@ -74,13 +61,13 @@ class Gondola extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteVendor } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteVendor(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -98,7 +85,7 @@ class Gondola extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
@@ -106,6 +93,7 @@ class Gondola extends Component {
         width: 100,
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Sistem Kerja Tali Baja',
@@ -141,7 +129,7 @@ class Gondola extends Component {
       },
       {
         Header: 'Perangkat Kerja Gondola',
-        accessor: 'perangkatKerja',
+        accessor: 'perangkatKerjaGondola',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
@@ -157,7 +145,7 @@ class Gondola extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: true,
         headerClassName: 'wordwrap',
       },
@@ -190,7 +178,7 @@ class Gondola extends Component {
     ]
 
     const pageName = 'Gondola'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -242,11 +230,10 @@ class Gondola extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -259,7 +246,7 @@ class Gondola extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -306,7 +293,7 @@ class Gondola extends Component {
                         <FormGroup>
                           <Field
                             label="Perangkat Kerja Gondola"
-                            name="perangkatKerja"
+                            name="perangkatKerjaGondola"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -316,7 +303,7 @@ class Gondola extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
@@ -362,23 +349,23 @@ Gondola.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createVendor: PropTypes.func.isRequired,
+  updateVendor: PropTypes.func.isRequired,
+  deleteVendor: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.vendor.isLoading,
+  message: state.vendor.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createVendor: (formData, refresh) => dispatch(createVendor(formData, refresh)),
+  updateVendor: (formData, id, refresh) => dispatch(updateVendor(formData, id, refresh)),
+  deleteVendor: (id, refresh) => dispatch(deleteVendor(id, refresh)),
 })
 
 export default connect(
@@ -386,7 +373,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getVendor(p),
     Component: withToggle({
       Component: Gondola,
       toggles: {

@@ -19,57 +19,44 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    toilet: true,
-    musholla: true,
-    lobbyLounge: false,
-    rMeeting: true,
-    rKelas: true,
-    rKerja: false,
-    koridor: true,
-    tanggaDarurat: false,
-    rSampah: true,
-    rShaft: false,
-    parkirMotor: true,
-    halaman: false,
-    rekanan: 'PT. ABC',
-  },
-  {
-    tanggal: '12/12/2020',
-    toilet: true,
-    musholla: true,
-    lobbyLounge: false,
-    rMeeting: true,
-    rKelas: false,
-    rKerja: true,
-    koridor: true,
-    tanggaDarurat: true,
-    rSampah: true,
-    rShaft: false,
-    parkirMotor: true,
-    halaman: false,
-    rekanan: 'PT. ABC',
-  },
-]
-
 class PestControl extends Component {
+  state = {
+    optRekanan: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    typeMonitoring: 'Pest Control',
+    toilet: false,
+    musholla: false,
+    lobbyLounge: false,
+    rMeeting: false,
+    rKelas: false,
+    rKerja: false,
+    koridor: false,
+    tanggaDarurat: false,
+    rSampah: false,
+    rShaft: false,
+    parkirMotor: false,
+    halaman: false,
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeMonitoring: 'Pest Control',
+    })
+    const resDataRekanan = await Service.getPartner()
+    const dataRekanan = resDataRekanan.data.data
+    const optRekanan = dataRekanan.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optRekanan })
   }
 
   doRefresh = () => {
@@ -80,11 +67,11 @@ class PestControl extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createVendor, updateVendor } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateVendor(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createVendor(values, this.doRefresh)
     }
   }
 
@@ -92,13 +79,13 @@ class PestControl extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteVendor } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteVendor(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -115,8 +102,9 @@ class PestControl extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optRekanan } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
@@ -124,6 +112,7 @@ class PestControl extends Component {
         width: 100,
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Toilet',
@@ -172,7 +161,7 @@ class PestControl extends Component {
       },
       {
         Header: 'R. Meeting',
-        accessor: 'rMeeting',
+        accessor: 'ruangMeeting',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -187,7 +176,7 @@ class PestControl extends Component {
       },
       {
         Header: 'R. Kelas',
-        accessor: 'rKelas',
+        accessor: 'ruangKelas',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -202,7 +191,7 @@ class PestControl extends Component {
       },
       {
         Header: 'R. Kerja',
-        accessor: 'rKerja',
+        accessor: 'ruangKerja',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -217,7 +206,7 @@ class PestControl extends Component {
       },
       {
         Header: 'Koridor',
-        accessor: 'koridor',
+        accessor: 'corridor',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -247,7 +236,7 @@ class PestControl extends Component {
       },
       {
         Header: 'R. Sampah',
-        accessor: 'rSampah',
+        accessor: 'ruangSampah',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -262,7 +251,7 @@ class PestControl extends Component {
       },
       {
         Header: 'R. Shaft',
-        accessor: 'rShaft',
+        accessor: 'ruangShaft',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -307,8 +296,9 @@ class PestControl extends Component {
       },
       {
         Header: 'Rekanan',
-        accessor: 'rekanan',
+        accessor: 'rekanan.name',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -339,7 +329,7 @@ class PestControl extends Component {
     ]
 
     const pageName = 'Pest Control'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -391,11 +381,10 @@ class PestControl extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -408,7 +397,7 @@ class PestControl extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -436,9 +425,9 @@ class PestControl extends Component {
                       <FormGroup>
                         <Field
                           label="Rekanan"
-                          options={[{ value: 'PT. ABC', label: 'PT. ABC' }]}
+                          options={optRekanan}
                           isRequired
-                          name="rekanan"
+                          name="partner"
                           placeholder="Pilih atau Cari Rekanan"
                           component={CfSelect}
                         />
@@ -466,21 +455,29 @@ class PestControl extends Component {
                         <FormGroup>
                           <Field
                             label="Ruang Meeting"
-                            name="rMeeting"
+                            name="ruangMeeting"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Ruang Kelas" name="rKelas" component={CfInputCheckbox} />
+                          <Field
+                            label="Ruang Kelas"
+                            name="ruangKelas"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Ruang Kerja" name="rKerja" component={CfInputCheckbox} />
+                          <Field
+                            label="Ruang Kerja"
+                            name="ruangKerja"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Corridor" name="koridor" component={CfInputCheckbox} />
+                          <Field label="Corridor" name="corridor" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
@@ -492,11 +489,19 @@ class PestControl extends Component {
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Ruang Sampah" name="rSampah" component={CfInputCheckbox} />
+                          <Field
+                            label="Ruang Sampah"
+                            name="ruangSampah"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Ruang Shaft" name="rShaft" component={CfInputCheckbox} />
+                          <Field
+                            label="Ruang Shaft"
+                            name="ruangShaft"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
@@ -551,23 +556,23 @@ PestControl.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createVendor: PropTypes.func.isRequired,
+  updateVendor: PropTypes.func.isRequired,
+  deleteVendor: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.vendor.isLoading,
+  message: state.vendor.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createVendor: (formData, refresh) => dispatch(createVendor(formData, refresh)),
+  updateVendor: (formData, id, refresh) => dispatch(updateVendor(formData, id, refresh)),
+  deleteVendor: (id, refresh) => dispatch(deleteVendor(id, refresh)),
 })
 
 export default connect(
@@ -575,7 +580,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getVendor(p),
     Component: withToggle({
       Component: PestControl,
       toggles: {

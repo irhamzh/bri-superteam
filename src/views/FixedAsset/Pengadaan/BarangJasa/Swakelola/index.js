@@ -357,8 +357,8 @@ class Swakelola extends Component {
                         <Field
                           label="Jenis Anggaran"
                           options={[
-                            { value: 'Investasi', label: 'Investasi' },
-                            { value: 'Eksploitasi', label: 'Eksploitasi' },
+                            { value: 'investasi', label: 'Investasi' },
+                            { value: 'eksploitasi', label: 'Eksploitasi' },
                           ]}
                           isRequired
                           name="jenisAnggaran"

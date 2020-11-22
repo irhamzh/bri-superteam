@@ -236,6 +236,16 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Water Meter',
+          url: '/master/water-meter',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Rekanan',
+          url: '/master/partners',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Jenis Barang',
           url: '/master/type-item',
           icon: 'fa fa-angle-double-right',

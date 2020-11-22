@@ -19,56 +19,33 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createPeralatanKerja,
+  updatePeralatanKerja,
+  deletePeralatanKerja,
+} from '../../../../../modules/peralatankerja/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    doubleBucket: 'Baik',
-    singleBucket: 'Baik',
-    lobbyDusterStick: 'Baik',
-    mopSet: 'Baik',
-    windowSqueeze: 'Baik',
-    windowWasher: 'Baik',
-    teleskopPool6: 'Baik',
-    floorSqueeze: 'Baik',
-    ember15lt: 'Baik',
-    gayung: 'Baik',
-    tanggaAlumunium2M: 'Baik',
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    doubleBucket: 'Baik',
-    singleBucket: 'Tidak Baik',
-    lobbyDusterStick: 'Baik',
-    mopSet: 'Tidak Baik',
-    windowSqueeze: 'Baik',
-    windowWasher: 'Baik',
-    teleskopPool6: 'Tidak Baik',
-    floorSqueeze: 'Baik',
-    ember15lt: 'Baik',
-    gayung: 'Baik',
-    tanggaAlumunium2M: 'Baik',
-    keterangan: 'Lorem Ipsum',
-  },
-]
 class Equipment extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    typePeralatanKerja: 'equipment consumable',
+    doubleBucket: 'yes',
+    singleBucket: 'yes',
+    lobbyDusterStick: 'yes',
+    mopSet: 'yes',
+    windowSqueeze: 'yes',
+    windowWasher: 'yes',
+    teleskopicPool: 'yes',
+    floorSqueeze: 'yes',
+    ember: 'yes',
+    gayung: 'yes',
+    tanggaAlumunium: 'yes',
   }
 
   doRefresh = () => {
@@ -79,11 +56,11 @@ class Equipment extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPeralatanKerja, updatePeralatanKerja } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePeralatanKerja(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPeralatanKerja(values, this.doRefresh)
     }
   }
 
@@ -91,13 +68,13 @@ class Equipment extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePeralatanKerja } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePeralatanKerja(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -123,6 +100,7 @@ class Equipment extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Double Bucket',
@@ -161,7 +139,7 @@ class Equipment extends Component {
       },
       {
         Header: 'Teleskop Pool 6',
-        accessor: 'teleskopPool6',
+        accessor: 'teleskopicPool',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -173,7 +151,7 @@ class Equipment extends Component {
       },
       {
         Header: 'Ember 15 lt',
-        accessor: 'ember15lt',
+        accessor: 'ember',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -184,13 +162,13 @@ class Equipment extends Component {
       },
       {
         Header: 'Tangga Alumunium 2 M',
-        accessor: 'tanggaAlumunium2M',
+        accessor: 'tanggaAlumunium',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -276,11 +254,10 @@ class Equipment extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -294,7 +271,7 @@ class Equipment extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -328,7 +305,7 @@ class Equipment extends Component {
                             <Field
                               label="Baik"
                               name="doubleBucket"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -338,7 +315,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="doubleBucket"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -354,7 +331,7 @@ class Equipment extends Component {
                             <Field
                               label="Baik"
                               name="singleBucket"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -364,7 +341,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="singleBucket"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -380,7 +357,7 @@ class Equipment extends Component {
                             <Field
                               label="Baik"
                               name="lobbyDusterStick"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -390,7 +367,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="lobbyDusterStick"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -403,7 +380,7 @@ class Equipment extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="mopSet" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="mopSet" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -411,7 +388,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="mopSet"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -427,7 +404,7 @@ class Equipment extends Component {
                             <Field
                               label="Baik"
                               name="windowSqueeze"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -437,7 +414,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="windowSqueeze"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -453,7 +430,7 @@ class Equipment extends Component {
                             <Field
                               label="Baik"
                               name="windowWasher"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -463,7 +440,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="windowWasher"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -478,8 +455,8 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="teleskopicPool6M"
-                              id="Baik"
+                              name="teleskopicPool"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -488,8 +465,8 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="teleskopicPool6M"
-                              id="Tidak Baik"
+                              name="teleskopicPool"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -505,7 +482,7 @@ class Equipment extends Component {
                             <Field
                               label="Baik"
                               name="floorSqueeze"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -515,7 +492,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="floorSqueeze"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -528,20 +505,15 @@ class Equipment extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="ember15lt"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="ember" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="ember15lt"
-                              id="Tidak Baik"
+                              name="ember"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -554,7 +526,7 @@ class Equipment extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="gayung" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="gayung" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -562,7 +534,7 @@ class Equipment extends Component {
                             <Field
                               label="Tidak Baik"
                               name="gayung"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -577,8 +549,8 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="tanggaAlumunium2M"
-                              id="Baik"
+                              name="tanggaAlumunium"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -587,8 +559,8 @@ class Equipment extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="tanggaAlumunium2M"
-                              id="Tidak Baik"
+                              name="tanggaAlumunium"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -599,7 +571,7 @@ class Equipment extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
@@ -645,23 +617,24 @@ Equipment.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPeralatanKerja: PropTypes.func.isRequired,
+  updatePeralatanKerja: PropTypes.func.isRequired,
+  deletePeralatanKerja: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanKerja.isLoading,
+  message: state.peralatanKerja.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPeralatanKerja: (formData, refresh) => dispatch(createPeralatanKerja(formData, refresh)),
+  updatePeralatanKerja: (formData, id, refresh) =>
+    dispatch(updatePeralatanKerja(formData, id, refresh)),
+  deletePeralatanKerja: (id, refresh) => dispatch(deletePeralatanKerja(id, refresh)),
 })
 
 export default connect(
@@ -669,7 +642,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPeralatanKerja(p),
     Component: withToggle({
       Component: Equipment,
       toggles: {

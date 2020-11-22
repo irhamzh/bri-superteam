@@ -102,6 +102,7 @@ class Service {
 
   // Master Partner
   static getPartner(params) {
+    if (!params) params = ''
     return axios.get(`partners${params}`)
   }
 
@@ -446,6 +447,27 @@ class Service {
     return axios.delete(`pengadaans/barang/penunjukan-langsung/${id}`)
   }
 
+  static getKonsultanPenunjukanLangsung(params) {
+    if (!params) params = ''
+    return axios.get(`pengadaans/konsultan/penunjukan-langsung${params}`)
+  }
+
+  static getKonsultanPenunjukanLangsungById(id) {
+    return axios.get(`pengadaans/konsultan/penunjukan-langsung/${id}`)
+  }
+
+  static createKonsultanPenunjukanLangsung(values) {
+    return axios.post('pengadaans/konsultan/penunjukan-langsung', values)
+  }
+
+  static updateKonsultanPenunjukanLangsung(values, id) {
+    return axios.put(`pengadaans/konsultan/penunjukan-langsung/${id}`, values)
+  }
+
+  static deleteKonsultanPenunjukanLangsung(id) {
+    return axios.delete(`pengadaans/konsultan/penunjukan-langsung/${id}`)
+  }
+
   // Pemilihan Langsung
   static getBarangPemilihanLangsung(params) {
     if (!params) params = ''
@@ -488,6 +510,91 @@ class Service {
 
   static deleteBarangLelang(id) {
     return axios.delete(`pengadaans/barang/lelang/${id}`)
+  }
+
+  // Seleksi Langsung
+  static getKonsultanSeleksiLangsung(params) {
+    if (!params) params = ''
+    return axios.get(`pengadaans/konsultan/seleksi-langsung${params}`)
+  }
+
+  static getKonsultanSeleksiLangsungById(id) {
+    return axios.get(`pengadaans/konsultan/seleksi-langsung/${id}`)
+  }
+
+  static createKonsultanSeleksiLangsung(values) {
+    return axios.post('pengadaans/konsultan/seleksi-langsung', values)
+  }
+
+  static updateKonsultanSeleksiLangsung(values, id) {
+    return axios.put(`pengadaans/konsultan/seleksi-langsung/${id}`, values)
+  }
+
+  static deleteKonsultanSeleksiLangsung(id) {
+    return axios.delete(`pengadaans/konsultan/seleksi-langsung/${id}`)
+  }
+
+  // PG Peralatan IT
+  static getPGPeralatanIT(params) {
+    return axios.get(`pg-it-tools${params}`)
+  }
+
+  static getPGPeralatanITById(id) {
+    return axios.get(`pg-it-tools/${id}`)
+  }
+
+  static createPGPeralatanIT(values) {
+    return axios.post('pg-it-tools', values)
+  }
+
+  static updatePGPeralatanIT(values, id) {
+    return axios.put(`pg-it-tools/${id}`, values)
+  }
+
+  static deletePGPeralatanIT(id) {
+    return axios.delete(`pg-it-tools/${id}`)
+  }
+
+  // Peralatan Kerja
+  static getPeralatanKerja(params) {
+    return axios.get(`pg-working-tools${params}`)
+  }
+
+  static getPeralatanKerjaById(id) {
+    return axios.get(`pg-working-tools/${id}`)
+  }
+
+  static createPeralatanKerja(values) {
+    return axios.post('pg-working-tools', values)
+  }
+
+  static updatePeralatanKerja(values, id) {
+    return axios.put(`pg-working-tools/${id}`, values)
+  }
+
+  static deletePeralatanKerja(id) {
+    return axios.delete(`pg-working-tools/${id}`)
+  }
+
+  // Water Meter
+  static getWaterMeter(params) {
+    return axios.get(`water-meters${params}`)
+  }
+
+  static getWaterMeterById(id) {
+    return axios.get(`water-meters/${id}`)
+  }
+
+  static createWaterMeter(values) {
+    return axios.post('water-meters', values)
+  }
+
+  static updateWaterMeter(values, id) {
+    return axios.put(`water-meters/${id}`, values)
+  }
+
+  static deleteWaterMeter(id) {
+    return axios.delete(`water-meters/${id}`)
   }
 }
 

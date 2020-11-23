@@ -19,26 +19,27 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import {
+  createEngineerGedungRoom,
+  updateEngineerGedungRoom,
+  deleteEngineerGedungRoom,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+class Ruangan extends Component {
+  state = {
+    optJenisGedung: [],
+    optJenisRuangan: [],
+    optRuangan: [],
+  }
 
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    gedung: 'Smart Building',
-    jenisRuangan: 'Ruangan Pendidikan',
-    ruangan: '101',
+  initialValues = {
     plafond: 'Baik',
     dinding: 'Baik',
     lantai: 'Baik',
@@ -51,31 +52,23 @@ const dataDummy = [
     lemari: 'Baik',
     toilet: 'Baik',
     peralatanLain: 'Baik',
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '05/06/2020',
-    gedung: 'Innovation Building',
-    jenisRuangan: 'Ruangan Kerja',
-    ruangan: '101',
-    plafond: 'Baik',
-    dinding: 'Tidak Baik',
-    lantai: 'Baik',
-    pintu: 'Tidak Baik',
-    jendela: 'Baik',
-    kursi: 'Baik',
-    meja: 'Tidak Baik',
-    lampu: 'Baik',
-    kasur: 'Tidak Baik',
-    lemari: 'Baik',
-    toilet: 'Baik',
-    peralatanLain: 'Baik',
-    keterangan: 'Lorem ipsum',
-  },
-]
+  }
 
-class Ruangan extends Component {
-  initialValues = {}
+  async componentDidMount() {
+    const resDataJenisGedung = await Service.getJenisGedung()
+    const dataJenisGedung = resDataJenisGedung.data.data
+    const optJenisGedung = dataJenisGedung.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataJenisRuangan = await Service.getJenisRuangan()
+    const dataJenisRuangan = resDataJenisRuangan.data.data
+    const optJenisRuangan = dataJenisRuangan.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataRuangan = await Service.getRoom()
+    const dataRuangan = resDataRuangan.data.data
+    const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optJenisGedung, optJenisRuangan, optRuangan })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -85,11 +78,11 @@ class Ruangan extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createEngineerGedungRoom, updateEngineerGedungRoom } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateEngineerGedungRoom(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerGedungRoom(values, this.doRefresh)
     }
   }
 
@@ -97,13 +90,13 @@ class Ruangan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerGedungRoom } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerGedungRoom(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -120,24 +113,25 @@ class Ruangan extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optJenisGedung, optJenisRuangan, optRuangan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Gedung',
-        accessor: 'gedung',
+        accessor: 'buildingType.name',
         filterable: false,
       },
       {
         Header: 'Jenis Ruangan',
-        accessor: 'jenisRuangan',
+        accessor: 'roomType.name',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Ruangan',
-        accessor: 'ruangan',
+        accessor: 'ruangan.name',
         filterable: false,
       },
       {
@@ -197,13 +191,13 @@ class Ruangan extends Component {
       },
       {
         Header: 'Peralatan Lainnya',
-        accessor: 'peralatanLain',
+        accessor: 'peralatanLainnya',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -289,11 +283,10 @@ class Ruangan extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -307,7 +300,7 @@ class Ruangan extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -339,12 +332,9 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Jenis Gedung"
-                              options={[
-                                { value: 'Innovation Building', label: 'Innovation Building' },
-                                { value: 'Smart Building', label: 'Smart Building' },
-                              ]}
+                              options={optJenisGedung}
                               isRequired
-                              name="jenisGedung"
+                              name="buildingType"
                               placeholder="Pilih atau Cari Jenis Gedung"
                               component={CfSelect}
                             />
@@ -355,12 +345,9 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Jenis Ruangan"
-                              options={[
-                                { value: 'Ruang Pendidikan', label: 'Ruang Pendidikan' },
-                                { value: 'Ruang Kerja', label: 'Ruang Kerja' },
-                              ]}
+                              options={optJenisRuangan}
                               isRequired
-                              name="jenisRuangan"
+                              name="roomType"
                               placeholder="Pilih atau Cari Jenis Ruangan"
                               component={CfSelect}
                             />
@@ -371,10 +358,7 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Ruangan"
-                              options={[
-                                { value: '101', label: '101' },
-                                { value: '102', label: '102' },
-                              ]}
+                              options={optRuangan}
                               isRequired
                               name="ruangan"
                               placeholder="Pilih atau Cari Ruangan"
@@ -609,14 +593,19 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="lainnya" id="Baik" component={CfInputRadio} />
+                            <Field
+                              label="Baik"
+                              name="peralatanLainnya"
+                              id="Baik"
+                              component={CfInputRadio}
+                            />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="lainnya"
+                              name="peralatanLainnya"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -631,7 +620,7 @@ class Ruangan extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -679,23 +668,25 @@ Ruangan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerGedungRoom: PropTypes.func.isRequired,
+  updateEngineerGedungRoom: PropTypes.func.isRequired,
+  deleteEngineerGedungRoom: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerGedungRoom: (formData, refresh) =>
+    dispatch(createEngineerGedungRoom(formData, refresh)),
+  updateEngineerGedungRoom: (formData, id, refresh) =>
+    dispatch(updateEngineerGedungRoom(formData, id, refresh)),
+  deleteEngineerGedungRoom: (id, refresh) => dispatch(deleteEngineerGedungRoom(id, refresh)),
 })
 
 export default connect(
@@ -703,7 +694,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerGedungRoom(p),
     Component: withToggle({
       Component: Ruangan,
       toggles: {

@@ -16,6 +16,9 @@ const Gedung = React.lazy(() => import('./views/Master/Gedung'))
 const Compressor = React.lazy(() => import('./views/Master/Compressor'))
 const Pompa = React.lazy(() => import('./views/Master/Pompa'))
 const UnitPompa = React.lazy(() => import('./views/Master/UnitPompa'))
+const JenisGedung = React.lazy(() => import('./views/Master/JenisGedung'))
+const JenisRuangan = React.lazy(() => import('./views/Master/JenisRuangan'))
+const Lokasi = React.lazy(() => import('./views/Master/Lokasi'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -390,9 +393,24 @@ const routes = [
     component: Pompa,
   },
   {
-    path: '/master/unit-Pompa',
+    path: '/master/unit-pompa',
     name: 'Unit Pompa',
     component: UnitPompa,
+  },
+  {
+    path: '/master/building-types',
+    name: 'Jenis Gedung',
+    component: JenisGedung,
+  },
+  {
+    path: '/master/room-types',
+    name: 'Jenis Ruangan',
+    component: JenisRuangan,
+  },
+  {
+    path: '/master/lokasi',
+    name: 'Lokasi',
+    component: Lokasi,
   },
 ]
 

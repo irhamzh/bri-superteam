@@ -19,30 +19,26 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
-  CfInput,
-  CfInputCheckbox,
-  CfInputDate,
-  CfInputRadio,
-  CfSelect,
-} from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+  createKebersihanInnovation,
+  updateKebersihanInnovation,
+  deleteKebersihanInnovation,
+} from '../../../../../modules/kebersihan/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+class TanggaDarurat extends Component {
+  state = {
+    optLokasi: [],
+  }
 
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    lokasi: 'Lantai 1',
+  initialValues = {
+    typeInnovationBuilding: 'Tangga Darurat',
     pintu: true,
     handle: true,
     anakTangga: true,
@@ -51,26 +47,18 @@ const dataDummy = [
     signage: true,
     ceiling: true,
     exhaustFan: true,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '02/06/2020',
-    lokasi: 'Lantai 3',
-    pintu: true,
-    handle: false,
-    anakTangga: true,
-    railingTangga: true,
-    dinding: false,
-    signage: false,
-    ceiling: true,
-    exhaustFan: true,
-    keterangan: 'Lorem Ipsum',
-  },
-]
-class TanggaDarurat extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeInnovationBuilding: 'Tangga Darurat',
+    })
+    const resDataLokasi = await Service.getLokasi()
+    const dataLokasi = resDataLokasi.data.data
+    const optLokasi = dataLokasi.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optLokasi })
   }
 
   doRefresh = () => {
@@ -81,11 +69,11 @@ class TanggaDarurat extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createKebersihanInnovation, updateKebersihanInnovation } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateKebersihanInnovation(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKebersihanInnovation(values, this.doRefresh)
     }
   }
 
@@ -93,13 +81,13 @@ class TanggaDarurat extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKebersihanInnovation } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKebersihanInnovation(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -116,6 +104,7 @@ class TanggaDarurat extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optLokasi } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -124,10 +113,11 @@ class TanggaDarurat extends Component {
         Header: 'Tanggal',
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Lokasi',
-        accessor: 'lokasi',
+        accessor: 'location.name',
         filterable: false,
       },
       {
@@ -255,7 +245,7 @@ class TanggaDarurat extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -341,11 +331,10 @@ class TanggaDarurat extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -359,7 +348,7 @@ class TanggaDarurat extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -391,12 +380,9 @@ class TanggaDarurat extends Component {
                           <FormGroup>
                             <Field
                               label="Lokasi"
-                              options={[
-                                { value: 'Lantai 1', label: 'Lantai 1' },
-                                { value: 'Lantai 2', label: 'Lantai 2' },
-                              ]}
+                              options={optLokasi}
                               isRequired
-                              name="lokasi"
+                              name="location"
                               placeholder="Pilih atau Cari Lokasi"
                               component={CfSelect}
                             />
@@ -458,7 +444,7 @@ class TanggaDarurat extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -506,23 +492,25 @@ TanggaDarurat.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKebersihanInnovation: PropTypes.func.isRequired,
+  updateKebersihanInnovation: PropTypes.func.isRequired,
+  deleteKebersihanInnovation: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.kebersihan.isLoading,
+  message: state.kebersihan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKebersihanInnovation: (formData, refresh) =>
+    dispatch(createKebersihanInnovation(formData, refresh)),
+  updateKebersihanInnovation: (formData, id, refresh) =>
+    dispatch(updateKebersihanInnovation(formData, id, refresh)),
+  deleteKebersihanInnovation: (id, refresh) => dispatch(deleteKebersihanInnovation(id, refresh)),
 })
 
 export default connect(
@@ -530,7 +518,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKebersihanInnovation(p),
     Component: withToggle({
       Component: TanggaDarurat,
       toggles: {

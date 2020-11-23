@@ -268,6 +268,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Lokasi',
+          url: '/master/lokasi',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Provider',
           url: '/master/providers',
           icon: 'fa fa-angle-double-right',
@@ -310,6 +315,16 @@ export default {
         {
           name: 'Jenis PC',
           url: '/master/type-pc',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Gedung',
+          url: '/master/building-types',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Ruangan',
+          url: '/master/room-types',
           icon: 'fa fa-angle-double-right',
         },
       ],

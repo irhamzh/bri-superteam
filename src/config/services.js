@@ -883,6 +883,160 @@ class Service {
   static deleteUnitPompa(id) {
     return axios.delete(`pump-units/${id}`)
   }
+
+  // Jenis Gedung
+  static getJenisGedung(params) {
+    if (!params) params = ''
+    return axios.get(`building-types${params}`)
+  }
+
+  static getJenisGedungById(id) {
+    return axios.get(`building-types/${id}`)
+  }
+
+  static createJenisGedung(values) {
+    return axios.post('building-types', values)
+  }
+
+  static updateJenisGedung(values, id) {
+    return axios.put(`building-types/${id}`, values)
+  }
+
+  static deleteJenisGedung(id) {
+    return axios.delete(`building-types/${id}`)
+  }
+
+  // Jenis Ruangan
+  static getJenisRuangan(params) {
+    if (!params) params = ''
+    return axios.get(`room-types${params}`)
+  }
+
+  static getJenisRuanganById(id) {
+    return axios.get(`room-types/${id}`)
+  }
+
+  static createJenisRuangan(values) {
+    return axios.post('room-types', values)
+  }
+
+  static updateJenisRuangan(values, id) {
+    return axios.put(`room-types/${id}`, values)
+  }
+
+  static deleteJenisRuangan(id) {
+    return axios.delete(`room-types/${id}`)
+  }
+
+  // Lokasi
+  static getLokasi(params) {
+    if (!params) params = ''
+    return axios.get(`locations${params}`)
+  }
+
+  static getLokasiById(id) {
+    return axios.get(`locations/${id}`)
+  }
+
+  static createLokasi(values) {
+    return axios.post('locations', values)
+  }
+
+  static updateLokasi(values, id) {
+    return axios.put(`locations/${id}`, values)
+  }
+
+  static deleteLokasi(id) {
+    return axios.delete(`locations/${id}`)
+  }
+
+  // Kebersihan Halaman
+  static getKebersihanHalaman(params) {
+    if (!params) params = ''
+    return axios.get(`pg-sanitations/yard${params}`)
+  }
+
+  static getKebersihanHalamanById(id) {
+    return axios.get(`pg-sanitations/yard/${id}`)
+  }
+
+  static createKebersihanHalaman(values) {
+    return axios.post('pg-sanitations/yard', values)
+  }
+
+  static updateKebersihanHalaman(values, id) {
+    return axios.put(`pg-sanitations/yard/${id}`, values)
+  }
+
+  static deleteKebersihanHalaman(id) {
+    return axios.delete(`pg-sanitations/yard/${id}`)
+  }
+
+  // Kebersihan Smart
+  static getKebersihanSmart(params) {
+    if (!params) params = ''
+    return axios.get(`pg-sanitations/smart-building${params}`)
+  }
+
+  static getKebersihanSmartById(id) {
+    return axios.get(`pg-sanitations/smart-building/${id}`)
+  }
+
+  static createKebersihanSmart(values) {
+    return axios.post('pg-sanitations/smart-building', values)
+  }
+
+  static updateKebersihanSmart(values, id) {
+    return axios.put(`pg-sanitations/smart-building/${id}`, values)
+  }
+
+  static deleteKebersihanSmart(id) {
+    return axios.delete(`pg-sanitations/smart-building/${id}`)
+  }
+
+  // Kebersihan Pendukung
+  static getKebersihanPendukung(params) {
+    if (!params) params = ''
+    return axios.get(`pg-sanitations/sarana-pendukung${params}`)
+  }
+
+  static getKebersihanPendukungById(id) {
+    return axios.get(`pg-sanitations/sarana-pendukung/${id}`)
+  }
+
+  static createKebersihanPendukung(values) {
+    return axios.post('pg-sanitations/sarana-pendukung', values)
+  }
+
+  static updateKebersihanPendukung(values, id) {
+    return axios.put(`pg-sanitations/sarana-pendukung/${id}`, values)
+  }
+
+  static deleteKebersihanPendukung(id) {
+    return axios.delete(`pg-sanitations/sarana-pendukung/${id}`)
+  }
+
+  // Kebersihan Innovation
+  static getKebersihanInnovation(params) {
+    if (!params) params = ''
+    return axios.get(`pg-sanitations/innovation-building${params}`)
+  }
+
+  static getKebersihanInnovationById(id) {
+    return axios.get(`pg-sanitations/innovation-building/${id}`)
+  }
+
+  static createKebersihanInnovation(values) {
+    return axios.post('pg-sanitations/innovation-building', values)
+  }
+
+  static updateKebersihanInnovation(values, id) {
+    return axios.put(`pg-sanitations/innovation-building/${id}`, values)
+  }
+
+  static deleteKebersihanInnovation(id) {
+    return axios.delete(`pg-sanitations/innovation-building/${id}`)
+  }
 }
 
 export default Service

@@ -31,6 +31,10 @@ import gedung from './gedung/reducer'
 import compressor from './compressor/reducer'
 import pompa from './pompa/reducer'
 import unitPompa from './unitPompa/reducer'
+import jenisGedung from './jenisGedung/reducer'
+import jenisRuangan from './jenisRuangan/reducer'
+import kebersihan from './kebersihan/reducer'
+import lokasi from './lokasi/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -65,6 +69,10 @@ const rootReducer = combineReducers({
   compressor,
   pompa,
   unitPompa,
+  jenisGedung,
+  jenisRuangan,
+  kebersihan,
+  lokasi,
 })
 
 export default rootReducer

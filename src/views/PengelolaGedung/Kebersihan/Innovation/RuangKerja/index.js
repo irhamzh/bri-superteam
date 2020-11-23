@@ -19,53 +19,46 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createKebersihanInnovation,
+  updateKebersihanInnovation,
+  deleteKebersihanInnovation,
+} from '../../../../../modules/kebersihan/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    ruangan: '101',
-    plafond: 'Baik',
-    dinding: 'Baik',
-    lantai: 'Baik',
-    pintu: 'Baik',
-    jendela: 'Baik',
-    kursi: 'Baik',
-    meja: 'Baik',
-    lampu: 'Baik',
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    ruangan: '102',
-    plafond: 'Tidak Baik',
-    dinding: 'Baik',
-    lantai: 'Tidak Baik',
-    pintu: 'Baik',
-    jendela: 'Tidak Baik',
-    kursi: 'Baik',
-    meja: 'Tidak Baik',
-    lampu: 'Baik',
-    keterangan: 'Lorem ipsum',
-  },
-]
-
 class RuangKerja extends Component {
+  state = {
+    optRuangan: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    typeInnovationBuilding: 'Ruang Kerja',
+    plafond: true,
+    dinding: true,
+    lantai: true,
+    pintu: true,
+    jendela: true,
+    kursi: true,
+    meja: true,
+    lampu: true,
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeInnovationBuilding: 'Ruang Kerja',
+    })
+    const resDataRuangan = await Service.getRoom()
+    const dataRuangan = resDataRuangan.data.data
+    const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optRuangan })
   }
 
   doRefresh = () => {
@@ -76,11 +69,11 @@ class RuangKerja extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createKebersihanInnovation, updateKebersihanInnovation } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateKebersihanInnovation(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKebersihanInnovation(values, this.doRefresh)
     }
   }
 
@@ -88,13 +81,13 @@ class RuangKerja extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKebersihanInnovation } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKebersihanInnovation(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -111,6 +104,7 @@ class RuangKerja extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optRuangan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -119,55 +113,136 @@ class RuangKerja extends Component {
         Header: 'Tanggal',
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Ruangan',
-        accessor: 'ruangan',
+        accessor: 'ruangan.name',
         filterable: false,
       },
       {
         Header: 'Plafond',
         accessor: 'plafond',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Dinding',
         accessor: 'dinding',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Lantai',
         accessor: 'lantai',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Pintu',
         accessor: 'pintu',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Jendela',
         accessor: 'jendela',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Kursi',
         accessor: 'kursi',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Meja',
         accessor: 'meja',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Lampu',
         accessor: 'lampu',
         filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -253,11 +328,10 @@ class RuangKerja extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -271,7 +345,7 @@ class RuangKerja extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -303,10 +377,7 @@ class RuangKerja extends Component {
                           <FormGroup>
                             <Field
                               label="Ruangan"
-                              options={[
-                                { value: '101', label: '101' },
-                                { value: '102', label: '102' },
-                              ]}
+                              options={optRuangan}
                               isRequired
                               name="ruangan"
                               placeholder="Pilih atau Cari Ruangan"
@@ -318,165 +389,39 @@ class RuangKerja extends Component {
 
                       <strong>Kondisi</strong>
                       <br />
-                      <Row style={{ paddingLeft: '15px' }}>
-                        <Col>
-                          <em>Plafond</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="plafond" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="plafond"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
+                      <div style={{ marginLeft: '40px' }}>
+                        <FormGroup>
+                          <Field label="Plafond" name="plafond" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                        <Col>
-                          <em>Dinding</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="dinding" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="dinding"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                        <FormGroup>
+                          <Field label="Dinding" name="dinding" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                      <Row style={{ paddingLeft: '15px' }}>
-                        <Col>
-                          <em>Lantai</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="lantai" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="lantai"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
+                        <FormGroup>
+                          <Field label="Lantai" name="lantai" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                        <Col>
-                          <em>Pintu</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="pintu" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="pintu"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                        <FormGroup>
+                          <Field label="Pintu" name="pintu" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                      <Row style={{ paddingLeft: '15px' }}>
-                        <Col>
-                          <em>Jendela</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="jendela" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="jendela"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
+                        <FormGroup>
+                          <Field label="Jendela" name="jendela" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                        <Col>
-                          <em>Kursi</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="kursi" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="kursi"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                        <FormGroup>
+                          <Field label="Kursi" name="kursi" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                      <Row style={{ paddingLeft: '15px' }}>
-                        <Col>
-                          <em>Meja</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="meja" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="meja"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
+                        <FormGroup>
+                          <Field label="Meja" name="meja" component={CfInputCheckbox} />
+                        </FormGroup>
 
-                        <Col>
-                          <em>Lampu</em>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field label="Baik" name="lampu" id="Baik" component={CfInputRadio} />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="lampu"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                        <FormGroup>
+                          <Field label="Lampu" name="lampu" component={CfInputCheckbox} />
+                        </FormGroup>
+                      </div>
 
                       <br />
                       <Row>
@@ -485,7 +430,7 @@ class RuangKerja extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -533,23 +478,25 @@ RuangKerja.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKebersihanInnovation: PropTypes.func.isRequired,
+  updateKebersihanInnovation: PropTypes.func.isRequired,
+  deleteKebersihanInnovation: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.kebersihan.isLoading,
+  message: state.kebersihan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKebersihanInnovation: (formData, refresh) =>
+    dispatch(createKebersihanInnovation(formData, refresh)),
+  updateKebersihanInnovation: (formData, id, refresh) =>
+    dispatch(updateKebersihanInnovation(formData, id, refresh)),
+  deleteKebersihanInnovation: (id, refresh) => dispatch(deleteKebersihanInnovation(id, refresh)),
 })
 
 export default connect(
@@ -557,7 +504,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKebersihanInnovation(p),
     Component: withToggle({
       Component: RuangKerja,
       toggles: {

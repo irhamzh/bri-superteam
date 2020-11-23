@@ -19,79 +19,57 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import {
+  createEngineerGedungME,
+  updateEngineerGedungME,
+  deleteEngineerGedungME,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    gedung: 'Gedung 1',
-    lantai: 'Lantai 1',
-    smokeDetector: 'Baik',
-    sistemAC: 'Tidak Baik',
-    thermostat: 'Baik',
-    telephone: 'Tidak Baik',
-    fireAlarm: 'Baik',
-    exhaust: 'Baik',
-    ceilingSpeaker: 'Baik',
-    headSprinkler: 'Baik',
-    cctv: 'Baik',
-    mccb: 'Baik',
-    apar: 'Baik',
-    segel: 'Baik',
-    pin: 'Baik',
-    selang: 'Baik',
-    nozle: 'Baik',
-    hose: 'Baik',
-    valves: 'Baik',
-    alarm: 'Baik',
-    pintuEngsel: 'Baik',
-    lampuIndikator: 'Baik',
-    expiredTabung: '06/06/2020',
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    gedung: 'Gedung 2',
-    lantai: 'Lantai 1',
-    smokeDetector: 'Baik',
-    sistemAC: 'Tidak Baik',
-    thermostat: 'Baik',
-    telephone: 'Tidak Baik',
-    fireAlarm: 'Baik',
-    exhaust: 'Baik',
-    ceilingSpeaker: 'Tidak Baik',
-    headSprinkler: 'Baik',
-    cctv: 'Baik',
-    mccb: 'Baik',
-    apar: 'Tidak Baik',
-    segel: 'Baik',
-    pin: 'Tidak Baik',
-    selang: 'Baik',
-    nozle: 'Baik',
-    hose: 'Tidak Baik',
-    valves: 'Baik',
-    alarm: 'Baik',
-    pintuEngsel: 'Baik',
-    lampuIndikator: 'Baik',
-    expiredTabung: '06/06/2020',
-    keterangan: 'Lorem Ipsum',
-  },
-]
-
 class ME extends Component {
+  state = {
+    optJenisGedung: [],
+    optLantai: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    smokeDetector: 'Baik',
+    thermostat: 'Baik',
+    fireAlarm: 'Baik',
+    ceillingSpeaker: 'Baik',
+    cctv: 'Baik',
+    acSystem: 'Baik',
+    telephone: 'Baik',
+    exhaust: 'Baik',
+    hedSprinkler: 'Baik',
+    mccb: 'Baik',
+    valves: 'Baik',
+    segel: 'Baik',
+    selang: 'Baik',
+    hose: 'Baik',
+    pintu: 'Baik',
+    apar: 'Baik',
+    pin: 'Baik',
+    nozle: 'Baik',
+    lampuIndikator: 'Baik',
+  }
+
+  async componentDidMount() {
+    const resDataJenisGedung = await Service.getJenisGedung()
+    const dataJenisGedung = resDataJenisGedung.data.data
+    const optJenisGedung = dataJenisGedung.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataLantai = await Service.getLantai()
+    const dataLantai = resDataLantai.data.data
+    const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optJenisGedung, optLantai })
   }
 
   doRefresh = () => {
@@ -102,11 +80,11 @@ class ME extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createEngineerGedungME, updateEngineerGedungME } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateEngineerGedungME(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerGedungME(values, this.doRefresh)
     }
   }
 
@@ -114,13 +92,13 @@ class ME extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerGedungME } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerGedungME(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -137,18 +115,19 @@ class ME extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optJenisGedung, optLantai } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Gedung',
-        accessor: 'gedung',
+        Header: 'Jenis Gedung',
+        accessor: 'buildingType.name',
         filterable: false,
       },
       {
         Header: 'Lantai',
-        accessor: 'lantai',
+        accessor: 'floor.name',
         filterable: false,
       },
       {
@@ -159,7 +138,7 @@ class ME extends Component {
       },
       {
         Header: 'AC System',
-        accessor: 'sistemAC',
+        accessor: 'acSystem',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -187,8 +166,8 @@ class ME extends Component {
         filterable: false,
       },
       {
-        Header: 'Ceiling Speaker',
-        accessor: 'ceilingSpeaker',
+        Header: 'Ceilling Speaker',
+        accessor: 'ceillingSpeaker',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -255,7 +234,7 @@ class ME extends Component {
           },
           {
             Header: 'Pintu / Engsel',
-            accessor: 'pintuEngsel',
+            accessor: 'pintu',
             filterable: false,
             headerClassName: 'wordwrap',
           },
@@ -276,7 +255,7 @@ class ME extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -362,11 +341,10 @@ class ME extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -380,7 +358,7 @@ class ME extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -397,12 +375,9 @@ class ME extends Component {
                           <FormGroup>
                             <Field
                               label="Jenis Gedung"
-                              options={[
-                                { value: 'Innovation Building', label: 'Innovation Building' },
-                                { value: 'Smart Building', label: 'Smart Building' },
-                              ]}
+                              options={optJenisGedung}
                               isRequired
-                              name="jenisGedung"
+                              name="buildingType"
                               placeholder="Pilih atau Cari Jenis Gedung"
                               component={CfSelect}
                             />
@@ -412,23 +387,15 @@ class ME extends Component {
                           <FormGroup>
                             <Field
                               label="Lantai"
-                              options={[
-                                { value: 'Lantai 1', label: 'Lantai 1' },
-                                { value: 'Lantai 2', label: 'Lantai 2' },
-                                { value: 'Lantai 3', label: 'Lantai 3' },
-                                { value: 'Lantai 4', label: 'Lantai 4' },
-                                { value: 'Lantai 5', label: 'Lantai 5' },
-                                { value: 'Lantai 6', label: 'Lantai 6' },
-                              ]}
+                              options={optLantai}
                               isRequired
-                              name="lantai"
+                              name="floor"
                               placeholder="Pilih atau Cari Lantai"
                               component={CfSelect}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <strong>Kondisi</strong>
                       <br />
                       <Row style={{ paddingLeft: '15px' }}>
@@ -480,7 +447,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Thermostat</em>
@@ -530,7 +496,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Fire Alarm</em>
@@ -575,7 +540,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Ceiling Speaker</em>
@@ -584,7 +548,7 @@ class ME extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="ceilingSpeaker"
+                              name="ceillingSpeaker"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -594,7 +558,7 @@ class ME extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="ceilingSpeaker"
+                              name="ceillingSpeaker"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -625,7 +589,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>CCTV</em>
@@ -665,7 +628,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <strong>Hydrant Box</strong>
                       <br />
                       <Row style={{ paddingLeft: '15px' }}>
@@ -707,7 +669,7 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
+                      ceilingSpeaker
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Segel</em>
@@ -747,7 +709,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Selang</em>
@@ -787,7 +748,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Hose</em>
@@ -827,26 +787,20 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Pintu/Engsel</em>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="pintuEngsel"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="pintu" id="Baik" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="pintuEngsel"
+                              name="pintu"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -877,7 +831,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       <br />
                       <Row>
                         <Col sm="6">
@@ -899,7 +852,7 @@ class ME extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -907,7 +860,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
                       {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
@@ -947,23 +899,25 @@ ME.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerGedungME: PropTypes.func.isRequired,
+  updateEngineerGedungME: PropTypes.func.isRequired,
+  deleteEngineerGedungME: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerGedungME: (formData, refresh) =>
+    dispatch(createEngineerGedungME(formData, refresh)),
+  updateEngineerGedungME: (formData, id, refresh) =>
+    dispatch(updateEngineerGedungME(formData, id, refresh)),
+  deleteEngineerGedungME: (id, refresh) => dispatch(deleteEngineerGedungME(id, refresh)),
 })
 
 export default connect(
@@ -971,7 +925,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerGedungME(p),
     Component: withToggle({
       Component: ME,
       toggles: {

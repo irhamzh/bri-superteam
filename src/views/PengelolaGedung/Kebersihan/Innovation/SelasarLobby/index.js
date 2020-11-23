@@ -19,35 +19,31 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
-  CfInput,
-  CfInputCheckbox,
-  CfInputDate,
-  CfInputRadio,
-  CfSelect,
-} from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+  createKebersihanInnovation,
+  updateKebersihanInnovation,
+  deleteKebersihanInnovation,
+} from '../../../../../modules/kebersihan/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+class SelasarLobby extends Component {
+  state = {
+    optLokasi: [],
+  }
 
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    lokasi: 'Lantai 1',
+  initialValues = {
+    typeInnovationBuilding: 'Selasar Dan Lobby',
     lantaiGranit: true,
     dindingGranit: true,
     boxHydrant: true,
     signage: true,
-    stainlessStell: true,
+    stainlessSteel: true,
     dropOffArea: true,
     kacaFasad: true,
     frontDesk: true,
@@ -58,34 +54,18 @@ const dataDummy = [
     plafond: true,
     grillAC: true,
     kapLampu: true,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '02/06/2020',
-    lokasi: 'Lantai 3',
-    lantaiGranit: true,
-    dindingGranit: false,
-    boxHydrant: true,
-    signage: true,
-    stainlessStell: false,
-    dropOffArea: true,
-    kacaFasad: false,
-    frontDesk: true,
-    mediaInformasi: false,
-    atm: false,
-    standingAshtray: true,
-    kacaDalam: true,
-    plafond: true,
-    grillAC: true,
-    kapLampu: true,
-    keterangan: 'Lorem Ipsum',
-  },
-]
+  }
 
-class SelasarLobby extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeInnovationBuilding: 'Selasar Dan Lobby',
+    })
+    const resDataLokasi = await Service.getLokasi()
+    const dataLokasi = resDataLokasi.data.data
+    const optLokasi = dataLokasi.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optLokasi })
   }
 
   doRefresh = () => {
@@ -96,11 +76,11 @@ class SelasarLobby extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createKebersihanInnovation, updateKebersihanInnovation } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateKebersihanInnovation(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKebersihanInnovation(values, this.doRefresh)
     }
   }
 
@@ -108,13 +88,13 @@ class SelasarLobby extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKebersihanInnovation } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKebersihanInnovation(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -131,6 +111,7 @@ class SelasarLobby extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optLokasi } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -139,10 +120,11 @@ class SelasarLobby extends Component {
         Header: 'Tanggal',
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Lokasi',
-        accessor: 'lokasi',
+        accessor: 'location.name',
         filterable: false,
       },
       {
@@ -381,7 +363,7 @@ class SelasarLobby extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -467,11 +449,10 @@ class SelasarLobby extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -485,7 +466,7 @@ class SelasarLobby extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -517,13 +498,9 @@ class SelasarLobby extends Component {
                           <FormGroup>
                             <Field
                               label="Lokasi"
-                              options={[
-                                { value: 'X', label: 'X' },
-                                { value: 'Y', label: 'Y' },
-                                { value: 'Z', label: 'Z' },
-                              ]}
+                              options={optLokasi}
                               isRequired
-                              name="lokasi"
+                              name="location"
                               placeholder="Pilih atau Cari Lokasi"
                               component={CfSelect}
                             />
@@ -614,7 +591,7 @@ class SelasarLobby extends Component {
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Grill AC" name="grillAc" component={CfInputCheckbox} />
+                          <Field label="Grill AC" name="grillAC" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
@@ -629,7 +606,7 @@ class SelasarLobby extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -677,23 +654,25 @@ SelasarLobby.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKebersihanInnovation: PropTypes.func.isRequired,
+  updateKebersihanInnovation: PropTypes.func.isRequired,
+  deleteKebersihanInnovation: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.kebersihan.isLoading,
+  message: state.kebersihan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKebersihanInnovation: (formData, refresh) =>
+    dispatch(createKebersihanInnovation(formData, refresh)),
+  updateKebersihanInnovation: (formData, id, refresh) =>
+    dispatch(updateKebersihanInnovation(formData, id, refresh)),
+  deleteKebersihanInnovation: (id, refresh) => dispatch(deleteKebersihanInnovation(id, refresh)),
 })
 
 export default connect(
@@ -701,7 +680,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKebersihanInnovation(p),
     Component: withToggle({
       Component: SelasarLobby,
       toggles: {

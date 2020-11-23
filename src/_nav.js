@@ -263,8 +263,28 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Gedung',
+          url: '/master/gedung',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Provider',
           url: '/master/providers',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Compressor',
+          url: '/master/compressor',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pompa',
+          url: '/master/pompa',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Unit Pompa',
+          url: '/master/unit-pompa',
           icon: 'fa fa-angle-double-right',
         },
         {

@@ -75,7 +75,7 @@
     "build:staging": "GENERATE_SOURCEMAP=false REACT_APP_BUILD_ENV=staging react-scripts build",
     "build:production": "GENERATE_SOURCEMAP=false REACT_APP_BUILD_ENV=production react-scripts build",
     "build:production-windows": "SET REACT_APP_BUILD_ENV=production&&react-scripts build",
-    "deploy:staging": "npm run lint && npm run build:staging && cp .htaccess build/ && scp -r build/ root@54.179.32.218:/var/www/html/bri-frontend/build/",
+    "deploy:staging": "npm run build:staging && cp .htaccess build/ && scp -r build/ root@54.179.32.218:/var/www/html/bri-frontend/",
     "deploy:production": "npm run lint && npm run build:production && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
     "deploy:production-windows": "npm run build:production-windows && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
     "test": "react-scripts test",

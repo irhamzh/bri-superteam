@@ -578,6 +578,7 @@ class Service {
 
   // Water Meter
   static getWaterMeter(params) {
+    if (!params) params = ''
     return axios.get(`water-meters${params}`)
   }
 
@@ -793,6 +794,94 @@ class Service {
 
   static deleteEngineerGedungME(id) {
     return axios.delete(`pg-engineer-buildings/mechanical-electrical/${id}`)
+  }
+
+  // Gedung
+  static getGedung(params) {
+    if (!params) params = ''
+    return axios.get(`buildings${params}`)
+  }
+
+  static getGedungById(id) {
+    return axios.get(`buildings/${id}`)
+  }
+
+  static createGedung(values) {
+    return axios.post('buildings', values)
+  }
+
+  static updateGedung(values, id) {
+    return axios.put(`buildings/${id}`, values)
+  }
+
+  static deleteGedung(id) {
+    return axios.delete(`buildings/${id}`)
+  }
+
+  // Compressor
+  static getCompressor(params) {
+    if (!params) params = ''
+    return axios.get(`compressors${params}`)
+  }
+
+  static getCompressorById(id) {
+    return axios.get(`compressors/${id}`)
+  }
+
+  static createCompressor(values) {
+    return axios.post('compressors', values)
+  }
+
+  static updateCompressor(values, id) {
+    return axios.put(`compressors/${id}`, values)
+  }
+
+  static deleteCompressor(id) {
+    return axios.delete(`compressors/${id}`)
+  }
+
+  // Pompa
+  static getPompa(params) {
+    if (!params) params = ''
+    return axios.get(`pumps${params}`)
+  }
+
+  static getPompaById(id) {
+    return axios.get(`pumps/${id}`)
+  }
+
+  static createPompa(values) {
+    return axios.post('pumps', values)
+  }
+
+  static updatePompa(values, id) {
+    return axios.put(`pumps/${id}`, values)
+  }
+
+  static deletePompa(id) {
+    return axios.delete(`pumps/${id}`)
+  }
+
+  // Unit Pompa
+  static getUnitPompa(params) {
+    if (!params) params = ''
+    return axios.get(`pump-units${params}`)
+  }
+
+  static getUnitPompaById(id) {
+    return axios.get(`pump-units/${id}`)
+  }
+
+  static createUnitPompa(values) {
+    return axios.post('pump-units', values)
+  }
+
+  static updateUnitPompa(values, id) {
+    return axios.put(`pump-units/${id}`, values)
+  }
+
+  static deleteUnitPompa(id) {
+    return axios.delete(`pump-units/${id}`)
   }
 }
 

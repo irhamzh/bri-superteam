@@ -111,7 +111,7 @@ class Lelang extends Component {
       {
         Header: 'Tanggal',
         width: 100,
-        accessor: 'tanggal',
+        accessor: 'tanggalPengadaan',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },

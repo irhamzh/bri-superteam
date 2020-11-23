@@ -1,24 +1,33 @@
+import React, { useState, useEffect } from 'react'
 import { Field, Form, Formik } from 'formik'
-import React from 'react'
 import { connect } from 'react-redux'
 import { Button, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Spinner } from 'reactstrap'
 import PropTypes from 'prop-types'
-import { CfInput } from '../../../../components'
+import { CfInput, CfSelect } from '../../../../components'
 import { invalidValues } from '../../../../helpers'
 import { WithToggleProps } from '../../../../HOC/withToggle'
-import { createJenisBarang, updateJenisBarang } from '../../../../modules/jenisBarang/actions'
-import jenisBarangSchema from '../../../../validations/mvJenisBarang'
+import { createUnitPompa, updateUnitPompa } from '../../../../modules/unitPompa/actions'
+// import jenisBarangSchema from '../../../../validations/mvJenisBarang'
+import Service from '../../../../config/services'
 
 function ModalForm(props) {
+  const [optPompa, setOptPompa] = useState([])
+
+  useEffect(() => {
+    Service.getPompa().then((res) => {
+      const option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+      setOptPompa(option)
+    })
+  }, [])
   const { modalForm, doRefresh, className } = props
 
   function handleSaveChanges(values) {
     const { id } = values
-    const { createJenisBarang, updateJenisBarang } = props
+    const { createUnitPompa, updateUnitPompa } = props
     if (!invalidValues.includes(id)) {
-      updateJenisBarang(values, id, doRefresh)
+      updateUnitPompa(values, id, doRefresh)
     } else {
-      createJenisBarang(values, doRefresh)
+      createUnitPompa(values, doRefresh)
     }
   }
 
@@ -32,7 +41,7 @@ function ModalForm(props) {
       >
         <Formik
           initialValues={modalForm.prop.data}
-          validationSchema={jenisBarangSchema}
+          // validationSchema={}
           onSubmit={(values, actions) => {
             setTimeout(() => {
               handleSaveChanges(values)
@@ -42,17 +51,28 @@ function ModalForm(props) {
         >
           {({ isSubmitting }) => (
             <Form>
-              <ModalHeader toggle={modalForm.hide}>Form Jenis Barang</ModalHeader>
+              <ModalHeader toggle={modalForm.hide}>Form Unit Pompa</ModalHeader>
 
               <ModalBody>
                 <FormGroup>
                   <Field
-                    label="Nama Jenis Barang"
+                    label="Nama Unit Pompa"
                     type="text"
-                    name="name"
+                    name="nameUnit"
                     isRequired
                     placeholder="Masukkan nama"
                     component={CfInput}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <Field
+                    label="Pompa"
+                    options={optPompa}
+                    isRequired
+                    name="pump"
+                    placeholder="Pilih atau Cari Pompa"
+                    component={CfSelect}
                   />
                 </FormGroup>
               </ModalBody>
@@ -83,8 +103,8 @@ function ModalForm(props) {
 
 ModalForm.propTypes = {
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createJenisBarang: PropTypes.func.isRequired,
-  updateJenisBarang: PropTypes.func.isRequired,
+  createUnitPompa: PropTypes.func.isRequired,
+  updateUnitPompa: PropTypes.func.isRequired,
   doRefresh: PropTypes.func,
   modalForm: WithToggleProps,
 }
@@ -96,8 +116,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createJenisBarang: (formData, refresh) => dispatch(createJenisBarang(formData, refresh)),
-  updateJenisBarang: (formData, id, refresh) => dispatch(updateJenisBarang(formData, id, refresh)),
+  createUnitPompa: (formData, refresh) => dispatch(createUnitPompa(formData, refresh)),
+  updateUnitPompa: (formData, id, refresh) => dispatch(updateUnitPompa(formData, id, refresh)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModalForm)

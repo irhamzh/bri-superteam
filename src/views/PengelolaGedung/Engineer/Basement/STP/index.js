@@ -19,46 +19,21 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
-import { CfInputDate, CfInputRadio, CfTextQuil } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createEngineerBasementSTP,
+  updateEngineerBasementSTP,
+  deleteEngineerBasementSTP,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: 'Desember 2020',
-    kondisiPompa: 'Baik',
-    kondisiOli: 'Tidak Baik',
-    kondisiWaterLevel: 'Baik',
-    testOperasional: 'Baik',
-    kondisiSampahLimbah: 'Tidak Baik',
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: 'November 2020',
-    kondisiPompa: 'Baik',
-    kondisiOli: 'Baik',
-    kondisiWaterLevel: 'Baik',
-    testOperasional: 'Baik',
-    kondisiSampahLimbah: 'Baik',
-    keterangan: 'Lorem Ipsum',
-  },
-]
-
 class STP extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -68,11 +43,11 @@ class STP extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createEngineerBasementSTP, updateEngineerBasementSTP } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateEngineerBasementSTP(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementSTP(values, this.doRefresh)
     }
   }
 
@@ -80,13 +55,13 @@ class STP extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementSTP } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementSTP(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -109,38 +84,39 @@ class STP extends Component {
     const columns = [
       {
         Header: 'Bulan',
-        accessor: 'tanggal',
+        accessor: 'yearMonth',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Kondisi Pompa',
-        accessor: 'kondisiPompa',
+        accessor: 'pompa',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Kondisi Oli',
-        accessor: 'kondisiOli',
+        accessor: 'oli',
         filterable: false,
         headerClassName: 'wordwrap',
       },
 
       {
         Header: 'Kondisi Water Level Kontrol',
-        accessor: 'kondisiWaterLevel',
+        accessor: 'waterLevelControl',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Test Operasional',
-        accessor: 'testOperasional',
+        accessor: 'operasional',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -226,11 +202,10 @@ class STP extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -244,7 +219,7 @@ class STP extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -259,7 +234,7 @@ class STP extends Component {
                       <FormGroup>
                         <Field
                           label="Bulan/Tahun"
-                          name="tanggal"
+                          name="yearMonth"
                           classIcon="fa fa-calendar"
                           blockLabel
                           // minDate={new Date()}
@@ -278,19 +253,14 @@ class STP extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="kondisiPompa"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="pompa" id="Baik" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kondisiPompa"
+                              name="pompa"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -304,19 +274,14 @@ class STP extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="kondisiOli"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="oli" id="Baik" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kondisiOli"
+                              name="oli"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -332,7 +297,7 @@ class STP extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="kondisiWaterLevel"
+                              name="waterLevelControl"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -342,7 +307,7 @@ class STP extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kondisiWaterLevel"
+                              name="waterLevelControl"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -358,7 +323,7 @@ class STP extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="testOperasional"
+                              name="operasional"
                               id="Baik"
                               component={CfInputRadio}
                             />
@@ -368,7 +333,7 @@ class STP extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="testOperasional"
+                              name="operasional"
                               id="Tidak Baik"
                               component={CfInputRadio}
                             />
@@ -380,10 +345,10 @@ class STP extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
-                          component={CfTextQuil}
+                          component={CfInput}
                         />
                       </FormGroup>
 
@@ -426,23 +391,25 @@ STP.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementSTP: PropTypes.func.isRequired,
+  updateEngineerBasementSTP: PropTypes.func.isRequired,
+  deleteEngineerBasementSTP: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementSTP: (formData, refresh) =>
+    dispatch(createEngineerBasementSTP(formData, refresh)),
+  updateEngineerBasementSTP: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementSTP(formData, id, refresh)),
+  deleteEngineerBasementSTP: (id, refresh) => dispatch(deleteEngineerBasementSTP(id, refresh)),
 })
 
 export default connect(
@@ -450,7 +417,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementSTP(p),
     Component: withToggle({
       Component: STP,
       toggles: {

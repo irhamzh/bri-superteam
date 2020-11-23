@@ -471,7 +471,7 @@ class SeleksiLangsung extends Component {
                           label="Jenis Anggaran"
                           options={[
                             { value: 'investasi', label: 'Investasi' },
-                            { value: 'epsloitasi', label: 'Eksploitasi' },
+                            { value: 'eksploitasi', label: 'Eksploitasi' },
                           ]}
                           isRequired
                           name="jenisAnggaran"

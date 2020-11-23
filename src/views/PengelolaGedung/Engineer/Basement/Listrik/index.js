@@ -19,42 +19,21 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createEngineerBasementListrik,
+  updateEngineerBasementListrik,
+  deleteEngineerBasementListrik,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '05/12/2020',
-    jenis: 'PDAM',
-    meterAwal: 100,
-    meterAkhir: 120,
-    penggunaan: 20,
-  },
-  {
-    tanggal: '06/12/2020',
-    jenis: 'Deep Well',
-    meterAwal: 100,
-    meterAkhir: 120,
-    penggunaan: 20,
-  },
-]
-
 class Listrik extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -64,11 +43,11 @@ class Listrik extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createEngineerBasementListrik, updateEngineerBasementListrik } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateEngineerBasementListrik(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementListrik(values, this.doRefresh)
     }
   }
 
@@ -76,13 +55,13 @@ class Listrik extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementListrik } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementListrik(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -108,6 +87,7 @@ class Listrik extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Meter Awal',
@@ -207,11 +187,10 @@ class Listrik extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -225,7 +204,7 @@ class Listrik extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -322,23 +301,26 @@ Listrik.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementListrik: PropTypes.func.isRequired,
+  updateEngineerBasementListrik: PropTypes.func.isRequired,
+  deleteEngineerBasementListrik: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementListrik: (formData, refresh) =>
+    dispatch(createEngineerBasementListrik(formData, refresh)),
+  updateEngineerBasementListrik: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementListrik(formData, id, refresh)),
+  deleteEngineerBasementListrik: (id, refresh) =>
+    dispatch(deleteEngineerBasementListrik(id, refresh)),
 })
 
 export default connect(
@@ -346,7 +328,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementListrik(p),
     Component: withToggle({
       Component: Listrik,
       toggles: {

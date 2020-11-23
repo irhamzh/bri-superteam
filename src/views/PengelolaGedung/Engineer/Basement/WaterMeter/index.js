@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementWM,
   updateEngineerBasementWM,
@@ -55,11 +55,11 @@ class WaterMeter extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createEngineerBasementWM, updateEngineerBasementWM } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateEngineerBasementWM(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementWM(values, this.doRefresh)
     }
   }
 
@@ -67,13 +67,13 @@ class WaterMeter extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementWM } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementWM(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -90,6 +90,7 @@ class WaterMeter extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optWaterMeter } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -99,10 +100,11 @@ class WaterMeter extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Jenis',
-        accessor: 'jenis',
+        accessor: 'waterMeter.name',
         filterable: false,
       },
       {
@@ -205,11 +207,10 @@ class WaterMeter extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -223,7 +224,7 @@ class WaterMeter extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -251,7 +252,7 @@ class WaterMeter extends Component {
                       <FormGroup>
                         <Field
                           label="Water Meter"
-                          options={[{ value: 'PDAM', label: 'PDAM' }]}
+                          options={optWaterMeter}
                           isRequired
                           name="waterMeter"
                           placeholder="Pilih atau Cari Water Meter"
@@ -331,23 +332,25 @@ WaterMeter.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementWM: PropTypes.func.isRequired,
+  updateEngineerBasementWM: PropTypes.func.isRequired,
+  deleteEngineerBasementWM: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementWM: (formData, refresh) =>
+    dispatch(createEngineerBasementWM(formData, refresh)),
+  updateEngineerBasementWM: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementWM(formData, id, refresh)),
+  deleteEngineerBasementWM: (id, refresh) => dispatch(deleteEngineerBasementWM(id, refresh)),
 })
 
 export default connect(
@@ -355,7 +358,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementWM(p),
     Component: withToggle({
       Component: WaterMeter,
       toggles: {

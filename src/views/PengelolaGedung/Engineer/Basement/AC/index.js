@@ -19,45 +19,42 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createEngineerBasementAC,
+  updateEngineerBasementAC,
+  deleteEngineerBasementAC,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '09/12/2020',
-    gedung: 'Smart Building',
-    lantai: 'Lantai 1',
-    compressor: 'Compressor 1',
-    ampereR: 100,
-    ampereS: 30,
-    ampereT: 20,
-  },
-  {
-    tanggal: '09/12/2020',
-    gedung: 'Innovation Building',
-    lantai: 'Lantai 3',
-    compressor: 'Compressor 2',
-    ampereR: 100,
-    ampereS: 30,
-    ampereT: 20,
-  },
-]
-
 class AC extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optGedung: [],
+    optLantai: [],
+    optCompressor: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataGedung = await Service.getGedung()
+    const dataGedung = resDataGedung.data.data
+    const optGedung = dataGedung.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataLantai = await Service.getLantai()
+    const dataLantai = resDataLantai.data.data
+    const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataCompressor = await Service.getCompressor()
+    const dataCompressor = resDataCompressor.data.data
+    const optCompressor = dataCompressor.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optGedung, optLantai, optCompressor })
   }
 
   doRefresh = () => {
@@ -68,11 +65,11 @@ class AC extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createEngineerBasementAC, updateEngineerBasementAC } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateEngineerBasementAC(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementAC(values, this.doRefresh)
     }
   }
 
@@ -80,13 +77,13 @@ class AC extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementAC } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementAC(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -103,6 +100,7 @@ class AC extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optCompressor, optGedung, optLantai } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -112,36 +110,36 @@ class AC extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Gedung',
-        accessor: 'gedung',
+        accessor: 'building.name',
         filterable: false,
       },
       {
         Header: 'Lantai',
-        accessor: 'lantai',
+        accessor: 'floor.name',
         filterable: false,
       },
       {
         Header: 'Compressor',
-        accessor: 'compressor',
+        accessor: 'compressor.name',
         filterable: false,
       },
       {
         Header: 'Ampere R',
-        accessor: 'ampereR',
+        accessor: 'ukuranAmpereR',
         filterable: false,
       },
       {
         Header: 'Ampere S',
-        accessor: 'ampereS',
+        accessor: 'ukuranAmpereS',
         filterable: false,
       },
       {
         Header: 'Ampere T',
-        accessor: 'ampereT',
+        accessor: 'ukuranAmpereT',
         filterable: false,
       },
       {
@@ -227,11 +225,10 @@ class AC extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -245,7 +242,7 @@ class AC extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -273,9 +270,9 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Gedung"
-                          options={[{ value: 'Smart Building', label: 'Smart Building' }]}
+                          options={optGedung}
                           isRequired
-                          name="gedung"
+                          name="building"
                           placeholder="Pilih atau Cari Gedung"
                           component={CfSelect}
                         />
@@ -284,16 +281,9 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Lantai"
-                          options={[
-                            { value: '1', label: '1' },
-                            { value: '2', label: '2' },
-                            { value: '3', label: '3' },
-                            { value: '4', label: '4' },
-                            { value: '5', label: '5' },
-                            { value: '6', label: '6' },
-                          ]}
+                          options={optLantai}
                           isRequired
-                          name="lantai"
+                          name="floor"
                           placeholder="Pilih atau Cari Lantai"
                           component={CfSelect}
                         />
@@ -313,14 +303,9 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Compressor"
-                          options={[
-                            { value: 'Compressor 1', label: 'Compressor 1' },
-                            { value: 'Compressor 2', label: 'Compressor 2' },
-                            { value: 'Compressor 3', label: 'Compressor 3' },
-                            { value: 'Compressor 4', label: 'Compressor 4' },
-                          ]}
+                          options={optCompressor}
                           isRequired
-                          name="Compressor"
+                          name="compressor"
                           placeholder="Pilih atau Cari Compressor"
                           component={CfSelect}
                         />
@@ -330,7 +315,7 @@ class AC extends Component {
                         <Field
                           label="Ukuran Ampere R"
                           type="text"
-                          name="ampereR"
+                          name="ukuranAmpereR"
                           isRequired
                           placeholder="Masukkan Ampere R"
                           component={CfInput}
@@ -341,7 +326,7 @@ class AC extends Component {
                         <Field
                           label="Ukuran Ampere S"
                           type="text"
-                          name="ampereS"
+                          name="ukuranAmpereS"
                           isRequired
                           placeholder="Masukkan Ampere S"
                           component={CfInput}
@@ -352,7 +337,7 @@ class AC extends Component {
                         <Field
                           label="Ukuran Ampere T"
                           type="text"
-                          name="ampereT"
+                          name="ukuranAmpereT"
                           isRequired
                           placeholder="Masukkan Ampere T"
                           component={CfInput}
@@ -398,23 +383,25 @@ AC.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementAC: PropTypes.func.isRequired,
+  updateEngineerBasementAC: PropTypes.func.isRequired,
+  deleteEngineerBasementAC: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementAC: (formData, refresh) =>
+    dispatch(createEngineerBasementAC(formData, refresh)),
+  updateEngineerBasementAC: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementAC(formData, id, refresh)),
+  deleteEngineerBasementAC: (id, refresh) => dispatch(deleteEngineerBasementAC(id, refresh)),
 })
 
 export default connect(
@@ -422,7 +409,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementAC(p),
     Component: withToggle({
       Component: AC,
       toggles: {

@@ -12,6 +12,10 @@ const Rekanan = React.lazy(() => import('./views/Master/Rekanan'))
 const WaterMeter = React.lazy(() => import('./views/Master/WaterMeter'))
 const Lantai = React.lazy(() => import('./views/Master/Lantai'))
 const Item = React.lazy(() => import('./views/Master/Item'))
+const Gedung = React.lazy(() => import('./views/Master/Gedung'))
+const Compressor = React.lazy(() => import('./views/Master/Compressor'))
+const Pompa = React.lazy(() => import('./views/Master/Pompa'))
+const UnitPompa = React.lazy(() => import('./views/Master/UnitPompa'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -369,6 +373,26 @@ const routes = [
     path: '/master/item',
     name: 'Item',
     component: Item,
+  },
+  {
+    path: '/master/gedung',
+    name: 'Gedung',
+    component: Gedung,
+  },
+  {
+    path: '/master/compressor',
+    name: 'Compressor',
+    component: Compressor,
+  },
+  {
+    path: '/master/pompa',
+    name: 'Pompa',
+    component: Pompa,
+  },
+  {
+    path: '/master/unit-Pompa',
+    name: 'Unit Pompa',
+    component: UnitPompa,
   },
 ]
 

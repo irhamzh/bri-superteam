@@ -26,6 +26,7 @@ import peralatanKerja from './peralatankerja/reducer'
 import waterMeter from './waterMeter/reducer'
 import lantai from './lantai/reducer'
 import item from './item/reducer'
+import engineer from './engineer/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -55,6 +56,7 @@ const rootReducer = combineReducers({
   peralatanKerja,
   lantai,
   item,
+  engineer,
 })
 
 export default rootReducer

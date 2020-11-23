@@ -19,41 +19,32 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import {
+  createEngineerBasementWM,
+  updateEngineerBasementWM,
+  deleteEngineerBasementWM,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '02/12/2020',
-    jenis: 'PDAM',
-    meterAwal: 100,
-    meterAkhir: 120,
-    penggunaan: 20,
-  },
-  {
-    tanggal: '05/12/2020',
-    jenis: 'Deep Well',
-    meterAwal: 100,
-    meterAkhir: 120,
-    penggunaan: 20,
-  },
-]
-
 class WaterMeter extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optWaterMeter: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataWaterMeter = await Service.getWaterMeter()
+    const dataWaterMeter = resDataWaterMeter.data.data
+    const optWaterMeter = dataWaterMeter.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optWaterMeter })
   }
 
   doRefresh = () => {

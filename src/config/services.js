@@ -640,6 +640,160 @@ class Service {
   static deleteItem(id) {
     return axios.delete(`items/${id}`)
   }
+
+  // Engineer Basement Water Meter
+  static getEngineerBasementWM(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-basements/water-meter${params}`)
+  }
+
+  static getEngineerBasementWMById(id) {
+    return axios.get(`pg-engineer-basements/water-meter/${id}`)
+  }
+
+  static createEngineerBasementWM(values) {
+    return axios.post('pg-engineer-basements/water-meter', values)
+  }
+
+  static updateEngineerBasementWM(values, id) {
+    return axios.put(`pg-engineer-basements/water-meter/${id}`, values)
+  }
+
+  static deleteEngineerBasementWM(id) {
+    return axios.delete(`pg-engineer-basements/water-meter/${id}`)
+  }
+
+  // Engineer Basement Listrik
+  static getEngineerBasementListrik(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-basements/electrify${params}`)
+  }
+
+  static getEngineerBasementListrikById(id) {
+    return axios.get(`pg-engineer-basements/electrify/${id}`)
+  }
+
+  static createEngineerBasementListrik(values) {
+    return axios.post('pg-engineer-basements/electrify', values)
+  }
+
+  static updateEngineerBasementListrik(values, id) {
+    return axios.put(`pg-engineer-basements/electrify/${id}`, values)
+  }
+
+  static deleteEngineerBasementListrik(id) {
+    return axios.delete(`pg-engineer-basements/electrify/${id}`)
+  }
+
+  // Engineer Basement STP
+  static getEngineerBasementSTP(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-basements/stp${params}`)
+  }
+
+  static getEngineerBasementSTPById(id) {
+    return axios.get(`pg-engineer-basements/stp/${id}`)
+  }
+
+  static createEngineerBasementSTP(values) {
+    return axios.post('pg-engineer-basements/stp', values)
+  }
+
+  static updateEngineerBasementSTP(values, id) {
+    return axios.put(`pg-engineer-basements/stp/${id}`, values)
+  }
+
+  static deleteEngineerBasementSTP(id) {
+    return axios.delete(`pg-engineer-basements/stp/${id}`)
+  }
+
+  // Engineer Basement plumbing
+  static getEngineerBasementPlumbing(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-basements/plumbing${params}`)
+  }
+
+  static getEngineerBasementPlumbingById(id) {
+    return axios.get(`pg-engineer-basements/plumbing/${id}`)
+  }
+
+  static createEngineerBasementPlumbing(values) {
+    return axios.post('pg-engineer-basements/plumbing', values)
+  }
+
+  static updateEngineerBasementPlumbing(values, id) {
+    return axios.put(`pg-engineer-basements/plumbing/${id}`, values)
+  }
+
+  static deleteEngineerBasementPlumbing(id) {
+    return axios.delete(`pg-engineer-basements/plumbing/${id}`)
+  }
+
+  // Engineer Basement AC
+  static getEngineerBasementAC(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-basements/ac${params}`)
+  }
+
+  static getEngineerBasementACById(id) {
+    return axios.get(`pg-engineer-basements/ac/${id}`)
+  }
+
+  static createEngineerBasementAC(values) {
+    return axios.post('pg-engineer-basements/ac', values)
+  }
+
+  static updateEngineerBasementAC(values, id) {
+    return axios.put(`pg-engineer-basements/ac/${id}`, values)
+  }
+
+  static deleteEngineerBasementAC(id) {
+    return axios.delete(`pg-engineer-basements/ac/${id}`)
+  }
+
+  // Engineer Gedung Room
+  static getEngineerGedungRoom(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-buildings/room${params}`)
+  }
+
+  static getEngineerGedungRoomById(id) {
+    return axios.get(`pg-engineer-buildings/room/${id}`)
+  }
+
+  static createEngineerGedungRoom(values) {
+    return axios.post('pg-engineer-buildings/room', values)
+  }
+
+  static updateEngineerGedungRoom(values, id) {
+    return axios.put(`pg-engineer-buildings/room/${id}`, values)
+  }
+
+  static deleteEngineerGedungRoom(id) {
+    return axios.delete(`pg-engineer-buildings/room/${id}`)
+  }
+
+  // Engineer Gedung ME
+  static getEngineerGedungME(params) {
+    if (!params) params = ''
+    return axios.get(`pg-engineer-buildings/mechanical-electrical${params}`)
+  }
+
+  static getEngineerGedungMEById(id) {
+    return axios.get(`pg-engineer-buildings/mechanical-electrical/${id}`)
+  }
+
+  static createEngineerGedungME(values) {
+    return axios.post('pg-engineer-buildings/mechanical-electrical', values)
+  }
+
+  static updateEngineerGedungME(values, id) {
+    return axios.put(`pg-engineer-buildings/mechanical-electrical/${id}`, values)
+  }
+
+  static deleteEngineerGedungME(id) {
+    return axios.delete(`pg-engineer-buildings/mechanical-electrical/${id}`)
+  }
 }
 
 export default Service

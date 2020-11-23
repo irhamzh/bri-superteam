@@ -57,35 +57,62 @@ export default {
           url: '/fixed-asset/peralatan-it',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Pengelola Gedung',
+          url: '/pengelola-gedung',
+          icon: 'icon-layers',
+          children: [
+            {
+              name: 'Engineer',
+              url: '/pengelola-gedung/engineer',
+              icon: 'fa fa-angle-double-right',
+            },
+            {
+              name: 'Peralatan IT',
+              url: '/pengelola-gedung/peralatan-it',
+              icon: 'fa fa-angle-double-right',
+            },
+            {
+              name: 'Kebersihan',
+              url: '/pengelola-gedung/kebersihan',
+              icon: 'fa fa-angle-double-right',
+            },
+            {
+              name: 'Peralatan Kerja',
+              url: '/pengelola-gedung/peralatan-kerja',
+              icon: 'fa fa-angle-double-right',
+            },
+          ],
+        },
       ],
     },
-    {
-      name: 'Pengelola Gedung',
-      url: '/pengelola-gedung',
-      icon: 'icon-layers',
-      children: [
-        {
-          name: 'Engineer',
-          url: '/pengelola-gedung/engineer',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'Peralatan IT',
-          url: '/pengelola-gedung/peralatan-it',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'Kebersihan',
-          url: '/pengelola-gedung/kebersihan',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'Peralatan Kerja',
-          url: '/pengelola-gedung/peralatan-kerja',
-          icon: 'fa fa-angle-double-right',
-        },
-      ],
-    },
+    // {
+    //   name: 'Pengelola Gedung',
+    //   url: '/pengelola-gedung',
+    //   icon: 'icon-layers',
+    //   children: [
+    //     {
+    //       name: 'Engineer',
+    //       url: '/pengelola-gedung/engineer',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'Peralatan IT',
+    //       url: '/pengelola-gedung/peralatan-it',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'Kebersihan',
+    //       url: '/pengelola-gedung/kebersihan',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'Peralatan Kerja',
+    //       url: '/pengelola-gedung/peralatan-kerja',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //   ],
+    // },
     {
       name: 'Procurement',
       url: '/procurement',

@@ -19,41 +19,46 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfInputRadio, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  createPGPeralatanIT,
+  updatePGPeralatanIT,
+  deletePGPeralatanIT,
+} from '../../../../modules/peralatan-it/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    lantai: 'Lantai 1',
-    ruangan: 'Ruangan X',
-    item: 'Koneksi',
-    status: 'Connected',
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    lantai: 'Lantai 3',
-    ruangan: 'Ruangan Y',
-    item: 'Antivirus',
-    status: 'Tidak Update',
-    keterangan: 'Lorem Ipsum',
-  },
-]
-
 class PeralatanJaringan extends Component {
+  state = {
+    optLantai: [],
+    optRuangan: [],
+    optItem: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    typePeralatanIT: 'jaringan',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePeralatanIT: 'jaringan',
+    })
+    const resDataRuangan = await Service.getRoom()
+    const dataRuangan = resDataRuangan.data.data
+    const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataLantai = await Service.getLantai()
+    const dataLantai = resDataLantai.data.data
+    const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataItem = await Service.getItem()
+    const dataItem = resDataItem.data.data
+    const optItem = dataItem.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optRuangan, optLantai, optItem })
   }
 
   doRefresh = () => {
@@ -64,11 +69,11 @@ class PeralatanJaringan extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPGPeralatanIT, updatePGPeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePGPeralatanIT(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPGPeralatanIT(values, this.doRefresh)
     }
   }
 
@@ -76,13 +81,13 @@ class PeralatanJaringan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePGPeralatanIT } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePGPeralatanIT(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -99,24 +104,26 @@ class PeralatanJaringan extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optRuangan, optLantai, optItem } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Lantai',
-        accessor: 'lantai',
+        accessor: 'floor.name',
         filterable: true,
       },
 
       {
         Header: 'Ruangan',
-        accessor: 'ruangan',
+        accessor: 'ruangan.name',
         filterable: false,
       },
       {
         Header: 'Item',
-        accessor: 'item',
+        accessor: 'item.name',
+        filterable: false,
       },
       {
         Header: 'Status',
@@ -125,7 +132,7 @@ class PeralatanJaringan extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: true,
       },
       {
@@ -190,11 +197,10 @@ class PeralatanJaringan extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -207,7 +213,7 @@ class PeralatanJaringan extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -222,16 +228,9 @@ class PeralatanJaringan extends Component {
                       <FormGroup>
                         <Field
                           label="Lantai"
-                          options={[
-                            { value: 'Lantai 1', label: 'Lantai 1' },
-                            { value: 'Lantai 2', label: 'Lantai 2' },
-                            { value: 'Lantai 3', label: 'Lantai 3' },
-                            { value: 'Lantai 4', label: 'Lantai 4' },
-                            { value: 'Lantai 5', label: 'Lantai 5' },
-                            { value: 'Lantai 6', label: 'Lantai 6' },
-                          ]}
+                          options={optLantai}
                           isRequired
-                          name="lantai"
+                          name="floor"
                           placeholder="Pilih atau Cari Lantai"
                           component={CfSelect}
                         />
@@ -240,11 +239,7 @@ class PeralatanJaringan extends Component {
                       <FormGroup>
                         <Field
                           label="Ruangan"
-                          options={[
-                            { value: 'Ruangan X', label: 'Ruangan X' },
-                            { value: 'Ruangan Y', label: 'Ruangan Y' },
-                            { value: 'Ruangan Z', label: 'Ruangan Z' },
-                          ]}
+                          options={optRuangan}
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
@@ -255,27 +250,25 @@ class PeralatanJaringan extends Component {
                       <FormGroup>
                         <Field
                           label="Item"
-                          options={[
-                            { value: 'Antivirus', label: 'Antivirus' },
-                            { value: 'Koneksi', label: 'Koneksi' },
-                          ]}
+                          options={optItem}
                           isRequired
                           name="item"
                           placeholder="Pilih atau Cari item"
                           component={CfSelect}
                         />
                       </FormGroup>
+                      {console.log(values.item)}
                       {values.item && (
                         <Row>
-                          <Col>
+                          <Col sm="3">
                             <h6>Status Item</h6>
                           </Col>
-                          <Col>
+                          <Col sm="4">
                             <FormGroup>
                               <Field
-                                label={values.item === 'Antivirus' ? 'Update' : 'Connected'}
+                                label="Updated/Connected"
                                 name="status"
-                                id={values.item === 'Antivirus' ? 'Update' : 'Connected'}
+                                id="yes"
                                 component={CfInputRadio}
                               />
                             </FormGroup>
@@ -283,11 +276,9 @@ class PeralatanJaringan extends Component {
                           <Col>
                             <FormGroup>
                               <Field
-                                label={
-                                  values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'
-                                }
+                                label="Tidak Update/Disconnected"
                                 name="status"
-                                id={values.item === 'Antivirus' ? 'Tidak Update' : 'Disconnected'}
+                                id="no"
                                 component={CfInputRadio}
                               />
                             </FormGroup>
@@ -299,7 +290,7 @@ class PeralatanJaringan extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
@@ -345,23 +336,24 @@ PeralatanJaringan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPGPeralatanIT: PropTypes.func.isRequired,
+  updatePGPeralatanIT: PropTypes.func.isRequired,
+  deletePGPeralatanIT: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanIt.isLoading,
+  message: state.peralatanIt.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPGPeralatanIT: (formData, refresh) => dispatch(createPGPeralatanIT(formData, refresh)),
+  updatePGPeralatanIT: (formData, id, refresh) =>
+    dispatch(updatePGPeralatanIT(formData, id, refresh)),
+  deletePGPeralatanIT: (id, refresh) => dispatch(deletePGPeralatanIT(id, refresh)),
 })
 
 export default connect(
@@ -369,7 +361,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPGPeralatanIT(p),
     Component: withToggle({
       Component: PeralatanJaringan,
       toggles: {

@@ -599,6 +599,7 @@ class Service {
 
   // Lantai
   static getLantai(params) {
+    if (!params) params = ''
     return axios.get(`floors${params}`)
   }
 
@@ -620,6 +621,7 @@ class Service {
 
   // Item
   static getItem(params) {
+    if (!params) params = ''
     return axios.get(`items${params}`)
   }
 

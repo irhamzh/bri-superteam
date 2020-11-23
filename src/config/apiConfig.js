@@ -1,6 +1,6 @@
 const BASE_URL = {
   production: 'http://localhost:8000',
-  staging: 'http://localhost:8000',
+  staging: 'https://asia-southeast2-geochat-252415.cloudfunctions.net/api',
   development: 'http://localhost:5000/geochat-252415/asia-southeast2/api',
 }
 

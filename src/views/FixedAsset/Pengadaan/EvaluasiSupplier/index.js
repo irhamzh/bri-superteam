@@ -34,16 +34,22 @@ class EvaluasiSupplier extends Component {
   state = {
     optProvider: [],
     optPengadaan: [],
+    dataProvider: [],
   }
 
   initialValues = {}
 
   async componentDidMount() {
+    const resDataPengadaan = await Service.getAllPengadaan()
+    const dataPengadaan = resDataPengadaan.data.data
+    const optPengadaan = dataPengadaan.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
     const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
     this.setState({
+      optPengadaan,
       optProvider,
       dataProvider,
     })
@@ -99,24 +105,24 @@ class EvaluasiSupplier extends Component {
     const columns = [
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
+        accessor: 'provider.name',
         filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Alamat',
-        accessor: 'alamat',
+        accessor: 'provider.address',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kontak',
-        accessor: 'contact',
+        accessor: 'provider.contact',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
+        accessor: 'pengadaan.namaPengadaan',
         filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -221,7 +227,7 @@ class EvaluasiSupplier extends Component {
                           label="Nama Pengadaan"
                           options={optPengadaan}
                           isRequired
-                          name="namaPengadaan"
+                          name="pengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
                           component={CfSelect}
                         />

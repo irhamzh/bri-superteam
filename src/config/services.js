@@ -1037,6 +1037,12 @@ class Service {
   static deleteKebersihanInnovation(id) {
     return axios.delete(`pg-sanitations/innovation-building/${id}`)
   }
+
+  // Get All Pengadaan
+  static getAllPengadaan(params) {
+    if (!params) params = ''
+    return axios.get(`pengadaans${params}`)
+  }
 }
 
 export default Service

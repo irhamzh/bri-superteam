@@ -235,7 +235,7 @@ class PestControl extends Component {
           ),
       },
       {
-        Header: 'R. Sampah',
+        Header: 'Tempat Sampah',
         accessor: 'ruangSampah',
         filterable: false,
         Cell: (props) =>
@@ -250,7 +250,7 @@ class PestControl extends Component {
           ),
       },
       {
-        Header: 'R. Shaft',
+        Header: 'Shaft',
         accessor: 'ruangShaft',
         filterable: false,
         Cell: (props) =>
@@ -490,18 +490,14 @@ class PestControl extends Component {
 
                         <FormGroup>
                           <Field
-                            label="Ruang Sampah"
+                            label="Tempat Sampah"
                             name="ruangSampah"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field
-                            label="Ruang Shaft"
-                            name="ruangShaft"
-                            component={CfInputCheckbox}
-                          />
+                          <Field label="Shaft" name="ruangShaft" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>

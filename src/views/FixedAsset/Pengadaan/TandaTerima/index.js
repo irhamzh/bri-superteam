@@ -33,9 +33,23 @@ import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 class TandaTerima extends Component {
   state = {
     optPengadaan: [],
+    optProvider: [],
+    dataProvider: [],
   }
 
   initialValues = {}
+
+  async componentDidMount() {
+    const resDataPengadaan = await Service.getAllPengadaan()
+    const dataPengadaan = resDataPengadaan.data.data
+    const optPengadaan = dataPengadaan.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optPengadaan, optProvider, dataProvider })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -80,7 +94,7 @@ class TandaTerima extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
-    const { optPengadaan } = this.state
+    const { optPengadaan, optProvider, dataProvider } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -89,7 +103,7 @@ class TandaTerima extends Component {
         Header: 'Tanggal',
         width: 100,
         filterable: false,
-        accessor: 'tanggal',
+        accessor: 'createdAt',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
@@ -102,17 +116,17 @@ class TandaTerima extends Component {
       {
         Header: 'Alamat',
         filterable: false,
-        accessor: 'provider.alamat',
+        accessor: 'provider.address',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kontak',
-        accessor: 'provider.kontak',
+        accessor: 'provider.contact',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'pengadaan.name',
+        accessor: 'pengadaan.namaPengadaan',
         filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -208,7 +222,7 @@ class TandaTerima extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tanda Terima Barang</ModalHeader>
                     <ModalBody>
@@ -217,7 +231,7 @@ class TandaTerima extends Component {
                           label="Nama Pengadaan"
                           options={optPengadaan}
                           isRequired
-                          name="namaPengadaan"
+                          name="pengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
                           component={CfSelect}
                         />
@@ -226,11 +240,11 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          type="text"
-                          name="provider.name"
+                          options={optProvider}
                           isRequired
-                          placeholder="Masukkan nama provider"
-                          component={CfInput}
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -238,20 +252,24 @@ class TandaTerima extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamat"
+                          name="address"
                           isRequired
-                          placeholder="Masukkan alamat provider"
+                          disabled
+                          value={dataProvider.find((obj) => obj.id === values.provider)?.address}
+                          placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kontak"
+                          label="No. Kontak Provider"
                           type="text"
                           name="contact"
                           isRequired
-                          placeholder="Masukkan No. Kontak provider"
+                          disabled
+                          value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
+                          placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -260,7 +278,7 @@ class TandaTerima extends Component {
                         <Field
                           label="Jumlah"
                           type="text"
-                          name="jumlahBarang"
+                          name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah"
                           component={CfInput}

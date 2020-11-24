@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,8 +21,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../../components'
+import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../../helpers'
 import {
   createWorkingOrder,
@@ -32,9 +35,21 @@ import withTableFetchQuery, {
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class KegiatanPendidikan extends Component {
   initialValues = {
     typeKegiatan: 'Kegiatan Pendidikan',
+    division: 'Fixed Asset',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeKegiatan: 'Kegiatan Pendidikan',
+      division: 'Fixed Asset',
+    })
   }
 
   doRefresh = () => {
@@ -80,6 +95,7 @@ class KegiatanPendidikan extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -145,35 +161,45 @@ class KegiatanPendidikan extends Component {
         accessor: 'catering',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - ATK',
         accessor: 'atk',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - Hotel',
         accessor: 'hotel',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - Akomodasi',
         accessor: 'akomodasi',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - Pengajar Eksternal',
         accessor: 'pengajarEksternal',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Aksi',
@@ -212,11 +238,15 @@ class KegiatanPendidikan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -244,13 +274,66 @@ class KegiatanPendidikan extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Kode Working Order" value="kodeWorkingOrder" />
+                          <ExcelColumn label="Nama Kegiatan" value="namaKegiatan" />
+                          <ExcelColumn label="Kode Pelatihan" value="kodePelatihan" />
+                          <ExcelColumn
+                            label="Tanggal Terima"
+                            value={(col) => formatDate(col.tanggalTerima)}
+                          />
+                          <ExcelColumn
+                            label="Tanggal Revisi"
+                            value={(col) => formatDate(col.tanggalRevisi)}
+                          />
+                          <ExcelColumn
+                            label="Tanggal Konfirmasi"
+                            value={(col) => formatDate(col.tanggalKonfirmasi)}
+                          />
+                          <ExcelColumn
+                            label="SLA"
+                            value={(col) =>
+                              Math.round(
+                                (new Date(col.tanggalKonfirmasi) - new Date(col.tanggalTerima)) /
+                                  (1000 * 24 * 3600)
+                              )
+                            }
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Catering"
+                            value={(col) => (col.catering === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - ATK"
+                            value={(col) => (col.atk === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Hotel"
+                            value={(col) => (col.hotel === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Akomodasi"
+                            value={(col) => (col.akomodasi === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Pengajar Eksternal"
+                            value={(col) => (col.pengajarEksternal === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -356,60 +439,113 @@ class KegiatanPendidikan extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
-                          type="text"
-                          name="catering"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <strong>Kebutuhan :</strong>
+                      <br />
+                      <br />
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Catering</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="catering" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="catering"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="atk"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Hotel (Nama Hotel)</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="hotel" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="hotel"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="hotel"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">ATK</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="atk" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Tidak Ada" name="atk" id="no" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Akomodasi"
-                          type="text"
-                          name="akomodasi"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Akomodasi</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="akomodasi" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="akomodasi"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="pengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Pengajar Eksternal</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="pengajarEksternal"
+                              id="yes"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="pengajarEksternal"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
                       {ErrorMessage(message)}
                     </ModalBody>

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,12 +20,18 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
 import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class PestControl extends Component {
   state = {
@@ -102,6 +109,7 @@ class PestControl extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
     const { optRekanan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -296,7 +304,7 @@ class PestControl extends Component {
       },
       {
         Header: 'Rekanan',
-        accessor: 'rekanan.name',
+        accessor: 'partner.name',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -337,11 +345,15 @@ class PestControl extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -369,13 +381,69 @@ class PestControl extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Toilet" value={(col) => (col.toilet ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Musholla"
+                            value={(col) => (col.musholla ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Lobby Lounge"
+                            value={(col) => (col.lobbyLounge ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ruang Meeting"
+                            value={(col) => (col.ruangMeeting ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ruang Kelas"
+                            value={(col) => (col.ruangKelas ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ruang Kerja"
+                            value={(col) => (col.ruangKerja ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Corridor"
+                            value={(col) => (col.corridor ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tangga Darurat"
+                            value={(col) => (col.tanggaDarurat ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tempat Sampah"
+                            value={(col) => (col.ruangSampah ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Shaft"
+                            value={(col) => (col.ruangShaft ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Parkir Motor"
+                            value={(col) => (col.parkirMotor ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Halaman"
+                            value={(col) => (col.halaman ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Rekanan" value={(col) => col.partner?.name} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

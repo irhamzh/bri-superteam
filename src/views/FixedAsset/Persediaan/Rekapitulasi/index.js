@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import { Button, Card, CardBody, CardHeader, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
@@ -5,6 +6,7 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
   createPersediaan,
@@ -14,11 +16,12 @@ import {
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Rekapitulasi extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -39,6 +42,7 @@ class Rekapitulasi extends Component {
   render() {
     const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -90,13 +94,27 @@ class Rekapitulasi extends Component {
                 <Row>
                   <Col sm="12">
                     <div style={{ textAlign: 'right' }}>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn
+                            label="Jenis Barang"
+                            value={(col) => col.jenisBarang?.name}
+                          />
+                          <ExcelColumn label="Nama Barang" value="name" />
+                          <ExcelColumn label="Posisi Terakhir Stok" value="stokAkhir" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

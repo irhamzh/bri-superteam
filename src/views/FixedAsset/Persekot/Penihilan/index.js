@@ -7,15 +7,19 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { AlertMessage } from '../../../../helpers'
+import { AlertMessage, formatDate } from '../../../../helpers'
 import { createPersekot, updatePersekot } from '../../../../modules/persekot/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class PenihilanPersekot extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  initialValues = { typePersekot: 'Fixed Asset' }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePersekot: 'Fixed Asset',
+    })
   }
 
   doRefresh = () => {
@@ -67,7 +71,7 @@ class PenihilanPersekot extends Component {
         Header: 'Tanggal',
         accessor: 'date',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Kegiatan',
@@ -83,7 +87,7 @@ class PenihilanPersekot extends Component {
       },
     ]
 
-    const pageName = 'Input Persekot'
+    const pageName = 'Penihilan Persekot'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -92,11 +96,15 @@ class PenihilanPersekot extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>

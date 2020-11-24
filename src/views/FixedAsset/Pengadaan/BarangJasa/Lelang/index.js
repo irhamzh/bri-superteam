@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
@@ -32,6 +34,10 @@ import withTableFetchQuery, {
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Lelang extends Component {
   state = {
     optProvider: [],
@@ -103,6 +109,7 @@ class Lelang extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
     const { optProvider, dataProvider } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -190,7 +197,7 @@ class Lelang extends Component {
       },
       {
         Header: 'Pemasukan Sampul Proposal Teknis',
-        accessor: 'sampulProposalTeknis',
+        accessor: 'pemasukanSampulProposalTeknis',
         filterable: true,
         headerClassName: 'wordwrap',
 
@@ -223,7 +230,7 @@ class Lelang extends Component {
           ),
       },
       {
-        Header: 'Pebukuan Proposal Financial',
+        Header: 'Pembukuan Proposal Financial',
         accessor: 'pembukuanProposalFinancial',
         filterable: true,
         headerClassName: 'wordwrap',
@@ -297,10 +304,58 @@ class Lelang extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Biaya Putusan',
-        accessor: 'biayaPutusan',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Header: 'Pembuatan SPK / PKS',
+        columns: [
+          {
+            Header: 'Tanggal',
+            accessor: 'tanggalSPK',
+          },
+          {
+            Header: 'Nomor SPK',
+            accessor: 'nomorSPK',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Nama Provider',
+            accessor: 'provider.name',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Alamat Provider',
+            accessor: 'provider.address',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'No. Contact Provider',
+            accessor: 'provider.contact',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Jenis Pekerjaan',
+            accessor: 'jenisPekerjaan',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Jumlah Biaya',
+            accessor: 'jumlahBiaya',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Jenis Barang',
+            accessor: 'jenisBarang',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Masa Berlaku',
+            accessor: 'masaBerlaku',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Sampai',
+            accessor: 'sampai',
+            headerClassName: 'wordwrap',
+          },
+        ],
       },
       {
         Header: 'Aksi',
@@ -339,11 +394,15 @@ class Lelang extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -372,13 +431,93 @@ class Lelang extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn
+                            label="Tanggal"
+                            value={(col) => formatDate(col.tanggalPengadaan)}
+                          />
+                          <ExcelColumn label="Nama Pengadaan" value={(col) => col.namaPengadaan} />
+                          <ExcelColumn
+                            label="Izin Prinsip User"
+                            value={(col) => (col.izinPrinsipUser ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Izin Prinsip Pengadaan"
+                            value={(col) => (col.izinPrinsipPengadaan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Undangan"
+                            value={(col) => (col.undangan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Aanwijzing"
+                            value={(col) => (col.aanwijzing ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pemasukan Sampul Proposal Teknis"
+                            value={(col) => (col.pemasukanSampulProposalTeknis ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Penilaian Proposal Teknis"
+                            value={(col) => (col.penilaianProposalTeknis ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pembukuan Proposal Finansial"
+                            value={(col) => (col.penilaianProposalTeknis ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Klarifikasi dan Negosiasi"
+                            value={(col) => (col.klarifikasiNegosiasi ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pengumuman Pemenang"
+                            value={(col) => (col.pengumumanPemenang ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Izin Hasil Pengadaan"
+                            value={(col) => (col.izinHasilPengadaan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Jenis Anggaran" value={(col) => col.jenisAnggaran} />
+                          <ExcelColumn
+                            label="Tanggal SPK"
+                            value={(col) => formatDate(col.tanggalSPK)}
+                          />
+                          <ExcelColumn label="Nomor SPK" value={(col) => col.nomorSPK} />
+                          <ExcelColumn label="Nama Provider" value={(col) => col.provider.name} />
+                          <ExcelColumn
+                            label="Alamat Provider"
+                            value={(col) => col.provider.address}
+                          />
+                          <ExcelColumn
+                            label="Kontak Provider"
+                            value={(col) => col.provider.contact}
+                          />
+                          <ExcelColumn
+                            label="Jenis Pekerjaan"
+                            value={(col) => col.jenisPekerjaan}
+                          />
+                          <ExcelColumn label="Jumlah Biaya" value={(col) => col.jumlahBiaya} />
+                          <ExcelColumn label="Nama Provider" value={(col) => col.provider.name} />
+                          <ExcelColumn
+                            label="Masa Berlaku"
+                            value={(col) => formatDate(col.masaBerlaku)}
+                          />
+                          <ExcelColumn label="Sampai" value={(col) => formatDate(col.sampai)} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -500,7 +639,7 @@ class Lelang extends Component {
                         <FormGroup>
                           <Field
                             label="Klarifikasi dan negosiasi"
-                            name="klarifikasi"
+                            name="klarifikasiNegosiasi"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -527,7 +666,7 @@ class Lelang extends Component {
                           label="Jenis Anggaran"
                           options={[
                             { value: 'investasi', label: 'Investasi' },
-                            { value: 'epsloitasi', label: 'Eksploitasi' },
+                            { value: 'eksploitasi', label: 'Eksploitasi' },
                           ]}
                           isRequired
                           name="jenisAnggaran"

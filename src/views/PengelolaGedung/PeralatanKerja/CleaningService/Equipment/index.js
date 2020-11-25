@@ -318,7 +318,7 @@ class Equipment extends Component {
                             value={(col) => (col.singleBucket === 'yes' ? 'Baik' : 'Tidak Baik')}
                           />
                           <ExcelColumn
-                            label="Lobby Duster-stick"
+                            label="Lobby Duster Stick"
                             value={(col) =>
                               col.lobbyDusterStick === 'yes' ? 'Baik' : 'Tidak Baik'}
                           />

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
 import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
@@ -32,6 +34,10 @@ import withTableFetchQuery, {
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class SelasarLobby extends Component {
   state = {
     optLokasi: [],
@@ -111,6 +117,7 @@ class SelasarLobby extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
     const { optLokasi } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -403,11 +410,15 @@ class SelasarLobby extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -437,13 +448,82 @@ class SelasarLobby extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Lokasi" value={(col) => col.location?.name} />
+                          <ExcelColumn
+                            label="Lantai Granit"
+                            value={(col) => (col.lantaiGranit ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Dinding Granit"
+                            value={(col) => (col.dindingGranit ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Box Hydrant"
+                            value={(col) => (col.boxHydrant ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Signage"
+                            value={(col) => (col.signage ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Stainless Steel"
+                            value={(col) => (col.stainlessSteel ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Drop Off Area"
+                            value={(col) => (col.dropOffArea ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Kaca Fasad"
+                            value={(col) => (col.kacaFasad ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Front Desk"
+                            value={(col) => (col.frontDesk ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Media Informasi"
+                            value={(col) => (col.mediaInformasi ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="ATM" value={(col) => (col.atm ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Standing Ashtray"
+                            value={(col) => (col.standingAshtray ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Kaca Dalam"
+                            value={(col) => (col.kacaDalam ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Plafond"
+                            value={(col) => (col.plafond ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Grill AC"
+                            value={(col) => (col.grillAC ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Kap Lampu"
+                            value={(col) => (col.kapLampu ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

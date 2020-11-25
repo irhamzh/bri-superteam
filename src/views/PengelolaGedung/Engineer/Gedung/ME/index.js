@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,9 +20,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerGedungME,
   updateEngineerGedungME,
@@ -32,6 +34,10 @@ import withTableFetchQuery, {
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class ME extends Component {
   state = {
     optJenisGedung: [],
@@ -115,6 +121,7 @@ class ME extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
     const { optJenisGedung, optLantai } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -295,11 +302,15 @@ class ME extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -329,13 +340,52 @@ class ME extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn
+                            label="Jenis Gedung"
+                            value={(col) => col.buildingType?.name}
+                          />
+                          <ExcelColumn label="Lantai" value={(col) => col.floor?.name} />
+                          <ExcelColumn label="Smoke Detector" value="smokeDetector" />
+                          <ExcelColumn label="AC System" value="acSystem" />
+                          <ExcelColumn label="Thermostat" value="thermostat" />
+                          <ExcelColumn label="Telephone" value="telephone" />
+                          <ExcelColumn label="Fire Alarm" value="fireAlarm" />
+                          <ExcelColumn label="Exhaust" value="exhaust" />
+                          <ExcelColumn label="Ceiling Speaker" value="ceillingSpeaker" />
+                          <ExcelColumn label="Head Sprinkler" value="headSprinkler" />
+                          <ExcelColumn label="CCTV" value="cctv" />
+                          <ExcelColumn label="MCCB" value="mccb" />
+                          <ExcelColumn label="APAR" value="apar" />
+                          <ExcelColumn label="Segel" value="segel" />
+                          <ExcelColumn label="PIN" value="pin" />
+                          <ExcelColumn label="Selang" value="selang" />
+                          <ExcelColumn label="Nozle" value="nozle" />
+                          <ExcelColumn label="Hose" value="hose" />
+                          <ExcelColumn label="Valves" value="valves" />
+                          <ExcelColumn label="Alarm" value="alarm" />
+                          <ExcelColumn label="Pintu/Engsel" value="pintu" />
+                          <ExcelColumn label="Lampu Indikator" value="lampuIndikator" />
+                          <ExcelColumn
+                            label="Expired Tabung"
+                            value={(col) => formatDate(col.expiredTabung)}
+                          />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -669,7 +719,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-                      ceilingSpeaker
                       <Row style={{ paddingLeft: '15px' }}>
                         <Col>
                           <em>Segel</em>
@@ -830,6 +879,30 @@ class ME extends Component {
                             />
                           </FormGroup>
                         </Col>
+                      </Row>
+                      <Row style={{ paddingLeft: '15px' }}>
+                        <Col>
+                          <em>Alarm</em>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Baik" name="alarm" id="Baik" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Baik"
+                              name="alarm"
+                              id="Tidak Baik"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col />
+                        <Col />
+                        <Col />
                       </Row>
                       <br />
                       <Row>

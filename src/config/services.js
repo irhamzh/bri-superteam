@@ -188,23 +188,23 @@ class Service {
 
   // Vendor
   static getVendor(params) {
-    return axios.get(`vendors${params}`)
+    return axios.get(`monitoring-vendors${params}`)
   }
 
   static getVendorById(id) {
-    return axios.get(`vendors/${id}`)
+    return axios.get(`monitoring-vendors/${id}`)
   }
 
   static createVendor(values) {
-    return axios.post('vendors', values)
+    return axios.post('monitoring-vendors', values)
   }
 
   static updateVendor(values, id) {
-    return axios.put(`vendors/${id}`, values)
+    return axios.put(`monitoring-vendors/${id}`, values)
   }
 
   static deleteVendor(id) {
-    return axios.delete(`vendors/${id}`)
+    return axios.delete(`monitoring-vendors/${id}`)
   }
 
   // Persediaan

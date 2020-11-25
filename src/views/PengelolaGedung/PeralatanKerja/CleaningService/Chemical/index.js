@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../../components'
 import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
@@ -32,6 +34,10 @@ import withTableFetchQuery, {
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Chemical extends Component {
   initialValues = {
     typePeralatanKerja: 'chemical',
@@ -48,6 +54,13 @@ class Chemical extends Component {
     fresPhone: true,
     marblePowder: true,
     karbolWangi: true,
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePeralatanKerja: 'chemical',
+    })
   }
 
   doRefresh = () => {
@@ -93,6 +106,7 @@ class Chemical extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -352,11 +366,15 @@ class Chemical extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -386,13 +404,70 @@ class Chemical extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Floor Klin"
+                            value={(col) => (col.floorKlin ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Glass Cleaner"
+                            value={(col) => (col.glassCleaner ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="All Purpose Cleaner"
+                            value={(col) => (col.allPurposeCleaner ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Metal Polish"
+                            value={(col) => (col.metalPolish ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Hand Soap"
+                            value={(col) => (col.handSoap ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Furniture Polish"
+                            value={(col) => (col.furniturePolish ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Vim" value={(col) => (col.vim ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Bubuk Detergen"
+                            value={(col) => (col.bubukDetergen ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Thiner" value={(col) => (col.thiner ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Bay Fresh"
+                            value={(col) => (col.bayFresh ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Fres Phone"
+                            value={(col) => (col.fresPhone ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Marble Powder"
+                            value={(col) => (col.marblePowder ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Karbol Wangi"
+                            value={(col) => (col.karbolWangi ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

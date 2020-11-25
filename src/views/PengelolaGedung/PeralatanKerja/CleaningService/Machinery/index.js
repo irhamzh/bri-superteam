@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
 import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
@@ -31,6 +33,11 @@ import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
+
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class Machinery extends Component {
   initialValues = {
@@ -92,6 +99,7 @@ class Machinery extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -108,28 +116,43 @@ class Machinery extends Component {
         accessor: 'lowSpeedPolisherMachine',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Wet & Dry Vacuum Cleaner 20 lt',
         accessor: 'wetDryVacuumCleaner',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Jet Sprayer',
         accessor: 'jetSprayer',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Blower',
         accessor: 'blower',
         filterable: false,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Signed',
         accessor: 'signed',
         filterable: false,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Keterangan',
@@ -173,11 +196,15 @@ class Machinery extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -207,13 +234,48 @@ class Machinery extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label='Low Speed Polisher Machine 17"'
+                            value={(col) =>
+                              col.lowSpeedPolisherMachine === 'yes' ? 'Baik' : 'Tidak Baik'
+                            }
+                          />
+                          <ExcelColumn
+                            label="Wet &amp; Dry Vacuum Cleaner 20 lt"
+                            value={(col) =>
+                              col.wetDryVacuumCleaner === 'yes' ? 'Baik' : 'Tidak Baik'
+                            }
+                          />
+                          <ExcelColumn
+                            label="Jet Sprayer"
+                            value={(col) => (col.jetSprayer === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Blower"
+                            value={(col) => (col.blower === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Signed"
+                            value={(col) => (col.signed === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

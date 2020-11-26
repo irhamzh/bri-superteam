@@ -1043,6 +1043,179 @@ class Service {
     if (!params) params = ''
     return axios.get(`pengadaans${params}`)
   }
+
+  // Catering
+  static getCatering(params) {
+    if (!params) params = ''
+    return axios.get(`caterings${params}`)
+  }
+
+  static getCateringById(id) {
+    return axios.get(`caterings/${id}`)
+  }
+
+  static createCatering(values) {
+    return axios.post('caterings', values)
+  }
+
+  static updateCatering(values, id) {
+    return axios.put(`caterings/${id}`, values)
+  }
+
+  static deleteCatering(id) {
+    return axios.delete(`caterings/${id}`)
+  }
+
+  // Catering
+  static getPREvaluasiCatering(params) {
+    if (!params) params = ''
+    return axios.get(`pr-catering-evaluations${params}`)
+  }
+
+  static getPREvaluasiCateringById(id) {
+    return axios.get(`pr-catering-evaluations/${id}`)
+  }
+
+  static createPREvaluasiCatering(values) {
+    return axios.post('pr-catering-evaluations', values)
+  }
+
+  static updatePREvaluasiCatering(values, id) {
+    return axios.put(`pr-catering-evaluations/${id}`, values)
+  }
+
+  static deletePREvaluasiCatering(id) {
+    return axios.delete(`pr-catering-evaluations/${id}`)
+  }
+
+  // ATK
+  static getPREvaluasiAtk(params) {
+    if (!params) params = ''
+    return axios.get(`pr-atk-evaluations${params}`)
+  }
+
+  static getPREvaluasiAtkById(id) {
+    return axios.get(`pr-atk-evaluations/${id}`)
+  }
+
+  static createPREvaluasiAtk(values) {
+    return axios.post('pr-atk-evaluations', values)
+  }
+
+  static updatePREvaluasiAtk(values, id) {
+    return axios.put(`pr-atk-evaluations/${id}`, values)
+  }
+
+  static deletePREvaluasiAtk(id) {
+    return axios.delete(`pr-atk-evaluations/${id}`)
+  }
+
+  // Hotel
+  static getPREvaluasiHotel(params) {
+    if (!params) params = ''
+    return axios.get(`pr-hotel-evaluations${params}`)
+  }
+
+  static getPREvaluasiHotelById(id) {
+    return axios.get(`pr-hotel-evaluations/${id}`)
+  }
+
+  static createPREvaluasiHotel(values) {
+    return axios.post('pr-hotel-evaluations', values)
+  }
+
+  static updatePREvaluasiHotel(values, id) {
+    return axios.put(`pr-hotel-evaluations/${id}`, values)
+  }
+
+  static deletePREvaluasiHotel(id) {
+    return axios.delete(`pr-hotel-evaluations/${id}`)
+  }
+
+  // Pengadaan
+  static getPREvaluasiPengadaan(params) {
+    if (!params) params = ''
+    return axios.get(`pr-pengadaan-evaluations${params}`)
+  }
+
+  static getPREvaluasiPengadaanById(id) {
+    return axios.get(`pr-pengadaan-evaluations/${id}`)
+  }
+
+  static createPREvaluasiPengadaan(values) {
+    return axios.post('pr-pengadaan-evaluations', values)
+  }
+
+  static updatePREvaluasiPengadaan(values, id) {
+    return axios.put(`pr-pengadaan-evaluations/${id}`, values)
+  }
+
+  static deletePREvaluasiPengadaan(id) {
+    return axios.delete(`pr-pengadaan-evaluations/${id}`)
+  }
+
+  static getPRBarangJasaPengadaan(params) {
+    if (!params) params = ''
+    return axios.get(`pr-pengadaan-jasa-barangs${params}`)
+  }
+
+  static getPRBarangJasaPengadaanById(id) {
+    return axios.get(`pr-pengadaan-jasa-barangs/${id}`)
+  }
+
+  static createPRBarangJasaPengadaan(values) {
+    return axios.post('pr-pengadaan-jasa-barangs', values)
+  }
+
+  static updatePRBarangJasaPengadaan(values, id) {
+    return axios.put(`pr-pengadaan-jasa-barangs/${id}`, values)
+  }
+
+  static deletePRBarangJasaPengadaan(id) {
+    return axios.delete(`pr-pengadaan-jasa-barangs/${id}`)
+  }
+
+  static getPRTandaTerimaPengadaan(params) {
+    if (!params) params = ''
+    return axios.get(`pr-pengadaan-tanda-terima-barangs${params}`)
+  }
+
+  static getPRTandaTerimaPengadaanById(id) {
+    return axios.get(`pr-pengadaan-tanda-terima-barangs/${id}`)
+  }
+
+  static createPRTandaTerimaPengadaan(values) {
+    return axios.post('pr-pengadaan-tanda-terima-barangs', values)
+  }
+
+  static updatePRTandaTerimaPengadaan(values, id) {
+    return axios.put(`pr-pengadaan-tanda-terima-barangs/${id}`, values)
+  }
+
+  static deletePRTandaTerimaPengadaan(id) {
+    return axios.delete(`pr-pengadaan-tanda-terima-barangs/${id}`)
+  }
+
+  static getPRPurchasePengadaan(params) {
+    if (!params) params = ''
+    return axios.get(`pr-pengadaan-purchase-orders${params}`)
+  }
+
+  static getPRPurchasePengadaanById(id) {
+    return axios.get(`pr-pengadaan-purchase-orders/${id}`)
+  }
+
+  static createPRPurchasePengadaan(values) {
+    return axios.post('pr-pengadaan-purchase-orders', values)
+  }
+
+  static updatePRPurchasePengadaan(values, id) {
+    return axios.put(`pr-pengadaan-purchase-orders/${id}`, values)
+  }
+
+  static deletePRPurchasePengadaan(id) {
+    return axios.delete(`pr-pengadaan-purchase-orders/${id}`)
+  }
 }
 
 export default Service

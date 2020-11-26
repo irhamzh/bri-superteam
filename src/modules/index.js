@@ -35,6 +35,11 @@ import jenisGedung from './jenisGedung/reducer'
 import jenisRuangan from './jenisRuangan/reducer'
 import kebersihan from './kebersihan/reducer'
 import lokasi from './lokasi/reducer'
+import catering from './catering/reducer'
+import procurementCatering from './procurement/catering/reducer'
+import procurementAtk from './procurement/atk/reducer'
+import procurementHotel from './procurement/hotel/reducer'
+import procurementPengadaan from './procurement/pengadaan/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -73,6 +78,11 @@ const rootReducer = combineReducers({
   jenisRuangan,
   kebersihan,
   lokasi,
+  catering,
+  procurementCatering,
+  procurementAtk,
+  procurementHotel,
+  procurementPengadaan,
 })
 
 export default rootReducer

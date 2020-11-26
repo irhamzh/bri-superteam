@@ -29,7 +29,7 @@ import {
 } from '../../../../modules/peralatan-it/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-import { createPeralatanSchema } from '../../../../validations/mvPeralatanIT'
+// import { createPeralatanSchema } from '../../../../validations/mvPeralatanIT'
 
 class Sound extends Component {
   state = {
@@ -128,13 +128,13 @@ class Sound extends Component {
       },
       {
         Header: 'Kondisi',
-        accessor: 'kondisi',
+        accessor: 'condition',
         filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -220,7 +220,7 @@ class Sound extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={createPeralatanSchema}
+                // validationSchema={createPeralatanSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -284,7 +284,7 @@ class Sound extends Component {
                             { value: 'Tidak Baik', label: 'Tidak Baik' },
                           ]}
                           isRequired
-                          name="kondisi"
+                          name="condition"
                           placeholder="Pilih atau Cari Kondisi"
                           component={CfSelect}
                         />
@@ -294,7 +294,7 @@ class Sound extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}

@@ -34,18 +34,17 @@ import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 import createSchema from '../../../../validations/mvPersekot'
 
 // Export
-
 const { ExcelFile } = ReactExport
 const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class InputPersekot extends Component {
-  initialValues = { typePersekot: 'Fixed Asset' }
+  initialValues = { division: 'Fixed Asset' }
 
   async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      typePersekot: 'Fixed Asset',
+      division: 'Fixed Asset',
     })
   }
 
@@ -214,7 +213,7 @@ class InputPersekot extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Input Persekot</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -299,8 +298,8 @@ InputPersekot.propTypes = {
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.persekot.isLoading,
+  message: state.persekot.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({

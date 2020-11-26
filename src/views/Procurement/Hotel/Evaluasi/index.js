@@ -19,40 +19,24 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  createPREvaluasiHotel,
+  updatePREvaluasiHotel,
+  deletePREvaluasiHotel,
+} from '../../../../modules/procurement/hotel/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    namaPendidikan: 'Pendidikan A',
-    namaHotel: 'Hotel Mawar',
-    performance: '4',
-    remark: 'Lorem ipsum',
-  },
-  {
-    tanggal: '08/06/2020',
-    namaPendidikan: 'Pendidikan B',
-    namaHotel: 'Hotel Melati',
-    performance: '3',
-    remark: 'Lorem ipsum',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Internal extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -62,11 +46,11 @@ class Internal extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPREvaluasiHotel, updatePREvaluasiHotel } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePREvaluasiHotel(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPREvaluasiHotel(values, this.doRefresh)
     }
   }
 
@@ -74,13 +58,13 @@ class Internal extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePREvaluasiHotel } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePREvaluasiHotel(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -211,11 +195,10 @@ class Internal extends Component {
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -228,7 +211,7 @@ class Internal extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -341,23 +324,24 @@ Internal.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPREvaluasiHotel: PropTypes.func.isRequired,
+  updatePREvaluasiHotel: PropTypes.func.isRequired,
+  deletePREvaluasiHotel: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.procurementHotel.isLoading,
+  message: state.procurementHotel.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPREvaluasiHotel: (formData, refresh) => dispatch(createPREvaluasiHotel(formData, refresh)),
+  updatePREvaluasiHotel: (formData, id, refresh) =>
+    dispatch(updatePREvaluasiHotel(formData, id, refresh)),
+  deletePREvaluasiHotel: (id, refresh) => dispatch(deletePREvaluasiHotel(id, refresh)),
 })
 
 export default connect(
@@ -365,7 +349,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPREvaluasiHotel(p),
     Component: withToggle({
       Component: Internal,
       toggles: {

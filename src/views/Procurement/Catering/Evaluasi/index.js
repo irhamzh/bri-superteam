@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,41 +20,51 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPREvaluasiCatering,
+  updatePREvaluasiCatering,
+  deletePREvaluasiCatering,
+} from '../../../../modules/procurement/catering/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 1213456,
-    namaCatering: 'Catering A',
-    evaluasiSampel: 'Enak',
-    evaluasiPenyajian: 'Baik',
-    performance: 'Puas',
-  },
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 121233456,
-    namaCatering: 'Catering B',
-    evaluasiSampel: 'Kurang Enak',
-    evaluasiPenyajian: 'Tidak Baik',
-    performance: 'Tidak Puas',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Internal extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optCatering: [],
+    optWorkingOrder: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataCatering = await Service.getCatering()
+    const dataCatering = resDataCatering.data.data
+    const optCatering = dataCatering.map((row) => ({ label: row.name, value: row.id }))
+
+    const filteredDivision = [{ id: 'division', value: 'Procurement' }]
+    const filterString = JSON.stringify(filteredDivision)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+
+    const resDataWorkingOrder = await Service.getWorkingOrder(paramsEncoded)
+    const dataWorkingOrder = resDataWorkingOrder.data.data
+    const optWorkingOrder = dataWorkingOrder.map((row) => ({
+      label: row.kodeWorkingOrder,
+      value: row.id,
+    }))
+
+    this.setState({
+      optCatering,
+      optWorkingOrder,
+    })
   }
 
   doRefresh = () => {
@@ -64,11 +75,11 @@ class Internal extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPREvaluasiCatering, updatePREvaluasiCatering } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePREvaluasiCatering(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPREvaluasiCatering(values, this.doRefresh)
     }
   }
 
@@ -76,13 +87,13 @@ class Internal extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePREvaluasiCatering } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePREvaluasiCatering(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -99,6 +110,8 @@ class Internal extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optCatering, optWorkingOrder } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -108,31 +121,42 @@ class Internal extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'No. Working Order',
-        accessor: 'nomorWorkingOrder',
+        accessor: 'workingOrder.kodeWorkingOrder',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Catering',
-        accessor: 'namaCatering',
+        accessor: 'catering.name',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Evaluasi Sampel Makanan',
-        accessor: 'evaluasiSampel',
+        accessor: 'sampleMakan',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Evaluasi Penyajian di Restoran',
-        accessor: 'evaluasiPenyajian',
+        accessor: 'penyajian',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Performance',
         accessor: 'performance',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -171,11 +195,15 @@ class Internal extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -205,23 +233,41 @@ class Internal extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="No. Working Order"
+                            value={(col) => col.workingOrder?.kodeWorkingOrder}
+                          />
+                          <ExcelColumn label="Nama Catering" value={(col) => col.catering?.name} />
+
+                          <ExcelColumn label="Evaluasi Sampel Makanan" value="sampleMakan" />
+                          <ExcelColumn label="Evaluasi Penyajian di Restoran" value="penyajian" />
+                          <ExcelColumn label="Performance" value="performance" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -234,7 +280,7 @@ class Internal extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -262,7 +308,7 @@ class Internal extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
-                          options={[{ value: '12345', label: '12345' }]}
+                          options={optWorkingOrder}
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
@@ -273,10 +319,7 @@ class Internal extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Catering"
-                          options={[
-                            { value: 'Catering A', label: 'Catering A' },
-                            { value: 'Catering B', label: 'Catering B' },
-                          ]}
+                          options={optCatering}
                           isRequired
                           name="catering"
                           placeholder="Pilih atau Cari Catering"
@@ -292,7 +335,7 @@ class Internal extends Component {
                             { value: 'Kurang Enak', label: 'Kurang Enak' },
                           ]}
                           isRequired
-                          name="evaluasiSampel"
+                          name="sampleMakan"
                           placeholder="Pilih atau Cari Evaluasi"
                           component={CfSelect}
                         />
@@ -306,7 +349,7 @@ class Internal extends Component {
                             { value: 'Tidak Baik', label: 'Tidak Baik' },
                           ]}
                           isRequired
-                          name="evaluasiPenyajian"
+                          name="penyajian"
                           placeholder="Pilih atau Cari Evaluasi"
                           component={CfSelect}
                         />
@@ -365,23 +408,25 @@ Internal.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPREvaluasiCatering: PropTypes.func.isRequired,
+  updatePREvaluasiCatering: PropTypes.func.isRequired,
+  deletePREvaluasiCatering: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.procurementCatering.isLoading,
+  message: state.procurementCatering.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPREvaluasiCatering: (formData, refresh) =>
+    dispatch(createPREvaluasiCatering(formData, refresh)),
+  updatePREvaluasiCatering: (formData, id, refresh) =>
+    dispatch(updatePREvaluasiCatering(formData, id, refresh)),
+  deletePREvaluasiCatering: (id, refresh) => dispatch(deletePREvaluasiCatering(id, refresh)),
 })
 
 export default connect(
@@ -389,7 +434,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPREvaluasiCatering(p),
     Component: withToggle({
       Component: Internal,
       toggles: {

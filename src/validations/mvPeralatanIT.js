@@ -7,7 +7,7 @@ const createPeralatanSchema = yup.object().shape({
   sn: yup.string().required(validationWording.required('sn')),
   ruangan: yup.string().required(validationWording.required('ruangan')),
   kondisi: yup.string().required(validationWording.required('kondisi')),
-  keterangan: yup.string().required(validationWording.required('keterangan')),
+  // keterangan: yup.string().required(validationWording.required('keterangan')),
   model: yup.string().required(validationWording.required('model')),
 })
 

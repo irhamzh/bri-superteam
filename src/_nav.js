@@ -308,6 +308,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Catering',
+          url: '/master/catering',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Jenis Barang',
           url: '/master/type-item',
           icon: 'fa fa-angle-double-right',

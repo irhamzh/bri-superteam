@@ -214,7 +214,7 @@ class KondisiAset extends Component {
                         <Field
                           label="Nama Aset"
                           type="text"
-                          name="nama"
+                          name="name"
                           isRequired
                           placeholder="Masukkan nama aset"
                           component={CfInput}

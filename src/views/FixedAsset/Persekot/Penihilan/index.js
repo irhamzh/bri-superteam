@@ -13,12 +13,12 @@ import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/wi
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class PenihilanPersekot extends Component {
-  initialValues = { typePersekot: 'Fixed Asset' }
+  initialValues = { division: 'Fixed Asset' }
 
   async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      typePersekot: 'Fixed Asset',
+      division: 'Fixed Asset',
     })
   }
 

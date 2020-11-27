@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -101,12 +102,18 @@ class STP extends Component {
         accessor: 'pompa',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Kondisi Oli',
         accessor: 'oli',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
 
       {
@@ -114,12 +121,18 @@ class STP extends Component {
         accessor: 'waterLevelControl',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Test Operasional',
         accessor: 'operasional',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Keterangan',
@@ -216,13 +229,24 @@ class STP extends Component {
                       >
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.yearMonth)} />
-                          <ExcelColumn label="Kondisi Pompa" value="pompa" />
-                          <ExcelColumn label="Kondisi Oli" value="oli" />
+                          <ExcelColumn
+                            label="Kondisi Pompa"
+                            value={(col) => (col.pompa === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Kondisi Oli"
+                            value={(col) => (col.oli === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
                           <ExcelColumn
                             label="Kondisi Water Level Kontrol"
-                            value="waterLevelControl"
+                            value={(col) =>
+                              col.waterLevelControl === 'yes' ? 'Baik' : 'Tidak Baik'
+                            }
                           />
-                          <ExcelColumn label="Test Operasional" value="operasional" />
+                          <ExcelColumn
+                            label="Test Operasional"
+                            value={(col) => (col.operasional === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
                           <ExcelColumn label="Keterangan" value="information" />
                         </ExcelSheet>
                       </ExcelFile>
@@ -282,7 +306,7 @@ class STP extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="pompa" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="pompa" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -290,7 +314,7 @@ class STP extends Component {
                             <Field
                               label="Tidak Baik"
                               name="pompa"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -303,17 +327,12 @@ class STP extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="oli" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="oli" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="oli"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Tidak Baik" name="oli" id="no" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                       </Row>
@@ -327,7 +346,7 @@ class STP extends Component {
                             <Field
                               label="Baik"
                               name="waterLevelControl"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -337,7 +356,7 @@ class STP extends Component {
                             <Field
                               label="Tidak Baik"
                               name="waterLevelControl"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -353,7 +372,7 @@ class STP extends Component {
                             <Field
                               label="Baik"
                               name="operasional"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -363,7 +382,7 @@ class STP extends Component {
                             <Field
                               label="Tidak Baik"
                               name="operasional"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>

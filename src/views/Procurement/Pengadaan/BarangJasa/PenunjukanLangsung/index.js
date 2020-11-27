@@ -42,6 +42,7 @@ class PenunjukanLangsung extends Component {
   state = {
     optProvider: [],
     dataProvider: [],
+    optPendidikan: [],
   }
 
   initialValues = {
@@ -57,9 +58,14 @@ class PenunjukanLangsung extends Component {
     const dataProvider = resDataProvider.data.data
     const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
+    const resDataPendidikan = await Service.getPendidikan()
+    const dataPendidikan = resDataPendidikan.data.data
+    const optPendidikan = dataPendidikan.map((row) => ({ label: row.name, value: row.id }))
+
     this.setState({
       optProvider,
       dataProvider,
+      optPendidikan,
     })
   }
 
@@ -107,7 +113,7 @@ class PenunjukanLangsung extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optProvider, dataProvider } = this.state
+    const { optProvider, dataProvider, optPendidikan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -277,7 +283,7 @@ class PenunjukanLangsung extends Component {
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        accessor: 'namaPendidikan.name',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -412,18 +418,28 @@ class PenunjukanLangsung extends Component {
                             label="Izin Prinsip Pengadaan"
                             value={(col) => (col.izinPrinsipPengadaan ? '✓' : '❌')}
                           />
+                          <ExcelColumn label="TOR" value={(col) => (col.tor ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Proposal Penawaran"
+                            value={(col) => (col.proposalPenawaran ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Undangan"
+                            value={(col) => (col.undangan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Klasifikasi dan Negosiasi"
+                            value={(col) => (col.klasifikasiNegosiasi ? '✓' : '❌')}
+                          />
                           <ExcelColumn
                             label="Izin Hasil Pengadaan"
                             value={(col) => (col.izinHasilPengadaan ? '✓' : '❌')}
                           />
                           <ExcelColumn
-                            label="Anggaran Biaya"
-                            value={(col) => (col.anggaranBiaya ? '✓' : '❌')}
-                          />
-                          <ExcelColumn
                             label="Surat Pemesanan"
                             value={(col) => (col.suratPemesanan ? '✓' : '❌')}
                           />
+                          <ExcelColumn label="Nomor SPK" value={(col) => col.nomorSPK} />
                           <ExcelColumn label="Nama Provider" value={(col) => col.provider?.name} />
                           <ExcelColumn
                             label="Alamat Provider"
@@ -433,6 +449,14 @@ class PenunjukanLangsung extends Component {
                             label="Kontak Provider"
                             value={(col) => col.provider?.contact}
                           />
+                          <ExcelColumn
+                            label="Nama Pendidikan"
+                            value={(col) => col.namaPendidikan?.name}
+                          />
+                          <ExcelColumn label="Jumlah Peserta" value="jumlahPeserta" />
+                          <ExcelColumn label="Durasi" value="durasi" />
+                          <ExcelColumn label="Jumlah Biaya" value="jumlahBiaya" />
+                          <ExcelColumn label="Masa Berlaku" value="masaBerlaku" />
                           <ExcelColumn label="Keterangan" value="information" />
                         </ExcelSheet>
                       </ExcelFile>
@@ -634,10 +658,7 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Nama Pendidikan"
-                            options={[
-                              { value: 'Pendidikan 1', label: 'Pendidikan 1' },
-                              { value: 'Pendidikan 2', label: 'Pendidikan 2' },
-                            ]}
+                            options={optPendidikan}
                             isRequired
                             name="namaPendidikan"
                             placeholder="Pilih atau Cari Nama Pendidikan"

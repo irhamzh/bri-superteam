@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -18,44 +19,62 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import { Formik, Form, Field, FieldArray } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createPRKlasifikasiHotel,
+  updatePRKlasifikasiHotel,
+  deletePRKlasifikasiHotel,
+} from '../../../../../modules/procurement/hotel/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 12343541,
-    nomorSuratPesanan: 23424324,
-    fasilitas: 'Room Meeting, Wifi',
-    kedudukanJabatan: 'Manager',
-    biaya: 'IDR 300.000',
-  },
-  {
-    tanggal: '05/06/2020',
-    nomorWorkingOrder: 12343541,
-    nomorSuratPesanan: 23424324,
-    fasilitas: 'Room Meeting, Wifi, Aula',
-    kedudukanJabatan: 'Direktur',
-    biaya: 'IDR 400.000',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Bintang4 extends Component {
+  state = {
+    optWorkingOrder: [],
+    optHotel: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    hotelClasification: 4,
+    facilities: [{ name: '', price: '' }],
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      hotelClasification: 4,
+    })
+
+    const resDataHotel = await Service.getHotel()
+    const dataHotel = resDataHotel.data.data
+    const optHotel = dataHotel.map((row) => ({ label: row.name, value: row.id }))
+
+    const filteredDivision = [{ id: 'division', value: 'Procurement' }]
+    const filterString = JSON.stringify(filteredDivision)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+
+    const resDataWorkingOrder = await Service.getWorkingOrder(paramsEncoded)
+    const dataWorkingOrder = resDataWorkingOrder.data.data
+    const optWorkingOrder = dataWorkingOrder.map((row) => ({
+      label: row.kodeWorkingOrder,
+      value: row.id,
+    }))
+
+    this.setState({
+      optHotel,
+      optWorkingOrder,
+    })
   }
 
   doRefresh = () => {
@@ -66,11 +85,11 @@ class Bintang4 extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPRKlasifikasiHotel, updatePRKlasifikasiHotel } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePRKlasifikasiHotel(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPRKlasifikasiHotel(values, this.doRefresh)
     }
   }
 
@@ -78,13 +97,13 @@ class Bintang4 extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePRKlasifikasiHotel } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePRKlasifikasiHotel(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,6 +120,8 @@ class Bintang4 extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optHotel, optWorkingOrder } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -110,33 +131,43 @@ class Bintang4 extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'No. WO',
-        accessor: 'nomorWorkingOrder',
+        accessor: 'workingOrder.kodeWorkingOrder',
         filterable: true,
       },
       {
         Header: 'No. Surat Pesanan',
-        accessor: 'nomorSuratPesanan',
+        accessor: 'noSuratPesanan',
         filterable: false,
         headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Fasilitas',
-        accessor: 'fasilitas',
-        filterable: false,
       },
       {
         Header: 'Kedudukan Jabatan',
         accessor: 'kedudukanJabatan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
+      {
+        Header: 'Fasilitas',
+        accessor: 'facilities',
+        filterable: false,
+        Cell: (props) => {
+          const { facilities } = props.original
+          return facilities.map((row) => <div>{`${row.name}`}</div>)
+        },
+      },
+
       {
         Header: 'Biaya',
         accessor: 'biaya',
         filterable: false,
+        Cell: (props) => {
+          const { facilities } = props.original
+          return facilities.map((row) => <div>{`${row.price}`}</div>)
+        },
       },
       {
         Header: 'Aksi',
@@ -175,11 +206,15 @@ class Bintang4 extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -209,23 +244,46 @@ class Bintang4 extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="No. WO"
+                            value={(col) => col.workingOrder?.kodeWorkingOrder}
+                          />
+                          <ExcelColumn label="Nomor Surat" value="noSuratPesanan" />
+                          <ExcelColumn
+                            label="KedudukanJabatan"
+                            value={(col) => col.kedudukanJabatan}
+                          />
+
+                          <ExcelColumn
+                            label="Fasilitas"
+                            value={(col) => JSON.stringify(col.facilities)}
+                          />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -238,7 +296,7 @@ class Bintang4 extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -246,7 +304,7 @@ class Bintang4 extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -266,12 +324,9 @@ class Bintang4 extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
-                          options={[
-                            { value: '123456 - X', label: '123456 - X' },
-                            { value: '000000 - Y', label: '000000 - Y' },
-                          ]}
+                          options={optWorkingOrder}
                           isRequired
-                          name="nomorWorkingOrder"
+                          name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
                           component={CfSelect}
                         />
@@ -281,7 +336,7 @@ class Bintang4 extends Component {
                         <Field
                           label="No. Surat Pesanan"
                           type="text"
-                          name="nomorSuratPesanan"
+                          name="noSuratPesanan"
                           isRequired
                           placeholder="Masukkan No. Surat Pesanan"
                           component={CfInput}
@@ -306,39 +361,103 @@ class Bintang4 extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Hotel"
-                              type="text"
-                              name="namaHotel"
+                              options={optHotel}
                               isRequired
-                              placeholder="Masukkan Nama Hotel"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Fasilitas"
-                              type="text"
-                              name="fasilitas"
-                              isRequired
-                              placeholder="Masukkan Fasilitas"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Biaya"
-                              type="text"
-                              name="biaya"
-                              isRequired
-                              placeholder="Masukkan Biaya"
-                              component={CfInput}
+                              name="hotelName"
+                              placeholder="Pilih atau Cari"
+                              component={CfSelect}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
+
+                      <FieldArray
+                        name="facilities"
+                        render={(arrayHelpers) => (
+                          <>
+                            {values.facilities && values.facilities.length > 0 ? (
+                              values.facilities.map((facilities, index) => (
+                                <Row form key={`key ${facilities.name}`}>
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Fasilitas"
+                                        options={[
+                                          { value: 'Deluxe Single', label: 'Deluxe Single' },
+                                          { value: 'Deluxe Twin', label: 'Deluxe Twin' },
+                                          {
+                                            value: 'Residential Meeting Single',
+                                            label: 'Residential Meeting Single',
+                                          },
+                                          {
+                                            value: 'Residential Meeting Twin',
+                                            label: 'Residential Meeting Twin',
+                                          },
+                                          {
+                                            value: 'Full Board Meeting',
+                                            label: 'Full Board Meeting',
+                                          },
+                                          { value: 'Fullday Meeting', label: 'Fullday Meeting' },
+                                          { value: 'Meeting Room', label: 'Meeting Room' },
+                                          { value: 'Lain-lain', label: 'Lain-lain' },
+                                        ]}
+                                        isRequired
+                                        name={`facilities[${index}].name`}
+                                        placeholder="Pilih atau Cari"
+                                        component={CfSelect}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Biaya"
+                                        type="number"
+                                        name={`facilities[${index}].price`}
+                                        isRequired
+                                        placeholder="Masukkan biaya"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  {values.facilities && values.facilities.length > 1 && (
+                                    <Col sm="2">
+                                      <FormGroup style={{ paddingTop: '50%' }}>
+                                        <Button
+                                          type="button"
+                                          color="danger"
+                                          onClick={() => arrayHelpers.remove(index)}
+                                          style={{ display: 'block' }}
+                                        >
+                                          <i className="fa fa-times" />
+                                        </Button>
+                                      </FormGroup>
+                                    </Col>
+                                  )}
+                                </Row>
+                              ))
+                            ) : (
+                              <>&nbsp;</>
+                            )}
+                            <div style={{ marginLeft: '90%' }}>
+                              <Button
+                                type="button"
+                                color="success"
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    nama: '',
+                                    biaya: '',
+                                  })
+                                }
+                              >
+                                <i className="fa fa-plus" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      />
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -379,23 +498,25 @@ Bintang4.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPRKlasifikasiHotel: PropTypes.func.isRequired,
+  updatePRKlasifikasiHotel: PropTypes.func.isRequired,
+  deletePRKlasifikasiHotel: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.procurementHotel.isLoading,
+  message: state.procurementHotel.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPRKlasifikasiHotel: (formData, refresh) =>
+    dispatch(createPRKlasifikasiHotel(formData, refresh)),
+  updatePRKlasifikasiHotel: (formData, id, refresh) =>
+    dispatch(updatePRKlasifikasiHotel(formData, id, refresh)),
+  deletePRKlasifikasiHotel: (id, refresh) => dispatch(deletePRKlasifikasiHotel(id, refresh)),
 })
 
 export default connect(
@@ -403,7 +524,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPRKlasifikasiHotel(p),
     Component: withToggle({
       Component: Bintang4,
       toggles: {

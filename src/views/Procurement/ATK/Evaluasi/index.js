@@ -110,7 +110,7 @@ class Internal extends Component {
       },
       {
         Header: 'Nama Vendor',
-        accessor: 'vendor.name',
+        accessor: 'provider.name',
         filterable: false,
       },
       {
@@ -213,7 +213,7 @@ class Internal extends Component {
                       >
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
-                          <ExcelColumn label="Nama Vendor" value={(col) => col.vendor?.name} />
+                          <ExcelColumn label="Nama Vendor" value={(col) => col.provider?.name} />
                           <ExcelColumn label="Performance" value="performance" />
                           <ExcelColumn label="Remark" value="remark" />
                         </ExcelSheet>
@@ -269,7 +269,7 @@ class Internal extends Component {
                           label="Nama Vendor"
                           options={optProvider}
                           isRequired
-                          name="vendor"
+                          name="provider"
                           placeholder="Pilih atau Cari Nama Vendor"
                           component={CfSelect}
                         />

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -18,56 +19,54 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import { Formik, Form, Field, FieldArray } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
-  CfInput,
-  CfInputCheckbox,
-  CfInputDate,
-  CfInputRadio,
-  CfSelect,
-} from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+  createPRStokOpnameAtk,
+  updatePRStokOpnameAtk,
+  deletePRStokOpnameAtk,
+} from '../../../../modules/procurement/atk/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 1234565,
-    namaPendidikan: 'X',
-    nomorSurat: '232224',
-    namaBarang: 'Kanopi',
-    stokAwal: 20,
-    jumlahMasuk: 10,
-    jumlahKeluar: 20,
-    stokAkhir: 10,
-    biaya: 'IDR 1.500.000',
-  },
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 6364,
-    nomorSurat: '235466',
-    namaPendidikan: 'X',
-    namaBarang: 'Tanaman',
-    stokAwal: 50,
-    jumlahMasuk: 10,
-    jumlahKeluar: 20,
-    stokAkhir: 40,
-    biaya: 'IDR 400.000',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class StockOpname extends Component {
+  state = {
+    optPendidikan: [],
+    optWorkingOrder: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    barang: [{ name: '', stockAwal: '', jumlahMasuk: '', jumlahKeluar: '', stockAkhir: '' }],
+  }
+
+  async componentDidMount() {
+    const resDataPendidikan = await Service.getPendidikan()
+    const dataPendidikan = resDataPendidikan.data.data
+    const optPendidikan = dataPendidikan.map((row) => ({ label: row.name, value: row.id }))
+
+    const filteredDivision = [{ id: 'division', value: 'Procurement' }]
+    const filterString = JSON.stringify(filteredDivision)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+
+    const resDataWorkingOrder = await Service.getWorkingOrder(paramsEncoded)
+    const dataWorkingOrder = resDataWorkingOrder.data.data
+    const optWorkingOrder = dataWorkingOrder.map((row) => ({
+      label: row.kodeWorkingOrder,
+      value: row.id,
+    }))
+
+    this.setState({
+      optPendidikan,
+      optWorkingOrder,
+    })
   }
 
   doRefresh = () => {
@@ -78,11 +77,11 @@ class StockOpname extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPRStokOpnameAtk, updatePRStokOpnameAtk } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePRStokOpnameAtk(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPRStokOpnameAtk(values, this.doRefresh)
     }
   }
 
@@ -90,13 +89,13 @@ class StockOpname extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePRStokOpnameAtk } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePRStokOpnameAtk(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -113,6 +112,8 @@ class StockOpname extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optPendidikan, optWorkingOrder } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -122,42 +123,68 @@ class StockOpname extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'No. WO',
-        accessor: 'nomorWO',
+        accessor: 'workingOrder.kodeWorkingOrder',
         filterable: false,
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        accessor: 'education.name',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Barang',
-        accessor: 'namaBarang',
+        accessor: 'barang',
         filterable: false,
+        Cell: (props) => {
+          const { barang } = props.original
+          const listBarang = barang.map((row) => <div>{`${row.name}`}</div>)
+          return listBarang
+        },
       },
       {
         Header: 'Stok Awal',
         accessor: 'stokAwal',
         filterable: false,
+        Cell: (props) => {
+          const { barang } = props.original
+          const listStokAwal = barang.map((row) => <div>{`${row.stockAwal}`}</div>)
+          return listStokAwal
+        },
       },
       {
         Header: 'Jumlah Masuk',
         accessor: 'jumlahMasuk',
         filterable: false,
+        Cell: (props) => {
+          const { barang } = props.original
+          const listJumlahMasuk = barang.map((row) => <div>{`${row.jumlahMasuk}`}</div>)
+          return listJumlahMasuk
+        },
       },
       {
         Header: 'Jumlah Keluar',
         accessor: 'jumlahKeluar',
         filterable: false,
+        Cell: (props) => {
+          const { barang } = props.original
+          const listJumlahKeluar = barang.map((row) => <div>{`${row.jumlahKeluar}`}</div>)
+          return listJumlahKeluar
+        },
       },
       {
         Header: 'Stok Akhir',
         accessor: 'stokAkhir',
         filterable: false,
+        Cell: (props) => {
+          const { barang } = props.original
+          const listStockAkhir = barang.map((row) => <div>{`${row.stockAkhir}`}</div>)
+          return listStockAkhir
+        },
       },
       {
         Header: 'Aksi',
@@ -196,11 +223,15 @@ class StockOpname extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -230,23 +261,41 @@ class StockOpname extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="No. WO"
+                            value={(col) => col.workingOrder?.kodeWorkingOrder}
+                          />
+                          <ExcelColumn
+                            label="Nama Pendidikan"
+                            value={(col) => col.education.name}
+                          />
+                          <ExcelColumn label="Barang" value={(col) => JSON.stringify(col.barang)} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -260,7 +309,7 @@ class StockOpname extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -268,7 +317,7 @@ class StockOpname extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -288,9 +337,9 @@ class StockOpname extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
-                          options={[{ value: '12345', label: '12345' }]}
+                          options={optWorkingOrder}
                           isRequired
-                          name="nomorWO"
+                          name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
                           component={CfSelect}
                         />
@@ -299,64 +348,132 @@ class StockOpname extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pendidikan"
-                          options={[{ value: 'x', label: 'x' }]}
+                          options={optPendidikan}
                           isRequired
-                          name="namaPendidikan"
+                          name="education"
                           placeholder="Pilih atau Cari Nama Pendidikan"
                           component={CfSelect}
                         />
                       </FormGroup>
 
-                      <Row>
-                        <Col sm="3">
-                          <FormGroup>
-                            <Field
-                              label="Nama Barang"
-                              options={[{ value: 'Barang A', label: 'Barang A' }]}
-                              isRequired
-                              name="namaBarang"
-                              placeholder="Pilih atau Cari Nama Barang"
-                              component={CfSelect}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col sm="3">
-                          <FormGroup>
-                            <Field
-                              label="Stok Awal"
-                              type="text"
-                              name="stokAwal"
-                              isRequired
-                              placeholder="Masukkan Stok Awal"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col sm="3">
-                          <FormGroup>
-                            <Field
-                              label="Jumlah Masuk"
-                              type="text"
-                              name="jumlahMasuk"
-                              isRequired
-                              placeholder="Masukkan Jumlah Masuk"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col sm="3">
-                          <FormGroup>
-                            <Field
-                              label="Jumlah Keluar"
-                              type="text"
-                              name="jumlahKeluar"
-                              isRequired
-                              placeholder="Masukkan Jumlah Keluar"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                      <FieldArray
+                        name="barang"
+                        render={(arrayHelpers) => (
+                          <>
+                            {values.barang && values.barang.length > 0 ? (
+                              values.barang.map((barang, index) => (
+                                <Row form key={`key ${barang.name}`}>
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Nama Barang"
+                                        options={[
+                                          { label: 'Bulpoin', value: 'Bulpoin' },
+                                          { label: 'Buku tulis', value: 'Buku tulis' },
+                                          { label: 'Blocknote', value: 'Blocknote' },
+                                          { label: 'Baterai', value: 'Baterai' },
+                                          { label: 'Pouch', value: 'Pouch' },
+                                          { label: 'Spidol', value: 'Spidol' },
+                                          { label: 'Lain-lain', value: 'Lain-lain' },
+                                        ]}
+                                        isRequired
+                                        name={`barang[${index}].name`}
+                                        placeholder="Pilih atau Nama Barang"
+                                        component={CfSelect}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Stok Awal"
+                                        type="number"
+                                        name={`barang[${index}].stockAwal`}
+                                        isRequired
+                                        placeholder="Masukkan Stok Awal"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Jumlah Masuk"
+                                        type="number"
+                                        name={`barang[${index}].jumlahMasuk`}
+                                        isRequired
+                                        placeholder="Masukkan Jumlah Masuk"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Jumlah Keluar"
+                                        type="number"
+                                        name={`barang[${index}].jumlahKeluar`}
+                                        isRequired
+                                        placeholder="Masukkan Jumlah Keluar"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Stok Akhir"
+                                        type="number"
+                                        name={`barang[${index}].stockAkhir`}
+                                        isRequired
+                                        placeholder="Masukkan Stok Akhir"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  {values.barang && values.barang.length > 1 && (
+                                    <Col sm="1">
+                                      <FormGroup style={{ paddingTop: '50%' }}>
+                                        <Button
+                                          type="button"
+                                          color="danger"
+                                          onClick={() => arrayHelpers.remove(index)}
+                                          style={{ display: 'block' }}
+                                        >
+                                          <i className="fa fa-times" />
+                                        </Button>
+                                      </FormGroup>
+                                    </Col>
+                                  )}
+                                </Row>
+                              ))
+                            ) : (
+                              <>&nbsp;</>
+                            )}
+                            <div style={{ marginLeft: '90%' }}>
+                              <Button
+                                type="button"
+                                color="success"
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    name: '',
+                                    stockAwal: '',
+                                    jumlahMasuk: '',
+                                    jumlahKeluar: '',
+                                    stockAkhir: '',
+                                  })}
+                              >
+                                <i className="fa fa-plus" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      />
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -397,23 +514,24 @@ StockOpname.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPRStokOpnameAtk: PropTypes.func.isRequired,
+  updatePRStokOpnameAtk: PropTypes.func.isRequired,
+  deletePRStokOpnameAtk: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.procurementAtk.isLoading,
+  message: state.procurementAtk.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPRStokOpnameAtk: (formData, refresh) => dispatch(createPRStokOpnameAtk(formData, refresh)),
+  updatePRStokOpnameAtk: (formData, id, refresh) =>
+    dispatch(updatePRStokOpnameAtk(formData, id, refresh)),
+  deletePRStokOpnameAtk: (id, refresh) => dispatch(deletePRStokOpnameAtk(id, refresh)),
 })
 
 export default connect(
@@ -421,7 +539,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPRStokOpnameAtk(p),
     Component: withToggle({
       Component: StockOpname,
       toggles: {

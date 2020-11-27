@@ -313,6 +313,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Pendidikan',
+          url: '/master/pendidikan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Jenis Barang',
           url: '/master/type-item',
           icon: 'fa fa-angle-double-right',
@@ -330,6 +335,11 @@ export default {
         {
           name: 'Jenis Ruangan',
           url: '/master/room-types',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Hotel',
+          url: '/master/hotel',
           icon: 'fa fa-angle-double-right',
         },
       ],

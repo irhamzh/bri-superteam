@@ -20,6 +20,8 @@ const JenisGedung = React.lazy(() => import('./views/Master/JenisGedung'))
 const JenisRuangan = React.lazy(() => import('./views/Master/JenisRuangan'))
 const Lokasi = React.lazy(() => import('./views/Master/Lokasi'))
 const Catering = React.lazy(() => import('./views/Master/Catering'))
+const Pendidikan = React.lazy(() => import('./views/Master/Pendidikan'))
+const Hotel = React.lazy(() => import('./views/Master/Hotel'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -417,6 +419,16 @@ const routes = [
     path: '/master/catering',
     name: 'Catering',
     component: Catering,
+  },
+  {
+    path: '/master/pendidikan',
+    name: 'Pendidikan',
+    component: Pendidikan,
+  },
+  {
+    path: '/master/hotel',
+    name: 'Hotel',
+    component: Hotel,
   },
 ]
 

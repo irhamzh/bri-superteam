@@ -1088,6 +1088,27 @@ class Service {
     return axios.delete(`pr-catering-evaluations/${id}`)
   }
 
+  static getPRKlasifikasiCatering(params) {
+    if (!params) params = ''
+    return axios.get(`pr-catering-clasifications${params}`)
+  }
+
+  static getPRKlasifikasiCateringById(id) {
+    return axios.get(`pr-catering-clasifications/${id}`)
+  }
+
+  static createPRKlasifikasiCatering(values) {
+    return axios.post('pr-catering-clasifications', values)
+  }
+
+  static updatePRKlasifikasiCatering(values, id) {
+    return axios.put(`pr-catering-clasifications/${id}`, values)
+  }
+
+  static deletePRKlasifikasiCatering(id) {
+    return axios.delete(`pr-catering-clasifications/${id}`)
+  }
+
   // ATK
   static getPREvaluasiAtk(params) {
     if (!params) params = ''
@@ -1110,6 +1131,48 @@ class Service {
     return axios.delete(`pr-atk-evaluations/${id}`)
   }
 
+  static getPRKlasifikasiAtk(params) {
+    if (!params) params = ''
+    return axios.get(`pr-atk-clasifications${params}`)
+  }
+
+  static getPRKlasifikasiAtkById(id) {
+    return axios.get(`pr-atk-clasifications/${id}`)
+  }
+
+  static createPRKlasifikasiAtk(values) {
+    return axios.post('pr-atk-clasifications', values)
+  }
+
+  static updatePRKlasifikasiAtk(values, id) {
+    return axios.put(`pr-atk-clasifications/${id}`, values)
+  }
+
+  static deletePRKlasifikasiAtk(id) {
+    return axios.delete(`pr-atk-clasifications/${id}`)
+  }
+
+  static getPRStokOpnameAtk(params) {
+    if (!params) params = ''
+    return axios.get(`pr-atk-stock-opnames${params}`)
+  }
+
+  static getPRStokOpnameAtkById(id) {
+    return axios.get(`pr-atk-stock-opnames/${id}`)
+  }
+
+  static createPRStokOpnameAtk(values) {
+    return axios.post('pr-atk-stock-opnames', values)
+  }
+
+  static updatePRStokOpnameAtk(values, id) {
+    return axios.put(`pr-atk-stock-opnames/${id}`, values)
+  }
+
+  static deletePRStokOpnameAtk(id) {
+    return axios.delete(`pr-atk-stock-opnames/${id}`)
+  }
+
   // Hotel
   static getPREvaluasiHotel(params) {
     if (!params) params = ''
@@ -1130,6 +1193,27 @@ class Service {
 
   static deletePREvaluasiHotel(id) {
     return axios.delete(`pr-hotel-evaluations/${id}`)
+  }
+
+  static getPRKlasifikasiHotel(params) {
+    if (!params) params = ''
+    return axios.get(`pr-hotel-clasifications${params}`)
+  }
+
+  static getPRKlasifikasiHotelById(id) {
+    return axios.get(`pr-hotel-clasifications/${id}`)
+  }
+
+  static createPRKlasifikasiHotel(values) {
+    return axios.post('pr-hotel-clasifications', values)
+  }
+
+  static updatePRKlasifikasiHotel(values, id) {
+    return axios.put(`pr-hotel-clasifications/${id}`, values)
+  }
+
+  static deletePRKlasifikasiHotel(id) {
+    return axios.delete(`pr-hotel-clasifications/${id}`)
   }
 
   // Pengadaan
@@ -1215,6 +1299,50 @@ class Service {
 
   static deletePRPurchasePengadaan(id) {
     return axios.delete(`pr-pengadaan-purchase-orders/${id}`)
+  }
+
+  // Pendidikan
+  static getPendidikan(params) {
+    if (!params) params = ''
+    return axios.get(`educations${params}`)
+  }
+
+  static getPendidikanById(id) {
+    return axios.get(`educations/${id}`)
+  }
+
+  static createPendidikan(values) {
+    return axios.post('educations', values)
+  }
+
+  static updatePendidikan(values, id) {
+    return axios.put(`educations/${id}`, values)
+  }
+
+  static deletePendidikan(id) {
+    return axios.delete(`educations/${id}`)
+  }
+
+  // Hotel
+  static getHotel(params) {
+    if (!params) params = ''
+    return axios.get(`hotels${params}`)
+  }
+
+  static getHotelById(id) {
+    return axios.get(`hotels/${id}`)
+  }
+
+  static createHotel(values) {
+    return axios.post('hotels', values)
+  }
+
+  static updateHotel(values, id) {
+    return axios.put(`hotels/${id}`, values)
+  }
+
+  static deleteHotel(id) {
+    return axios.delete(`hotels/${id}`)
   }
 }
 

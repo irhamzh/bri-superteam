@@ -40,6 +40,8 @@ import procurementCatering from './procurement/catering/reducer'
 import procurementAtk from './procurement/atk/reducer'
 import procurementHotel from './procurement/hotel/reducer'
 import procurementPengadaan from './procurement/pengadaan/reducer'
+import pendidikan from './pendidikan/reducer'
+import hotel from './hotel/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -83,6 +85,8 @@ const rootReducer = combineReducers({
   procurementAtk,
   procurementHotel,
   procurementPengadaan,
+  pendidikan,
+  hotel,
 })
 
 export default rootReducer

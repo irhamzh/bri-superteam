@@ -138,17 +138,20 @@ class Plumbing extends Component {
         accessor: 'valve',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Kondisi Bearing',
         accessor: 'bearing',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Oli',
         accessor: 'oli',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Kebocoran',
@@ -253,9 +256,18 @@ class Plumbing extends Component {
                           <ExcelColumn label="Pompa" value={(col) => col.pump?.name} />
                           <ExcelColumn label="Unit Pompa" value={(col) => col.unit?.nameUnit} />
                           <ExcelColumn label="Voltase" value="voltase" />
-                          <ExcelColumn label="Kondisi Valve" value="valve" />
-                          <ExcelColumn label="Kondisi Bearing" value="bearing" />
-                          <ExcelColumn label="Oli" value="oli" />
+                          <ExcelColumn
+                            label="Kondisi Valve"
+                            value={(col) => (col.valve === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Kondisi Bearing"
+                            value={(col) => (col.bearing === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Oli"
+                            value={(col) => (col.oli === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
                           <ExcelColumn label="Kebocoran" value="kebocoran" />
                           <ExcelColumn label="Keterangan" value="information" />
                         </ExcelSheet>
@@ -346,7 +358,7 @@ class Plumbing extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="valve" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="valve" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -354,7 +366,7 @@ class Plumbing extends Component {
                             <Field
                               label="Tidak Baik"
                               name="valve"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -367,7 +379,7 @@ class Plumbing extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="bearing" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="bearing" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -375,7 +387,7 @@ class Plumbing extends Component {
                             <Field
                               label="Tidak Baik"
                               name="bearing"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -388,17 +400,12 @@ class Plumbing extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="oli" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="oli" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="oli"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Tidak Baik" name="oli" id="no" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                       </Row>

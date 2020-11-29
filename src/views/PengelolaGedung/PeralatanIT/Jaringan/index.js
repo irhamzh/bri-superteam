@@ -254,7 +254,10 @@ class PeralatanJaringan extends Component {
                       <FormGroup>
                         <Field
                           label="Item"
-                          options={optItem}
+                          options={[
+                            { value: 'Antivirus', label: 'Antivirus' },
+                            { value: 'Jaringan', label: 'Jaringan' },
+                          ]}
                           isRequired
                           name="item"
                           placeholder="Pilih atau Cari item"
@@ -270,9 +273,9 @@ class PeralatanJaringan extends Component {
                           <Col sm="4">
                             <FormGroup>
                               <Field
-                                label="Updated/Connected"
+                                label={values.item === 'Antivirus' ? 'Updated' : 'Connected'}
                                 name="status"
-                                id="yes"
+                                id={values.item === 'Antivirus' ? 'Updated' : 'Connected'}
                                 component={CfInputRadio}
                               />
                             </FormGroup>
@@ -280,9 +283,9 @@ class PeralatanJaringan extends Component {
                           <Col>
                             <FormGroup>
                               <Field
-                                label="Tidak Update/Disconnected"
+                                label={values.item === 'Antivirus' ? 'Not Updated' : 'Disconnected'}
                                 name="status"
-                                id="no"
+                                id={values.item === 'Antivirus' ? 'Not Updated' : 'Disconnected'}
                                 component={CfInputRadio}
                               />
                             </FormGroup>

@@ -267,7 +267,7 @@ class Aktivitas extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aktivitas</ModalHeader>
                     <ModalBody>
@@ -345,6 +345,12 @@ class Aktivitas extends Component {
                           type="number"
                           name="stokAkhir"
                           isRequired
+                          disabled
+                          value={
+                            Number(values.stokAwal) +
+                            Number(values.penambahan) -
+                            Number(values.pengurangan)
+                          }
                           placeholder="Masukkan Stok Akhir"
                           component={CfInput}
                         />

@@ -145,62 +145,74 @@ class Ruangan extends Component {
         Header: 'Plafond',
         accessor: 'plafond',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Dinding',
         accessor: 'dinding',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Lantai',
         accessor: 'lantai',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Pintu',
         accessor: 'pintu',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Jendela',
         accessor: 'jendela',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Kursi',
         accessor: 'kursi',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Meja',
         accessor: 'meja',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Lampu',
         accessor: 'lampu',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Kasur',
         accessor: 'kasur',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Lemari',
         accessor: 'lemari',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Toilet',
         accessor: 'toilet',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Peralatan Lainnya',
         accessor: 'peralatanLainnya',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Keterangan',
@@ -415,7 +427,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="plafond" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="plafond" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -423,7 +435,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="plafond"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -434,7 +446,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="dinding" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="dinding" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -442,7 +454,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="dinding"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -455,7 +467,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="lantai" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="lantai" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -463,7 +475,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="lantai"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -474,7 +486,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="pintu" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="pintu" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -482,7 +494,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="pintu"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -495,7 +507,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="jendela" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="jendela" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -503,7 +515,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="jendela"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -513,7 +525,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="kursi" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="kursi" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -521,7 +533,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="kursi"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -534,7 +546,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="meja" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="meja" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -542,7 +554,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="meja"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -552,7 +564,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="lampu" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="lampu" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -560,7 +572,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="lampu"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -573,7 +585,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="kasur" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="kasur" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -581,7 +593,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="kasur"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -592,7 +604,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="lemari" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="lemari" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -600,7 +612,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="lemari"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -613,7 +625,7 @@ class Ruangan extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="toilet" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="toilet" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -621,7 +633,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="toilet"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -635,7 +647,7 @@ class Ruangan extends Component {
                             <Field
                               label="Baik"
                               name="peralatanLainnya"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -645,7 +657,7 @@ class Ruangan extends Component {
                             <Field
                               label="Tidak Baik"
                               name="peralatanLainnya"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>

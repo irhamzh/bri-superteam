@@ -29,7 +29,7 @@ import {
 } from '../../../../modules/peralatan-it/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-import { createInfokusSchema } from '../../../../validations/mvPeralatanIT'
+// import { createInfokusSchema } from '../../../../validations/mvPeralatanIT'
 
 class Infokus extends Component {
   state = {
@@ -152,11 +152,11 @@ class Infokus extends Component {
         accessor: 'ruangan.name',
         filterable: true,
       },
-      // {
-      //   Header: 'Kondisi',
-      //   accessor: 'kondisi',
-      //   filterable: true,
-      // },
+      {
+        Header: 'Kondisi',
+        accessor: 'condition',
+        filterable: true,
+      },
       {
         Header: 'Keterangan',
         accessor: 'information',
@@ -244,7 +244,7 @@ class Infokus extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={createInfokusSchema}
+                // validationSchema={createInfokusSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -343,10 +343,10 @@ class Infokus extends Component {
                           label="Kondisi"
                           options={[
                             { value: 'Baik', label: 'Baik' },
-                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                            { value: 'Buruk', label: 'Buruk' },
                           ]}
                           isRequired
-                          name="kondisi"
+                          name="condition"
                           placeholder="Pilih atau Cari Kondisi"
                           component={CfSelect}
                         />

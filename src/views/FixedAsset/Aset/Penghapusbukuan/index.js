@@ -90,6 +90,7 @@ class Penghapusbukuan extends Component {
     const columns = [
       {
         Header: 'Pilih',
+        width: 80,
         filterable: false,
         Cell: () => (
           <span>
@@ -99,7 +100,7 @@ class Penghapusbukuan extends Component {
       },
       {
         Header: 'Kode',
-        accessor: 'code',
+        accessor: 'id',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

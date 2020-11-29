@@ -142,59 +142,69 @@ class ME extends Component {
         accessor: 'smokeDetector',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'AC System',
         accessor: 'acSystem',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Thermostat',
         accessor: 'thermostat',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Telephone',
         accessor: 'telephone',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Fire Alarm',
         accessor: 'fireAlarm',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Exhaust',
         accessor: 'exhaust',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Ceilling Speaker',
         accessor: 'ceillingSpeaker',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Head Sprinkler',
         accessor: 'headSprinkler',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'CCTV',
         accessor: 'cctv',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'MCCB',
         accessor: 'mccb',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Hydrant Box',
@@ -203,54 +213,63 @@ class ME extends Component {
             Header: 'APAR',
             accessor: 'apar',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Segel',
             accessor: 'segel',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'PIN',
             accessor: 'pin',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Selang',
             accessor: 'selang',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Nozle',
             accessor: 'nozle',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Hose',
             accessor: 'hose',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Valves',
             accessor: 'valves',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Alarm',
             accessor: 'alarm',
             filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Pintu / Engsel',
             accessor: 'pintu',
             filterable: false,
             headerClassName: 'wordwrap',
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Lampu Indikator',
             accessor: 'lampuIndikator',
             filterable: false,
-
             headerClassName: 'wordwrap',
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
           },
           {
             Header: 'Expired Tabung',
@@ -457,7 +476,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="smokeDetector"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -467,7 +486,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="smokeDetector"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -478,12 +497,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="acSystem"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="acSystem" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -491,7 +505,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="acSystem"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -506,7 +520,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="thermostat"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -516,7 +530,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="thermostat"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -530,7 +544,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="telephone"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -540,7 +554,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="telephone"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -555,7 +569,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="fireAlarm"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -565,7 +579,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="fireAlarm"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -576,7 +590,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="exhaust" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="exhaust" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -584,7 +598,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="exhaust"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -599,7 +613,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="ceillingSpeaker"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -609,7 +623,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="ceillingSpeaker"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -623,7 +637,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="headSprinkler"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -633,7 +647,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="headSprinkler"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -645,7 +659,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="cctv" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="cctv" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -653,7 +667,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="cctv"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -664,7 +678,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="mccb" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="mccb" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -672,7 +686,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="mccb"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -686,7 +700,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="valve" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="valve" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -694,7 +708,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="valve"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -705,7 +719,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="apar" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="apar" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -713,7 +727,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="apar"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -725,7 +739,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="segel" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="segel" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -733,7 +747,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="segel"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -744,17 +758,12 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="pin" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="pin" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="pin"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Tidak Baik" name="pin" id="no" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                       </Row>
@@ -764,7 +773,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="selang" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="selang" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -772,7 +781,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="selang"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -783,7 +792,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="nozle" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="nozle" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -791,7 +800,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="nozle"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -803,7 +812,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="hose" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="hose" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -811,7 +820,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="hose"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -822,7 +831,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="valves" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="valves" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -830,7 +839,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="valves"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -842,7 +851,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="pintu" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="pintu" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -850,7 +859,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="pintu"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -864,7 +873,7 @@ class ME extends Component {
                             <Field
                               label="Baik"
                               name="lampuIndikator"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -874,7 +883,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="lampuIndikator"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -886,7 +895,7 @@ class ME extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="alarm" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="alarm" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -894,7 +903,7 @@ class ME extends Component {
                             <Field
                               label="Tidak Baik"
                               name="alarm"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>

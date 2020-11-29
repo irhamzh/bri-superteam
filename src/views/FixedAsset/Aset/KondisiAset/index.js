@@ -34,7 +34,7 @@ class KondisiAset extends Component {
     optKondisiAset: [
       { label: 'Belum Ditentukan', value: 'Belum Ditentukan' },
       { label: 'Baik', value: 'Baik' },
-      { label: 'Tidak Baik', value: 'Tidak Baik' },
+      { label: 'Buruk', value: 'Buruk' },
     ],
   }
 
@@ -57,6 +57,10 @@ class KondisiAset extends Component {
   }
 
   handleChangeSelect = (name, value) => {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      condition: value.value,
+    })
     this.setState(
       {
         [name]: value,
@@ -101,7 +105,7 @@ class KondisiAset extends Component {
     const columns = [
       {
         Header: 'Kode',
-        accessor: 'code',
+        accessor: 'id',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -199,7 +203,7 @@ class KondisiAset extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Kode Aset"
                           type="text"
@@ -208,7 +212,7 @@ class KondisiAset extends Component {
                           placeholder="Masukkan kode aset"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field
@@ -226,7 +230,7 @@ class KondisiAset extends Component {
                           label="Kondisi Aset"
                           options={optKondisiAset}
                           isRequired
-                          name="kondisi"
+                          name="condition"
                           placeholder="Pilih atau Cari Kondisi"
                           component={CfSelect}
                         />

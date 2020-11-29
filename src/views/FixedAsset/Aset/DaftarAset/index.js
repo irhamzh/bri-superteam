@@ -77,7 +77,7 @@ class DaftarAset extends Component {
     const columns = [
       {
         Header: 'Kode',
-        accessor: 'code',
+        accessor: 'id',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -189,7 +189,7 @@ class DaftarAset extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Kode Aset"
                           type="text"
@@ -198,7 +198,7 @@ class DaftarAset extends Component {
                           placeholder="Masukkan kode aset"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field

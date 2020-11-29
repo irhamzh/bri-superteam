@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createPeralatanIT,
   updatePeralatanIT,
@@ -95,7 +95,7 @@ class Sound extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { optRuangan } = this.state
 
@@ -281,7 +281,7 @@ class Sound extends Component {
                           label="Kondisi"
                           options={[
                             { value: 'Baik', label: 'Baik' },
-                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                            { value: 'Buruk', label: 'Buruk' },
                           ]}
                           isRequired
                           name="condition"
@@ -300,8 +300,6 @@ class Sound extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

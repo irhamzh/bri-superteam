@@ -281,7 +281,7 @@ class PrinterScanner extends Component {
                           label="Kondisi"
                           options={[
                             { value: 'Baik', label: 'Baik' },
-                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                            { value: 'Buruk', label: 'Buruk' },
                           ]}
                           isRequired
                           name="condition"

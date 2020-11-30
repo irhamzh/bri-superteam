@@ -18,10 +18,10 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field, FieldArray } from 'formik'
+import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { CfInput, CfInputDate } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -34,30 +34,40 @@ const roleSchema = Yup.object().shape({
 const dataDummy = [
   {
     tanggal: '08/12/2020',
-    nomorWO: 123456,
+    workingOrderCode: 123456,
     namaKegiatan: 'Kegiatan 1',
-    nomorSurat: 9987,
-    namaCatering: 'Catering A',
-    kebutuhan: 'lorem ipsum',
-    menu: 'Ayam Goreng',
-    biaya: 'Rp 30.0000',
+    kodePelatihan: 9987,
+    tanggalTerima: '08/12/2020',
+    tanggalRevisi: '10/12/2020',
+    tanggalKonfirmasi: '12/12/2020',
+    sla: 4,
+    kebutuhanCatering: 'lorem ipsum',
+    kebutuhanATK: 'lorem ipsum',
+    kebutuhanHotel: 'lorem ipsum',
+    kebutuhanAkomodasi: 'lorem ipsum',
+    kebutuhanPengajarEksternal: 'lorem ipsum',
   },
   {
     tanggal: '06/12/2020',
-    nomorWO: 123456,
+    workingOrderCode: 123456,
     namaKegiatan: 'Kegiatan 2',
-    nomorSurat: 3245,
-    namaCatering: 'Catering B',
-    kebutuhan: 'lorem ipsum',
-    menu: 'Pecel',
-    biaya: 'Rp 10.0000',
+    kodePelatihan: 3245,
+    tanggalTerima: '06/12/2020',
+    tanggalRevisi: '08/12/2020',
+    tanggalKonfirmasi: '10/12/2020',
+    sla: 4,
+    kebutuhanCatering: 'lorem ipsum',
+    kebutuhanATK: 'lorem ipsum',
+    kebutuhanHotel: 'lorem ipsum',
+    kebutuhanAkomodasi: 'lorem ipsum',
+    kebutuhanPengajarEksternal: 'lorem ipsum',
   },
 ]
 
-class KonsumsiKegiatan extends Component {
+class Rapat extends Component {
   initialValues = {
-    jenis: 'Kegiatan Lain',
-    menu: [{ name: '', price: '' }],
+    nama: '',
+    id: '',
   }
 
   doRefresh = () => {
@@ -108,51 +118,28 @@ class KonsumsiKegiatan extends Component {
 
     const columns = [
       {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
+        Header: 'Kode Working Order',
+        accessor: 'workingOrderCode',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Jenis',
-        accessor: 'jenis',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'No. WO',
-        accessor: 'nomorWO',
+        Header: 'Nama Kegiatan',
+        accessor: 'namaKegiatan',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Nomor Surat',
-        accessor: 'nomorSurat',
+        Header: 'Kode Pelatihan',
+        accessor: 'kodePelatihan',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kebutuhan',
-        accessor: 'kebutuhan',
+        Header: 'Tanggal Terima',
+        accessor: 'tanggalTerima',
         filterable: false,
         headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Nama Catering',
-        accessor: 'namaCatering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Menu',
-        accessor: 'menu',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Biaya',
-        accessor: 'biaya',
-        filterable: false,
       },
       {
         Header: 'Aksi',
@@ -182,7 +169,7 @@ class KonsumsiKegiatan extends Component {
       },
     ]
 
-    const pageName = 'Konsumsi Kegiatan'
+    const pageName = 'Rapat'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -263,163 +250,44 @@ class KonsumsiKegiatan extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>
-                      Data Kegiatan Konsumsi Kegiatan
-                    </ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Kegiatan Rapat</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Jenis"
-                          options={[
-                            { value: 'Sosialsiasi', label: 'Sosialisasi' },
-                            { value: 'Kegiatan Lain', label: 'Kegiatan Lain' },
-                            { value: 'Rapat', label: 'Rapat' },
-                          ]}
+                          label="Nama Kegiatan"
+                          type="text"
+                          name="namaKegiatan"
                           isRequired
-                          isDisabled
-                          name="jenis"
-                          placeholder="Pilih atau Cari Jenis Pengadaan"
-                          component={CfSelect}
+                          placeholder="Masukkan nama kegiatan"
+                          component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal"
-                          name="tanggal"
+                          label="Kode Pelatihan"
+                          type="number"
+                          name="kodePelatihan"
+                          isRequired
+                          placeholder="Masukkan kode Pelatihan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Tanggal Terima"
+                          name="tanggalTerima"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Tanggal"
+                          placeholder="Tanggal Terima"
                           component={CfInputDate}
                         />
                       </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="No. Working Order"
-                          type="text"
-                          name="nomorWO"
-                          isRequired
-                          placeholder="Masukkan No. Working Order"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nomor Surat"
-                          type="text"
-                          name="nomorSurat"
-                          isRequired
-                          placeholder="Masukkan Nomor Surat"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan"
-                          type="text"
-                          name="kebutuhan"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <strong>Detail Catering</strong>
-                      <br />
-                      <Row>
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Nama Catering"
-                              options={[
-                                { value: 'Catering 1', label: 'Catering 1' },
-                                { value: 'Catering 2', label: 'Catering 2' },
-                              ]}
-                              isRequired
-                              name="catering"
-                              placeholder="Pilih atau Cari Catering"
-                              component={CfSelect}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-
-                      <FieldArray
-                        name="menu"
-                        render={(arrayHelpers) => (
-                          <>
-                            {values.menu && values.menu.length > 0 ? (
-                              values.menu.map((menu, index) => (
-                                <Row form key={`key ${menu.name}`}>
-                                  <Col>
-                                    <FormGroup>
-                                      <Field
-                                        label="Nama Menu"
-                                        type="text"
-                                        name={`menu[${index}].name`}
-                                        isRequired
-                                        placeholder="Masukkan Nama Menu"
-                                        component={CfInput}
-                                      />
-                                    </FormGroup>
-                                  </Col>
-
-                                  <Col>
-                                    <FormGroup>
-                                      <Field
-                                        label="Biaya"
-                                        type="text"
-                                        name={`menu[${index}].price`}
-                                        isRequired
-                                        placeholder="Masukkan biaya"
-                                        component={CfInput}
-                                      />
-                                    </FormGroup>
-                                  </Col>
-
-                                  {values.menu && values.menu.length > 1 && (
-                                    <Col sm="2">
-                                      <FormGroup style={{ paddingTop: '50%' }}>
-                                        <Button
-                                          type="button"
-                                          color="danger"
-                                          onClick={() => arrayHelpers.remove(index)}
-                                          style={{ display: 'block' }}
-                                        >
-                                          <i className="fa fa-times" />
-                                        </Button>
-                                      </FormGroup>
-                                    </Col>
-                                  )}
-                                </Row>
-                              ))
-                            ) : (
-                              <>&nbsp;</>
-                            )}
-                            <div style={{ marginLeft: '90%' }}>
-                              <Button
-                                type="button"
-                                color="success"
-                                onClick={() =>
-                                  arrayHelpers.push({
-                                    nama: '',
-                                    biaya: '',
-                                  })
-                                }
-                              >
-                                <i className="fa fa-plus" />
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                      />
 
                       {ErrorMessage(message)}
                     </ModalBody>
@@ -455,7 +323,7 @@ class KonsumsiKegiatan extends Component {
   }
 }
 
-KonsumsiKegiatan.propTypes = {
+Rapat.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -486,7 +354,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: KonsumsiKegiatan,
+      Component: Rapat,
       toggles: {
         modalForm: false,
       },

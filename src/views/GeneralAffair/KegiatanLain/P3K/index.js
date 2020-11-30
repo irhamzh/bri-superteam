@@ -110,6 +110,24 @@ class P3K extends Component {
         headerClassName: 'wordwrap',
       },
       {
+        Header: 'Jenis Obat',
+        accessor: 'jenisObat',
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Jumlah',
+        accessor: 'jumlah',
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Expired Date',
+        accessor: 'expiredDate',
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
         Header: 'Keterangan',
         accessor: 'keterangan',
         filterable: false,
@@ -152,11 +170,15 @@ class P3K extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -200,7 +222,6 @@ class P3K extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -255,6 +276,41 @@ class P3K extends Component {
                           name="area"
                           placeholder="Pilih atau Cari Area"
                           component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Obat"
+                          type="text"
+                          name="jenisObat"
+                          isRequired
+                          placeholder="Masukkan Jenis Obat"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jumlah"
+                          type="text"
+                          name="jumlah"
+                          isRequired
+                          placeholder="Masukkan Jumlah"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Expired Date"
+                          name="expiredDate"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
+                          isRequired
+                          placeholder="Tanggal"
+                          component={CfInputDate}
                         />
                       </FormGroup>
 

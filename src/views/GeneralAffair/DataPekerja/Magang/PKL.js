@@ -36,7 +36,7 @@ const dataDummy = [
     tanggal: '06/06/2020',
     uker: 'Uker A',
     nama: 'Ammaruddin',
-    universitas: 'SMA A',
+    sekolah: 'SMA A',
     tahunMasukMagang: '2019',
     status: 'Rekomendasi',
     skor: '8',
@@ -45,7 +45,7 @@ const dataDummy = [
     tanggal: '06/06/2020',
     uker: 'Uker B',
     nama: 'Mamamia',
-    universitas: 'SMA K',
+    sekolah: 'SMA K',
     tahunMasukMagang: '2020',
     status: 'Derekomendasi',
     skor: '5',
@@ -132,13 +132,13 @@ class PKL extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Universitas',
-        accessor: 'universitas',
+        Header: 'Sekolah',
+        accessor: 'sekolah',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Tahun Masuk Magang',
+        Header: 'Tahun Masuk PKL',
         accessor: 'tahunMasukMagang',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -198,11 +198,15 @@ class PKL extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -248,7 +252,6 @@ class PKL extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -302,11 +305,22 @@ class PKL extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Universitas"
+                          label="Sekolah"
                           type="text"
-                          name="universitas"
+                          name="sekolah"
                           isRequired
-                          placeholder="Masukkan Universitas"
+                          placeholder="Masukkan Sekolah"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Tahun Masuk PKL"
+                          type="text"
+                          name="tahunPKL"
+                          isRequired
+                          placeholder="Masukkan Tahun"
                           component={CfInput}
                         />
                       </FormGroup>

@@ -114,7 +114,7 @@ class PemesananKendaraan extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Nama Vendor',
+        Header: 'Nama Pekerja',
         accessor: 'namaVendor',
         filterable: true,
         headerClassName: 'wordwrap',
@@ -135,22 +135,22 @@ class PemesananKendaraan extends Component {
             </div>
           ),
       },
-      {
-        Header: 'Membuat Register',
-        accessor: 'membuatRegister',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
+      // {
+      //   Header: 'Membuat Register',
+      //   accessor: 'membuatRegister',
+      //   filterable: false,
+      //   headerClassName: 'wordwrap',
+      //   Cell: (props) =>
+      //     props.value ? (
+      //       <div className="text-center">
+      //         <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+      //       </div>
+      //     ) : (
+      //       <div className="text-center">
+      //         <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+      //       </div>
+      //     ),
+      // },
       {
         Header: 'Dokumen Pembayaran',
         accessor: 'dokumenPembayaran',
@@ -226,11 +226,15 @@ class PemesananKendaraan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -274,7 +278,6 @@ class PemesananKendaraan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -314,11 +317,11 @@ class PemesananKendaraan extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Vendor"
+                          label="Nama Pekerja"
                           type="text"
                           name="namaVendor"
                           isRequired
-                          placeholder="Masukkan Nama Vendor"
+                          placeholder="Masukkan Nama"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -328,14 +331,6 @@ class PemesananKendaraan extends Component {
                           <Field
                             label="Surat Pemesanan"
                             name="suratPemesanan"
-                            component={CfInputCheckbox}
-                          />
-                        </FormGroup>
-
-                        <FormGroup>
-                          <Field
-                            label="Membuat Register"
-                            name="membuatRegister"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>

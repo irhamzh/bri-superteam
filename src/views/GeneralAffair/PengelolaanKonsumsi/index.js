@@ -27,6 +27,19 @@ const PengelolaanKonsumsi = (props) => {
 
         <Col xs="8">
           <Link
+            to="/general-affair/pengelolaan-konsumsi/konsumsi-sosialisasi"
+            style={{ textDecoration: 'none' }}
+          >
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Konsumsi Sosialisasi</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
+          <Link
             to="/general-affair/pengelolaan-konsumsi/konsumsi-rapat"
             style={{ textDecoration: 'none' }}
           >

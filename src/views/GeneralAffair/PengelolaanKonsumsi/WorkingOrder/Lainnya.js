@@ -142,53 +142,6 @@ class Lainnya extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Tanggal Revisi',
-        accessor: 'tanggalRevisi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'SLA',
-        accessor: 'sla',
-        filterable: false,
-      },
-      {
-        Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
         Header: 'Aksi',
         width: 150,
         filterable: false,
@@ -225,11 +178,15 @@ class Lainnya extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -273,7 +230,6 @@ class Lainnya extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -298,17 +254,6 @@ class Lainnya extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Kegiatan Lainnya</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Kode Working Order"
-                          type="text"
-                          name="workingOrderCode"
-                          isRequired
-                          placeholder="Masukkan Kode Working Order"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
                       <FormGroup>
                         <Field
                           label="Nama Kegiatan"
@@ -341,87 +286,6 @@ class Lainnya extends Component {
                           isRequired
                           placeholder="Tanggal Terima"
                           component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Revisi"
-                          name="tanggalRevisi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Revisi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
-                          type="text"
-                          name="kebutuhanCatering"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="kebutuhanATK"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="kebutuhanHotel"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Akomodasi"
-                          type="text"
-                          name="kebutuhanAkomodasi"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="kebutuhanPengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
-                          component={CfInput}
                         />
                       </FormGroup>
 

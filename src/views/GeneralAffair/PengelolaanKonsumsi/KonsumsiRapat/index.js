@@ -18,10 +18,10 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
+import { Formik, Form, Field, FieldArray } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -56,8 +56,8 @@ const dataDummy = [
 
 class KonsumsiRapat extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    jenis: 'Rapat',
+    menu: [{ name: '', price: '' }],
   }
 
   doRefresh = () => {
@@ -185,11 +185,15 @@ class KonsumsiRapat extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -233,7 +237,6 @@ class KonsumsiRapat extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -254,10 +257,26 @@ class KonsumsiRapat extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Kegiatan Konsumsi Rapat</ModalHeader>
                     <ModalBody>
+                      <FormGroup>
+                        <Field
+                          label="Jenis"
+                          options={[
+                            { value: 'Sosialisasi', label: 'Sosialisasi' },
+                            { value: 'Kegiatan Lain', label: 'Kegiatan Lain' },
+                            { value: 'Rapat', label: 'Rapat' },
+                          ]}
+                          isRequired
+                          isDisabled
+                          name="jenis"
+                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
                       <FormGroup>
                         <Field
                           label="Tanggal"
@@ -310,41 +329,88 @@ class KonsumsiRapat extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Catering"
-                              type="text"
-                              name="namaCatering"
+                              options={[
+                                { value: 'Catering 1', label: 'Catering 1' },
+                                { value: 'Catering 2', label: 'Catering 2' },
+                              ]}
                               isRequired
-                              placeholder="Masukkan Nama Catering"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Menu"
-                              type="text"
-                              name="menu"
-                              isRequired
-                              placeholder="Masukkan Menu"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col>
-                          <FormGroup>
-                            <Field
-                              label="Biaya"
-                              type="text"
-                              name="biaya"
-                              isRequired
-                              placeholder="Masukkan Biaya"
-                              component={CfInput}
+                              name="catering"
+                              placeholder="Pilih atau Cari Catering"
+                              component={CfSelect}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
+
+                      <FieldArray
+                        name="menu"
+                        render={(arrayHelpers) => (
+                          <>
+                            {values.menu && values.menu.length > 0 ? (
+                              values.menu.map((menu, index) => (
+                                <Row form key={`key ${menu.name}`}>
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Nama Menu"
+                                        type="text"
+                                        name={`menu[${index}].name`}
+                                        isRequired
+                                        placeholder="Masukkan Nama Menu"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Biaya"
+                                        type="text"
+                                        name={`menu[${index}].price`}
+                                        isRequired
+                                        placeholder="Masukkan biaya"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  {values.menu && values.menu.length > 1 && (
+                                    <Col sm="2">
+                                      <FormGroup style={{ paddingTop: '50%' }}>
+                                        <Button
+                                          type="button"
+                                          color="danger"
+                                          onClick={() => arrayHelpers.remove(index)}
+                                          style={{ display: 'block' }}
+                                        >
+                                          <i className="fa fa-times" />
+                                        </Button>
+                                      </FormGroup>
+                                    </Col>
+                                  )}
+                                </Row>
+                              ))
+                            ) : (
+                              <>&nbsp;</>
+                            )}
+                            <div style={{ marginLeft: '90%' }}>
+                              <Button
+                                type="button"
+                                color="success"
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    nama: '',
+                                    biaya: '',
+                                  })
+                                }
+                              >
+                                <i className="fa fa-plus" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      />
 
                       {ErrorMessage(message)}
                     </ModalBody>

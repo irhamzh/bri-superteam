@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
 import classnames from 'classnames'
-import Pendidikan from './Pendidikan'
+import Sosialisasi from './Sosialisasi'
 import Lainnya from './Lainnya'
+import Rapat from './Rapat'
 
 const Lembur = () => {
   const [activeTab, setActiveTab] = useState('1')
@@ -21,7 +22,7 @@ const Lembur = () => {
               toggle('1')
             }}
           >
-            Kegiatan Pendidikan
+            Sosialisasi
           </NavLink>
         </NavItem>
         <NavItem>
@@ -34,12 +35,22 @@ const Lembur = () => {
             Kegiatan Lain
           </NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: activeTab === '3' })}
+            onClick={() => {
+              toggle('3')
+            }}
+          >
+            Rapat
+          </NavLink>
+        </NavItem>
       </Nav>
       <TabContent activeTab={activeTab}>
         <TabPane tabId="1">
           <Row>
             <Col sm="12">
-              <Pendidikan />
+              <Sosialisasi />
             </Col>
           </Row>
         </TabPane>
@@ -47,6 +58,13 @@ const Lembur = () => {
           <Row>
             <Col sm="12">
               <Lainnya />
+            </Col>
+          </Row>
+        </TabPane>
+        <TabPane tabId="3">
+          <Row>
+            <Col sm="12">
+              <Rapat />
             </Col>
           </Row>
         </TabPane>

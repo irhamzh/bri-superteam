@@ -50,6 +50,9 @@ const KonsumsiKegiatanPK = React.lazy(() =>
 const KonsumsiRapatPK = React.lazy(() =>
   import('./views/GeneralAffair/PengelolaanKonsumsi/KonsumsiRapat')
 )
+const KonsumsiSosialisasiPK = React.lazy(() =>
+  import('./views/GeneralAffair/PengelolaanKonsumsi/KonsumsiSosialisasi')
+)
 // General Affair / Pengelola Kendaraan
 const PengelolaanKendaraanGA = React.lazy(() =>
   import('./views/GeneralAffair/PengelolaanKendaraan')
@@ -212,6 +215,12 @@ const routes = [
     exact: true,
     name: 'Konsumsi Rapat',
     component: KonsumsiRapatPK,
+  },
+  {
+    path: '/general-affair/pengelolaan-konsumsi/konsumsi-sosialisasi',
+    exact: true,
+    name: 'Konsumsi Sosialisasi',
+    component: KonsumsiSosialisasiPK,
   },
   // GA / Pengelolaan Kegiatan
   {

@@ -42,7 +42,7 @@ const DataPekerja = (props) => {
           </Link>
         </Col>
 
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/general-affair/data-pekerja/pengobatan" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -50,9 +50,9 @@ const DataPekerja = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/general-affair/data-pekerja/rawat-inap" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -60,7 +60,7 @@ const DataPekerja = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
         <Col xs="8">
           <Link to="/general-affair/data-pekerja/aps" style={{ textDecoration: 'none' }}>

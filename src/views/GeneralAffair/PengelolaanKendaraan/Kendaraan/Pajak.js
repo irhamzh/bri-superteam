@@ -112,7 +112,7 @@ class PajakKendaran extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Tanggal Berakhir',
+        Header: 'Jatuh Tempo',
         accessor: 'tanggalBerakhir',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -160,11 +160,15 @@ class PajakKendaran extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -208,7 +212,6 @@ class PajakKendaran extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -266,16 +269,27 @@ class PajakKendaran extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
-                          label="Tanggal Berakhir"
-                          name="tanggalBerakhir"
+                          label="Jatuh Tempo"
+                          name="jatuhTempo"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
                           placeholder="Tanggal Berakhir"
                           component={CfInputDate}
+                        />
+                      </FormGroup> */}
+
+                      <FormGroup>
+                        <Field
+                          label="Jatuh Tempo"
+                          type="text"
+                          name="jatuhTempo"
+                          isRequired
+                          placeholder="Masukkan Jatuh Tempo"
+                          component={CfInput}
                         />
                       </FormGroup>
 

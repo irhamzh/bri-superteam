@@ -20,6 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+import ReactStars from 'react-rating-stars-component'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
@@ -157,7 +158,7 @@ class PenugasanDriver extends Component {
             &nbsp; | &nbsp;
             <Button
               color="info"
-              onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => modalForm.show({ data: props.original, evaluasi: true })}
               className="mr-1"
               title="Evaluasi"
             >
@@ -168,6 +169,14 @@ class PenugasanDriver extends Component {
       },
     ]
 
+    const starOptions = {
+      size: 80,
+      count: 5,
+      isHalf: false,
+      value: 0,
+      // activeColor: "",
+    }
+
     const pageName = 'Penugasan Driver'
     // const isIcon = { paddingRight: '7px' }
 
@@ -177,11 +186,15 @@ class PenugasanDriver extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -225,7 +238,6 @@ class PenugasanDriver extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -246,7 +258,7 @@ class PenugasanDriver extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting, setFieldValue }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Penugasan Driver</ModalHeader>
                     <ModalBody>
@@ -258,6 +270,7 @@ class PenugasanDriver extends Component {
                           blockLabel
                           minDate={new Date()}
                           isRequired
+                          disabled={!!modalForm.prop.evaluasi}
                           placeholder="Tanggal"
                           component={CfInputDate}
                         />
@@ -268,6 +281,7 @@ class PenugasanDriver extends Component {
                           type="text"
                           name="namaDriver"
                           isRequired
+                          disabled={!!modalForm.prop.evaluasi}
                           placeholder="Masukkan Nama Driver"
                           component={CfInput}
                         />
@@ -279,6 +293,7 @@ class PenugasanDriver extends Component {
                           type="text"
                           name="namaPenumpang"
                           isRequired
+                          disabled={!!modalForm.prop.evaluasi}
                           placeholder="Masukkan Nama Penumpang"
                           component={CfInput}
                         />
@@ -290,10 +305,26 @@ class PenugasanDriver extends Component {
                           type="text"
                           name="tujuan"
                           isRequired
+                          disabled={!!modalForm.prop.evaluasi}
                           placeholder="Masukkan Tujuan"
                           component={CfInput}
                         />
                       </FormGroup>
+
+                      {modalForm.prop.evaluasi && (
+                        <>
+                          <strong>Bintang</strong>
+
+                          <FormGroup>
+                            <ReactStars
+                              {...starOptions}
+                              value={values.bintang ? values.bintang : 0}
+                              onChange={(newValue) => setFieldValue('bintang', newValue)}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
+                      {console.log(values, 'values')}
 
                       {ErrorMessage(message)}
                     </ModalBody>

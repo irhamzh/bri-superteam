@@ -36,12 +36,14 @@ const dataDummy = [
     tanggal: '08/12/2020',
     kendaraan: 'B 1234 XY - Avanza - Merah',
     jadwalService: '09/12/2020',
+    totalKM: 1230432,
     biaya: 'Rp 500.000',
   },
   {
     tanggal: '06/12/2020',
     kendaraan: 'B 2323 XA - Avanza - Hitam',
     jadwalService: '09/12/2020',
+    totalKM: 234413,
     biaya: 'Rp 900.000',
   },
 ]
@@ -112,8 +114,8 @@ class ServiceKendaraan extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Jadwal Service',
-        accessor: 'jadwalService',
+        Header: 'Total KM',
+        accessor: 'totalKM',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -160,11 +162,15 @@ class ServiceKendaraan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -208,7 +214,6 @@ class ServiceKendaraan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -266,7 +271,7 @@ class ServiceKendaraan extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Jadwal Service"
                           name="jadwalService"
@@ -276,6 +281,17 @@ class ServiceKendaraan extends Component {
                           isRequired
                           placeholder="Jadwal Service"
                           component={CfInputDate}
+                        />
+                      </FormGroup> */}
+
+                      <FormGroup>
+                        <Field
+                          label="Total KM"
+                          type="text"
+                          name="totalKM"
+                          isRequired
+                          placeholder="Masukkan Total KM"
+                          component={CfInput}
                         />
                       </FormGroup>
 

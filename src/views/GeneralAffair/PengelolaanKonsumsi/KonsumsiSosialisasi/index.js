@@ -54,9 +54,9 @@ const dataDummy = [
   },
 ]
 
-class KonsumsiKegiatan extends Component {
+class KonsumsiSosialisasi extends Component {
   initialValues = {
-    jenis: 'Kegiatan Lain',
+    jenis: 'Sosialisasi',
     menu: [{ name: '', price: '' }],
   }
 
@@ -182,7 +182,7 @@ class KonsumsiKegiatan extends Component {
       },
     ]
 
-    const pageName = 'Konsumsi Kegiatan'
+    const pageName = 'Konsumsi Sosialisasi'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -266,14 +266,14 @@ class KonsumsiKegiatan extends Component {
                 {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>
-                      Data Kegiatan Konsumsi Kegiatan
+                      Data Kegiatan Konsumsi Sosialisasi
                     </ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
                           label="Jenis"
                           options={[
-                            { value: 'Sosialsiasi', label: 'Sosialisasi' },
+                            { value: 'Sosialisasi', label: 'Sosialisasi' },
                             { value: 'Kegiatan Lain', label: 'Kegiatan Lain' },
                             { value: 'Rapat', label: 'Rapat' },
                           ]}
@@ -455,7 +455,7 @@ class KonsumsiKegiatan extends Component {
   }
 }
 
-KonsumsiKegiatan.propTypes = {
+KonsumsiSosialisasi.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -486,7 +486,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: KonsumsiKegiatan,
+      Component: KonsumsiSosialisasi,
       toggles: {
         modalForm: false,
       },

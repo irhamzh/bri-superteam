@@ -144,25 +144,6 @@ class Magang extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Penilaian',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        columns: [
-          {
-            Header: 'Status',
-            accessor: 'status',
-            filterable: false,
-            headerClassName: 'wordwrap',
-          },
-          {
-            Header: 'Skor',
-            accessor: 'skor',
-            filterable: false,
-            headerClassName: 'wordwrap',
-          },
-        ],
-      },
-      {
         Header: 'Aksi',
         filterable: false,
         Cell: (props) => (
@@ -198,11 +179,15 @@ class Magang extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -248,7 +233,6 @@ class Magang extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -313,6 +297,17 @@ class Magang extends Component {
 
                       <FormGroup>
                         <Field
+                          label="Tahun Masuk Magang"
+                          type="number"
+                          name="tahunMagang"
+                          isRequired
+                          placeholder="Masukkan Tahun"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      {/* <FormGroup>
+                        <Field
                           label="Status"
                           options={[
                             { value: 'Rekomendasi', label: 'Rekomendasi' },
@@ -334,7 +329,7 @@ class Magang extends Component {
                           placeholder="Masukkan Skor"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       {ErrorMessage(message)}
                     </ModalBody>

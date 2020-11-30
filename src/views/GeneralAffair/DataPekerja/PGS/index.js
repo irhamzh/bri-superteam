@@ -19,7 +19,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
@@ -27,14 +26,11 @@ import { createRole, updateRole, deleteRole } from '../../../../modules/master/r
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
 const dataDummy = [
   {
     tanggal: '06/06/2020',
     uker: 'Uker A',
+    penugasan: 'PGS',
     nama: 'Ammaruddin',
     jabatan: 'Executive Vice President',
     berlaku: '02/02/2020',
@@ -43,6 +39,7 @@ const dataDummy = [
   {
     tanggal: '06/06/2020',
     uker: 'Uker B',
+    penugasan: 'PJS',
     nama: 'Mamamia',
     jabatan: 'Vice President',
     berlaku: '02/02/2020',
@@ -129,6 +126,12 @@ class DataPGS extends Component {
         headerClassName: 'wordwrap',
       },
       {
+        Header: 'Penugasan',
+        accessor: 'penugasan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
         Header: 'Nama',
         accessor: 'nama',
         filterable: false,
@@ -188,11 +191,15 @@ class DataPGS extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -238,7 +245,6 @@ class DataPGS extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -251,7 +257,7 @@ class DataPGS extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -259,10 +265,23 @@ class DataPGS extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
+                      <FormGroup>
+                        <Field
+                          label="Penugasan"
+                          options={[
+                            { value: 'PGS', label: 'PGS' },
+                            { value: 'PJS', label: 'PJS' },
+                          ]}
+                          isRequired
+                          name="penugasan"
+                          placeholder="Pilih atau Cari"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
                       <FormGroup>
                         <Field
                           label="Tanggal"

@@ -236,7 +236,7 @@ class Outsourcing extends Component {
       },
     ]
 
-    const pageName = 'Outsourcing Man Power'
+    const pageName = 'Pramubakti'
     const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />

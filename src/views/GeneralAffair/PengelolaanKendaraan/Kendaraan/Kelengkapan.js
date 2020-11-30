@@ -110,8 +110,88 @@ class KelengkapanKendaraan extends Component {
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kelengkapan (Sesuai list yang diberikan)',
-        accessor: 'kelengkapan',
+        Header: 'Tisu Basah',
+        accessor: 'tisuBasah',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Tisu Kering',
+        accessor: 'tisuKering',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Aqua',
+        accessor: 'aqua',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pengharum',
+        accessor: 'pengharum',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Permen',
+        accessor: 'permen',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Hand Sanitizer',
+        accessor: 'handSanitizer',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
@@ -162,11 +242,15 @@ class KelengkapanKendaraan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -210,7 +294,6 @@ class KelengkapanKendaraan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -268,11 +351,37 @@ class KelengkapanKendaraan extends Component {
                         />
                       </FormGroup>
 
-                      <div style={{ marginLeft: '20px' }}>
+                      <strong>Jenis Kelengkapan</strong>
+                      <br />
+                      <div style={{ marginLeft: '2.5rem' }}>
+                        <FormGroup>
+                          <Field label="Tisu Basah" name="tisuBasah" component={CfInputCheckbox} />
+                        </FormGroup>
+
                         <FormGroup>
                           <Field
-                            label="Kelengkapan Sesuai"
-                            name="kelengkapan"
+                            label="Tisu Kering"
+                            name="tisuKering"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Aqua" name="aqua" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Pengharum" name="pengharum" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Permen" name="permen" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Hand Sanitizer"
+                            name="handSanitizer"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>

@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -34,37 +34,17 @@ const roleSchema = Yup.object().shape({
 const dataDummy = [
   {
     tanggal: '08/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    kodePelatihan: 9987,
-    tanggalTerima: '08/12/2020',
-    tanggalRevisi: '10/12/2020',
-    tanggalKonfirmasi: '12/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
+    kendaraan: 'B 1234 XY - Avanza - Merah',
+    biayaKir: 'Rp 500.000',
   },
   {
     tanggal: '06/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    kodePelatihan: 3245,
-    tanggalTerima: '06/12/2020',
-    tanggalRevisi: '08/12/2020',
-    tanggalKonfirmasi: '10/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
+    kendaraan: 'B 2323 XA - Avanza - Hitam',
+    biayaKir: 'Rp 900.000',
   },
 ]
 
-class Pendidikan extends Component {
+class KIR extends Component {
   initialValues = {
     nama: '',
     id: '',
@@ -118,73 +98,20 @@ class Pendidikan extends Component {
 
     const columns = [
       {
-        Header: 'Kode Working Order',
-        accessor: 'workingOrderCode',
+        Header: 'Tanggal',
+        accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Nama Kegiatan',
-        accessor: 'namaKegiatan',
+        Header: 'Kendaraan',
+        accessor: 'kendaraan',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
-        Header: 'Kode Pelatihan',
-        accessor: 'kodePelatihan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Tanggal Terima',
-        accessor: 'tanggalTerima',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Tanggal Revisi',
-        accessor: 'tanggalRevisi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'SLA',
-        accessor: 'sla',
-        filterable: false,
-      },
-      {
-        Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
+        Header: 'Biaya KIR',
+        accessor: 'biayaKir',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -216,7 +143,7 @@ class Pendidikan extends Component {
       },
     ]
 
-    const pageName = 'Kegiatan Pendidikan'
+    const pageName = 'KIR'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -225,11 +152,15 @@ class Pendidikan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -273,7 +204,6 @@ class Pendidikan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -296,131 +226,48 @@ class Pendidikan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Kegiatan Pendidikan</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Pajak Kendaraan</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Kode Working Order"
-                          type="text"
-                          name="workingOrderCode"
-                          isRequired
-                          placeholder="Masukkan Kode Working Order"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Kegiatan"
-                          type="text"
-                          name="namaKegiatan"
-                          isRequired
-                          placeholder="Masukkan nama kegiatan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kode Pelatihan"
-                          type="number"
-                          name="kodePelatihan"
-                          isRequired
-                          placeholder="Masukkan kode Pelatihan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Terima"
-                          name="tanggalTerima"
+                          label="Tanggal"
+                          name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Tanggal Terima"
+                          placeholder="Tanggal"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Revisi"
-                          name="tanggalRevisi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
+                          label="Kendaraan"
+                          options={[
+                            {
+                              value: 'B 1234 XY - Avanza - Merah',
+                              label: 'B 1234 XY - Avanza - Merah',
+                            },
+                            {
+                              value: 'B 2323 AB - Avanza - Hitam',
+                              label: 'B 2323 AB - Avanza - Hitam',
+                            },
+                          ]}
                           isRequired
-                          placeholder="Tanggal Revisi"
-                          component={CfInputDate}
+                          name="kendaraan"
+                          placeholder="Pilih atau Cari Kendaraan"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
+                          label="Biaya KIR"
                           type="text"
-                          name="kebutuhanCatering"
+                          name="biayaKir"
                           isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="kebutuhanATK"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="kebutuhanHotel"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Akomodasi"
-                          type="text"
-                          name="kebutuhanAkomodasi"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="kebutuhanPengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
+                          placeholder="Masukkan Biaya"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -459,7 +306,7 @@ class Pendidikan extends Component {
   }
 }
 
-Pendidikan.propTypes = {
+KIR.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -490,7 +337,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Pendidikan,
+      Component: KIR,
       toggles: {
         modalForm: false,
       },

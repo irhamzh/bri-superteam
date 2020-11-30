@@ -118,6 +118,12 @@ class RekreasiSiswa extends Component {
         headerClassName: 'wordwrap',
       },
       {
+        Header: 'PIC',
+        accessor: 'pic',
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
         Header: 'Jumlah Siswa',
         accessor: 'jumlahSiswa',
         filterable: false,
@@ -224,11 +230,15 @@ class RekreasiSiswa extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -272,7 +282,6 @@ class RekreasiSiswa extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -317,6 +326,17 @@ class RekreasiSiswa extends Component {
                           name="namaKegiatan"
                           isRequired
                           placeholder="Masukkan Nama Kegiatan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="PIC"
+                          type="text"
+                          name="pic"
+                          isRequired
+                          placeholder="Masukkan PIC"
                           component={CfInput}
                         />
                       </FormGroup>

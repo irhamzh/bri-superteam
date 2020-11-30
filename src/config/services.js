@@ -1344,6 +1344,180 @@ class Service {
   static deleteHotel(id) {
     return axios.delete(`hotels/${id}`)
   }
+
+  // Checkpoint
+  static getCheckpoint(params) {
+    if (!params) params = ''
+    return axios.get(`checkpoints${params}`)
+  }
+
+  static getCheckpointById(id) {
+    return axios.get(`checkpoints/${id}`)
+  }
+
+  static createCheckpoint(values) {
+    return axios.post('checkpoints', values)
+  }
+
+  static updateCheckpoint(values, id) {
+    return axios.put(`checkpoints/${id}`, values)
+  }
+
+  static deleteCheckpoint(id) {
+    return axios.delete(`checkpoints/${id}`)
+  }
+
+  // Monitor CCTV
+  static getMonitorCCTV(params) {
+    if (!params) params = ''
+    return axios.get(`ga-monitoring-cctvs${params}`)
+  }
+
+  static getMonitorCCTVById(id) {
+    return axios.get(`ga-monitoring-cctvs/${id}`)
+  }
+
+  static createMonitorCCTV(values) {
+    return axios.post('ga-monitoring-cctvs', values)
+  }
+
+  static updateMonitorCCTV(values, id) {
+    return axios.put(`ga-monitoring-cctvs/${id}`, values)
+  }
+
+  static deleteMonitorCCTV(id) {
+    return axios.delete(`ga-monitoring-cctvs/${id}`)
+  }
+
+  // Evaluasi Klinik
+  static getEvaluasiKlinik(params) {
+    if (!params) params = ''
+    return axios.get(`ga-clinic-evaluations${params}`)
+  }
+
+  static getEvaluasiKlinikById(id) {
+    return axios.get(`ga-clinic-evaluations/${id}`)
+  }
+
+  static createEvaluasiKlinik(values) {
+    return axios.post('ga-clinic-evaluations', values)
+  }
+
+  static updateEvaluasiKlinik(values, id) {
+    return axios.put(`ga-clinic-evaluations/${id}`, values)
+  }
+
+  static deleteEvaluasiKlinik(id) {
+    return axios.delete(`ga-clinic-evaluations/${id}`)
+  }
+
+  // Aktivitas Security
+  static getAktivitasSecurity(params) {
+    if (!params) params = ''
+    return axios.get(`ga-activities/security${params}`)
+  }
+
+  static getAktivitasSecurityById(id) {
+    return axios.get(`ga-activities/security/${id}`)
+  }
+
+  static createAktivitasSecurity(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post('ga-activities/security', formData)
+  }
+
+  static updateAktivitasSecurity(values, id) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.put(`ga-activities/security/${id}`, formData)
+  }
+
+  static deleteAktivitasSecurity(id) {
+    return axios.delete(`ga-activities/security/${id}`)
+  }
+
+  // Aktivitas Driver
+  static getAktivitasDriver(params) {
+    if (!params) params = ''
+    return axios.get(`ga-activities/driver${params}`)
+  }
+
+  static getAktivitasDriverById(id) {
+    return axios.get(`ga-activities/driver/${id}`)
+  }
+
+  static createAktivitasDriver(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post('ga-activities/driver', formData)
+  }
+
+  static updateAktivitasDriver(values, id) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.put(`ga-activities/driver/${id}`, formData)
+  }
+
+  static deleteAktivitasDriver(id) {
+    return axios.delete(`ga-activities/driver/${id}`)
+  }
+
+  // Aktivitas Courier
+  static getAktivitasCourier(params) {
+    if (!params) params = ''
+    return axios.get(`ga-activities/courier${params}`)
+  }
+
+  static getAktivitasCourierById(id) {
+    return axios.get(`ga-activities/courier/${id}`)
+  }
+
+  static createAktivitasCourier(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post('ga-activities/courier', formData)
+  }
+
+  static updateAktivitasCourier(values, id) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.put(`ga-activities/courier/${id}`, formData)
+  }
+
+  static deleteAktivitasCourier(id) {
+    return axios.delete(`ga-activities/courier/${id}`)
+  }
 }
 
 export default Service

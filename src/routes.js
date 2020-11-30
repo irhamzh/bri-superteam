@@ -22,6 +22,7 @@ const Lokasi = React.lazy(() => import('./views/Master/Lokasi'))
 const Catering = React.lazy(() => import('./views/Master/Catering'))
 const Pendidikan = React.lazy(() => import('./views/Master/Pendidikan'))
 const Hotel = React.lazy(() => import('./views/Master/Hotel'))
+const Checkpoint = React.lazy(() => import('./views/Master/Checkpoint'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -438,6 +439,11 @@ const routes = [
     path: '/master/hotel',
     name: 'Hotel',
     component: Hotel,
+  },
+  {
+    path: '/master/checkpoint',
+    name: 'Checkpoint',
+    component: Checkpoint,
   },
 ]
 

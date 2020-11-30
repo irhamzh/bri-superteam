@@ -42,6 +42,12 @@ import procurementHotel from './procurement/hotel/reducer'
 import procurementPengadaan from './procurement/pengadaan/reducer'
 import pendidikan from './pendidikan/reducer'
 import hotel from './hotel/reducer'
+import generalAffairMonitorCCTV from './generalAffair/monitorCCTV/reducer'
+import generalAffairEvaluasiKlinik from './generalAffair/evaluasiKlinik/reducer'
+import aktivitasSecurity from './generalAffair/aktivitas/security/reducer'
+import checkpoint from './master/checkpoint/reducer'
+import aktivitasDriver from './generalAffair/aktivitas/driver/reducer'
+import aktivitasCourier from './generalAffair/aktivitas/courier/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -87,6 +93,12 @@ const rootReducer = combineReducers({
   procurementPengadaan,
   pendidikan,
   hotel,
+  generalAffairMonitorCCTV,
+  generalAffairEvaluasiKlinik,
+  aktivitasSecurity,
+  checkpoint,
+  aktivitasDriver,
+  aktivitasCourier,
 })
 
 export default rootReducer

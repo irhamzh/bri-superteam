@@ -342,6 +342,11 @@ export default {
           url: '/master/hotel',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Checkpoint',
+          url: '/master/checkpoint',
+          icon: 'fa fa-angle-double-right',
+        },
       ],
     },
   ],

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,35 +20,43 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createAktivitasFirstAid,
+  updateAktivitasFirstAid,
+  deleteAktivitasFirstAid,
+} from '../../../../modules/generalAffair/aktivitas/firstAid/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    area: 'Gedung A - Lantai 1',
-    keterangan: 'Lorem ipsum bla bla',
-  },
-  {
-    tanggal: '06/12/2020',
-    area: 'Gedung A - Lantai 2',
-    keterangan: 'Lorem ipsum bla bla',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class P3K extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optJenisObat: [],
+    optArea: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataJenisObat = await Service.getJenisObat()
+    const dataJenisObat = resDataJenisObat.data.data
+    const optJenisObat = dataJenisObat.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataArea = await Service.getArea()
+    const dataArea = resDataArea.data.data
+    const optArea = dataArea.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optJenisObat,
+      optArea,
+    })
   }
 
   doRefresh = () => {
@@ -58,11 +67,11 @@ class P3K extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createAktivitasFirstAid, updateAktivitasFirstAid } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateAktivitasFirstAid(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createAktivitasFirstAid(values, this.doRefresh)
     }
   }
 
@@ -70,13 +79,13 @@ class P3K extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteAktivitasFirstAid } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteAktivitasFirstAid(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -93,6 +102,8 @@ class P3K extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optJenisObat, optArea } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -102,36 +113,42 @@ class P3K extends Component {
         accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Area',
-        accessor: 'area',
+        accessor: 'area.name',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jenis Obat',
-        accessor: 'jenisObat',
+        accessor: 'medicineType.name',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah',
         accessor: 'jumlah',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Expired Date',
-        accessor: 'expiredDate',
+        accessor: 'expired',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -206,22 +223,40 @@ class P3K extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Area" value={(col) => col.area?.name} />
+                          <ExcelColumn label="Jenis Obat" value={(col) => col.medicineType?.name} />
+                          <ExcelColumn label="Jumlah" value={(col) => col.jumlah} />
+                          <ExcelColumn
+                            label="Expired Date"
+                            value={(col) => formatDate(col.expired)}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -234,7 +269,7 @@ class P3K extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -262,16 +297,7 @@ class P3K extends Component {
                       <FormGroup>
                         <Field
                           label="Area"
-                          options={[
-                            {
-                              value: 'Gedung A - Lantai 1',
-                              label: 'Gedung A - Lantai 1',
-                            },
-                            {
-                              value: 'Gedung A - Lantai 2',
-                              label: 'Gedung A - Lantai 2',
-                            },
-                          ]}
+                          options={optArea}
                           isRequired
                           name="area"
                           placeholder="Pilih atau Cari Area"
@@ -282,11 +308,11 @@ class P3K extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis Obat"
-                          type="text"
-                          name="jenisObat"
+                          options={optJenisObat}
                           isRequired
-                          placeholder="Masukkan Jenis Obat"
-                          component={CfInput}
+                          name="medicineType"
+                          placeholder="Pilih atau Cari"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -304,7 +330,7 @@ class P3K extends Component {
                       <FormGroup>
                         <Field
                           label="Expired Date"
-                          name="expiredDate"
+                          name="expired"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
@@ -318,7 +344,7 @@ class P3K extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
@@ -364,23 +390,25 @@ P3K.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createAktivitasFirstAid: PropTypes.func.isRequired,
+  updateAktivitasFirstAid: PropTypes.func.isRequired,
+  deleteAktivitasFirstAid: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.aktivitasFirstAid.isLoading,
+  message: state.aktivitasFirstAid.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createAktivitasFirstAid: (formData, refresh) =>
+    dispatch(createAktivitasFirstAid(formData, refresh)),
+  updateAktivitasFirstAid: (formData, id, refresh) =>
+    dispatch(updateAktivitasFirstAid(formData, id, refresh)),
+  deleteAktivitasFirstAid: (id, refresh) => dispatch(deleteAktivitasFirstAid(id, refresh)),
 })
 
 export default connect(
@@ -388,7 +416,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getAktivitasFirstAid(p),
     Component: withToggle({
       Component: P3K,
       toggles: {

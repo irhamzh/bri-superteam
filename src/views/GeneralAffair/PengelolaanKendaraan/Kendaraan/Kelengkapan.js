@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,35 +20,46 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createGAKelengkapanKendaraan,
+  updateGAKelengkapanKendaraan,
+  deleteGAKelengkapanKendaraan,
+} from '../../../../modules/generalAffair/pengelolaanKendaraan/kendaraan/kelengkapanKendaraan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    kendaraan: 'B 1234 XY - Avanza - Merah',
-    kelengkapan: true,
-  },
-  {
-    tanggal: '06/12/2020',
-    kendaraan: 'B 2323 XA - Avanza - Hitam',
-    kelengkapan: false,
-  },
-]
-
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class KelengkapanKendaraan extends Component {
+  state = {
+    optKendaraan: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    tisuBasah: false,
+    tisuKering: false,
+    airMinum: false,
+    pengharum: false,
+    permen: false,
+    handSanitizer: false,
+  }
+
+  async componentDidMount() {
+    const resDataKendaraan = await Service.getKendaraan()
+    const dataKendaraan = resDataKendaraan.data.data
+    const optKendaraan = dataKendaraan.map((row) => ({
+      label: `${row.platNomor}-${row.merk}-${row.color}`,
+      value: row.id,
+    }))
+
+    this.setState({
+      optKendaraan,
+    })
   }
 
   doRefresh = () => {
@@ -58,11 +70,11 @@ class KelengkapanKendaraan extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createGAKelengkapanKendaraan, updateGAKelengkapanKendaraan } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateGAKelengkapanKendaraan(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createGAKelengkapanKendaraan(values, this.doRefresh)
     }
   }
 
@@ -70,13 +82,13 @@ class KelengkapanKendaraan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteGAKelengkapanKendaraan } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteGAKelengkapanKendaraan(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -93,6 +105,8 @@ class KelengkapanKendaraan extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optKendaraan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -102,12 +116,18 @@ class KelengkapanKendaraan extends Component {
         accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Kendaraan',
-        accessor: 'kendaraan',
+        accessor: 'vehicle',
         filterable: true,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>
+            {row.value ? `${row.value.platNomor} - ${row.value.merk} - ${row.value.color}` : ''}
+          </div>
+        ),
       },
       {
         Header: 'Tisu Basah',
@@ -142,8 +162,8 @@ class KelengkapanKendaraan extends Component {
           ),
       },
       {
-        Header: 'Aqua',
-        accessor: 'aqua',
+        Header: 'Air Minum',
+        accessor: 'airMinum',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
@@ -278,22 +298,61 @@ class KelengkapanKendaraan extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Kendaraan"
+                            value={(col) =>
+                              col.vehicle
+                                ? `${col.vehicle.platNomor} - ${col.vehicle.merk} - ${col.vehicle.color}`
+                                : ''
+                            }
+                          />
+                          <ExcelColumn
+                            label="Tisu Basah"
+                            value={(col) => (col.tisuBasah ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tisu Kering"
+                            value={(col) => (col.tisuKering ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Air Minum"
+                            value={(col) => (col.airMinum ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pengharum"
+                            value={(col) => (col.pengharum ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Permen" value={(col) => (col.permen ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Hand Sanitizer"
+                            value={(col) => (col.handSanitizer ? '✓' : '❌')}
+                          />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -306,7 +365,7 @@ class KelengkapanKendaraan extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -334,18 +393,9 @@ class KelengkapanKendaraan extends Component {
                       <FormGroup>
                         <Field
                           label="Kendaraan"
-                          options={[
-                            {
-                              value: 'B 1234 XY - Avanza - Merah',
-                              label: 'B 1234 XY - Avanza - Merah',
-                            },
-                            {
-                              value: 'B 2323 AB - Avanza - Hitam',
-                              label: 'B 2323 AB - Avanza - Hitam',
-                            },
-                          ]}
+                          options={optKendaraan}
                           isRequired
-                          name="kendaraan"
+                          name="vehicle"
                           placeholder="Pilih atau Cari Kendaraan"
                           component={CfSelect}
                         />
@@ -367,7 +417,7 @@ class KelengkapanKendaraan extends Component {
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Aqua" name="aqua" component={CfInputCheckbox} />
+                          <Field label="Air Minum" name="airMinum" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
@@ -426,23 +476,26 @@ KelengkapanKendaraan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createGAKelengkapanKendaraan: PropTypes.func.isRequired,
+  updateGAKelengkapanKendaraan: PropTypes.func.isRequired,
+  deleteGAKelengkapanKendaraan: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.generalAffairKelengkapanKendaraan.isLoading,
+  message: state.generalAffairKelengkapanKendaraan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createGAKelengkapanKendaraan: (formData, refresh) =>
+    dispatch(createGAKelengkapanKendaraan(formData, refresh)),
+  updateGAKelengkapanKendaraan: (formData, id, refresh) =>
+    dispatch(updateGAKelengkapanKendaraan(formData, id, refresh)),
+  deleteGAKelengkapanKendaraan: (id, refresh) =>
+    dispatch(deleteGAKelengkapanKendaraan(id, refresh)),
 })
 
 export default connect(
@@ -450,7 +503,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getGAKelengkapanKendaraan(p),
     Component: withToggle({
       Component: KelengkapanKendaraan,
       toggles: {

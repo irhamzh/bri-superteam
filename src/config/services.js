@@ -1367,6 +1367,72 @@ class Service {
     return axios.delete(`checkpoints/${id}`)
   }
 
+  // Area
+  static getArea(params) {
+    if (!params) params = ''
+    return axios.get(`area${params}`)
+  }
+
+  static getAreaById(id) {
+    return axios.get(`area/${id}`)
+  }
+
+  static createArea(values) {
+    return axios.post('area', values)
+  }
+
+  static updateArea(values, id) {
+    return axios.put(`area/${id}`, values)
+  }
+
+  static deleteArea(id) {
+    return axios.delete(`area/${id}`)
+  }
+
+  // Jenis Obaat
+  static getJenisObat(params) {
+    if (!params) params = ''
+    return axios.get(`medicine-types${params}`)
+  }
+
+  static getJenisObatById(id) {
+    return axios.get(`medicine-types/${id}`)
+  }
+
+  static createJenisObat(values) {
+    return axios.post('medicine-types', values)
+  }
+
+  static updateJenisObat(values, id) {
+    return axios.put(`medicine-types/${id}`, values)
+  }
+
+  static deleteJenisObat(id) {
+    return axios.delete(`medicine-types/${id}`)
+  }
+
+  // Master Kendaraan
+  static getKendaraan(params) {
+    if (!params) params = ''
+    return axios.get(`vehicles${params}`)
+  }
+
+  static getKendaraanById(id) {
+    return axios.get(`vehicles/${id}`)
+  }
+
+  static createKendaraan(values) {
+    return axios.post('vehicles', values)
+  }
+
+  static updateKendaraan(values, id) {
+    return axios.put(`vehicles/${id}`, values)
+  }
+
+  static deleteKendaraan(id) {
+    return axios.delete(`vehicles/${id}`)
+  }
+
   // Monitor CCTV
   static getMonitorCCTV(params) {
     if (!params) params = ''
@@ -1517,6 +1583,226 @@ class Service {
 
   static deleteAktivitasCourier(id) {
     return axios.delete(`ga-activities/courier/${id}`)
+  }
+
+  // Aktivitas First Aid
+  static getAktivitasFirstAid(params) {
+    if (!params) params = ''
+    return axios.get(`ga-activities/first-aid-kit${params}`)
+  }
+
+  static getAktivitasFirstAidById(id) {
+    return axios.get(`ga-activities/first-aid-kit/${id}`)
+  }
+
+  static createAktivitasFirstAid(values) {
+    return axios.post('ga-activities/first-aid-kit', values)
+  }
+
+  static updateAktivitasFirstAid(values, id) {
+    return axios.put(`ga-activities/first-aid-kit/${id}`, values)
+  }
+
+  static deleteAktivitasFirstAid(id) {
+    return axios.delete(`ga-activities/first-aid-kit/${id}`)
+  }
+
+  // Aktivitas Rekreasi
+  static getAktivitasRekreasi(params) {
+    if (!params) params = ''
+    return axios.get(`ga-activities/recreation${params}`)
+  }
+
+  static getAktivitasRekreasiById(id) {
+    return axios.get(`ga-activities/recreation/${id}`)
+  }
+
+  static createAktivitasRekreasi(values) {
+    return axios.post('ga-activities/recreation', values)
+  }
+
+  static updateAktivitasRekreasi(values, id) {
+    return axios.put(`ga-activities/recreation/${id}`, values)
+  }
+
+  static deleteAktivitasRekreasi(id) {
+    return axios.delete(`ga-activities/recreation/${id}`)
+  }
+
+  // Pengelolaan Konsumsi
+  static getPengelolaanKonsumsi(params) {
+    if (!params) params = ''
+    return axios.get(`ga-consumption${params}`)
+  }
+
+  static getPengelolaanKonsumsiById(id) {
+    return axios.get(`ga-consumption/${id}`)
+  }
+
+  static createPengelolaanKonsumsi(values) {
+    return axios.post('ga-consumption', values)
+  }
+
+  static updatePengelolaanKonsumsi(values, id) {
+    return axios.put(`ga-consumption/${id}`, values)
+  }
+
+  static deletePengelolaanKonsumsi(id) {
+    return axios.delete(`ga-consumption/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - Penugasan Driver
+  static getPenugasanDriver(params) {
+    if (!params) params = ''
+    return axios.get(`ga-driver-assignment${params}`)
+  }
+
+  static getPenugasanDriverById(id) {
+    return axios.get(`ga-driver-assignment/${id}`)
+  }
+
+  static createPenugasanDriver(values) {
+    return axios.post('ga-driver-assignment', values)
+  }
+
+  static updatePenugasanDriver(values, id) {
+    return axios.put(`ga-driver-assignment/${id}`, values)
+  }
+
+  static deletePenugasanDriver(id) {
+    return axios.delete(`ga-driver-assignment/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - Pemesanan Kendaraan Luar
+  static getGAKendaraanLuar(params) {
+    if (!params) params = ''
+    return axios.get(`ga-external-vehicles${params}`)
+  }
+
+  static getGAKendaraanLuarById(id) {
+    return axios.get(`ga-external-vehicles/${id}`)
+  }
+
+  static createGAKendaraanLuar(values) {
+    return axios.post('ga-external-vehicles', values)
+  }
+
+  static updateGAKendaraanLuar(values, id) {
+    return axios.put(`ga-external-vehicles/${id}`, values)
+  }
+
+  static deleteGAKendaraanLuar(id) {
+    return axios.delete(`ga-external-vehicles/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - Bahan Bakar
+  static getGABahanBakar(params) {
+    if (!params) params = ''
+    return axios.get(`ga-fuel${params}`)
+  }
+
+  static getGABahanBakarById(id) {
+    return axios.get(`ga-fuel/${id}`)
+  }
+
+  static createGABahanBakar(values) {
+    return axios.post('ga-fuel', values)
+  }
+
+  static updateGABahanBakar(values, id) {
+    return axios.put(`ga-fuel/${id}`, values)
+  }
+
+  static deleteGABahanBakar(id) {
+    return axios.delete(`ga-fuel/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - Service Kendaraan
+  static getGAServiceKendaraan(params) {
+    if (!params) params = ''
+    return axios.get(`ga-vehicles/service${params}`)
+  }
+
+  static getGAServiceKendaraanById(id) {
+    return axios.get(`ga-vehicles/service/${id}`)
+  }
+
+  static createGAServiceKendaraan(values) {
+    return axios.post('ga-vehicles/service', values)
+  }
+
+  static updateGAServiceKendaraan(values, id) {
+    return axios.put(`ga-vehicles/service/${id}`, values)
+  }
+
+  static deleteGAServiceKendaraan(id) {
+    return axios.delete(`ga-vehicles/service/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - Kelengkapan Kendaraan
+  static getGAKelengkapanKendaraan(params) {
+    if (!params) params = ''
+    return axios.get(`ga-vehicles/accessories${params}`)
+  }
+
+  static getGAKelengkapanKendaraanById(id) {
+    return axios.get(`ga-vehicles/accessories/${id}`)
+  }
+
+  static createGAKelengkapanKendaraan(values) {
+    return axios.post('ga-vehicles/accessories', values)
+  }
+
+  static updateGAKelengkapanKendaraan(values, id) {
+    return axios.put(`ga-vehicles/accessories/${id}`, values)
+  }
+
+  static deleteGAKelengkapanKendaraan(id) {
+    return axios.delete(`ga-vehicles/accessories/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - Pajak Kendaraan
+  static getGAPajakKendaraan(params) {
+    if (!params) params = ''
+    return axios.get(`ga-vehicles/tax${params}`)
+  }
+
+  static getGAPajakKendaraanById(id) {
+    return axios.get(`ga-vehicles/tax/${id}`)
+  }
+
+  static createGAPajakKendaraan(values) {
+    return axios.post('ga-vehicles/tax', values)
+  }
+
+  static updateGAPajakKendaraan(values, id) {
+    return axios.put(`ga-vehicles/tax/${id}`, values)
+  }
+
+  static deleteGAPajakKendaraan(id) {
+    return axios.delete(`ga-vehicles/tax/${id}`)
+  }
+
+  // Pengelolaan Kendaraan - KIR Kendaraan
+  static getGAKirKendaraan(params) {
+    if (!params) params = ''
+    return axios.get(`ga-vehicles/kir${params}`)
+  }
+
+  static getGAKirKendaraanById(id) {
+    return axios.get(`ga-vehicles/kir/${id}`)
+  }
+
+  static createGAKirKendaraan(values) {
+    return axios.post('ga-vehicles/kir', values)
+  }
+
+  static updateGAKirKendaraan(values, id) {
+    return axios.put(`ga-vehicles/kir/${id}`, values)
+  }
+
+  static deleteGAKirKendaraan(id) {
+    return axios.delete(`ga-vehicles/kir/${id}`)
   }
 }
 

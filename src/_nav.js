@@ -347,6 +347,21 @@ export default {
           url: '/master/checkpoint',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Area',
+          url: '/master/area',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Obat',
+          url: '/master/jenis-obat',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Kendaraan',
+          url: '/master/vehicles',
+          icon: 'fa fa-angle-double-right',
+        },
       ],
     },
   ],

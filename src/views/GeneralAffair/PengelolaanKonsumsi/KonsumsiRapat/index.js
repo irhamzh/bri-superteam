@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,45 +20,64 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPengelolaanKonsumsi,
+  updatePengelolaanKonsumsi,
+  deletePengelolaanKonsumsi,
+} from '../../../../modules/generalAffair/pengelolaanKonsumsi/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    nomorWO: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    nomorSurat: 9987,
-    namaCatering: 'Catering A',
-    kebutuhan: 'lorem ipsum',
-    menu: 'Ayam Goreng',
-    biaya: 'Rp 30.0000',
-  },
-  {
-    tanggal: '06/12/2020',
-    nomorWO: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    nomorSurat: 3245,
-    namaCatering: 'Catering B',
-    kebutuhan: 'lorem ipsum',
-    menu: 'Pecel',
-    biaya: 'Rp 10.0000',
-  },
-]
-
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class KonsumsiRapat extends Component {
+  state = {
+    optWorkingOrder: [],
+    optCatering: [],
+  }
+
   initialValues = {
-    jenis: 'Rapat',
+    consumptionType: 'Rapat',
     menu: [{ name: '', price: '' }],
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      consumptionType: 'Rapat',
+    })
+
+    const filteredDivision = [
+      { id: 'division', value: 'General Affair' },
+      { id: 'typeKegiatan', value: 'Rapat' },
+    ]
+    const filterString = JSON.stringify(filteredDivision)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+
+    const resDataWorkingOrder = await Service.getWorkingOrder(paramsEncoded)
+    const dataWorkingOrder = resDataWorkingOrder.data.data
+    const optWorkingOrder = dataWorkingOrder.map((row) => ({
+      label: row.kodeWorkingOrder,
+      value: row.id,
+    }))
+
+    const resDataCatering = await Service.getCatering()
+    const dataCatering = resDataCatering.data.data
+    const optCatering = dataCatering.map((row) => ({
+      label: row.name,
+      value: row.id,
+    }))
+
+    this.setState({
+      optWorkingOrder,
+      optCatering,
+    })
   }
 
   doRefresh = () => {
@@ -68,11 +88,11 @@ class KonsumsiRapat extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPengelolaanKonsumsi, updatePengelolaanKonsumsi } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePengelolaanKonsumsi(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPengelolaanKonsumsi(values, this.doRefresh)
     }
   }
 
@@ -80,13 +100,13 @@ class KonsumsiRapat extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePengelolaanKonsumsi } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePengelolaanKonsumsi(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -103,6 +123,8 @@ class KonsumsiRapat extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optCatering, optWorkingOrder } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -112,16 +134,23 @@ class KonsumsiRapat extends Component {
         accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Jenis',
+        accessor: 'consumptionType',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'No. WO',
-        accessor: 'nomorWO',
+        accessor: 'workingOrder.kodeWorkingOrder',
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nomor Surat',
-        accessor: 'nomorSurat',
+        accessor: 'noSuratPesanan',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -133,7 +162,7 @@ class KonsumsiRapat extends Component {
       },
       {
         Header: 'Nama Catering',
-        accessor: 'namaCatering',
+        accessor: 'catering.name',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -142,11 +171,21 @@ class KonsumsiRapat extends Component {
         accessor: 'menu',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { menu } = props.original
+          const listMenu = menu.map((row) => <div>{`${row.name}`}</div>)
+          return listMenu
+        },
       },
       {
         Header: 'Biaya',
         accessor: 'biaya',
         filterable: false,
+        Cell: (props) => {
+          const { menu } = props.original
+          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
+          return listBiaya
+        },
       },
       {
         Header: 'Aksi',
@@ -221,22 +260,40 @@ class KonsumsiRapat extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="No. WO"
+                            value={(col) => col.workingOrder?.kodeWorkingOrder}
+                          />
+                          <ExcelColumn label="Nomor Surat" value="noSuratPesanan" />
+                          <ExcelColumn label="Kebutuhan" value={(col) => col.kebutuhan} />
+                          <ExcelColumn label="Nama Catering" value={(col) => col.catering?.name} />
+                          <ExcelColumn label="Menu" value={(col) => JSON.stringify(col.menu)} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -249,7 +306,7 @@ class KonsumsiRapat extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -271,8 +328,8 @@ class KonsumsiRapat extends Component {
                           ]}
                           isRequired
                           isDisabled
-                          name="jenis"
-                          placeholder="Pilih atau Cari Jenis Pengadaan"
+                          name="consumptionType"
+                          placeholder="Pilih atau Cari"
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -289,14 +346,15 @@ class KonsumsiRapat extends Component {
                           component={CfInputDate}
                         />
                       </FormGroup>
+
                       <FormGroup>
                         <Field
                           label="No. Working Order"
-                          type="text"
-                          name="nomorWO"
+                          options={optWorkingOrder}
                           isRequired
-                          placeholder="Masukkan No. Working Order"
-                          component={CfInput}
+                          name="workingOrder"
+                          placeholder="Pilih atau Cari"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -304,7 +362,7 @@ class KonsumsiRapat extends Component {
                         <Field
                           label="Nomor Surat"
                           type="text"
-                          name="nomorSurat"
+                          name="noSuratPesanan"
                           isRequired
                           placeholder="Masukkan Nomor Surat"
                           component={CfInput}
@@ -329,10 +387,7 @@ class KonsumsiRapat extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Catering"
-                              options={[
-                                { value: 'Catering 1', label: 'Catering 1' },
-                                { value: 'Catering 2', label: 'Catering 2' },
-                              ]}
+                              options={optCatering}
                               isRequired
                               name="catering"
                               placeholder="Pilih atau Cari Catering"
@@ -451,23 +506,25 @@ KonsumsiRapat.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPengelolaanKonsumsi: PropTypes.func.isRequired,
+  updatePengelolaanKonsumsi: PropTypes.func.isRequired,
+  deletePengelolaanKonsumsi: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.pengelolaanKonsumsi.isLoading,
+  message: state.pengelolaanKonsumsi.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPengelolaanKonsumsi: (formData, refresh) =>
+    dispatch(createPengelolaanKonsumsi(formData, refresh)),
+  updatePengelolaanKonsumsi: (formData, id, refresh) =>
+    dispatch(updatePengelolaanKonsumsi(formData, id, refresh)),
+  deletePengelolaanKonsumsi: (id, refresh) => dispatch(deletePengelolaanKonsumsi(id, refresh)),
 })
 
 export default connect(
@@ -475,7 +532,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPengelolaanKonsumsi(p),
     Component: withToggle({
       Component: KonsumsiRapat,
       toggles: {

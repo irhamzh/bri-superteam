@@ -48,6 +48,19 @@ import aktivitasSecurity from './generalAffair/aktivitas/security/reducer'
 import checkpoint from './master/checkpoint/reducer'
 import aktivitasDriver from './generalAffair/aktivitas/driver/reducer'
 import aktivitasCourier from './generalAffair/aktivitas/courier/reducer'
+import area from './master/area/reducer'
+import jenisObat from './master/jenisObat/reducer'
+import aktivitasRekreasi from './generalAffair/aktivitas/rekreasi/reducer'
+import aktivitasFirstAid from './generalAffair/aktivitas/firstAid/reducer'
+import pengelolaanKonsumsi from './generalAffair/pengelolaanKonsumsi/reducer'
+import penugasanDriver from './generalAffair/pengelolaanKendaraan/penugasanDriver/reducer'
+import kendaraan from './master/kendaraan/reducer'
+import generalAffairKendaraanLuar from './generalAffair/pengelolaanKendaraan/kendaraanLuar/reducer'
+import generalAffairBahanBakar from './generalAffair/pengelolaanKendaraan/bahanBakar/reducer'
+import generalAffairServiceKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/serviceKendaraan/reducer'
+import generalAffairKelengkapanKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/kelengkapanKendaraan/reducer'
+import generalAffairPajakKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/pajakKendaraan/reducer'
+import generalAffairKirKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/kirKendaraan/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -99,6 +112,19 @@ const rootReducer = combineReducers({
   checkpoint,
   aktivitasDriver,
   aktivitasCourier,
+  area,
+  jenisObat,
+  aktivitasRekreasi,
+  aktivitasFirstAid,
+  pengelolaanKonsumsi,
+  penugasanDriver,
+  kendaraan,
+  generalAffairKendaraanLuar,
+  generalAffairBahanBakar,
+  generalAffairServiceKendaraan,
+  generalAffairKelengkapanKendaraan,
+  generalAffairPajakKendaraan,
+  generalAffairKirKendaraan,
 })
 
 export default rootReducer

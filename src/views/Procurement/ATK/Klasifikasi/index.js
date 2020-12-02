@@ -375,13 +375,13 @@ class Klasifikasi extends Component {
                                       <Field
                                         label="Nama Barang"
                                         options={[
-                                          { label: 'Bulpoin', value: 'Bulpoin' },
+                                          { label: 'Bolpoin', value: 'Bolpoin' },
                                           { label: 'Buku tulis', value: 'Buku tulis' },
                                           { label: 'Blocknote', value: 'Blocknote' },
                                           { label: 'Baterai', value: 'Baterai' },
                                           { label: 'Pouch', value: 'Pouch' },
                                           { label: 'Spidol', value: 'Spidol' },
-                                          { label: 'Lain-lain', value: 'Lain-lain' },
+                                          { label: 'Lain lain', value: 'Lain lain' },
                                         ]}
                                         isRequired
                                         name={`barang[${index}].name`}

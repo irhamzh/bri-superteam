@@ -283,7 +283,7 @@ class PajakKendaran extends Component {
                           label="Kendaraan"
                           options={optKendaraan}
                           isRequired
-                          name="kendaraan"
+                          name="vehicle"
                           placeholder="Pilih atau Cari Kendaraan"
                           component={CfSelect}
                         />

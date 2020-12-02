@@ -26,6 +26,7 @@ const Checkpoint = React.lazy(() => import('./views/Master/Checkpoint'))
 const Area = React.lazy(() => import('./views/Master/Area'))
 const JenisObat = React.lazy(() => import('./views/Master/JenisObat'))
 const MasterKendaraan = React.lazy(() => import('./views/Master/Kendaraan'))
+const Uker = React.lazy(() => import('./views/Master/Uker'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -462,6 +463,11 @@ const routes = [
     path: '/master/vehicles',
     name: 'Kendaraan',
     component: MasterKendaraan,
+  },
+  {
+    path: '/master/ukers',
+    name: 'Uker',
+    component: Uker,
   },
 ]
 

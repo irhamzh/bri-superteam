@@ -362,6 +362,11 @@ export default {
           url: '/master/vehicles',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Uker',
+          url: '/master/ukers',
+          icon: 'fa fa-angle-double-right',
+        },
       ],
     },
   ],

@@ -1433,6 +1433,28 @@ class Service {
     return axios.delete(`vehicles/${id}`)
   }
 
+  // Master Uker
+  static getUker(params) {
+    if (!params) params = ''
+    return axios.get(`ukers${params}`)
+  }
+
+  static getUkerById(id) {
+    return axios.get(`ukers/${id}`)
+  }
+
+  static createUker(values) {
+    return axios.post('ukers', values)
+  }
+
+  static updateUker(values, id) {
+    return axios.put(`ukers/${id}`, values)
+  }
+
+  static deleteUker(id) {
+    return axios.delete(`ukers/${id}`)
+  }
+
   // Monitor CCTV
   static getMonitorCCTV(params) {
     if (!params) params = ''
@@ -1803,6 +1825,116 @@ class Service {
 
   static deleteGAKirKendaraan(id) {
     return axios.delete(`ga-vehicles/kir/${id}`)
+  }
+
+  // Data Pekerja - PGS PJS
+  static getGAPgsPjs(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/pgspjs${params}`)
+  }
+
+  static getGAPgsPjsById(id) {
+    return axios.get(`ga-employees/pgspjs/${id}`)
+  }
+
+  static createGAPgsPjs(values) {
+    return axios.post('ga-employees/pgspjs', values)
+  }
+
+  static updateGAPgsPjs(values, id) {
+    return axios.put(`ga-employees/pgspjs/${id}`, values)
+  }
+
+  static deleteGAPgsPjs(id) {
+    return axios.delete(`ga-employees/pgspjs/${id}`)
+  }
+
+  // Data Pekerja - Kehadiran
+  static getGAKehadiran(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/attendance${params}`)
+  }
+
+  static getGAKehadiranById(id) {
+    return axios.get(`ga-employees/attendance/${id}`)
+  }
+
+  static createGAKehadiran(values) {
+    return axios.post('ga-employees/attendance', values)
+  }
+
+  static updateGAKehadiran(values, id) {
+    return axios.put(`ga-employees/attendance/${id}`, values)
+  }
+
+  static deleteGAKehadiran(id) {
+    return axios.delete(`ga-employees/attendance/${id}`)
+  }
+
+  // Data Pekerja - APS
+  static getGAAps(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/aps${params}`)
+  }
+
+  static getGAApsById(id) {
+    return axios.get(`ga-employees/aps/${id}`)
+  }
+
+  static createGAAps(values) {
+    return axios.post('ga-employees/aps', values)
+  }
+
+  static updateGAAps(values, id) {
+    return axios.put(`ga-employees/aps/${id}`, values)
+  }
+
+  static deleteGAAps(id) {
+    return axios.delete(`ga-employees/aps/${id}`)
+  }
+
+  // Data Pekerja - Internship
+  static getGAInternship(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/internship${params}`)
+  }
+
+  static getGAInternshipById(id) {
+    return axios.get(`ga-employees/internship/${id}`)
+  }
+
+  static createGAInternship(values) {
+    return axios.post('ga-employees/internship', values)
+  }
+
+  static updateGAInternship(values, id) {
+    return axios.put(`ga-employees/internship/${id}`, values)
+  }
+
+  static deleteGAInternship(id) {
+    return axios.delete(`ga-employees/internship/${id}`)
+  }
+
+  // Data Pekerja - Lembur
+  static getGALembur(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/overtime${params}`)
+  }
+
+  static getGALemburById(id) {
+    return axios.get(`ga-employees/overtime/${id}`)
+  }
+
+  static createGALembur(values) {
+    return axios.post('ga-employees/overtime', values)
+  }
+
+  static updateGALembur(values, id) {
+    return axios.put(`ga-employees/overtime/${id}`, values)
+  }
+
+  static deleteGALembur(id) {
+    return axios.delete(`ga-employees/overtime/${id}`)
   }
 }
 

@@ -61,6 +61,12 @@ import generalAffairServiceKendaraan from './generalAffair/pengelolaanKendaraan/
 import generalAffairKelengkapanKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/kelengkapanKendaraan/reducer'
 import generalAffairPajakKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/pajakKendaraan/reducer'
 import generalAffairKirKendaraan from './generalAffair/pengelolaanKendaraan/kendaraan/kirKendaraan/reducer'
+import dataPekerjaPgsPjs from './generalAffair/dataPekerja/pgspjs/reducer'
+import uker from './master/uker/reducer'
+import dataPekerjaKehadiran from './generalAffair/dataPekerja/kehadiran/reducer'
+import dataPekerjaAps from './generalAffair/dataPekerja/aps/reducer'
+import dataPekerjaInternship from './generalAffair/dataPekerja/magang/reducer'
+import dataPekerjaLembur from './generalAffair/dataPekerja/lembur/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -125,6 +131,12 @@ const rootReducer = combineReducers({
   generalAffairKelengkapanKendaraan,
   generalAffairPajakKendaraan,
   generalAffairKirKendaraan,
+  dataPekerjaPgsPjs,
+  uker,
+  dataPekerjaKehadiran,
+  dataPekerjaAps,
+  dataPekerjaInternship,
+  dataPekerjaLembur,
 })
 
 export default rootReducer

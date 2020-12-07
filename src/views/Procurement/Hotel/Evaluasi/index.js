@@ -111,7 +111,7 @@ class Internal extends Component {
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namePendidikan',
+        accessor: 'namaPendidikan',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -221,7 +221,7 @@ class Internal extends Component {
                       >
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
-                          <ExcelColumn label="Nama Pendidikan" value="namePendidikan" />
+                          <ExcelColumn label="Nama Pendidikan" value="namaPendidikan" />
                           <ExcelColumn label="Nama Hotel" value={(col) => col.hotelName?.name} />
                           <ExcelColumn label="Performance" value={(col) => col.performance} />
                           <ExcelColumn label="Remark" value={(col) => col.remark} />
@@ -288,7 +288,7 @@ class Internal extends Component {
                         <Field
                           label="Nama Pendidikan"
                           type="text"
-                          name="namePendidikan"
+                          name="namaPendidikan"
                           isRequired
                           placeholder="Masukkan Nama Pendidikan"
                           component={CfInput}

@@ -3,6 +3,24 @@ import React from 'react'
 import { fixedAsset, pengelolaGedung, procurement } from './navigation'
 
 const Dashboard = React.lazy(() => import('./views/Dashboard'))
+const FixedAsset = React.lazy(() => import('./views/Dashboard/FixedAsset'))
+const FABelumBerjalan = React.lazy(() => import('./views/Dashboard/FixedAsset/BelumBerjalan'))
+const FAProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/FixedAsset/ProsesPersetujuan')
+)
+const FABelumSelesai = React.lazy(() => import('./views/Dashboard/FixedAsset/BelumSelesai'))
+const FASelesai = React.lazy(() => import('./views/Dashboard/FixedAsset/Selesai'))
+
+// Procurement
+const Procurement = React.lazy(() => import('./views/Dashboard/Procurement'))
+const PRBelumBerjalan = React.lazy(() => import('./views/Dashboard/Procurement/BelumBerjalan'))
+const PRProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/Procurement/ProsesPersetujuan')
+)
+const PRBelumSelesai = React.lazy(() => import('./views/Dashboard/Procurement/BelumSelesai'))
+const PRSelesai = React.lazy(() => import('./views/Dashboard/Procurement/Selesai'))
+
+// Master
 const Role = React.lazy(() => import('./views/Master/Role'))
 const Ruangan = React.lazy(() => import('./views/Master/Ruangan'))
 const JenisBarang = React.lazy(() => import('./views/Master/JenisBarang'))
@@ -96,9 +114,72 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   {
     path: '/dashboard',
+    exact: true,
     name: 'Dashboard',
     component: Dashboard,
   },
+  {
+    path: '/dashboard/fixed-asset',
+    exact: true,
+    name: 'Fixed Asset',
+    component: FixedAsset,
+  },
+  {
+    path: '/dashboard/fixed-asset/belum-berjalan',
+    exact: true,
+    name: 'Belum Berjalan',
+    component: FABelumBerjalan,
+  },
+  {
+    path: '/dashboard/fixed-asset/proses-persetujuan',
+    exact: true,
+    name: 'Proses Persetujuan',
+    component: FAProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/fixed-asset/belum-selesai',
+    exact: true,
+    name: 'Belum Selesai',
+    component: FABelumSelesai,
+  },
+  {
+    path: '/dashboard/fixed-asset/selesai',
+    exact: true,
+    name: 'Selesai',
+    component: FASelesai,
+  },
+  // Procurement
+  {
+    path: '/dashboard/procurement',
+    exact: true,
+    name: 'Procurement',
+    component: Procurement,
+  },
+  {
+    path: '/dashboard/procurement/belum-berjalan',
+    exact: true,
+    name: 'Belum Berjalan',
+    component: PRBelumBerjalan,
+  },
+  {
+    path: '/dashboard/procurement/proses-persetujuan',
+    exact: true,
+    name: 'Proses Persetujuan',
+    component: PRProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/procurement/belum-selesai',
+    exact: true,
+    name: 'Belum Selesai',
+    component: PRBelumSelesai,
+  },
+  {
+    path: '/dashboard/procurement/selesai',
+    exact: true,
+    name: 'Selesai',
+    component: PRSelesai,
+  },
+
   // Fixed Asset
   ...fixedAsset,
   ...pengelolaGedung,

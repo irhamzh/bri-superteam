@@ -10,6 +10,10 @@ const FAProsesPersetujuan = React.lazy(() =>
 )
 const FABelumSelesai = React.lazy(() => import('./views/Dashboard/FixedAsset/BelumSelesai'))
 const FASelesai = React.lazy(() => import('./views/Dashboard/FixedAsset/Selesai'))
+const FAApprovedProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/FixedAsset/ApprovedProsesPersetujuan')
+)
+const FAApprovedSelesai = React.lazy(() => import('./views/Dashboard/FixedAsset/ApprovedSelesai'))
 
 // Procurement
 const Procurement = React.lazy(() => import('./views/Dashboard/Procurement'))
@@ -19,6 +23,40 @@ const PRProsesPersetujuan = React.lazy(() =>
 )
 const PRBelumSelesai = React.lazy(() => import('./views/Dashboard/Procurement/BelumSelesai'))
 const PRSelesai = React.lazy(() => import('./views/Dashboard/Procurement/Selesai'))
+const PRApprovedProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/Procurement/ApprovedProsesPersetujuan')
+)
+const PRApprovedSelesai = React.lazy(() => import('./views/Dashboard/Procurement/ApprovedSelesai'))
+
+// General Affair
+const GeneralAffair = React.lazy(() => import('./views/Dashboard/GeneralAffair'))
+const GABelumBerjalan = React.lazy(() => import('./views/Dashboard/GeneralAffair/BelumBerjalan'))
+const GAProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/GeneralAffair/ProsesPersetujuan')
+)
+const GABelumSelesai = React.lazy(() => import('./views/Dashboard/GeneralAffair/BelumSelesai'))
+const GASelesai = React.lazy(() => import('./views/Dashboard/GeneralAffair/Selesai'))
+const GAApprovedProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/GeneralAffair/ApprovedProsesPersetujuan')
+)
+const GAApprovedSelesai = React.lazy(() =>
+  import('./views/Dashboard/GeneralAffair/ApprovedSelesai')
+)
+
+// Financial Admin
+const FinancialAdmin = React.lazy(() => import('./views/Dashboard/FinancialAdmin'))
+const FIBelumBerjalan = React.lazy(() => import('./views/Dashboard/FinancialAdmin/BelumBerjalan'))
+const FIProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/FinancialAdmin/ProsesPersetujuan')
+)
+const FIBelumSelesai = React.lazy(() => import('./views/Dashboard/FinancialAdmin/BelumSelesai'))
+const FISelesai = React.lazy(() => import('./views/Dashboard/FinancialAdmin/Selesai'))
+const FIApprovedProsesPersetujuan = React.lazy(() =>
+  import('./views/Dashboard/FinancialAdmin/ApprovedProsesPersetujuan')
+)
+const FIApprovedSelesai = React.lazy(() =>
+  import('./views/Dashboard/FinancialAdmin/ApprovedSelesai')
+)
 
 // Master
 const Role = React.lazy(() => import('./views/Master/Role'))
@@ -148,6 +186,18 @@ const routes = [
     name: 'Selesai',
     component: FASelesai,
   },
+  {
+    path: '/dashboard/fixed-asset/approved-proses-persetujuan',
+    exact: true,
+    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    component: FAApprovedProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/fixed-asset/approved-selesai',
+    exact: true,
+    name: 'Approval oleh Kabag (Kegiatan Selesai)',
+    component: FAApprovedSelesai,
+  },
   // Procurement
   {
     path: '/dashboard/procurement',
@@ -178,6 +228,106 @@ const routes = [
     exact: true,
     name: 'Selesai',
     component: PRSelesai,
+  },
+  {
+    path: '/dashboard/procurement/approved-proses-persetujuan',
+    exact: true,
+    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    component: PRApprovedProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/procurement/approved-selesai',
+    exact: true,
+    name: 'Approval oleh Kabag (Kegiatan Selesai)',
+    component: PRApprovedSelesai,
+  },
+
+  // General Affair
+  {
+    path: '/dashboard/general-affair',
+    exact: true,
+    name: 'General Affair',
+    component: GeneralAffair,
+  },
+  {
+    path: '/dashboard/general-affair/belum-berjalan',
+    exact: true,
+    name: 'Belum Berjalan',
+    component: GABelumBerjalan,
+  },
+  {
+    path: '/dashboard/general-affair/proses-persetujuan',
+    exact: true,
+    name: 'Proses Persetujuan',
+    component: GAProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/general-affair/belum-selesai',
+    exact: true,
+    name: 'Belum Selesai',
+    component: GABelumSelesai,
+  },
+  {
+    path: '/dashboard/general-affair/selesai',
+    exact: true,
+    name: 'Selesai',
+    component: GASelesai,
+  },
+  {
+    path: '/dashboard/general-affair/approved-proses-persetujuan',
+    exact: true,
+    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    component: GAApprovedProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/general-affair/approved-selesai',
+    exact: true,
+    name: 'Approval oleh Kabag (Kegiatan Selesai)',
+    component: GAApprovedSelesai,
+  },
+
+  // Financial Admin
+  {
+    path: '/dashboard/financial-admin',
+    exact: true,
+    name: 'Financial Admin',
+    component: FinancialAdmin,
+  },
+  {
+    path: '/dashboard/financial-admin/belum-berjalan',
+    exact: true,
+    name: 'Belum Berjalan',
+    component: FIBelumBerjalan,
+  },
+  {
+    path: '/dashboard/financial-admin/proses-persetujuan',
+    exact: true,
+    name: 'Proses Persetujuan',
+    component: FIProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/financial-admin/belum-selesai',
+    exact: true,
+    name: 'Belum Selesai',
+    component: FIBelumSelesai,
+  },
+  {
+    path: '/dashboard/financial-admin/selesai',
+    exact: true,
+    name: 'Selesai',
+    component: FISelesai,
+  },
+  {
+    path: '/dashboard/financial-admin/approved-proses-persetujuan',
+    exact: true,
+    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    component: FIApprovedProsesPersetujuan,
+  },
+  {
+    path: '/dashboard/financial-admin/approved-selesai',
+    exact: true,
+    name: 'Approval oleh Kabag (Kegiatan Selesai)',
+    component: FIApprovedSelesai,
   },
 
   // Fixed Asset

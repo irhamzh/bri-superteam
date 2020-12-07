@@ -1,61 +1,40 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Button, Card, CardBody, Col, Row, Form, FormGroup } from 'reactstrap'
-import { Bar, Pie } from 'react-chartjs-2'
+import { Bar, Line, Pie, Polar } from 'react-chartjs-2'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Service from '../../../config/services'
+import { AlertMessage, invalidValues } from '../../../helpers'
 
-const Procurement = () => {
-  const [dataDashboard, setDataDashboard] = useState({})
+const data = {
+  labels: ['Red', 'Green', 'Yellow', 'Blue'],
+  datasets: [
+    {
+      data: [300, 50, 10, 120],
+      backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
+      hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
+    },
+  ],
+}
 
-  useEffect(() => {
-    ;(async function getDataDashboard() {
-      const resData = await Service.getDashboardProcurement()
-      const { data } = resData.data
-      setDataDashboard(data)
-    })()
-  }, [])
+const dataBar = {
+  labels: ['Approved (Proses Persetujuan)', 'Approved (Kegiatan Selesai)'],
+  datasets: [
+    {
+      barThickness: 90,
+      maxBarThickness: 110,
+      label: 'Data Fixed Asset',
+      backgroundColor: ['rgba(0, 250, 154,0.2)', 'rgba(54, 162, 235, 0.2)'],
+      borderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
+      borderWidth: 1,
+      hoverBackgroundColor: ['rgba(0, 250, 154,0.4)', 'rgba(54, 162, 235, 0.4)'],
+      hoverBorderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
+      data: [40, 30],
+    },
+  ],
+}
 
-  const {
-    totalApprovedKabag,
-    totalApprovedWakabag,
-    totalBelumBerjalan,
-    totalProsesPersetujuan,
-    totalSelesai,
-  } = dataDashboard
-
-  const data = {
-    labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],
-    datasets: [
-      {
-        data: [
-          totalBelumBerjalan,
-          totalProsesPersetujuan,
-          totalApprovedWakabag + totalApprovedKabag,
-          totalSelesai,
-        ],
-        backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
-        hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
-      },
-    ],
-  }
-
-  const dataBar = {
-    labels: ['Approved (Proses Persetujuan)', 'Approved (Kegiatan Selesai)'],
-    datasets: [
-      {
-        barThickness: 90,
-        maxBarThickness: 110,
-        label: 'Data Fixed Asset',
-        backgroundColor: ['rgba(0, 250, 154,0.2)', 'rgba(54, 162, 235, 0.2)'],
-        borderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
-        borderWidth: 1,
-        hoverBackgroundColor: ['rgba(0, 250, 154,0.4)', 'rgba(54, 162, 235, 0.4)'],
-        hoverBorderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
-        data: [totalApprovedWakabag, totalApprovedKabag],
-      },
-    ],
-  }
+const GeneralAffair = (props) => {
   return (
     <Row>
       <Col>
@@ -63,7 +42,7 @@ const Procurement = () => {
           <CardBody>
             <Row>
               <Col>
-                <Form onSubmit={() => {}}>
+                <Form onSubmit={(e) => {}}>
                   <Row>
                     <Col>
                       <FormGroup>
@@ -137,7 +116,10 @@ const Procurement = () => {
                 alignItems: 'baseline',
               }}
             >
-              <Link to="/dashboard/procurement/belum-berjalan" style={{ textDecoration: 'none' }}>
+              <Link
+                to="/dashboard/general-affair/belum-berjalan"
+                style={{ textDecoration: 'none' }}
+              >
                 <Card style={{ backgroundColor: '#FF6384', padding: '20px' }}>
                   <div
                     style={{
@@ -158,14 +140,14 @@ const Procurement = () => {
                         <br />
                         Berjalan
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>{totalBelumBerjalan}</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
                     </div>
                   </div>
                 </Card>
               </Link>
 
               <Link
-                to="/dashboard/procurement/proses-persetujuan"
+                to="/dashboard/general-affair/proses-persetujuan"
                 style={{ textDecoration: 'none' }}
               >
                 <Card style={{ backgroundColor: '#00FA9A', padding: '20px' }}>
@@ -188,15 +170,13 @@ const Procurement = () => {
                         <br />
                         Persetujuan
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>
-                        {totalProsesPersetujuan}
-                      </span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
                     </div>
                   </div>
                 </Card>
               </Link>
 
-              <Link to="/dashboard/procurement/belum-selesai" style={{ textDecoration: 'none' }}>
+              <Link to="/dashboard/general-affair/belum-selesai" style={{ textDecoration: 'none' }}>
                 <Card style={{ backgroundColor: '#FFCE56', padding: '20px' }}>
                   <div
                     style={{
@@ -217,15 +197,13 @@ const Procurement = () => {
                         <br />
                         Selesai
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>
-                        {totalApprovedKabag + totalApprovedWakabag}
-                      </span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
                     </div>
                   </div>
                 </Card>
               </Link>
 
-              <Link to="/dashboard/procurement/selesai" style={{ textDecoration: 'none' }}>
+              <Link to="/dashboard/general-affair/selesai" style={{ textDecoration: 'none' }}>
                 <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>
                   <div
                     style={{
@@ -246,7 +224,7 @@ const Procurement = () => {
                         <br />
                         <br />
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>{totalSelesai}</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
                     </div>
                   </div>
                 </Card>
@@ -272,7 +250,7 @@ const Procurement = () => {
                             ticks: {
                               beginAtZero: true,
                               min: 0,
-                              // max: 100,
+                              max: 100,
                             },
                           },
                         ],
@@ -293,7 +271,7 @@ const Procurement = () => {
               }}
             >
               <Link
-                to="/dashboard/procurement/approved-proses-persetujuan"
+                to="/dashboard/general-affair/approved-proses-persetujuan"
                 style={{ textDecoration: 'none' }}
               >
                 <Card style={{ backgroundColor: '#00FA9A', padding: '20px' }}>
@@ -312,19 +290,20 @@ const Procurement = () => {
                     </div>
                     <div>
                       <h3>
-                        Approved oleh Wakabag
+                        Approved oleh Kabag
                         <br />
                         (Proses Persetujuan)
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>
-                        {totalApprovedWakabag}
-                      </span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>40</span>
                     </div>
                   </div>
                 </Card>
               </Link>
 
-              <Link to="/dashboard/procurement/approved-selesai" style={{ textDecoration: 'none' }}>
+              <Link
+                to="/dashboard/general-affair/approved-selesai"
+                style={{ textDecoration: 'none' }}
+              >
                 <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>
                   <div
                     style={{
@@ -345,7 +324,7 @@ const Procurement = () => {
                         <br />
                         (Kegiatan Selesai)
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>{totalApprovedKabag}</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>30</span>
                     </div>
                   </div>
                 </Card>
@@ -353,9 +332,33 @@ const Procurement = () => {
             </div>
           </CardBody>
         </Card>
+
+        <Card style={{ backgroundColor: 'yellow' }}>
+          <CardBody>
+            <div>Jumlah pekerja yang akan pensiun di bulan depan: 40 orang</div>
+          </CardBody>
+        </Card>
+
+        <Card style={{ backgroundColor: 'yellow' }}>
+          <CardBody>
+            <div>Jumlah kenaikan JG di bulan depan: 40 orang</div>
+          </CardBody>
+        </Card>
+
+        <Card style={{ backgroundColor: 'yellow' }}>
+          <CardBody>
+            <div>Jumlah kenaikan PG di bulan depan: 40 orang</div>
+          </CardBody>
+        </Card>
+
+        <Card style={{ backgroundColor: 'yellow' }}>
+          <CardBody>
+            <div>Jumlah PGS berakhir di bulan depan: 40 orang</div>
+          </CardBody>
+        </Card>
       </Col>
     </Row>
   )
 }
 
-export default Procurement
+export default GeneralAffair

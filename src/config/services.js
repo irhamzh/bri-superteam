@@ -1936,6 +1936,27 @@ class Service {
   static deleteGALembur(id) {
     return axios.delete(`ga-employees/overtime/${id}`)
   }
+
+  // Dashboard
+  static getDashboardProcurement(params) {
+    if (!params) params = ''
+    return axios.get(`/pr-pengadaan-jasa-barangs/dashboard${params}`)
+  }
+
+  static getFullProcurement(params) {
+    if (!params) params = ''
+    return axios.get(`/pr-pengadaan-jasa-barangs/full${params}`)
+  }
+
+  static getDashboardFixedAsset(params) {
+    if (!params) params = ''
+    return axios.get(`/pengadaans/dashboard${params}`)
+  }
+
+  static getFullFixedAsset(params) {
+    if (!params) params = ''
+    return axios.get(`/pengadaans/full${params}`)
+  }
 }
 
 export default Service

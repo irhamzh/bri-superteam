@@ -1,40 +1,62 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, Col, Row, Form, FormGroup } from 'reactstrap'
-import { Bar, Line, Pie, Polar } from 'react-chartjs-2'
+import { Bar, Pie } from 'react-chartjs-2'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Service from '../../../config/services'
-import { AlertMessage, invalidValues } from '../../../helpers'
 
-const data = {
-  labels: ['Red', 'Green', 'Yellow', 'Blue'],
-  datasets: [
-    {
-      data: [300, 50, 10, 120],
-      backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
-      hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
-    },
-  ],
-}
+const FixedAsset = () => {
+  const [dataDashboard, setDataDashboard] = useState({})
 
-const dataBar = {
-  labels: ['Approved (Proses Persetujuan)', 'Approved (Kegiatan Selesai)'],
-  datasets: [
-    {
-      barThickness: 90,
-      maxBarThickness: 110,
-      label: 'Data Fixed Asset',
-      backgroundColor: ['rgba(0, 250, 154,0.2)', 'rgba(54, 162, 235, 0.2)'],
-      borderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
-      borderWidth: 1,
-      hoverBackgroundColor: ['rgba(0, 250, 154,0.4)', 'rgba(54, 162, 235, 0.4)'],
-      hoverBorderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
-      data: [40, 30],
-    },
-  ],
-}
+  useEffect(() => {
+    ;(async function getDataDashboard() {
+      const resData = await Service.getDashboardFixedAsset()
+      const { data } = resData.data
+      setDataDashboard(data)
+    })()
+  }, [])
 
-const FixedAsset = (props) => {
+  const {
+    totalApprovedKabag,
+    totalApprovedWakabag,
+    totalBelumBerjalan,
+    totalProsesPersetujuan,
+    totalSelesai,
+  } = dataDashboard
+
+  const data = {
+    labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],
+    datasets: [
+      {
+        data: [
+          totalBelumBerjalan,
+          totalProsesPersetujuan,
+          totalApprovedWakabag + totalApprovedKabag,
+          totalSelesai,
+        ],
+        backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
+      },
+    ],
+  }
+
+  const dataBar = {
+    labels: ['Approved (Proses Persetujuan)', 'Approved (Kegiatan Selesai)'],
+    datasets: [
+      {
+        barThickness: 90,
+        maxBarThickness: 110,
+        label: 'Data Fixed Asset',
+        backgroundColor: ['rgba(0, 250, 154,0.2)', 'rgba(54, 162, 235, 0.2)'],
+        borderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
+        borderWidth: 1,
+        hoverBackgroundColor: ['rgba(0, 250, 154,0.4)', 'rgba(54, 162, 235, 0.4)'],
+        hoverBorderColor: ['rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
+        data: [totalApprovedWakabag, totalApprovedKabag],
+      },
+    ],
+  }
+
   return (
     <Row>
       <Col>
@@ -42,25 +64,8 @@ const FixedAsset = (props) => {
           <CardBody>
             <Row>
               <Col>
-                <Form onSubmit={(e) => {}}>
+                <Form onSubmit={() => {}}>
                   <Row>
-                    <Col>
-                      <FormGroup>
-                        <Select
-                          isClearable
-                          placeholder="Pilih tahun..."
-                          options={[
-                            { value: 2018, label: '2018' },
-                            { value: 2019, label: '2019' },
-                            { value: 2020, label: '2020' },
-                            { value: 2021, label: '2021' },
-                            { value: 2022, label: '2022' },
-                          ]}
-                          name="tahun"
-                          className=""
-                        />
-                      </FormGroup>
-                    </Col>
                     <Col>
                       <FormGroup>
                         <Select
@@ -81,6 +86,23 @@ const FixedAsset = (props) => {
                             { label: 'Desember', value: 'Desember' },
                           ]}
                           name="bulan"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col>
+                      <FormGroup>
+                        <Select
+                          isClearable
+                          placeholder="Pilih tahun..."
+                          options={[
+                            { value: 2018, label: '2018' },
+                            { value: 2019, label: '2019' },
+                            { value: 2020, label: '2020' },
+                            { value: 2021, label: '2021' },
+                            { value: 2022, label: '2022' },
+                          ]}
+                          name="tahun"
+                          className=""
                         />
                       </FormGroup>
                     </Col>
@@ -128,7 +150,7 @@ const FixedAsset = (props) => {
                     <div>
                       <i
                         className="icon-social-dropbox"
-                        style={{ fontSize: '50px', color: 'white' }}
+                        style={{ fontSize: '50px', color: 'white', marginRight: '30px' }}
                       />
                     </div>
                     <div>
@@ -137,7 +159,7 @@ const FixedAsset = (props) => {
                         <br />
                         Berjalan
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>{totalBelumBerjalan}</span>
                     </div>
                   </div>
                 </Card>
@@ -156,7 +178,10 @@ const FixedAsset = (props) => {
                     }}
                   >
                     <div>
-                      <i className="icon-paper-clip" style={{ fontSize: '50px', color: 'white' }} />
+                      <i
+                        className="icon-paper-clip"
+                        style={{ fontSize: '50px', color: 'white', marginRight: '30px' }}
+                      />
                     </div>
                     <div>
                       <h3>
@@ -164,7 +189,9 @@ const FixedAsset = (props) => {
                         <br />
                         Persetujuan
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>
+                        {totalProsesPersetujuan}
+                      </span>
                     </div>
                   </div>
                 </Card>
@@ -180,7 +207,10 @@ const FixedAsset = (props) => {
                     }}
                   >
                     <div>
-                      <i className="icon-pin" style={{ fontSize: '50px', color: 'white' }} />
+                      <i
+                        className="icon-pin"
+                        style={{ fontSize: '50px', color: 'white', marginRight: '30px' }}
+                      />
                     </div>
                     <div>
                       <h3>
@@ -188,7 +218,9 @@ const FixedAsset = (props) => {
                         <br />
                         Selesai
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>
+                        {totalApprovedWakabag + totalApprovedKabag}
+                      </span>
                     </div>
                   </div>
                 </Card>
@@ -204,7 +236,10 @@ const FixedAsset = (props) => {
                     }}
                   >
                     <div>
-                      <i className="icon-badge" style={{ fontSize: '50px', color: 'white' }} />
+                      <i
+                        className="icon-badge"
+                        style={{ fontSize: '50px', color: 'white', marginRight: '30px' }}
+                      />
                     </div>
                     <div>
                       <h3>
@@ -212,7 +247,7 @@ const FixedAsset = (props) => {
                         <br />
                         <br />
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>13</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>{totalSelesai}</span>
                     </div>
                   </div>
                 </Card>
@@ -220,6 +255,7 @@ const FixedAsset = (props) => {
             </div>
           </CardBody>
         </Card>
+
         <Card>
           <CardBody>
             <Row>
@@ -237,7 +273,7 @@ const FixedAsset = (props) => {
                             ticks: {
                               beginAtZero: true,
                               min: 0,
-                              max: 100,
+                              // max: 100,
                             },
                           },
                         ],
@@ -247,7 +283,88 @@ const FixedAsset = (props) => {
                 </div>
               </Col>
             </Row>
+
+            <div
+              style={{
+                marginTop: '30px',
+
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'baseline',
+              }}
+            >
+              <Link
+                to="/dashboard/fixed-asset/approved-proses-persetujuan"
+                style={{ textDecoration: 'none' }}
+              >
+                <Card style={{ backgroundColor: '#00FA9A', padding: '20px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <i
+                        className="icon-calendar"
+                        style={{ fontSize: '50px', color: 'white', marginRight: '30px' }}
+                      />
+                    </div>
+                    <div>
+                      <h3>
+                        Approved oleh Wakabag
+                        <br />
+                        (Proses Persetujuan)
+                      </h3>
+                      <span style={{ color: 'white', fontSize: '30px' }}>
+                        {totalApprovedWakabag}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link to="/dashboard/fixed-asset/approved-selesai" style={{ textDecoration: 'none' }}>
+                <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <i
+                        className="icon-calendar"
+                        style={{ fontSize: '50px', color: 'white', marginRight: '30px' }}
+                      />
+                    </div>
+                    <div>
+                      <h3>
+                        Approved oleh Kabag
+                        <br />
+                        (Kegiatan Selesai)
+                      </h3>
+                      <span style={{ color: 'white', fontSize: '30px' }}>{totalApprovedKabag}</span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            </div>
           </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>Anggaran (belum fix)</CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>Sisa Persekot (lihat detail di contoh grafik)</CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>Approval Pengelola Gedung (belum fix)</CardBody>
         </Card>
       </Col>
     </Row>

@@ -1,36 +1,43 @@
 import React, { Component } from 'react'
-import { Button, Card, CardBody, Col, Row } from 'reactstrap'
+import {
+  Button,
+  Card,
+  CardBody,
+  Col,
+  Row,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+  FormGroup,
+  Form,
+} from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-// import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../config/services'
-// import { CfInput, CfSelect } from '../../../components'
-import { formatDate, invalidValues } from '../../../helpers'
+import { CfInput, CfSelect } from '../../../components'
+import { ErrorMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
+import { updateAssetSchema } from '../../../validations/mvAsset'
 
-class BelumSelesai extends Component {
+class Selesai extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
       { label: 'All', value: 'All' },
       { label: 'Pengadan', value: 'Pengadaan' },
+      { label: 'Aset', value: 'Aset' },
     ],
   }
 
   initialValues = {}
-
-  componentDidMount() {
-    const { fetchQueryProps } = this.props
-    fetchQueryProps.setFilteredByObject({
-      status: 'Belum Selesai',
-    })
-  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -89,7 +96,7 @@ class BelumSelesai extends Component {
 
   render() {
     const { optKondisiAset, kondisiAsetId } = this.state
-    const { auth, fetchQueryProps } = this.props
+    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -103,10 +110,15 @@ class BelumSelesai extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
+        Header: 'Nama Pengadaan',
+        accessor: 'namaPengadaan',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         filterable: false,
-        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -125,7 +137,6 @@ class BelumSelesai extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: false,
-        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -138,51 +149,29 @@ class BelumSelesai extends Component {
         Header: 'Harga Barang',
         accessor: 'harga',
         filterable: false,
-        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Penilaian Vendor',
         accessor: 'penilaian',
         filterable: false,
-        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Status',
         accessor: 'status',
         filterable: false,
-        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        filterable: false,
-        Cell: () => (
-          <>
-            <Button
-              color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              // onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
-          </>
-        ),
       },
     ]
 
-    // const pageName = 'Kondisi Aset'
+    const pageName = 'Kondisi Aset'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -194,16 +183,58 @@ class BelumSelesai extends Component {
             <Card>
               <CardBody>
                 <Row>
-                  <Col sm="4">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('kondisiAsetId', v)}
-                      options={optKondisiAset}
-                      value={kondisiAsetId}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Kegiatan Belum Selesai"
-                    />
+                  <Col>
+                    <Form onSubmit={(e) => {}}>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih Bulan..."
+                              options={[
+                                { label: 'Januari', value: 'Januari' },
+                                { label: 'Februari', value: 'Februari' },
+                                { label: 'Maret', value: 'Maret' },
+                                { label: 'April', value: 'April' },
+                                { label: 'Mei', value: 'Mei' },
+                                { label: 'Juni', value: 'Juni' },
+                                { label: 'Juli', value: 'Juli' },
+                                { label: 'Agustus', value: 'Agustus' },
+                                { label: 'September', value: 'September' },
+                                { label: 'Oktober', value: 'Oktober' },
+                                { label: 'November', value: 'November' },
+                                { label: 'Desember', value: 'Desember' },
+                              ]}
+                              name="bulan"
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih tahun..."
+                              options={[
+                                { value: 2018, label: '2018' },
+                                { value: 2019, label: '2019' },
+                                { value: 2020, label: '2020' },
+                                { value: 2021, label: '2021' },
+                                { value: 2022, label: '2022' },
+                              ]}
+                              name="tahun"
+                              className=""
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col sm="1">
+                          <Button type="submit" color="primary">
+                            <i className="fa fa-filter" />
+                          </Button>
+                        </Col>
+                        <Col sm="3" />
+                      </Row>
+                    </Form>
                   </Col>
                 </Row>
                 <br />
@@ -212,7 +243,7 @@ class BelumSelesai extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -223,14 +254,11 @@ class BelumSelesai extends Component {
   }
 }
 
-BelumSelesai.propTypes = {
+Selesai.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createAsset: PropTypes.func.isRequired,
-  updateAsset: PropTypes.func.isRequired,
-  deleteAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -252,9 +280,9 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getFullFixedAsset(p),
+    API: (p) => Service.getAsset(p),
     Component: withToggle({
-      Component: BelumSelesai,
+      Component: Selesai,
       toggles: {
         modalForm: false,
       },

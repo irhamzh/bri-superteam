@@ -1,36 +1,43 @@
 import React, { Component } from 'react'
-import { Button, Card, CardBody, Col, Row } from 'reactstrap'
+import {
+  Button,
+  Card,
+  CardBody,
+  Col,
+  Row,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+  FormGroup,
+} from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-// import { Formik, Form, Field } from 'formik'
+import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../config/services'
-// import { CfInput, CfSelect } from '../../../components'
-import { formatDate, invalidValues } from '../../../helpers'
+import { CfInput, CfSelect } from '../../../components'
+import { ErrorMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
+import { updateAssetSchema } from '../../../validations/mvAsset'
 
-class ProsesPersetujuan extends Component {
+class BelumBerjalan extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
       { label: 'All', value: 'All' },
       { label: 'Pengadan', value: 'Pengadaan' },
+      { label: 'Aset', value: 'Aset' },
     ],
   }
 
   initialValues = {}
-
-  componentDidMount() {
-    const { fetchQueryProps } = this.props
-    fetchQueryProps.setFilteredByObject({
-      status: 'Proses Persetujuan',
-    })
-  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -89,18 +96,25 @@ class ProsesPersetujuan extends Component {
 
   render() {
     const { optKondisiAset, kondisiAsetId } = this.state
-    const { auth, fetchQueryProps } = this.props
+    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tanggal Pengadaan',
-        accessor: 'tanggalPengadaan',
+        Header: 'Tanggal',
+        accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Jenis Pengadaan',
+        accessor: 'jenisPengadaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pengadaan',
@@ -161,41 +175,75 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Undangan',
-        accessor: 'undangan',
-        filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Aanwijzing',
-        accessor: 'aanwijzing',
-        filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Pemasukan Sampul Proposal Teknis',
-        accessor: 'pemasukanSampulProposalTeknis',
+        Header: 'Anggaran Biaya',
+        accessor: 'anggaranBiaya',
         filterable: false,
         headerClassName: 'wordwrap',
 
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Surat Pemesanan',
+        accessor: 'suratPemesanan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'TOR',
+        accessor: 'tor',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Proposal Penawaran',
+        accessor: 'proposalPenawaran',
+        filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: false,
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -225,73 +273,69 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Pengumuman Pemenang',
-        accessor: 'pengumumanPemenang',
+        Header: 'Nomor SPK',
+        accessor: 'nomorSPK',
         filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Penilaian Proposal Teknis',
-        accessor: 'penilaianProposalTeknis',
-        filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Pembukuan Proposal Financial',
-        accessor: 'pembukuanProposalFinancial',
-        filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Jenis Anggaran',
-        accessor: 'jenisAnggaran',
+        Header: 'Nama Provider',
+        accessor: 'provider.name',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Biaya Putusan',
-        accessor: 'biaya',
+        Header: 'Alamat Provider',
+        accessor: 'provider.address',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nomor Contact Provider',
+        accessor: 'provider.contact',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Pendidikan',
+        accessor: 'namaPendidikan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Jumlah Peserta',
+        accessor: 'jumlah',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Durasi',
+        accessor: 'durasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Jumlah Biaya',
+        accessor: 'jumlahBiaya',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Status',
-        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -299,7 +343,6 @@ class ProsesPersetujuan extends Component {
       },
       {
         Header: 'Aksi',
-        width: 200,
         filterable: false,
         Cell: () => (
           <>
@@ -325,7 +368,7 @@ class ProsesPersetujuan extends Component {
       },
     ]
 
-    // const pageName = 'Kondisi Aset'
+    const pageName = 'Kondisi Aset'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -345,7 +388,7 @@ class ProsesPersetujuan extends Component {
                       value={kondisiAsetId}
                       className="basic-single"
                       classNamePrefix="select"
-                      placeholder="Kegiatan Proses Persetujuan"
+                      placeholder="Kegiatan Belum Berjalan"
                     />
                   </Col>
                 </Row>
@@ -355,10 +398,91 @@ class ProsesPersetujuan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  {...tableProps}
+                  // {...tableProps}
                 />
               </CardBody>
             </Card>
+
+            <Modal
+              isOpen={modalForm.isOpen}
+              toggle={modalForm.toggle}
+              backdrop="static"
+              className={className}
+            >
+              <Formik
+                initialValues={modalForm.prop.data}
+                validationSchema={updateAssetSchema}
+                onSubmit={(values, actions) => {
+                  setTimeout(() => {
+                    this.handleSaveChanges(values)
+                    actions.setSubmitting(false)
+                  }, 1000)
+                }}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
+                    <ModalBody>
+                      {/* <FormGroup>
+                        <Field
+                          label="Kode Aset"
+                          type="text"
+                          name="code"
+                          isRequired
+                          placeholder="Masukkan kode aset"
+                          component={CfInput}
+                        />
+                      </FormGroup> */}
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Aset"
+                          type="text"
+                          name="name"
+                          isRequired
+                          placeholder="Masukkan nama aset"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kondisi Aset"
+                          options={optKondisiAset}
+                          isRequired
+                          name="condition"
+                          placeholder="Pilih atau Cari Kondisi"
+                          component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      {ErrorMessage(message)}
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button type="button" color="secondary" onClick={modalForm.hide}>
+                        Cancel
+                      </Button>
+                      &nbsp;
+                      <Button
+                        type="submit"
+                        color="primary"
+                        className="px-4"
+                        disabled={isSubmitting || isLoading}
+                      >
+                        {isSubmitting || isLoading ? (
+                          <>
+                            <Spinner size="sm" color="light" />
+                            &nbsp;Loading...
+                          </>
+                        ) : (
+                          'Submit'
+                        )}
+                      </Button>
+                    </ModalFooter>
+                  </Form>
+                )}
+              </Formik>
+            </Modal>
           </Col>
         </Row>
       </div>
@@ -366,7 +490,7 @@ class ProsesPersetujuan extends Component {
   }
 }
 
-ProsesPersetujuan.propTypes = {
+BelumBerjalan.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
@@ -395,9 +519,9 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getFullFixedAsset(p),
+    API: (p) => Service.getAsset(p),
     Component: withToggle({
-      Component: ProsesPersetujuan,
+      Component: BelumBerjalan,
       toggles: {
         modalForm: false,
       },

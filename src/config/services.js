@@ -9,19 +9,19 @@ axios.defaults.headers.common.Authorization = localStorage.getItem('token')
 class Service {
   // Authentication
   static signIn(values) {
-    // return axios.post('/auth/sign-in', values)
-    const { email, password } = values
-    return firebase.auth().signInWithEmailAndPassword(email, password)
+    return axios.post('/users/login', values)
+    // const { email, password } = values
+    // return firebase.auth().signInWithEmailAndPassword(email, password)
   }
 
   static signUp(values) {
-    // return axios.post('/auth/sign-up', values)
-    const { email, password } = values
-    return firebase.auth().createUserWithEmailAndPassword(email, password)
+    return axios.post('/users', values)
+    // const { email, password } = values
+    // return firebase.auth().createUserWithEmailAndPassword(email, password)
   }
 
   static verifyToken() {
-    return axios.get('/profile')
+    return axios.get('/users/token-data')
   }
 
   static changePassword(values, id) {

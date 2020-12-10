@@ -16,13 +16,19 @@ const Procurement = () => {
     })()
   }, [])
 
-  const {
+  let {
     totalApprovedKabag,
     totalApprovedWakabag,
     totalBelumBerjalan,
     totalProsesPersetujuan,
     totalSelesai,
   } = dataDashboard
+
+  if (!totalApprovedKabag) totalApprovedKabag = 0
+  if (!totalApprovedWakabag) totalApprovedWakabag = 0
+  if (!totalBelumBerjalan) totalBelumBerjalan = 0
+  if (!totalProsesPersetujuan) totalProsesPersetujuan = 0
+  if (!totalSelesai) totalSelesai = 0
 
   const data = {
     labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],

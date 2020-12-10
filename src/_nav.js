@@ -211,6 +211,28 @@ export default {
       name: 'Financial Adm',
       url: '/financial-admin',
       icon: 'icon-layers',
+      children: [
+        {
+          name: 'Tambahan Kas',
+          url: '/financial-admin/tambahan-kas',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Payment',
+          url: '/financial-admin/payment',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Persekot',
+          url: '/financial-admin/persekot',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Upload',
+          url: '/financial-admin/upload',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
     },
     {
       title: true,

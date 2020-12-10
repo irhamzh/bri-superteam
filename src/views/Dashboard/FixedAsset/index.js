@@ -4,25 +4,36 @@ import { Bar, Pie } from 'react-chartjs-2'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Service from '../../../config/services'
+import { AlertMessage } from '../../../helpers'
 
 const FixedAsset = () => {
   const [dataDashboard, setDataDashboard] = useState({})
 
   useEffect(() => {
     ;(async function getDataDashboard() {
-      const resData = await Service.getDashboardFixedAsset()
-      const { data } = resData.data
-      setDataDashboard(data)
+      try {
+        const resData = await Service.getDashboardFixedAsset()
+        const { data } = resData.data
+        setDataDashboard(data)
+      } catch (error) {
+        AlertMessage.error(error)
+      }
     })()
   }, [])
 
-  const {
+  let {
     totalApprovedKabag,
     totalApprovedWakabag,
     totalBelumBerjalan,
     totalProsesPersetujuan,
     totalSelesai,
   } = dataDashboard
+
+  if (!totalApprovedKabag) totalApprovedKabag = 0
+  if (!totalApprovedWakabag) totalApprovedWakabag = 0
+  if (!totalBelumBerjalan) totalBelumBerjalan = 0
+  if (!totalProsesPersetujuan) totalProsesPersetujuan = 0
+  if (!totalSelesai) totalSelesai = 0
 
   const data = {
     labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],

@@ -148,6 +148,23 @@ const PersekotGA = React.lazy(() => import('./views/GeneralAffair/Persekot'))
 const InputPersekot = React.lazy(() => import('./views/GeneralAffair/Persekot/Input'))
 const PenihilanPersekot = React.lazy(() => import('./views/GeneralAffair/Persekot/Penihilan'))
 
+// Financial Admin
+const TambahanKasFI = React.lazy(() => import('./views/FinancialAdmin/TambahanKas'))
+const PaymentFI = React.lazy(() => import('./views/FinancialAdmin/Payment'))
+const PersekotFI = React.lazy(() => import('./views/FinancialAdmin/Persekot'))
+const LOPPersekotFI = React.lazy(() => import('./views/FinancialAdmin/Persekot/LOP'))
+const DLKPersekotFI = React.lazy(() => import('./views/FinancialAdmin/Persekot/DLK'))
+const UploadFI = React.lazy(() => import('./views/FinancialAdmin/Upload'))
+const BrismartUploadFI = React.lazy(() => import('./views/FinancialAdmin/Upload/Brismart'))
+const BrinetUploadFI = React.lazy(() => import('./views/FinancialAdmin/Upload/Brinet'))
+const TitipanUploadFI = React.lazy(() => import('./views/FinancialAdmin/Upload/Titipan'))
+const PaymentFIFixedAsset = React.lazy(() => import('./views/FinancialAdmin/Payment/FixedAsset'))
+const PaymentFIGeneralAffair = React.lazy(() =>
+  import('./views/FinancialAdmin/Payment/GeneralAffair')
+)
+const PaymentFIFinance = React.lazy(() => import('./views/FinancialAdmin/Payment/Finance'))
+const PaymentFIProcurement = React.lazy(() => import('./views/FinancialAdmin/Payment/Procurement'))
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   {
@@ -573,6 +590,90 @@ const routes = [
     name: 'Penihilan Persekot',
     component: PenihilanPersekot,
   },
+
+  // Financial Admin
+  {
+    path: '/financial-admin/tambahan-kas',
+    exact: true,
+    name: 'Tambahan Kas',
+    component: TambahanKasFI,
+  },
+  {
+    path: '/financial-admin/persekot',
+    exact: true,
+    name: 'Persekot',
+    component: PersekotFI,
+  },
+  {
+    path: '/financial-admin/persekot/lop',
+    exact: true,
+    name: 'LOP',
+    component: LOPPersekotFI,
+  },
+  {
+    path: '/financial-admin/persekot/dlk',
+    exact: true,
+    name: 'DLK',
+    component: DLKPersekotFI,
+  },
+  {
+    path: '/financial-admin/upload',
+    exact: true,
+    name: 'Upload',
+    component: UploadFI,
+  },
+  {
+    path: '/financial-admin/upload/brismart',
+    exact: true,
+    name: 'Brismart',
+    component: BrismartUploadFI,
+  },
+  {
+    path: '/financial-admin/upload/brinet',
+    exact: true,
+    name: 'Brinet',
+    component: BrinetUploadFI,
+  },
+  {
+    path: '/financial-admin/upload/titipan',
+    exact: true,
+    name: 'Titipan',
+    component: TitipanUploadFI,
+  },
+
+  // Financial Admin - Payment
+  {
+    path: '/financial-admin/payment',
+    exact: true,
+    name: 'Payment',
+    component: PaymentFI,
+  },
+  {
+    path: '/financial-admin/payment/fixed-asset',
+    exact: true,
+    name: 'Fixed Asset',
+    component: PaymentFIFixedAsset,
+  },
+  {
+    path: '/financial-admin/payment/general-affair',
+    exact: true,
+    name: 'General Affair',
+    component: PaymentFIGeneralAffair,
+  },
+  {
+    path: '/financial-admin/payment/finance',
+    exact: true,
+    name: 'Finance',
+    component: PaymentFIFinance,
+  },
+  {
+    path: '/financial-admin/payment/procurement',
+    exact: true,
+    name: 'Procurement',
+    component: PaymentFIProcurement,
+  },
+
+  // Master
   {
     path: '/akun',
     exact: true,

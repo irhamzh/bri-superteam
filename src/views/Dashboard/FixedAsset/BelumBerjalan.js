@@ -63,30 +63,30 @@ class BelumBerjalan extends Component {
     )
   }
 
-  // onClickConfirm = async () => {
-  //   const { assetId } = dataReport
-  //   const values = { assetId }
+  onClickApprove = async (id) => {
+    const field = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah Approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Setuju!',
+      cancelButtonText: 'Kembali',
+    }
 
-  //   const field = {
-  //     title: 'Apa kamu yakin?',
-  //     text: 'Setelah Approve, Kamu tidak dapat memulihkan data ini!',
-  //     confirmButtonText: 'Ya, Setuju!',
-  //     cancelButtonText: 'Kembali',
-  //   }
-
-  //   AlertMessage.warning(field)
-  //     .then(async (result) => {
-  //       if (result.value) {
-  //         await Service.confirmLost(values).then((res) => {
-  //           AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
-  //         })
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // Internal Server Error
-  //       AlertMessage.error(err)
-  //     })
-  // }
+    AlertMessage.warning(field)
+      .then(async (result) => {
+        if (result.value) {
+          await Service.approveProcessFixedAsset(id).then((res) => {
+            if (res.data) {
+              AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
+              this.doRefresh()
+            }
+          })
+        }
+      })
+      .catch((err) => {
+        // Internal Server Error
+        AlertMessage.error(err)
+      })
+  }
 
   // handleDelete = (e, state) => {
   //   e.preventDefault()
@@ -327,12 +327,13 @@ class BelumBerjalan extends Component {
       {
         Header: 'Aksi',
         width: 200,
+        accessor: 'id',
         filterable: false,
-        Cell: () => (
+        Cell: (props) => (
           <>
             <Button
               color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => this.onClickApprove(props.value)}
               className="mr-1"
               title="Edit"
             >

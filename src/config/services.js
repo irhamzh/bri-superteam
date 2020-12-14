@@ -1969,6 +1969,23 @@ class Service {
     return axios.get(`/working-orders${params}`)
   }
 
+  // Approval
+  static approveProcessFixedAsset(id) {
+    return axios.put(`/pengadaans/${id}/approve-process`, { id })
+  }
+
+  static approveWabagFixedAsset(id) {
+    return axios.put(`/pengadaans/${id}/approve-wabag`, { id })
+  }
+
+  static approveKabagFixedAsset(id) {
+    return axios.put(`/pengadaans/${id}/approve-kabag`, { id })
+  }
+
+  static approveFinishFixedAsset(id) {
+    return axios.put(`/pengadaans/${id}/finish`, { id })
+  }
+
   // Financial Admin
   static getFITambahanKas(params) {
     if (!params) params = ''

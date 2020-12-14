@@ -206,7 +206,7 @@ const routes = [
   {
     path: '/dashboard/fixed-asset/approved-proses-persetujuan',
     exact: true,
-    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    name: 'Approval oleh Wakabag (Proses Persetujuan)',
     component: FAApprovedProsesPersetujuan,
   },
   {
@@ -249,7 +249,7 @@ const routes = [
   {
     path: '/dashboard/procurement/approved-proses-persetujuan',
     exact: true,
-    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    name: 'Approval oleh Wakabag (Proses Persetujuan)',
     component: PRApprovedProsesPersetujuan,
   },
   {
@@ -293,7 +293,7 @@ const routes = [
   {
     path: '/dashboard/general-affair/approved-proses-persetujuan',
     exact: true,
-    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    name: 'Approval oleh Wakabag (Proses Persetujuan)',
     component: GAApprovedProsesPersetujuan,
   },
   {
@@ -337,7 +337,7 @@ const routes = [
   {
     path: '/dashboard/financial-admin/approved-proses-persetujuan',
     exact: true,
-    name: 'Approval oleh Kabag (Proses Persetujuan)',
+    name: 'Approval oleh Wakabag (Proses Persetujuan)',
     component: FIApprovedProsesPersetujuan,
   },
   {
@@ -592,6 +592,12 @@ const routes = [
   },
 
   // Financial Admin
+  {
+    path: '/financial-admin',
+    exact: true,
+    name: 'Financial Admin',
+    component: TambahanKasFI,
+  },
   {
     path: '/financial-admin/tambahan-kas',
     exact: true,

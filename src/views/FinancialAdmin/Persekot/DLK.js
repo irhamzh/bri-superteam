@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,15 +20,32 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../config/services'
 import { CfInput, CfInputDate } from '../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../helpers'
-import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
+import { createPersekot, updatePersekot, deletePersekot } from '../../../modules/persekot/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
+
 class DLK extends Component {
-  initialValues = {}
+  initialValues = {
+    division: 'Financial Admin',
+    typePersekot: 'DLK',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      division: 'Financial Admin',
+      typePersekot: 'DLK',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -37,11 +55,11 @@ class DLK extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createAsset, updateAsset } = this.props
+    const { createPersekot, updatePersekot } = this.props
     if (!invalidValues.includes(id)) {
-      updateAsset(values, id, this.doRefresh)
+      updatePersekot(values, id, this.doRefresh)
     } else {
-      createAsset(values, this.doRefresh)
+      createPersekot(values, this.doRefresh)
     }
   }
 
@@ -49,13 +67,13 @@ class DLK extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteAsset } = this.props
+    const { deletePersekot } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteAsset(id, this.doRefresh)
+          deletePersekot(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -72,24 +90,25 @@ class DLK extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const columns = [
       {
         Header: 'Tanggal',
-        accessor: 'tanggal',
+        accessor: 'date',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Persekot',
-        accessor: 'namaPersekot',
+        accessor: 'name',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nominal',
-        accessor: 'nominal',
+        accessor: 'costNominal',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -171,13 +190,26 @@ class DLK extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.date)} />
+                          <ExcelColumn label="Nama Kegiatan" value="name" />
+                          <ExcelColumn label="Nominal Biaya" value="costNominal" />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -186,6 +218,7 @@ class DLK extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -213,7 +246,7 @@ class DLK extends Component {
                       <FormGroup>
                         <Field
                           label="Tanggal"
-                          name="tanggal"
+                          name="date"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
@@ -227,7 +260,7 @@ class DLK extends Component {
                         <Field
                           label="Nama Persekot"
                           type="text"
-                          name="namaPersekot"
+                          name="name"
                           isRequired
                           placeholder="Masukkan Nama Persekot"
                           component={CfInput}
@@ -238,7 +271,7 @@ class DLK extends Component {
                         <Field
                           label="Nominal"
                           type="number"
-                          name="nominal"
+                          name="costNominal"
                           isRequired
                           placeholder="Masukkan nominal"
                           component={CfInput}
@@ -295,23 +328,23 @@ DLK.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createAsset: PropTypes.func.isRequired,
-  updateAsset: PropTypes.func.isRequired,
-  deleteAsset: PropTypes.func.isRequired,
+  createPersekot: PropTypes.func.isRequired,
+  updatePersekot: PropTypes.func.isRequired,
+  deletePersekot: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.persekot.isLoading,
+  message: state.persekot.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
-  updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
-  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  createPersekot: (formData, refresh) => dispatch(createPersekot(formData, refresh)),
+  updatePersekot: (formData, id, refresh) => dispatch(updatePersekot(formData, id, refresh)),
+  deletePersekot: (id, refresh) => dispatch(deletePersekot(id, refresh)),
 })
 
 export default connect(
@@ -319,7 +352,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getPersekot(p),
     Component: withToggle({
       Component: DLK,
       toggles: {

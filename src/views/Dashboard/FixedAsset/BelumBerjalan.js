@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { formatDate, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -63,6 +63,31 @@ class BelumBerjalan extends Component {
     )
   }
 
+  // onClickConfirm = async () => {
+  //   const { assetId } = dataReport
+  //   const values = { assetId }
+
+  //   const field = {
+  //     title: 'Apa kamu yakin?',
+  //     text: 'Setelah Approve, Kamu tidak dapat memulihkan data ini!',
+  //     confirmButtonText: 'Ya, Setuju!',
+  //     cancelButtonText: 'Kembali',
+  //   }
+
+  //   AlertMessage.warning(field)
+  //     .then(async (result) => {
+  //       if (result.value) {
+  //         await Service.confirmLost(values).then((res) => {
+  //           AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
+  //         })
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       // Internal Server Error
+  //       AlertMessage.error(err)
+  //     })
+  // }
+
   // handleDelete = (e, state) => {
   //   e.preventDefault()
 
@@ -97,10 +122,12 @@ class BelumBerjalan extends Component {
     const columns = [
       {
         Header: 'Tanggal',
-        accessor: 'tanggal',
+        accessor: 'tanggalPengadaan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value ? formatDate(row.value) : null}</div>
+        ),
       },
       {
         Header: 'Nama Pengadaan',
@@ -291,6 +318,7 @@ class BelumBerjalan extends Component {
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -298,6 +326,7 @@ class BelumBerjalan extends Component {
       },
       {
         Header: 'Aksi',
+        width: 200,
         filterable: false,
         Cell: () => (
           <>

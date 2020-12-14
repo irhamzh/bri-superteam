@@ -29,7 +29,7 @@ class BelumSelesai extends Component {
   componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      status: 'Belum Selesai',
+      status: 'Approved oleh Kabag',
     })
   }
 

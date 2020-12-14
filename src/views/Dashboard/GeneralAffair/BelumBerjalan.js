@@ -1,44 +1,38 @@
 import React, { Component } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  FormGroup,
-} from 'reactstrap'
+import { Button, Card, CardBody, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
+// import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInput, CfSelect } from '../../../components'
-import { ErrorMessage, formatDate, invalidValues } from '../../../helpers'
+// import { CfInput, CfSelect } from '../../../components'
+import { formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
-import { updateAssetSchema } from '../../../validations/mvAsset'
 
 class BelumBerjalan extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
       { label: 'All', value: 'All' },
-      { label: 'Kegiatan Sosialisasi', value: 'Kegiatan Sosialisasi' },
+      { label: 'Kegiatan Pendidikan', value: 'Kegiatan Pendidikan' },
       { label: 'Kegiatan Lainnya', value: 'Kegiatan Lainnya' },
-      { label: 'Kegiatan Rapat', value: 'Kegiatan Rapat' },
     ],
   }
 
   initialValues = {}
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      division: 'General Affair',
+      status: 'Belum Berjalan',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -97,7 +91,7 @@ class BelumBerjalan extends Component {
 
   render() {
     const { optKondisiAset, kondisiAsetId } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -140,6 +134,7 @@ class BelumBerjalan extends Component {
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -147,6 +142,7 @@ class BelumBerjalan extends Component {
       },
       {
         Header: 'Aksi',
+        width: 200,
         filterable: false,
         Cell: () => (
           <>
@@ -172,7 +168,7 @@ class BelumBerjalan extends Component {
       },
     ]
 
-    const pageName = 'Kondisi Aset'
+    // const pageName = ''
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -192,7 +188,7 @@ class BelumBerjalan extends Component {
                       value={kondisiAsetId}
                       className="basic-single"
                       classNamePrefix="select"
-                      placeholder="Kegiatan Belum Berjalan"
+                      placeholder="Filter Kegiatan"
                     />
                   </Col>
                 </Row>
@@ -202,91 +198,10 @@ class BelumBerjalan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
-
-            <Modal
-              isOpen={modalForm.isOpen}
-              toggle={modalForm.toggle}
-              backdrop="static"
-              className={className}
-            >
-              <Formik
-                initialValues={modalForm.prop.data}
-                validationSchema={updateAssetSchema}
-                onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    this.handleSaveChanges(values)
-                    actions.setSubmitting(false)
-                  }, 1000)
-                }}
-              >
-                {({ isSubmitting }) => (
-                  <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>
-                      {/* <FormGroup>
-                        <Field
-                          label="Kode Aset"
-                          type="text"
-                          name="code"
-                          isRequired
-                          placeholder="Masukkan kode aset"
-                          component={CfInput}
-                        />
-                      </FormGroup> */}
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kondisi Aset"
-                          options={optKondisiAset}
-                          isRequired
-                          name="condition"
-                          placeholder="Pilih atau Cari Kondisi"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button type="button" color="secondary" onClick={modalForm.hide}>
-                        Cancel
-                      </Button>
-                      &nbsp;
-                      <Button
-                        type="submit"
-                        color="primary"
-                        className="px-4"
-                        disabled={isSubmitting || isLoading}
-                      >
-                        {isSubmitting || isLoading ? (
-                          <>
-                            <Spinner size="sm" color="light" />
-                            &nbsp;Loading...
-                          </>
-                        ) : (
-                          'Submit'
-                        )}
-                      </Button>
-                    </ModalFooter>
-                  </Form>
-                )}
-              </Formik>
-            </Modal>
           </Col>
         </Row>
       </div>
@@ -323,7 +238,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getWorkingOrder(p),
     Component: withToggle({
       Component: BelumBerjalan,
       toggles: {

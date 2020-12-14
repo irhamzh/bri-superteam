@@ -49,7 +49,7 @@ function ModalForm(props) {
                   <Field
                     label="Nama Role"
                     type="text"
-                    name="nama"
+                    name="name"
                     isRequired
                     placeholder="Masukkan nama role"
                     component={CfInput}

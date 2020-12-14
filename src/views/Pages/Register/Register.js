@@ -6,7 +6,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Formik, Form, Field } from 'formik'
 import { signUp } from '../../../modules/auth/actions'
-import { CfInputGroup } from '../../../components'
+import { CfInputGroup, CfSelect } from '../../../components'
+import Service from '../../../config/services'
 
 const initialValues = {
   email: '',
@@ -23,12 +24,27 @@ const registerSchema = Yup.object().shape({
 })
 
 class Register extends Component {
+  state = {
+    optRole: [],
+  }
+
+  async componentDidMount() {
+    const resDataRole = await Service.getRoles()
+    const dataRole = resDataRole.data.data
+    const optRole = dataRole.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optRole,
+    })
+  }
+
   handleRegister = (values) => {
     const { signUp } = this.props
     signUp(values)
   }
 
   render() {
+    const { optRole } = this.state
     const { auth, isLoading, message } = this.props
     if (auth) return (window.location.href = '/')
 
@@ -72,7 +88,7 @@ class Register extends Component {
                         />
 
                         <Field
-                          classGroup="mb-4"
+                          classGroup="mb-3"
                           classIcon="icon-lock"
                           type="password"
                           name="password"
@@ -80,13 +96,24 @@ class Register extends Component {
                           component={CfInputGroup}
                         />
                         <Field
-                          classGroup="mb-4"
+                          // classGroup="mb-3"
                           classIcon="icon-lock"
                           type="password"
                           name="passwordConfirm"
                           placeholder="Confirm Password"
                           component={CfInputGroup}
                         />
+
+                        <Field
+                          classGroup="mb-4"
+                          classIcon="icon-people"
+                          options={optRole}
+                          name="role"
+                          placeholder="Pilih atau Cari Role"
+                          component={CfSelect}
+                        />
+                        <br />
+
                         <Row>
                           <Col xs="12">
                             <Button

@@ -1,18 +1,5 @@
 import React, { Component } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  FormGroup,
-  Form,
-} from 'reactstrap'
+import { Button, Card, CardBody, Col, Row, FormGroup, Form } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
@@ -20,8 +7,8 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInput, CfSelect } from '../../../components'
-import { ErrorMessage, formatDate, invalidValues } from '../../../helpers'
+// import { CfInput, CfSelect } from '../../../components'
+import { formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -30,6 +17,13 @@ class ApprovedProsesPersetujuan extends Component {
   state = {}
 
   initialValues = {}
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      status: 'Approved oleh Wakabag',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -87,19 +81,29 @@ class ApprovedProsesPersetujuan extends Component {
   // }
 
   render() {
-    const { optKondisiAset, kondisiAsetId } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
+        Header: 'Tanggal Awal',
+        accessor: 'tanggalAwal',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value ? formatDate(row.value) : ''}</div>
+        ),
+      },
+      {
+        Header: 'Tanggal Akhir',
+        accessor: 'tanggalAkhir',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value ? formatDate(row.value) : ''}</div>
+        ),
       },
       {
         Header: 'Jenis Pengadaan',
@@ -333,9 +337,34 @@ class ApprovedProsesPersetujuan extends Component {
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+      {
+        Header: 'Aksi',
+        filterable: false,
+        Cell: () => (
+          <>
+            <Button
+              color="success"
+              // onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              // onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      },
     ]
 
-    const pageName = 'Kondisi Aset'
+    // const pageName = ''
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -348,7 +377,7 @@ class ApprovedProsesPersetujuan extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <Form onSubmit={(e) => {}}>
+                    <Form onSubmit={() => {}}>
                       <Row>
                         <Col>
                           <FormGroup>
@@ -407,7 +436,7 @@ class ApprovedProsesPersetujuan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -424,6 +453,9 @@ ApprovedProsesPersetujuan.propTypes = {
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   fetchQueryProps: WithTableFetchQueryProp,
+  createAsset: PropTypes.func.isRequired,
+  updateAsset: PropTypes.func.isRequired,
+  deleteAsset: PropTypes.func.isRequired,
   modalForm: WithToggleProps,
 }
 
@@ -444,7 +476,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getFullProcurement(p),
     Component: withToggle({
       Component: ApprovedProsesPersetujuan,
       toggles: {

@@ -4,15 +4,20 @@ import { Bar, Pie } from 'react-chartjs-2'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Service from '../../../config/services'
+import { AlertMessage } from '../../../helpers'
 
 const Procurement = () => {
   const [dataDashboard, setDataDashboard] = useState({})
 
   useEffect(() => {
     ;(async function getDataDashboard() {
-      const resData = await Service.getDashboardProcurement()
-      const { data } = resData.data
-      setDataDashboard(data)
+      try {
+        const resData = await Service.getDashboardProcurement()
+        const { data } = resData.data
+        setDataDashboard(data)
+      } catch (error) {
+        AlertMessage.error(error)
+      }
     })()
   }, [])
 

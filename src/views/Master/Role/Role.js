@@ -57,7 +57,7 @@ function Role(props) {
     },
     {
       Header: 'Role',
-      accessor: 'nama',
+      accessor: 'name',
     },
     {
       Header: 'Edit',
@@ -165,7 +165,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRole(p),
+    API: (p) => Service.getRoles(p),
     Component: withToggle({
       Component: Role,
       toggles: {

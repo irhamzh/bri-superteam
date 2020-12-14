@@ -4,7 +4,7 @@ import { API_URL } from './apiConfig'
 import firebase from './firebase'
 
 axios.defaults.baseURL = `${API_URL}`
-axios.defaults.headers.common.Authorization = localStorage.getItem('token')
+axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
 
 class Service {
   // Authentication
@@ -38,23 +38,24 @@ class Service {
 
   // Role
   static getRoles(params) {
-    return axios.get(`role${params}`)
+    if (!params) params = ''
+    return axios.get(`roles${params}`)
   }
 
   static getRoleById(id) {
-    return axios.get(`role/${id}`)
+    return axios.get(`roles/${id}`)
   }
 
   static createRole(values) {
-    return axios.post('role', values)
+    return axios.post('roles', values)
   }
 
   static updateRole(values, id) {
-    return axios.put(`role/${id}`, values)
+    return axios.put(`roles/${id}`, values)
   }
 
   static deleteRole(id) {
-    return axios.delete(`role/${id}`)
+    return axios.delete(`roles/${id}`)
   }
 
   // Master Profesi
@@ -1956,6 +1957,52 @@ class Service {
   static getFullFixedAsset(params) {
     if (!params) params = ''
     return axios.get(`/pengadaans/full${params}`)
+  }
+
+  static getDashboardGeneralAffair(params) {
+    if (!params) params = ''
+    return axios.get(`/working-orders/dashboard${params}`)
+  }
+
+  static getFullGeneralAffair(params) {
+    if (!params) params = ''
+    return axios.get(`/working-orders${params}`)
+  }
+
+  // Financial Admin
+  static getFITambahanKas(params) {
+    if (!params) params = ''
+    return axios.get(`fa-cashes${params}`)
+  }
+
+  static getFITambahanKasById(id) {
+    return axios.get(`fa-cashes/${id}`)
+  }
+
+  static createFITambahanKas(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post('fa-cashes', formData)
+  }
+
+  static updateFITambahanKas(values, id) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.put(`fa-cashes/${id}`, formData)
+  }
+
+  static deleteFITambahanKas(id) {
+    return axios.delete(`fa-cashes/${id}`)
   }
 }
 

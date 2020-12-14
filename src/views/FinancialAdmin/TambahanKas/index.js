@@ -22,7 +22,11 @@ import { Formik, Form, Field } from 'formik'
 import Service from '../../../config/services'
 import { CfInput, CfInputDate, CfInputFile } from '../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../helpers'
-import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
+import {
+  createFITambahanKas,
+  updateFITambahanKas,
+  deleteFITambahanKas,
+} from '../../../modules/financialAdmin/tambahanKas/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
 
@@ -37,11 +41,11 @@ class TambahanKas extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createAsset, updateAsset } = this.props
+    const { createFITambahanKas, updateFITambahanKas } = this.props
     if (!invalidValues.includes(id)) {
-      updateAsset(values, id, this.doRefresh)
+      updateFITambahanKas(values, id, this.doRefresh)
     } else {
-      createAsset(values, this.doRefresh)
+      createFITambahanKas(values, this.doRefresh)
     }
   }
 
@@ -49,13 +53,13 @@ class TambahanKas extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteAsset } = this.props
+    const { deleteFITambahanKas } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteAsset(id, this.doRefresh)
+          deleteFITambahanKas(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -89,7 +93,7 @@ class TambahanKas extends Component {
       },
       {
         Header: 'Unit Kerja Tujuan',
-        accessor: 'name',
+        accessor: 'unitKerjaTujuan',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -193,6 +197,7 @@ class TambahanKas extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -213,7 +218,7 @@ class TambahanKas extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data Kas</ModalHeader>
                     <ModalBody>
@@ -262,6 +267,7 @@ class TambahanKas extends Component {
                           component={CfInputFile}
                         />
                       </FormGroup>
+                      {console.log(values?.lampiran)}
 
                       <FormGroup>
                         <Field
@@ -313,23 +319,24 @@ TambahanKas.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createAsset: PropTypes.func.isRequired,
-  updateAsset: PropTypes.func.isRequired,
-  deleteAsset: PropTypes.func.isRequired,
+  createFITambahanKas: PropTypes.func.isRequired,
+  updateFITambahanKas: PropTypes.func.isRequired,
+  deleteFITambahanKas: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.tambahanKas.isLoading,
+  message: state.tambahanKas.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
-  updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
-  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  createFITambahanKas: (formData, refresh) => dispatch(createFITambahanKas(formData, refresh)),
+  updateFITambahanKas: (formData, id, refresh) =>
+    dispatch(updateFITambahanKas(formData, id, refresh)),
+  deleteFITambahanKas: (id, refresh) => dispatch(deleteFITambahanKas(id, refresh)),
 })
 
 export default connect(
@@ -337,7 +344,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getFITambahanKas(p),
     Component: withToggle({
       Component: TambahanKas,
       toggles: {

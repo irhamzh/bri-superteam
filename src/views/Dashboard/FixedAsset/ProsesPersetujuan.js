@@ -28,7 +28,7 @@ class ProsesPersetujuan extends Component {
   componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      status: 'Proses Persetujuan',
+      in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
     })
   }
 

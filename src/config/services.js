@@ -1991,6 +1991,16 @@ class Service {
     return axios.get(`/working-orders${params}`)
   }
 
+  static getDashboardFinancialAdmin(params) {
+    if (!params) params = ''
+    return axios.get(`/fa-payments/dashboard${params}`)
+  }
+
+  static getFullFinancialAdmin(params) {
+    if (!params) params = ''
+    return axios.get(`/fa-payments${params}`)
+  }
+
   // Approval - Fixed Asset
   static approveProcessFixedAsset(id) {
     return axios.put(`/pengadaans/${id}/approve-process`, { id })
@@ -2040,6 +2050,23 @@ class Service {
 
   static approveFinishGeneralAffair(id) {
     return axios.put(`/working-orders/${id}/finish`)
+  }
+
+  // Approval - Financial Admin
+  static approveProcessFinancialAdmin(id) {
+    return axios.put(`/fa-payments/${id}/approve-process`)
+  }
+
+  static approveWabagFinancialAdmin(id) {
+    return axios.put(`/fa-payments/${id}/approve-wabag`)
+  }
+
+  static approveKabagFinancialAdmin(id) {
+    return axios.put(`/fa-payments/${id}/approve-kabag`)
+  }
+
+  static approveFinishFinancialAdmin(id) {
+    return axios.put(`/fa-payments/${id}/finish`)
   }
 
   // Financial Admin

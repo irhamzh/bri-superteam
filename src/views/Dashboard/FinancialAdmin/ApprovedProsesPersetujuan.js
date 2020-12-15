@@ -1,18 +1,5 @@
 import React, { Component } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  FormGroup,
-  Form,
-} from 'reactstrap'
+import { Button, Card, CardBody, Col, Row, FormGroup, Form } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
@@ -20,8 +7,8 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInput, CfSelect } from '../../../components'
-import { ErrorMessage, formatDate, invalidValues } from '../../../helpers'
+// import { CfInput, CfSelect } from '../../../components'
+import { formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -30,6 +17,13 @@ class ApprovedProsesPersetujuan extends Component {
   state = {}
 
   initialValues = {}
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      status: 'Approved oleh Wakabag',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -87,8 +81,7 @@ class ApprovedProsesPersetujuan extends Component {
   // }
 
   render() {
-    const { optKondisiAset, kondisiAsetId } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -102,35 +95,18 @@ class ApprovedProsesPersetujuan extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
-        Header: 'Jenis Pengadaan',
-        accessor: 'jenisPengadaan',
+        Header: 'Kegiatan',
+        accessor: 'kegiatan',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
+        Header: 'Seksi',
+        accessor: 'seksi',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Izin Prinsip User',
-        accessor: 'izinPrinsipUser',
-        filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
       },
       {
         Header: 'Izin Prinsip Pengadaan',
@@ -150,8 +126,8 @@ class ApprovedProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Izin Hasil Pengadaan',
-        accessor: 'izinHasilPengadaan',
+        Header: 'KTP / NPWP',
+        accessor: 'ktpAtauNpwp',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -167,8 +143,8 @@ class ApprovedProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Anggaran Biaya',
-        accessor: 'anggaranBiaya',
+        Header: 'Faktur Pajak',
+        accessor: 'fakturPajak',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -201,8 +177,8 @@ class ApprovedProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'TOR',
-        accessor: 'tor',
+        Header: 'Nota Pembukuan',
+        accessor: 'notaPembukuan',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -248,8 +224,8 @@ class ApprovedProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Klarifikasi dan negosiasi',
-        accessor: 'klarifikasiNegosiasi',
+        Header: 'Invoice Bermaterai',
+        accessor: 'invoiceBermateraiKwitansi',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -265,28 +241,15 @@ class ApprovedProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Nomor SPK',
-        accessor: 'nomorSPK',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
+        Header: 'Tipe Payment',
+        accessor: 'typePayment',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Alamat Provider',
-        accessor: 'provider.address',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nomor Contact Provider',
-        accessor: 'provider.contact',
+        Header: 'Tipe Pendidikan',
+        accessor: 'typePendidikan',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -328,6 +291,7 @@ class ApprovedProsesPersetujuan extends Component {
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -335,7 +299,7 @@ class ApprovedProsesPersetujuan extends Component {
       },
     ]
 
-    const pageName = 'Kondisi Aset'
+    // const pageName = 'Kondisi Aset'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -348,7 +312,7 @@ class ApprovedProsesPersetujuan extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <Form onSubmit={(e) => {}}>
+                    <Form onSubmit={() => {}}>
                       <Row>
                         <Col>
                           <FormGroup>
@@ -407,7 +371,7 @@ class ApprovedProsesPersetujuan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -423,6 +387,9 @@ ApprovedProsesPersetujuan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
+  createAsset: PropTypes.func.isRequired,
+  updateAsset: PropTypes.func.isRequired,
+  deleteAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -444,7 +411,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getFullFinancialAdmin(p),
     Component: withToggle({
       Component: ApprovedProsesPersetujuan,
       toggles: {

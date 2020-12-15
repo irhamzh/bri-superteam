@@ -1,31 +1,18 @@
 import React, { Component } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  FormGroup,
-} from 'reactstrap'
+import { Button, Card, CardBody, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
+// import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInput, CfSelect } from '../../../components'
-import { ErrorMessage, formatDate, invalidValues } from '../../../helpers'
+// import { CfInput, CfSelect } from '../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
-import { updateAssetSchema } from '../../../validations/mvAsset'
 
 class ProsesPersetujuan extends Component {
   state = {
@@ -38,6 +25,13 @@ class ProsesPersetujuan extends Component {
   }
 
   initialValues = {}
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -70,6 +64,40 @@ class ProsesPersetujuan extends Component {
     )
   }
 
+  onClickApprove = async (id, status) => {
+    const field = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah Approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Setuju!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(field)
+      .then(async (result) => {
+        if (result.value) {
+          if (status === 'Proses Persetujuan') {
+            await Service.approveWabagFinancialAdmin(id).then((res) => {
+              if (res.data) {
+                AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
+                this.doRefresh()
+              }
+            })
+          } else {
+            await Service.approveKabagFinancialAdmin(id).then((res) => {
+              if (res.data) {
+                AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
+                this.doRefresh()
+              }
+            })
+          }
+        }
+      })
+      .catch((err) => {
+        // Internal Server Error
+        AlertMessage.error(err)
+      })
+  }
+
   // handleDelete = (e, state) => {
   //   e.preventDefault()
 
@@ -96,7 +124,7 @@ class ProsesPersetujuan extends Component {
 
   render() {
     const { optKondisiAset, kondisiAsetId } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -110,35 +138,18 @@ class ProsesPersetujuan extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
-        Header: 'Jenis Pengadaan',
-        accessor: 'jenisPengadaan',
+        Header: 'Kegiatan',
+        accessor: 'kegiatan',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
+        Header: 'Seksi',
+        accessor: 'seksi',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Izin Prinsip User',
-        accessor: 'izinPrinsipUser',
-        filterable: false,
-        headerClassName: 'wordwrap',
-
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
       },
       {
         Header: 'Izin Prinsip Pengadaan',
@@ -158,8 +169,8 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Izin Hasil Pengadaan',
-        accessor: 'izinHasilPengadaan',
+        Header: 'KTP / NPWP',
+        accessor: 'ktpAtauNpwp',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -175,8 +186,8 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Anggaran Biaya',
-        accessor: 'anggaranBiaya',
+        Header: 'Faktur Pajak',
+        accessor: 'fakturPajak',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -209,8 +220,8 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'TOR',
-        accessor: 'tor',
+        Header: 'Nota Pembukuan',
+        accessor: 'notaPembukuan',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -256,8 +267,8 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Klarifikasi dan negosiasi',
-        accessor: 'klarifikasiNegosiasi',
+        Header: 'Invoice Bermaterai',
+        accessor: 'invoiceBermateraiKwitansi',
         filterable: false,
         headerClassName: 'wordwrap',
 
@@ -273,28 +284,15 @@ class ProsesPersetujuan extends Component {
           ),
       },
       {
-        Header: 'Nomor SPK',
-        accessor: 'nomorSPK',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
+        Header: 'Tipe Payment',
+        accessor: 'typePayment',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Alamat Provider',
-        accessor: 'provider.address',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nomor Contact Provider',
-        accessor: 'provider.contact',
+        Header: 'Tipe Pendidikan',
+        accessor: 'typePendidikan',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -336,6 +334,7 @@ class ProsesPersetujuan extends Component {
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -343,12 +342,14 @@ class ProsesPersetujuan extends Component {
       },
       {
         Header: 'Aksi',
+        accessor: 'id',
+        width: 200,
         filterable: false,
-        Cell: () => (
+        Cell: (props) => (
           <>
             <Button
               color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => this.onClickApprove(props.value, props.original?.status)}
               className="mr-1"
               title="Edit"
             >
@@ -368,7 +369,7 @@ class ProsesPersetujuan extends Component {
       },
     ]
 
-    const pageName = 'Kondisi Aset'
+    // const pageName = 'Kondisi Aset'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -398,91 +399,10 @@ class ProsesPersetujuan extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
-
-            <Modal
-              isOpen={modalForm.isOpen}
-              toggle={modalForm.toggle}
-              backdrop="static"
-              className={className}
-            >
-              <Formik
-                initialValues={modalForm.prop.data}
-                validationSchema={updateAssetSchema}
-                onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    this.handleSaveChanges(values)
-                    actions.setSubmitting(false)
-                  }, 1000)
-                }}
-              >
-                {({ isSubmitting }) => (
-                  <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>
-                      {/* <FormGroup>
-                        <Field
-                          label="Kode Aset"
-                          type="text"
-                          name="code"
-                          isRequired
-                          placeholder="Masukkan kode aset"
-                          component={CfInput}
-                        />
-                      </FormGroup> */}
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kondisi Aset"
-                          options={optKondisiAset}
-                          isRequired
-                          name="condition"
-                          placeholder="Pilih atau Cari Kondisi"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button type="button" color="secondary" onClick={modalForm.hide}>
-                        Cancel
-                      </Button>
-                      &nbsp;
-                      <Button
-                        type="submit"
-                        color="primary"
-                        className="px-4"
-                        disabled={isSubmitting || isLoading}
-                      >
-                        {isSubmitting || isLoading ? (
-                          <>
-                            <Spinner size="sm" color="light" />
-                            &nbsp;Loading...
-                          </>
-                        ) : (
-                          'Submit'
-                        )}
-                      </Button>
-                    </ModalFooter>
-                  </Form>
-                )}
-              </Formik>
-            </Modal>
           </Col>
         </Row>
       </div>
@@ -519,7 +439,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getFullFinancialAdmin(p),
     Component: withToggle({
       Component: ProsesPersetujuan,
       toggles: {

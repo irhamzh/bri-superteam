@@ -2025,6 +2025,23 @@ class Service {
     return axios.put(`/pr-pengadaan-jasa-barangs/${id}/finish`)
   }
 
+  // Approval - General Admin
+  static approveProcessGeneralAffair(id) {
+    return axios.put(`/working-orders/${id}/approve-process`)
+  }
+
+  static approveWabagGeneralAffair(id) {
+    return axios.put(`/working-orders/${id}/approve-wabag`)
+  }
+
+  static approveKabagGeneralAffair(id) {
+    return axios.put(`/working-orders/${id}/approve-kabag`)
+  }
+
+  static approveFinishGeneralAffair(id) {
+    return axios.put(`/working-orders/${id}/finish`)
+  }
+
   // Financial Admin
   static getFITambahanKas(params) {
     if (!params) params = ''

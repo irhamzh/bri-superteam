@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Card, CardBody, Col, Row } from 'reactstrap'
+import { Card, CardBody, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
@@ -139,32 +139,6 @@ class Selesai extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 200,
-        filterable: false,
-        Cell: () => (
-          <>
-            <Button
-              color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Approve"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              // onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
-          </>
-        ),
       },
     ]
 

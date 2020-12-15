@@ -11,10 +11,12 @@ import {
 } from 'reactstrap'
 import PropTypes from 'prop-types'
 import { AppNavbarBrand, AppSidebarToggler } from '@coreui/react'
+import { connect } from 'react-redux'
 import logo from '../../assets/img/brand/bri-logo.png'
 import sygnet from '../../assets/img/brand/sygnet.svg'
 import withToggle, { WithToggleProps } from '../../HOC/withToggle'
 import ModalForm from './ModalForm/ModalForm'
+import { signOut } from '../../modules/auth/actions'
 
 function DefaultHeader(props) {
   // eslint-disable-next-line
@@ -71,10 +73,10 @@ function DefaultHeader(props) {
             <DropdownItem header tag="div" className="text-center">
               <strong>Account</strong>
             </DropdownItem>
-            <DropdownItem onClick={modalForm.toggle}>
+            {/* <DropdownItem onClick={modalForm.toggle}>
               <i className="fa fa-user" />
               &nbsp; Change Password
-            </DropdownItem>
+            </DropdownItem> */}
             <DropdownItem onClick={signOut}>
               <i className="fa fa-lock" />
               &nbsp; Logout
@@ -96,8 +98,12 @@ DefaultHeader.propTypes = {
   modalForm: WithToggleProps,
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  signOut: () => dispatch(signOut()),
+})
+
 export default withToggle({
-  Component: DefaultHeader,
+  Component: connect(null, mapDispatchToProps)(DefaultHeader),
   toggles: {
     modalForm: false,
   },

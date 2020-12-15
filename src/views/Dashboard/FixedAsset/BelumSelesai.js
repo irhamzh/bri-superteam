@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { formatDate, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -63,6 +63,31 @@ class BelumSelesai extends Component {
     )
   }
 
+  onClickApprove = async (id) => {
+    const field = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah Approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Setuju!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(field)
+      .then(async (result) => {
+        if (result.value) {
+          await Service.approveFinishFixedAsset(id).then((res) => {
+            if (res.data) {
+              AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
+              this.doRefresh()
+            }
+          })
+        }
+      })
+      .catch((err) => {
+        // Internal Server Error
+        AlertMessage.error(err)
+      })
+  }
+
   // handleDelete = (e, state) => {
   //   e.preventDefault()
 
@@ -96,30 +121,11 @@ class BelumSelesai extends Component {
 
     const columns = [
       {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
+        Header: 'Tanggal Pengadaan',
+        accessor: 'tanggalPengadaan',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Alamat',
-        accessor: 'provider.address',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Kontak',
-        accessor: 'provider.contact',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pengadaan',
@@ -129,27 +135,188 @@ class BelumSelesai extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Jumlah',
-        accessor: 'jumlah',
+        Header: 'Izin Prinsip User',
+        accessor: 'izinPrinsipUser',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
-        Header: 'Harga Barang',
-        accessor: 'harga',
+        Header: 'Izin Prinsip Pengadaan',
+        accessor: 'izinPrinsipPengadaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Izin Hasil Pengadaan',
+        accessor: 'izinHasilPengadaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Aanwijzing',
+        accessor: 'aanwijzing',
+        filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pemasukan Sampul Proposal Teknis',
+        accessor: 'pemasukanSampulProposalTeknis',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pengumuman Pemenang',
+        accessor: 'pengumumanPemenang',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Penilaian Proposal Teknis',
+        accessor: 'penilaianProposalTeknis',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pembukuan Proposal Financial',
+        accessor: 'pembukuanProposalFinancial',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Jenis Anggaran',
+        accessor: 'jenisAnggaran',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Penilaian Vendor',
-        accessor: 'penilaian',
+        Header: 'Biaya Putusan',
+        accessor: 'biaya',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
@@ -157,12 +324,14 @@ class BelumSelesai extends Component {
       },
       {
         Header: 'Aksi',
+        width: 200,
+        accessor: 'id',
         filterable: false,
-        Cell: () => (
+        Cell: (props) => (
           <>
             <Button
               color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => this.onClickApprove(props.value, props.original?.status)}
               className="mr-1"
               title="Edit"
             >

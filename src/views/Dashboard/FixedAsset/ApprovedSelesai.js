@@ -282,6 +282,7 @@ class ApprovedSelesai extends Component {
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',

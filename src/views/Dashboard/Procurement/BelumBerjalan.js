@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { formatDate, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -62,6 +62,31 @@ class BelumBerjalan extends Component {
         this.doRefresh()
       }
     )
+  }
+
+  onClickApprove = async (id) => {
+    const field = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah Approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Setuju!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(field)
+      .then(async (result) => {
+        if (result.value) {
+          await Service.approveProcessProcurement(id).then((res) => {
+            if (res.data) {
+              AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
+              this.doRefresh()
+            }
+          })
+        }
+      })
+      .catch((err) => {
+        // Internal Server Error
+        AlertMessage.error(err)
+      })
   }
 
   // handleDelete = (e, state) => {
@@ -306,7 +331,7 @@ class BelumBerjalan extends Component {
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        accessor: 'namaPendidikan.name',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -350,12 +375,13 @@ class BelumBerjalan extends Component {
       {
         Header: 'Aksi',
         width: 200,
+        accessor: 'id',
         filterable: false,
-        Cell: () => (
+        Cell: (props) => (
           <>
             <Button
               color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => this.onClickApprove(props.value)}
               className="mr-1"
               title="Edit"
             >

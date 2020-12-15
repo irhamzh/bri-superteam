@@ -36,6 +36,28 @@ class Service {
     return axios.put(`/auth/forgot-password/${id}`, values)
   }
 
+  // User
+  static getUser(params) {
+    if (!params) params = ''
+    return axios.get(`users${params}`)
+  }
+
+  static getUserById(id) {
+    return axios.get(`users/${id}`)
+  }
+
+  static createUser(values) {
+    return axios.post('users', values)
+  }
+
+  static updateUser(values, id) {
+    return axios.put(`users/${id}`, values)
+  }
+
+  static deleteUser(id) {
+    return axios.delete(`users/${id}`)
+  }
+
   // Role
   static getRoles(params) {
     if (!params) params = ''
@@ -1969,7 +1991,7 @@ class Service {
     return axios.get(`/working-orders${params}`)
   }
 
-  // Approval
+  // Approval - Fixed Asset
   static approveProcessFixedAsset(id) {
     return axios.put(`/pengadaans/${id}/approve-process`, { id })
   }
@@ -1984,6 +2006,23 @@ class Service {
 
   static approveFinishFixedAsset(id) {
     return axios.put(`/pengadaans/${id}/finish`, { id })
+  }
+
+  // Approval - Procurement
+  static approveProcessProcurement(id) {
+    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-process`)
+  }
+
+  static approveWabagProcurement(id) {
+    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-wabag`)
+  }
+
+  static approveKabagProcurement(id) {
+    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-kabag`)
+  }
+
+  static approveFinishProcurement(id) {
+    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/finish`)
   }
 
   // Financial Admin

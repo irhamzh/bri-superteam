@@ -39,12 +39,7 @@ const Procurement = () => {
     labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],
     datasets: [
       {
-        data: [
-          totalBelumBerjalan,
-          totalProsesPersetujuan,
-          totalApprovedWakabag + totalApprovedKabag,
-          totalSelesai,
-        ],
+        data: [totalBelumBerjalan, totalProsesPersetujuan, totalApprovedKabag, totalSelesai],
         backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
         hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
       },
@@ -228,9 +223,7 @@ const Procurement = () => {
                         <br />
                         Selesai
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>
-                        {totalApprovedKabag + totalApprovedWakabag}
-                      </span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>{totalApprovedKabag}</span>
                     </div>
                   </div>
                 </Card>

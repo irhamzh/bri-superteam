@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Card, CardBody, Col, Row } from 'reactstrap'
+import { Card, CardBody, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
@@ -97,54 +97,197 @@ class Selesai extends Component {
 
     const columns = [
       {
-        Header: 'Tanggal',
+        Header: 'Tanggal Pengadaan',
         accessor: 'tanggalPengadaan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value ? formatDate(row.value) : ''}</div>
-        ),
-      },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Alamat',
-        accessor: 'provider.address',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Kontak',
-        accessor: 'provider.contact',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Jumlah',
-        accessor: 'jumlah',
+        Header: 'Izin Prinsip User',
+        accessor: 'izinPrinsipUser',
         filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Izin Prinsip Pengadaan',
+        accessor: 'izinPrinsipPengadaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Izin Hasil Pengadaan',
+        accessor: 'izinHasilPengadaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Aanwijzing',
+        accessor: 'aanwijzing',
+        filterable: false,
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pemasukan Sampul Proposal Teknis',
+        accessor: 'pemasukanSampulProposalTeknis',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pengumuman Pemenang',
+        accessor: 'pengumumanPemenang',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Penilaian Proposal Teknis',
+        accessor: 'penilaianProposalTeknis',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Pembukuan Proposal Financial',
+        accessor: 'pembukuanProposalFinancial',
+        filterable: false,
+        headerClassName: 'wordwrap',
+
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
+      },
+      {
+        Header: 'Jenis Anggaran',
+        accessor: 'jenisAnggaran',
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Harga Barang',
-        accessor: 'harga',
+        Header: 'Biaya Putusan',
+        accessor: 'biaya',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Penilaian Vendor',
-        accessor: 'penilaian',
-        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -154,32 +297,6 @@ class Selesai extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 200,
-        filterable: false,
-        Cell: () => (
-          <>
-            <Button
-              color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              // onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
-          </>
-        ),
       },
     ]
 

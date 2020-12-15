@@ -297,7 +297,7 @@ class ApprovedSelesai extends Component {
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        accessor: 'namaPendidikan.name',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -332,35 +332,11 @@ class ApprovedSelesai extends Component {
       },
       {
         Header: 'Status',
+        width: 200,
         accessor: 'status',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        filterable: false,
-        Cell: () => (
-          <>
-            <Button
-              color="success"
-              // onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              // onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
-          </>
-        ),
       },
     ]
 

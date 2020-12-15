@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import authReducer from './auth/reducer'
 import roleReducer from './master/role/reducer'
+import user from './master/user/reducer'
 import profesiReducer from './master/profesi/reducer'
 import persekotReducer from './persekot/reducer'
 import assetReducer from './asset/reducer'
@@ -139,6 +140,7 @@ const rootReducer = combineReducers({
   dataPekerjaInternship,
   dataPekerjaLembur,
   tambahanKas,
+  user,
 })
 
 export default rootReducer

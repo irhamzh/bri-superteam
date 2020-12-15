@@ -83,6 +83,7 @@ const Area = React.lazy(() => import('./views/Master/Area'))
 const JenisObat = React.lazy(() => import('./views/Master/JenisObat'))
 const MasterKendaraan = React.lazy(() => import('./views/Master/Kendaraan'))
 const Uker = React.lazy(() => import('./views/Master/Uker'))
+const User = React.lazy(() => import('./views/Master/User'))
 
 // General Affair / Formasi
 const FormasiGA = React.lazy(() => import('./views/GeneralAffair/Formasi'))
@@ -681,10 +682,10 @@ const routes = [
 
   // Master
   {
-    path: '/akun',
+    path: '/master/users',
     exact: true,
-    name: 'Account',
-    component: Role,
+    name: 'User',
+    component: User,
   },
   {
     path: '/master/roles',

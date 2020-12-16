@@ -69,6 +69,7 @@ import dataPekerjaAps from './generalAffair/dataPekerja/aps/reducer'
 import dataPekerjaInternship from './generalAffair/dataPekerja/magang/reducer'
 import dataPekerjaLembur from './generalAffair/dataPekerja/lembur/reducer'
 import tambahanKas from './financialAdmin/tambahanKas/reducer'
+import payment from './financialAdmin/payment/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -141,6 +142,7 @@ const rootReducer = combineReducers({
   dataPekerjaLembur,
   tambahanKas,
   user,
+  payment,
 })
 
 export default rootReducer

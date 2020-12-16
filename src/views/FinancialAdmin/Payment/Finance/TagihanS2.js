@@ -28,12 +28,31 @@ import {
   CfSelect,
 } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
-import { createAsset, updateAsset, deleteAsset } from '../../../../modules/asset/actions'
+import {
+  createFIPayment,
+  updateFIPayment,
+  deleteFIPayment,
+} from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class TagihanS2 extends Component {
-  initialValues = {}
+  initialValues = {
+    seksi: 'Financial Admin',
+    typePayment: 'Tagihan S2 Luar dan Dalam Negeri',
+    suratPerintahBayar: false,
+    suratkeKCK: false,
+    anggaranKegiatan: false,
+    rekeningTujuan: false,
+  }
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      seksi: 'Financial Admin',
+      typePayment: 'Tagihan S2 Luar dan Dalam Negeri',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -43,11 +62,11 @@ class TagihanS2 extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createAsset, updateAsset } = this.props
+    const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
-      updateAsset(values, id, this.doRefresh)
+      updateFIPayment(values, id, this.doRefresh)
     } else {
-      createAsset(values, this.doRefresh)
+      createFIPayment(values, this.doRefresh)
     }
   }
 
@@ -55,13 +74,13 @@ class TagihanS2 extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteAsset } = this.props
+    const { deleteFIPayment } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteAsset(id, this.doRefresh)
+          deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,7 +120,7 @@ class TagihanS2 extends Component {
       },
       {
         Header: 'Periode/Bulan',
-        accessor: 'periode',
+        accessor: 'periodeBulan',
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -123,7 +142,7 @@ class TagihanS2 extends Component {
       },
       {
         Header: 'Surat ke KCK',
-        accessor: 'suratKCK',
+        accessor: 'suratkeKCK',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
@@ -190,6 +209,7 @@ class TagihanS2 extends Component {
       },
       {
         Header: 'Aksi',
+        width: 200,
         filterable: false,
         Cell: (props) => (
           <>
@@ -275,7 +295,7 @@ class TagihanS2 extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {..tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -316,9 +336,10 @@ class TagihanS2 extends Component {
                       <FormGroup>
                         <Field
                           label="Seksi"
-                          options={[{ value: 'Finance', label: 'Finance' }]}
+                          options={[{ value: 'Financial Admin', label: 'Financial Admin' }]}
                           isRequired
                           name="seksi"
+                          isDisabled
                           placeholder="Pilih atau Cari"
                           component={CfSelect}
                         />
@@ -356,7 +377,11 @@ class TagihanS2 extends Component {
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Surat ke KCK" name="suratKCK" component={CfInputCheckbox} />
+                          <Field
+                            label="Surat ke KCK"
+                            name="suratkeKCK"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
@@ -448,23 +473,23 @@ TagihanS2.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createAsset: PropTypes.func.isRequired,
-  updateAsset: PropTypes.func.isRequired,
-  deleteAsset: PropTypes.func.isRequired,
+  createFIPayment: PropTypes.func.isRequired,
+  updateFIPayment: PropTypes.func.isRequired,
+  deleteFIPayment: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.payment.isLoading,
+  message: state.payment.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
-  updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
-  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  createFIPayment: (formData, refresh) => dispatch(createFIPayment(formData, refresh)),
+  updateFIPayment: (formData, id, refresh) => dispatch(updateFIPayment(formData, id, refresh)),
+  deleteFIPayment: (id, refresh) => dispatch(deleteFIPayment(id, refresh)),
 })
 
 export default connect(
@@ -472,7 +497,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getFIPayment(p),
     Component: withToggle({
       Component: TagihanS2,
       toggles: {

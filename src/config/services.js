@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios'
 import { API_URL } from './apiConfig'
-import firebase from './firebase'
 
 axios.defaults.baseURL = `${API_URL}`
 axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
@@ -2103,6 +2102,43 @@ class Service {
 
   static deleteFITambahanKas(id) {
     return axios.delete(`fa-cashes/${id}`)
+  }
+
+  // Financial Admin - payment
+
+  static getFIPayment(params) {
+    if (!params) params = ''
+    return axios.get(`fa-payments${params}`)
+  }
+
+  static getFIPaymentById(id) {
+    return axios.get(`fa-payments/${id}`)
+  }
+
+  static createFIPayment(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post('fa-payments', formData)
+  }
+
+  static updateFIPayment(values, id) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.put(`fa-payments/${id}`, formData)
+  }
+
+  static deleteFIPayment(id) {
+    return axios.delete(`fa-payments/${id}`)
   }
 }
 

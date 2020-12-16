@@ -28,12 +28,32 @@ import {
   CfSelect,
 } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
-import { createAsset, updateAsset, deleteAsset } from '../../../../modules/asset/actions'
+import {
+  createFIPayment,
+  updateFIPayment,
+  deleteFIPayment,
+} from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class TagihanBBM extends Component {
-  initialValues = {}
+  initialValues = {
+    seksi: 'General Affair',
+    typePayment: 'Tagihan BBM',
+    // typePendidikan: 'Non Pendidikan',
+    invoiceSPBUBermaterai: false,
+    rekapStrukPerTransaksi: false,
+    notaPembukuan: false,
+  }
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      // typePendidikan: 'Non Pendidikan',
+      seksi: 'General Affair',
+      typePayment: 'Tagihan BBM',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -43,11 +63,11 @@ class TagihanBBM extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createAsset, updateAsset } = this.props
+    const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
-      updateAsset(values, id, this.doRefresh)
+      updateFIPayment(values, id, this.doRefresh)
     } else {
-      createAsset(values, this.doRefresh)
+      createFIPayment(values, this.doRefresh)
     }
   }
 
@@ -55,13 +75,13 @@ class TagihanBBM extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteAsset } = this.props
+    const { deleteFIPayment } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteAsset(id, this.doRefresh)
+          deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -117,7 +137,7 @@ class TagihanBBM extends Component {
       },
       {
         Header: 'Rekap Struk Per Transaksi',
-        accessor: 'rekapStruk',
+        accessor: 'rekapStrukPerTransaksi',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
@@ -168,6 +188,7 @@ class TagihanBBM extends Component {
       },
       {
         Header: 'Aksi',
+        width: 200,
         filterable: false,
         Cell: (props) => (
           <>
@@ -253,7 +274,7 @@ class TagihanBBM extends Component {
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {..tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -297,6 +318,7 @@ class TagihanBBM extends Component {
                           options={[{ value: 'General Affair', label: 'General Affair' }]}
                           isRequired
                           name="seksi"
+                          isDisabled
                           placeholder="Pilih atau Cari"
                           component={CfSelect}
                         />
@@ -325,7 +347,7 @@ class TagihanBBM extends Component {
                         <FormGroup>
                           <Field
                             label="Rekap Struk per Transaksi"
-                            name="invoice"
+                            name="rekapStrukPerTransaksi"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -411,23 +433,23 @@ TagihanBBM.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createAsset: PropTypes.func.isRequired,
-  updateAsset: PropTypes.func.isRequired,
-  deleteAsset: PropTypes.func.isRequired,
+  createFIPayment: PropTypes.func.isRequired,
+  updateFIPayment: PropTypes.func.isRequired,
+  deleteFIPayment: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.payment.isLoading,
+  message: state.payment.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
-  updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
-  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  createFIPayment: (formData, refresh) => dispatch(createFIPayment(formData, refresh)),
+  updateFIPayment: (formData, id, refresh) => dispatch(updateFIPayment(formData, id, refresh)),
+  deleteFIPayment: (id, refresh) => dispatch(deleteFIPayment(id, refresh)),
 })
 
 export default connect(
@@ -435,7 +457,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAsset(p),
+    API: (p) => Service.getFIPayment(p),
     Component: withToggle({
       Component: TagihanBBM,
       toggles: {

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
   CfInput,
@@ -35,6 +37,11 @@ import {
 } from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class TagihanRekreasiSiswa extends Component {
   initialValues = {
@@ -100,6 +107,7 @@ class TagihanRekreasiSiswa extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const columns = [
       {
@@ -293,13 +301,50 @@ class TagihanRekreasiSiswa extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Seksi" value={(col) => col.seksi} />
+                          <ExcelColumn
+                            label="Nama Pembayaran"
+                            value={(col) => col.namaPembayaran}
+                          />
+                          <ExcelColumn
+                            label="Tiket / Kwitansi / Bukti"
+                            value={(col) => (col.tiketKwitansiBukti ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Rekap Biaya"
+                            value={(col) => (col.rekapBiaya ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Surat Keterangan Rekreasi LOP"
+                            value={(col) => (col.suratKeteranganRekreasiLOP ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Working Order"
+                            value={(col) => (col.workingOrder ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Nota Pembukuan"
+                            value={(col) => (col.notaPembukuan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

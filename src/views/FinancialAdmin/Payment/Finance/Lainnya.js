@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
   CfInput,
@@ -35,6 +37,11 @@ import {
 } from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class PembayaranLainnya extends Component {
   initialValues = {
@@ -95,6 +102,7 @@ class PembayaranLainnya extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const columns = [
       {
@@ -117,8 +125,8 @@ class PembayaranLainnya extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Surat Perintah Bayar',
-        accessor: 'suratPerintahBayar',
+        Header: 'Invoice Bermaterai',
+        accessor: 'invoiceBermaterai',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
@@ -240,13 +248,35 @@ class PembayaranLainnya extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Seksi" value={(col) => col.seksi} />
+                          <ExcelColumn label="Nama Asuransi" value={(col) => col.namaAsuransi} />
+                          <ExcelColumn
+                            label="Invoice Bermaterai"
+                            value={(col) => (col.invoiceBermaterai ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cek Nama Pengajar, Daftar Hadir, No. Rekening, Pajak"
+                            value={(col) => (col.cekLainnya ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -319,8 +349,8 @@ class PembayaranLainnya extends Component {
                       <div style={{ marginLeft: '20px' }}>
                         <FormGroup>
                           <Field
-                            label="Surat Perintah Bayar"
-                            name="suratPerintahBayar"
+                            label="Invoice Bermaterai"
+                            name="invoiceBermaterai"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>

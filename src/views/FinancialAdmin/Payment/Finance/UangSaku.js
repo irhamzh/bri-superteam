@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
   CfInput,
@@ -36,12 +38,17 @@ import {
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
+
 class UangSaku extends Component {
   initialValues = {
     seksi: 'Financial Admin',
     typePayment: 'Salary Creaditing',
     suratPerintahBayar: false,
-    cekLainnnya: false,
+    cekLainnya: false,
   }
 
   componentDidMount() {
@@ -95,6 +102,7 @@ class UangSaku extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const columns = [
       {
@@ -240,13 +248,35 @@ class UangSaku extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Seksi" value={(col) => col.seksi} />
+                          <ExcelColumn label="Nama Asuransi" value={(col) => col.namaAsuransi} />
+                          <ExcelColumn
+                            label="Surat Perintah Bayar"
+                            value={(col) => (col.suratPerintahBayar ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cek Nama Pengajar, Daftar Hadir, No. Rekening, Pajak"
+                            value={(col) => (col.cekLainnya ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

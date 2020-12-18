@@ -18,9 +18,11 @@ class BelumBerjalan extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
-      { label: 'All', value: 'All' },
-      { label: 'Pengadan', value: 'Pengadaan' },
-      { label: 'Aset', value: 'Aset' },
+      { label: 'All', value: '' },
+      { label: 'Financial Admin', value: 'Financial Admin' },
+      { label: 'Procurement', value: 'Procurement' },
+      { label: 'Fixed Asset', value: 'Fixed Asset' },
+      { label: 'General Affair', value: 'General Affair' },
     ],
   }
 
@@ -52,7 +54,7 @@ class BelumBerjalan extends Component {
   handleChangeSelect = (name, value) => {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      condition: value.value,
+      seksi: value.value,
     })
     this.setState(
       {

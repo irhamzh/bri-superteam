@@ -8,13 +8,16 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { formatDate, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
 
 class ApprovedProsesPersetujuan extends Component {
-  state = {}
+  state = {
+    bulan: null,
+    tahun: null,
+  }
 
   initialValues = {}
 
@@ -54,6 +57,30 @@ class ApprovedProsesPersetujuan extends Component {
         this.doRefresh()
       }
     )
+  }
+
+  filterData = async (e) => {
+    e.preventDefault()
+    const { bulan, tahun } = this.state
+    if (invalidValues.includes(bulan)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+    if (invalidValues.includes(tahun)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+
+    try {
+      const { fetchQueryProps } = this.props
+      fetchQueryProps.setFilteredByObject({
+        'month-year$createdAt': `${tahun}-${bulan}`,
+      })
+
+      this.doRefresh()
+    } catch (error) {
+      AlertMessage.error(error)
+    }
   }
 
   // handleDelete = (e, state) => {
@@ -353,7 +380,7 @@ class ApprovedProsesPersetujuan extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <Form onSubmit={() => {}}>
+                    <Form onSubmit={(e) => this.filterData(e)}>
                       <Row>
                         <Col>
                           <FormGroup>
@@ -361,20 +388,21 @@ class ApprovedProsesPersetujuan extends Component {
                               isClearable
                               placeholder="Pilih Bulan..."
                               options={[
-                                { label: 'Januari', value: 'Januari' },
-                                { label: 'Februari', value: 'Februari' },
-                                { label: 'Maret', value: 'Maret' },
-                                { label: 'April', value: 'April' },
-                                { label: 'Mei', value: 'Mei' },
-                                { label: 'Juni', value: 'Juni' },
-                                { label: 'Juli', value: 'Juli' },
-                                { label: 'Agustus', value: 'Agustus' },
-                                { label: 'September', value: 'September' },
-                                { label: 'Oktober', value: 'Oktober' },
-                                { label: 'November', value: 'November' },
-                                { label: 'Desember', value: 'Desember' },
+                                { label: 'Januari', value: '1' },
+                                { label: 'Februari', value: '2' },
+                                { label: 'Maret', value: '3' },
+                                { label: 'April', value: '4' },
+                                { label: 'Mei', value: '5' },
+                                { label: 'Juni', value: '6' },
+                                { label: 'Juli', value: '7' },
+                                { label: 'Agustus', value: '8' },
+                                { label: 'September', value: '9' },
+                                { label: 'Oktober', value: '10' },
+                                { label: 'November', value: '11' },
+                                { label: 'Desember', value: '12' },
                               ]}
                               name="bulan"
+                              onChange={(e) => this.setState({ bulan: e?.value })}
                             />
                           </FormGroup>
                         </Col>
@@ -392,6 +420,7 @@ class ApprovedProsesPersetujuan extends Component {
                               ]}
                               name="tahun"
                               className=""
+                              onChange={(e) => this.setState({ tahun: e?.value })}
                             />
                           </FormGroup>
                         </Col>

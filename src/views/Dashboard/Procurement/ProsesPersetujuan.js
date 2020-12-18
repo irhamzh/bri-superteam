@@ -18,9 +18,10 @@ class ProsesPersetujuan extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
-      { label: 'All', value: 'All' },
-      { label: 'Pengadan', value: 'Pengadaan' },
-      { label: 'Aset', value: 'Aset' },
+      { label: 'All', value: '' },
+      { label: 'Pembelian Langsung', value: 'Pembelian Langsung' },
+      { label: 'Pemilihan Langsung', value: 'Pemilihan Langsung' },
+      { label: 'Penunjukan Langsung', value: 'Penunjukan Langsung' },
     ],
   }
 
@@ -52,7 +53,7 @@ class ProsesPersetujuan extends Component {
   handleChangeSelect = (name, value) => {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      condition: value.value,
+      typePengadaan: value.value,
     })
     this.setState(
       {

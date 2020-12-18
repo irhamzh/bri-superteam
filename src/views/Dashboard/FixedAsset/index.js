@@ -3,11 +3,16 @@ import { Button, Card, CardBody, Col, Row, Form, FormGroup } from 'reactstrap'
 import { Bar, Pie } from 'react-chartjs-2'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import Service from '../../../config/services'
-import { AlertMessage } from '../../../helpers'
+import { AlertMessage, invalidValues } from '../../../helpers'
 
-const FixedAsset = () => {
+const FixedAsset = (props) => {
   const [dataDashboard, setDataDashboard] = useState({})
+  const [tahun, setTahun] = useState(null)
+  const [bulan, setBulan] = useState(null)
+
+  console.log(props, 'props')
 
   useEffect(() => {
     ;(async function getDataDashboard() {
@@ -63,6 +68,32 @@ const FixedAsset = () => {
     ],
   }
 
+  const filterData = async (e) => {
+    e.preventDefault()
+    if (invalidValues.includes(bulan)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+    if (invalidValues.includes(tahun)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+
+    try {
+      const filteredDate = [{ id: 'month-year$createdAt', value: `${tahun}-${bulan}` }]
+      const filterString = JSON.stringify(filteredDate)
+      const params = `?filtered=${filterString}`
+      const paramsEncoded = encodeURI(params)
+      Swal.showLoading()
+      const resData = await Service.getDashboardFixedAsset(paramsEncoded)
+      Swal.close()
+      const { data } = resData.data
+      setDataDashboard(data)
+    } catch (error) {
+      AlertMessage.error(error)
+    }
+  }
+
   return (
     <Row>
       <Col>
@@ -70,7 +101,7 @@ const FixedAsset = () => {
           <CardBody>
             <Row>
               <Col>
-                <Form onSubmit={() => {}}>
+                <Form onSubmit={(e) => filterData(e)}>
                   <Row>
                     <Col>
                       <FormGroup>
@@ -78,20 +109,21 @@ const FixedAsset = () => {
                           isClearable
                           placeholder="Pilih Bulan..."
                           options={[
-                            { label: 'Januari', value: 'Januari' },
-                            { label: 'Februari', value: 'Februari' },
-                            { label: 'Maret', value: 'Maret' },
-                            { label: 'April', value: 'April' },
-                            { label: 'Mei', value: 'Mei' },
-                            { label: 'Juni', value: 'Juni' },
-                            { label: 'Juli', value: 'Juli' },
-                            { label: 'Agustus', value: 'Agustus' },
-                            { label: 'September', value: 'September' },
-                            { label: 'Oktober', value: 'Oktober' },
-                            { label: 'November', value: 'November' },
-                            { label: 'Desember', value: 'Desember' },
+                            { label: 'Januari', value: '1' },
+                            { label: 'Februari', value: '2' },
+                            { label: 'Maret', value: '3' },
+                            { label: 'April', value: '4' },
+                            { label: 'Mei', value: '5' },
+                            { label: 'Juni', value: '6' },
+                            { label: 'Juli', value: '7' },
+                            { label: 'Agustus', value: '8' },
+                            { label: 'September', value: '9' },
+                            { label: 'Oktober', value: '10' },
+                            { label: 'November', value: '11' },
+                            { label: 'Desember', value: '12' },
                           ]}
                           name="bulan"
+                          onChange={(e) => setBulan(e?.value)}
                         />
                       </FormGroup>
                     </Col>
@@ -109,6 +141,7 @@ const FixedAsset = () => {
                           ]}
                           name="tahun"
                           className=""
+                          onChange={(e) => setTahun(e?.value)}
                         />
                       </FormGroup>
                     </Col>

@@ -18,9 +18,10 @@ class Selesai extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
-      { label: 'All', value: 'All' },
-      { label: 'Pengadan', value: 'Pengadaan' },
-      { label: 'Aset', value: 'Aset' },
+      { label: 'All', value: '' },
+      { label: 'Sosialisasi', value: 'Sosialisasi' },
+      { label: 'Kegiatan Lain', value: 'Kegiatan Lain' },
+      { label: 'Rapat', value: 'Rapat' },
     ],
   }
 
@@ -53,7 +54,7 @@ class Selesai extends Component {
   handleChangeSelect = (name, value) => {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      condition: value.value,
+      typeKegiatan: value.value,
     })
     this.setState(
       {

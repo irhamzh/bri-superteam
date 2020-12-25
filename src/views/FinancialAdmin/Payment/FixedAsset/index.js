@@ -46,7 +46,7 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class FixedAssetFinancialAdmin extends Component {
   initialValues = {
     seksi: 'Fixed Asset',
-    typePayment: 'Kelogisitikan',
+    typePayment: 'Kelogistikan',
     typePendidikan: 'Non Pendidikan',
     izinPrinsipPengadaan: false,
     invoiceBermateraiKwitansi: false,

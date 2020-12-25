@@ -233,6 +233,14 @@ class EvaluasiSupplier extends Component {
                           isRequired
                           name="pengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -244,6 +252,11 @@ class EvaluasiSupplier extends Component {
                           isRequired
                           name="provider"
                           placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -255,7 +268,11 @@ class EvaluasiSupplier extends Component {
                           name="address"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.address}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
                           placeholder="Masukkan alamat provider"
                           component={CfInput}
                         />
@@ -268,7 +285,11 @@ class EvaluasiSupplier extends Component {
                           name="contact"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
                           placeholder="Masukkan No. Kontak provider"
                           component={CfInput}
                         />

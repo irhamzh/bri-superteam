@@ -4,7 +4,18 @@ import { API_URL } from './apiConfig'
 
 axios.defaults.baseURL = `${API_URL}`
 axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
-
+// axios.interceptors.response.use(
+//   (response) => {
+//     return response
+//   },
+//   (error) => {
+//     if (error.response.status === 401) {
+//       // window.location.reload()
+//       if (window.location.pathname !== '/login') window.history.go('/login')
+//     }
+//     return error
+//   }
+// )
 class Service {
   // Authentication
   static signIn(values) {
@@ -184,6 +195,17 @@ class Service {
 
   static deleteAsset(id) {
     return axios.delete(`assets/${id}`)
+  }
+
+  static uploadAsset(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+    console.log(values, formData)
+    return axios.post('assets/excel', formData)
   }
 
   // Room
@@ -1849,6 +1871,39 @@ class Service {
     return axios.delete(`ga-vehicles/kir/${id}`)
   }
 
+  // Data Pekerja - Upload data pekerja
+  static getGAPekerja(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/employee${params}`)
+  }
+
+  static getGAPekerjaById(id) {
+    return axios.get(`ga-employees/employee/${id}`)
+  }
+
+  static createGAPekerja(values) {
+    return axios.post('ga-employees/employee', values)
+  }
+
+  static updateGAPekerja(values, id) {
+    return axios.put(`ga-employees/employee/${id}`, values)
+  }
+
+  static deleteGAPekerja(id) {
+    return axios.delete(`ga-employees/employee/${id}`)
+  }
+
+  static uploadGAPekerja(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post(`ga-employees/employee/excel`, formData)
+  }
+
   // Data Pekerja - PGS PJS
   static getGAPgsPjs(params) {
     if (!params) params = ''
@@ -2139,6 +2194,48 @@ class Service {
 
   static deleteFIPayment(id) {
     return axios.delete(`fa-payments/${id}`)
+  }
+
+  // Anggaran
+
+  static getAnggaranEksploitasi(params) {
+    if (!params) params = ''
+    return axios.get(`fa-anggaran-exploitations${params}`)
+  }
+
+  static getAnggaranEksploitasiById(id) {
+    return axios.get(`fa-anggaran-exploitations/${id}`)
+  }
+
+  static uploadAnggaranEksploitasi(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post(`fa-anggaran-exploitations/excel`, formData)
+  }
+
+  static getAnggaranInvestasi(params) {
+    if (!params) params = ''
+    return axios.get(`fa-anggaran-investations${params}`)
+  }
+
+  static getAnggaranInvestasiById(id) {
+    return axios.get(`fa-anggaran-investations/${id}`)
+  }
+
+  static uploadAnggaranInvestasi(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post(`fa-anggaran-investations/excel`, formData)
   }
 }
 

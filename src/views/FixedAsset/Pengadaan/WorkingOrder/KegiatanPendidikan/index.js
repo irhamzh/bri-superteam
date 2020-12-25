@@ -24,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../../helpers'
+import { AlertMessage, invalidValues, formatDate } from '../../../../../helpers'
 import {
   createWorkingOrder,
   updateWorkingOrder,
@@ -93,7 +93,7 @@ class KegiatanPendidikan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
 
@@ -367,7 +367,7 @@ class KegiatanPendidikan extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Kegiatan Pendidikan</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Kode Working Order"
                           type="text"
@@ -376,7 +376,7 @@ class KegiatanPendidikan extends Component {
                           placeholder="Masukkan Kode Working Order"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field
@@ -547,7 +547,7 @@ class KegiatanPendidikan extends Component {
                         </Col>
                       </Row>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

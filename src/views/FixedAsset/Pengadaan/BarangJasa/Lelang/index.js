@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createBarangLelang,
   updateBarangLelang,
@@ -76,6 +76,11 @@ class Lelang extends Component {
     const { id } = values
     const { createBarangLelang, updateBarangLelang } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
       updateBarangLelang(values, id, this.doRefresh)
     } else {
       createBarangLelang(values, this.doRefresh)
@@ -107,7 +112,7 @@ class Lelang extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optProvider, dataProvider } = this.state
@@ -510,7 +515,6 @@ class Lelang extends Component {
                             value={(col) => col.jenisPekerjaan}
                           />
                           <ExcelColumn label="Jumlah Biaya" value={(col) => col.jumlahBiaya} />
-                          <ExcelColumn label="Nama Provider" value={(col) => col.provider.name} />
                           <ExcelColumn
                             label="Masa Berlaku"
                             value={(col) => formatDate(col.masaBerlaku)}
@@ -708,6 +712,11 @@ class Lelang extends Component {
                           isRequired
                           name="provider"
                           placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -719,7 +728,11 @@ class Lelang extends Component {
                           name="address"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.address}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
                           placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
@@ -732,7 +745,11 @@ class Lelang extends Component {
                           name="contact"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
                           placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
@@ -799,7 +816,7 @@ class Lelang extends Component {
                         </Col>
                       </Row>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -1,32 +1,32 @@
 import {
-  CREATE_ASSET_LOADING,
-  CREATE_ASSET_SUCCESS,
-  CREATE_ASSET_ERROR,
-  UPDATE_ASSET_LOADING,
-  UPDATE_ASSET_SUCCESS,
-  UPDATE_ASSET_ERROR,
-  DELETE_ASSET_LOADING,
-  DELETE_ASSET_SUCCESS,
-  DELETE_ASSET_ERROR,
-  UPLOAD_ASSET_LOADING,
-  UPLOAD_ASSET_SUCCESS,
-  UPLOAD_ASSET_ERROR,
+  CREATE_PEKERJA_LOADING,
+  CREATE_PEKERJA_SUCCESS,
+  CREATE_PEKERJA_ERROR,
+  UPDATE_PEKERJA_LOADING,
+  UPDATE_PEKERJA_SUCCESS,
+  UPDATE_PEKERJA_ERROR,
+  DELETE_PEKERJA_LOADING,
+  DELETE_PEKERJA_SUCCESS,
+  DELETE_PEKERJA_ERROR,
+  UPLOAD_PEKERJA_LOADING,
+  UPLOAD_PEKERJA_SUCCESS,
+  UPLOAD_PEKERJA_ERROR,
 } from './types'
 
-const assetReducer = (state = {}, action) => {
+const pekerjaReducer = (state = {}, action) => {
   switch (action.type) {
     // created
-    case CREATE_ASSET_LOADING:
+    case CREATE_PEKERJA_LOADING:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case CREATE_ASSET_SUCCESS:
+    case CREATE_PEKERJA_SUCCESS:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case CREATE_ASSET_ERROR:
+    case CREATE_PEKERJA_ERROR:
       return {
         ...state,
         message: action.payload,
@@ -34,17 +34,17 @@ const assetReducer = (state = {}, action) => {
       }
 
     // updated
-    case UPDATE_ASSET_LOADING:
+    case UPDATE_PEKERJA_LOADING:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case UPDATE_ASSET_SUCCESS:
+    case UPDATE_PEKERJA_SUCCESS:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case UPDATE_ASSET_ERROR:
+    case UPDATE_PEKERJA_ERROR:
       return {
         ...state,
         message: action.payload,
@@ -52,34 +52,34 @@ const assetReducer = (state = {}, action) => {
       }
 
     // deleted
-    case DELETE_ASSET_LOADING:
+    case DELETE_PEKERJA_LOADING:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case DELETE_ASSET_SUCCESS:
+    case DELETE_PEKERJA_SUCCESS:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case DELETE_ASSET_ERROR:
+    case DELETE_PEKERJA_ERROR:
       return {
         ...state,
         message: action.payload,
         isLoading: action.isLoading,
       }
     // upload
-    case UPLOAD_ASSET_LOADING:
+    case UPLOAD_PEKERJA_LOADING:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case UPLOAD_ASSET_SUCCESS:
+    case UPLOAD_PEKERJA_SUCCESS:
       return {
         ...state,
         isLoading: action.isLoading,
       }
-    case UPLOAD_ASSET_ERROR:
+    case UPLOAD_PEKERJA_ERROR:
       return {
         ...state,
         message: action.payload,
@@ -91,4 +91,4 @@ const assetReducer = (state = {}, action) => {
   }
 }
 
-export default assetReducer
+export default pekerjaReducer

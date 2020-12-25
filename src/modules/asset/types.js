@@ -10,3 +10,7 @@ export const UPDATE_ASSET_ERROR = 'update_asset_error'
 export const DELETE_ASSET_LOADING = 'delete_asset_loading'
 export const DELETE_ASSET_SUCCESS = 'delete_asset_success'
 export const DELETE_ASSET_ERROR = 'delete_asset_error'
+// upload
+export const UPLOAD_ASSET_LOADING = 'UPLOAD_asset_loading'
+export const UPLOAD_ASSET_SUCCESS = 'UPLOAD_asset_success'
+export const UPLOAD_ASSET_ERROR = 'UPLOAD_asset_error'

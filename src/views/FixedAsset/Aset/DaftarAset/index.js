@@ -20,9 +20,14 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
-import { CfInput } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createAsset, updateAsset, deleteAsset } from '../../../../modules/asset/actions'
+import { CfInput, CfInputFile } from '../../../../components'
+import { AlertMessage, invalidValues } from '../../../../helpers'
+import {
+  createAsset,
+  updateAsset,
+  deleteAsset,
+  uploadAsset,
+} from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 import { createAssetSchema } from '../../../../validations/mvAsset'
@@ -37,10 +42,12 @@ class DaftarAset extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createAsset, updateAsset } = this.props
+    const { id, excel } = values
+    const { createAsset, updateAsset, uploadAsset } = this.props
     if (!invalidValues.includes(id)) {
       updateAsset(values, id, this.doRefresh)
+    } else if (excel) {
+      uploadAsset(values, this.doRefresh)
     } else {
       createAsset(values, this.doRefresh)
     }
@@ -71,7 +78,7 @@ class DaftarAset extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const columns = [
@@ -129,11 +136,15 @@ class DaftarAset extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -141,7 +152,7 @@ class DaftarAset extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        // onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-3"
                       >
                         Import Data Aset
@@ -149,7 +160,7 @@ class DaftarAset extends Component {
 
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: false })}
                         className="mr-1"
                       >
                         Input Data Aset
@@ -177,7 +188,7 @@ class DaftarAset extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={createAssetSchema}
+                validationSchema={modalForm.prop.upload ? null : createAssetSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -199,30 +210,44 @@ class DaftarAset extends Component {
                           component={CfInput}
                         />
                       </FormGroup> */}
+                      {modalForm.prop.upload && (
+                        <FormGroup>
+                          <Field
+                            label="File Excel"
+                            name="excel"
+                            isRequired
+                            accept=".xlsx, .xls, .csv"
+                            component={CfInputFile}
+                          />
+                        </FormGroup>
+                      )}
+                      {!modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Nama Aset"
+                              type="text"
+                              name="name"
+                              isRequired
+                              placeholder="Masukkan nama aset"
+                              component={CfInput}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                          <FormGroup>
+                            <Field
+                              label="Keterangan"
+                              type="text"
+                              name="information"
+                              isRequired
+                              placeholder="Masukkan Keterangan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
 
-                      <FormGroup>
-                        <Field
-                          label="Keterangan"
-                          type="text"
-                          name="information"
-                          isRequired
-                          placeholder="Masukkan Keterangan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -264,6 +289,7 @@ DaftarAset.propTypes = {
   createAsset: PropTypes.func.isRequired,
   updateAsset: PropTypes.func.isRequired,
   deleteAsset: PropTypes.func.isRequired,
+  uploadAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -278,6 +304,7 @@ const mapDispatchToProps = (dispatch) => ({
   createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
   updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
   deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  uploadAsset: (formData, refresh) => dispatch(uploadAsset(formData, refresh)),
 })
 
 export default connect(

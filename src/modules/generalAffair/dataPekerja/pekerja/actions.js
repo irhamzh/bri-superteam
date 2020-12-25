@@ -1,29 +1,29 @@
-import Service from '../../config/services'
-import { AlertMessage } from '../../helpers'
+import Service from '../../../../config/services'
+import { AlertMessage } from '../../../../helpers'
 import {
-  CREATE_ASSET_LOADING,
-  CREATE_ASSET_SUCCESS,
-  CREATE_ASSET_ERROR,
-  UPDATE_ASSET_LOADING,
-  UPDATE_ASSET_SUCCESS,
-  UPDATE_ASSET_ERROR,
-  DELETE_ASSET_LOADING,
-  DELETE_ASSET_SUCCESS,
-  DELETE_ASSET_ERROR,
-  UPLOAD_ASSET_LOADING,
-  UPLOAD_ASSET_SUCCESS,
-  UPLOAD_ASSET_ERROR,
+  CREATE_PEKERJA_LOADING,
+  CREATE_PEKERJA_SUCCESS,
+  CREATE_PEKERJA_ERROR,
+  UPDATE_PEKERJA_LOADING,
+  UPDATE_PEKERJA_SUCCESS,
+  UPDATE_PEKERJA_ERROR,
+  DELETE_PEKERJA_LOADING,
+  DELETE_PEKERJA_SUCCESS,
+  DELETE_PEKERJA_ERROR,
+  UPLOAD_PEKERJA_LOADING,
+  UPLOAD_PEKERJA_SUCCESS,
+  UPLOAD_PEKERJA_ERROR,
 } from './types'
 
-export const createAsset = (formData, refresh) => async (dispatch) => {
+export const createGAPekerja = (formData, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: CREATE_ASSET_LOADING, isLoading: true })
+    dispatch({ type: CREATE_PEKERJA_LOADING, isLoading: true })
     // Call API
-    const res = await Service.createAsset(formData)
-    dispatch({ type: CREATE_ASSET_SUCCESS, isLoading: false })
+    const res = await Service.createGAPekerja(formData)
+    dispatch({ type: CREATE_PEKERJA_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Created'
     paramsResponse.text = res.data.message
@@ -38,7 +38,7 @@ export const createAsset = (formData, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: CREATE_ASSET_ERROR,
+      type: CREATE_PEKERJA_ERROR,
       payload: ObjError,
       isLoading: false,
     })
@@ -46,15 +46,15 @@ export const createAsset = (formData, refresh) => async (dispatch) => {
   }
 }
 
-export const updateAsset = (formData, id, refresh) => async (dispatch) => {
+export const updateGAPekerja = (formData, id, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: UPDATE_ASSET_LOADING, isLoading: true })
+    dispatch({ type: UPDATE_PEKERJA_LOADING, isLoading: true })
     // Call API
-    const res = await Service.updateAsset(formData, id)
-    dispatch({ type: UPDATE_ASSET_SUCCESS, isLoading: false })
+    const res = await Service.updateGAPekerja(formData, id)
+    dispatch({ type: UPDATE_PEKERJA_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'
     paramsResponse.text = res.data.message
@@ -69,7 +69,7 @@ export const updateAsset = (formData, id, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: UPDATE_ASSET_ERROR,
+      type: UPDATE_PEKERJA_ERROR,
       payload: ObjError,
       isLoading: false,
     })
@@ -77,15 +77,15 @@ export const updateAsset = (formData, id, refresh) => async (dispatch) => {
   }
 }
 
-export const deleteAsset = (id, refresh) => async (dispatch) => {
+export const deleteGAPekerja = (id, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: DELETE_ASSET_LOADING, isLoading: true })
+    dispatch({ type: DELETE_PEKERJA_LOADING, isLoading: true })
     // Call API
-    const res = await Service.deleteAsset(id)
-    dispatch({ type: DELETE_ASSET_SUCCESS, isLoading: false })
+    const res = await Service.deleteGAPekerja(id)
+    dispatch({ type: DELETE_PEKERJA_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'
     paramsResponse.text = res.data.message
@@ -100,7 +100,7 @@ export const deleteAsset = (id, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: DELETE_ASSET_ERROR,
+      type: DELETE_PEKERJA_ERROR,
       payload: ObjError,
       isLoading: false,
     })
@@ -108,15 +108,15 @@ export const deleteAsset = (id, refresh) => async (dispatch) => {
   }
 }
 
-export const uploadAsset = (formData, refresh) => async (dispatch) => {
+export const uploadGAPekerja = (formData, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: UPLOAD_ASSET_LOADING, isLoading: true })
+    dispatch({ type: UPLOAD_PEKERJA_LOADING, isLoading: true })
     // Call API
-    const res = await Service.uploadAsset(formData)
-    dispatch({ type: UPLOAD_ASSET_SUCCESS, isLoading: false })
+    const res = await Service.uploadGAPekerja(formData)
+    dispatch({ type: UPLOAD_PEKERJA_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Uploaded'
     paramsResponse.text = res.data.message
@@ -131,7 +131,7 @@ export const uploadAsset = (formData, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: UPLOAD_ASSET_ERROR,
+      type: UPLOAD_PEKERJA_ERROR,
       payload: ObjError,
       isLoading: false,
     })

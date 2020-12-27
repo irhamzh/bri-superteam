@@ -22,12 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { CfInput, CfInputDate, CfInputFile } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAKehadiran,
   updateGAKehadiran,
   deleteGAKehadiran,
+  uploadGAKehadiran,
 } from '../../../../modules/generalAffair/dataPekerja/kehadiran/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -54,10 +55,12 @@ class Security extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createGAKehadiran, updateGAKehadiran } = this.props
+    const { id, excel } = values
+    const { createGAKehadiran, updateGAKehadiran, uploadGAKehadiran } = this.props
     if (!invalidValues.includes(id)) {
       updateGAKehadiran(values, id, this.doRefresh)
+    } else if (excel) {
+      uploadGAKehadiran(values, this.doRefresh)
     } else {
       createGAKehadiran(values, this.doRefresh)
     }
@@ -99,7 +102,7 @@ class Security extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
 
@@ -149,7 +152,7 @@ class Security extends Component {
           <>
             <Button
               color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => modalForm.show({ data: props.original, upload: false })}
               className="mr-1"
               title="Edit"
             >
@@ -194,7 +197,7 @@ class Security extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        // onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-3"
                       >
                         Upload Data
@@ -202,7 +205,7 @@ class Security extends Component {
 
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: false })}
                         className="mr-1"
                       >
                         <i className="fa fa-plus" style={isIcon} />
@@ -281,67 +284,100 @@ class Security extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          // minDate={new Date()}
-                          isRequired
-                          placeholder="Pilih Tanggal"
-                          showMonthYearPicker
-                          showFullMonthYearPicker
-                          dateFormat="MM/yyyy"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
+                      {modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Tanggal"
+                              name="tanggal"
+                              classIcon="fa fa-calendar"
+                              blockLabel
+                              // minDate={new Date()}
+                              isRequired
+                              placeholder="Pilih Tanggal"
+                              // showMonthYearPicker
+                              // showFullMonthYearPicker
+                              // dateFormat="MM/yyyy"
+                              component={CfInputDate}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Nama"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan Nama"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                          <FormGroup>
+                            <Field
+                              label="File Excel"
+                              name="excel"
+                              isRequired
+                              component={CfInputFile}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
 
-                      <FormGroup>
-                        <Field
-                          label="Jumlah Hadir"
-                          type="text"
-                          name="jumlahHadir"
-                          isRequired
-                          placeholder="Masukkan Jumlah Hadir"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      {!modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Tanggal"
+                              name="tanggal"
+                              classIcon="fa fa-calendar"
+                              blockLabel
+                              // minDate={new Date()}
+                              isRequired
+                              placeholder="Pilih Tanggal"
+                              showMonthYearPicker
+                              showFullMonthYearPicker
+                              dateFormat="MM/yyyy"
+                              component={CfInputDate}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Jumlah Tidak Hadir"
-                          type="text"
-                          name="jumlahTidakHadir"
-                          isRequired
-                          placeholder="Masukkan Jumlah Tidak Hadir"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                          <FormGroup>
+                            <Field
+                              label="Nama"
+                              type="text"
+                              name="name"
+                              isRequired
+                              placeholder="Masukkan Nama"
+                              component={CfInput}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Jumlah Cuti"
-                          type="text"
-                          name="jumlahCuti"
-                          isRequired
-                          placeholder="Masukkan Jumlah Cuti"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                          <FormGroup>
+                            <Field
+                              label="Jumlah Hadir"
+                              type="text"
+                              name="jumlahHadir"
+                              isRequired
+                              placeholder="Masukkan Jumlah Hadir"
+                              component={CfInput}
+                            />
+                          </FormGroup>
 
-                      {ErrorMessage(message)}
+                          <FormGroup>
+                            <Field
+                              label="Jumlah Tidak Hadir"
+                              type="text"
+                              name="jumlahTidakHadir"
+                              isRequired
+                              placeholder="Masukkan Jumlah Tidak Hadir"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Jumlah Cuti"
+                              type="text"
+                              name="jumlahCuti"
+                              isRequired
+                              placeholder="Masukkan Jumlah Cuti"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
+
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -383,6 +419,7 @@ Security.propTypes = {
   createGAKehadiran: PropTypes.func.isRequired,
   updateGAKehadiran: PropTypes.func.isRequired,
   deleteGAKehadiran: PropTypes.func.isRequired,
+  uploadGAKehadiran: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -397,6 +434,7 @@ const mapDispatchToProps = (dispatch) => ({
   createGAKehadiran: (formData, refresh) => dispatch(createGAKehadiran(formData, refresh)),
   updateGAKehadiran: (formData, id, refresh) => dispatch(updateGAKehadiran(formData, id, refresh)),
   deleteGAKehadiran: (id, refresh) => dispatch(deleteGAKehadiran(id, refresh)),
+  uploadGAKehadiran: (formData, refresh) => dispatch(uploadGAKehadiran(formData, refresh)),
 })
 
 export default connect(

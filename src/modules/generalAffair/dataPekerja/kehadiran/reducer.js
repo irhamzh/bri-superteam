@@ -8,6 +8,9 @@ import {
   DELETE_KEHADIRAN_LOADING,
   DELETE_KEHADIRAN_SUCCESS,
   DELETE_KEHADIRAN_ERROR,
+  UPLOAD_KEHADIRAN_LOADING,
+  UPLOAD_KEHADIRAN_SUCCESS,
+  UPLOAD_KEHADIRAN_ERROR,
 } from './types'
 
 const kehadiranReducer = (state = {}, action) => {
@@ -60,6 +63,24 @@ const kehadiranReducer = (state = {}, action) => {
         isLoading: action.isLoading,
       }
     case DELETE_KEHADIRAN_ERROR:
+      return {
+        ...state,
+        message: action.payload,
+        isLoading: action.isLoading,
+      }
+
+    // upload
+    case UPLOAD_KEHADIRAN_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    case UPLOAD_KEHADIRAN_SUCCESS:
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    case UPLOAD_KEHADIRAN_ERROR:
       return {
         ...state,
         message: action.payload,

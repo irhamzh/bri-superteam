@@ -10,3 +10,7 @@ export const UPDATE_KEHADIRAN_ERROR = 'update_KEHADIRAN_error'
 export const DELETE_KEHADIRAN_LOADING = 'delete_KEHADIRAN_loading'
 export const DELETE_KEHADIRAN_SUCCESS = 'delete_KEHADIRAN_success'
 export const DELETE_KEHADIRAN_ERROR = 'delete_KEHADIRAN_error'
+// upload
+export const UPLOAD_KEHADIRAN_LOADING = 'UPLOAD_KEHADIRAN_loading'
+export const UPLOAD_KEHADIRAN_SUCCESS = 'UPLOAD_KEHADIRAN_success'
+export const UPLOAD_KEHADIRAN_ERROR = 'UPLOAD_KEHADIRAN_error'

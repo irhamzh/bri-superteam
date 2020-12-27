@@ -1948,6 +1948,17 @@ class Service {
     return axios.delete(`ga-employees/attendance/${id}`)
   }
 
+  static uploadGAKehadiran(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post(`ga-employees/attendance/excel`, formData)
+  }
+
   // Data Pekerja - APS
   static getGAAps(params) {
     if (!params) params = ''

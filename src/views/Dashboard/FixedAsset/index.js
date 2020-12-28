@@ -392,7 +392,7 @@ const FixedAsset = (props) => {
           </CardBody>
         </Card>
 
-        <Card>
+        {/* <Card>
           <CardBody>Anggaran (belum fix)</CardBody>
         </Card>
 
@@ -402,7 +402,7 @@ const FixedAsset = (props) => {
 
         <Card>
           <CardBody>Approval Pengelola Gedung (belum fix)</CardBody>
-        </Card>
+        </Card> */}
       </Col>
     </Row>
   )

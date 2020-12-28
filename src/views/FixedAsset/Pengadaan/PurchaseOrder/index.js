@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPurchaseOrder,
   updatePurchaseOrder,
@@ -61,6 +61,15 @@ class PurchaseOrder extends Component {
     const { id } = values
     const { createPurchaseOrder, updatePurchaseOrder } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider, pengadaan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      if (pengadaan && Object.keys(pengadaan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pengadaan = pengadaan.id || pengadaan
+      }
       updatePurchaseOrder(values, id, this.doRefresh)
     } else {
       createPurchaseOrder(values, this.doRefresh)
@@ -92,7 +101,7 @@ class PurchaseOrder extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { optPengadaan, optProvider, dataProvider } = this.state
 
@@ -247,6 +256,14 @@ class PurchaseOrder extends Component {
                           isRequired
                           name="pengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -258,6 +275,11 @@ class PurchaseOrder extends Component {
                           isRequired
                           name="provider"
                           placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -269,7 +291,11 @@ class PurchaseOrder extends Component {
                           name="address"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.address}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
                           placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
@@ -282,7 +308,11 @@ class PurchaseOrder extends Component {
                           name="contact"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
                           placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
@@ -321,7 +351,7 @@ class PurchaseOrder extends Component {
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

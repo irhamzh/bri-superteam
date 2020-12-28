@@ -396,7 +396,7 @@ const GeneralAffair = () => {
           </CardBody>
         </Card>
 
-        <Card style={{ backgroundColor: 'yellow' }}>
+        {/* <Card style={{ backgroundColor: 'yellow' }}>
           <CardBody>
             <div>Jumlah pekerja yang akan pensiun di bulan depan: 40 orang</div>
           </CardBody>
@@ -418,7 +418,7 @@ const GeneralAffair = () => {
           <CardBody>
             <div>Jumlah PGS berakhir di bulan depan: 40 orang</div>
           </CardBody>
-        </Card>
+        </Card> */}
       </Col>
     </Row>
   )

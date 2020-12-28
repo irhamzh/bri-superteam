@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createEvaluasiSupplier,
   updateEvaluasiSupplier,
@@ -65,6 +65,15 @@ class EvaluasiSupplier extends Component {
     const { id } = values
     const { createEvaluasiSupplier, updateEvaluasiSupplier } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider, pengadaan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      if (pengadaan && Object.keys(pengadaan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pengadaan = pengadaan.id || pengadaan
+      }
       updateEvaluasiSupplier(values, id, this.doRefresh)
     } else {
       createEvaluasiSupplier(values, this.doRefresh)
@@ -96,7 +105,7 @@ class EvaluasiSupplier extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { optPengadaan, optProvider, dataProvider } = this.state
 
@@ -312,7 +321,7 @@ class EvaluasiSupplier extends Component {
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

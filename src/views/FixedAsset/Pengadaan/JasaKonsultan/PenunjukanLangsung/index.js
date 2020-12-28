@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createKonsultanPenunjukanLangsung,
   updateKonsultanPenunjukanLangsung,
@@ -77,6 +77,11 @@ class PenunjukanLangsung extends Component {
     const { id } = values
     const { createKonsultanPenunjukanLangsung, updateKonsultanPenunjukanLangsung } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
       updateKonsultanPenunjukanLangsung(values, id, this.doRefresh)
     } else {
       createKonsultanPenunjukanLangsung(values, this.doRefresh)
@@ -108,7 +113,7 @@ class PenunjukanLangsung extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optProvider, dataProvider } = this.state
@@ -529,6 +534,11 @@ class PenunjukanLangsung extends Component {
                           isRequired
                           name="provider"
                           placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -540,7 +550,11 @@ class PenunjukanLangsung extends Component {
                           name="address"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.address}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
                           placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
@@ -553,7 +567,11 @@ class PenunjukanLangsung extends Component {
                           name="contact"
                           isRequired
                           disabled
-                          value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
                           placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
@@ -620,7 +638,7 @@ class PenunjukanLangsung extends Component {
                         </Col>
                       </Row>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -22,15 +22,15 @@ import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../../config/services'
 import { CfInputDate, CfInputFile } from '../../../../components'
-import { formatDate } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import { uploadAnggaranInvestasi } from '../../../../modules/anggaran/investasi/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class InvestasiAnggaran extends Component {
   state = {
-    tahun: '',
-    bulan: '',
+    tahun: null,
+    bulan: null,
     optBulan: [
       { label: 'Januari', value: '1' },
       { label: 'Februari', value: '2' },
@@ -89,8 +89,32 @@ class InvestasiAnggaran extends Component {
     )
   }
 
+  filterData = async (e) => {
+    e.preventDefault()
+    const { bulan, tahun } = this.state
+    if (invalidValues.includes(bulan)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+    if (invalidValues.includes(tahun)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+
+    try {
+      const { fetchQueryProps } = this.props
+      fetchQueryProps.setFilteredByObject({
+        'month-year$createdAt': `${tahun}-${bulan}`,
+      })
+
+      this.doRefresh()
+    } catch (error) {
+      AlertMessage.error(error)
+    }
+  }
+
   render() {
-    const { optBulan, optTahun, tahun, bulan } = this.state
+    const { optBulan, optTahun } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
@@ -729,19 +753,43 @@ class InvestasiAnggaran extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('bulan', v)}
-                      options={optBulan}
-                      value={bulan}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Bulan"
-                    />
+                  <Col>
+                    <div>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih Bulan..."
+                              options={optBulan}
+                              name="bulan"
+                              onChange={(e) => this.setState({ bulan: e?.value })}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih tahun..."
+                              options={optTahun}
+                              name="tahun"
+                              className=""
+                              onChange={(e) => this.setState({ tahun: e?.value })}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col sm="2">
+                          <Button type="submit" color="primary" onClick={(e) => this.filterData(e)}>
+                            <i className="fa fa-filter" />
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
                   </Col>
 
-                  <Col sm="2">
+                  {/* <Col sm="2">
                     <Select
                       // isClearable
                       onChange={(v) => this.handleChangeSelect('tahun', v)}
@@ -751,9 +799,9 @@ class InvestasiAnggaran extends Component {
                       classNamePrefix="select"
                       placeholder="Tahun"
                     />
-                  </Col>
+                  </Col> */}
 
-                  <Col sm="8">
+                  <Col>
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"

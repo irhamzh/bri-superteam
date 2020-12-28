@@ -300,6 +300,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Formasi',
+          url: '/master/formasi',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Compressor',
           url: '/master/compressor',
           icon: 'fa fa-angle-double-right',

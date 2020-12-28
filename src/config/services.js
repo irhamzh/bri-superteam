@@ -2025,6 +2025,28 @@ class Service {
     return axios.delete(`ga-employees/overtime/${id}`)
   }
 
+  // Data Pekerja - Formasi
+  static getFormasi(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/formation${params}`)
+  }
+
+  static getFormasiById(id) {
+    return axios.get(`ga-employees/formation/${id}`)
+  }
+
+  static createFormasi(values) {
+    return axios.post('ga-employees/formation', values)
+  }
+
+  static updateFormasi(values, id) {
+    return axios.put(`ga-employees/formation/${id}`, values)
+  }
+
+  static deleteFormasi(id) {
+    return axios.delete(`ga-employees/formation/${id}`)
+  }
+
   // Dashboard
   static getDashboardProcurement(params) {
     if (!params) params = ''

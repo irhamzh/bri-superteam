@@ -19,49 +19,36 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Select from 'react-select'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfInputFile, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, invalidValues } from '../../../../helpers'
+import {
+  createGASmkpt,
+  updateGASmkpt,
+  deleteGASmkpt,
+  uploadGASmkpt,
+} from '../../../../modules/generalAffair/dataPekerja/smkpt/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    code: 1234567,
-    nama: 'Elektronik',
-    kondisi: 'Baik',
-  },
-  {
-    code: 989667,
-    nama: 'Perkakas',
-    kondisi: 'Tidak Baik',
-  },
-]
 
 class SMKPT extends Component {
   state = {
     tahun: '',
     bulan: '',
     optBulan: [
-      { label: 'Januari', value: 'Januari' },
-      { label: 'Februari', value: 'Februari' },
-      { label: 'Maret', value: 'Maret' },
-      { label: 'April', value: 'April' },
-      { label: 'Mei', value: 'Mei' },
-      { label: 'Juni', value: 'Juni' },
-      { label: 'Juli', value: 'Juli' },
-      { label: 'Agustus', value: 'Agustus' },
-      { label: 'September', value: 'September' },
-      { label: 'Oktober', value: 'Oktober' },
-      { label: 'November', value: 'November' },
-      { label: 'Desember', value: 'Desember' },
+      { label: 'Januari', value: '1' },
+      { label: 'Februari', value: '2' },
+      { label: 'Maret', value: '3' },
+      { label: 'April', value: '4' },
+      { label: 'Mei', value: '5' },
+      { label: 'Juni', value: '6' },
+      { label: 'Juli', value: '7' },
+      { label: 'Agustus', value: '8' },
+      { label: 'September', value: '9' },
+      { label: 'Oktober', value: '10' },
+      { label: 'November', value: '11' },
+      { label: 'Desember', value: '12' },
     ],
     optTahun: [
       { label: '2015', value: '2015' },
@@ -91,12 +78,14 @@ class SMKPT extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, excel } = values
+    const { createGASmkpt, updateGASmkpt, uploadGASmkpt } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateGASmkpt(values, id, this.doRefresh)
+    } else if (excel) {
+      uploadGASmkpt(values, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createGASmkpt(values, this.doRefresh)
     }
   }
 
@@ -115,13 +104,13 @@ class SMKPT extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteGASmkpt } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteGASmkpt(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -135,18 +124,50 @@ class SMKPT extends Component {
       })
   }
 
+  filterData = async (e) => {
+    e.preventDefault()
+    const { bulan, tahun } = this.state
+    if (invalidValues.includes(bulan)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+    if (invalidValues.includes(tahun)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+
+    try {
+      const { fetchQueryProps } = this.props
+      fetchQueryProps.setFilteredByObject({
+        'month-year$createdAt': `${tahun}-${bulan}`,
+      })
+
+      this.doRefresh()
+    } catch (error) {
+      AlertMessage.error(error)
+    }
+  }
+
   render() {
-    const { optBulan, optTahun, tahun, bulan } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { optBulan, optTahun } = this.state
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tampilan Kolom-kolom tabel disamakan dengan file excel yang diberikan',
-        accessor: 'note',
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
         filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
+      },
+      {
+        Header: 'Nama',
+        accessor: `name`,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
       },
       // {
       //   Header: 'Aksi',
@@ -155,7 +176,7 @@ class SMKPT extends Component {
       //     <>
       //       <Button
       //         color="success"
-      //         onClick={() => modalForm.show({ data: props.original })}
+      //         onClick={() => modalForm.show({ data: props.original, upload: false })}
       //         className="mr-1"
       //         title="Edit"
       //       >
@@ -175,11 +196,15 @@ class SMKPT extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -187,7 +212,7 @@ class SMKPT extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-1"
                       >
                         <i className="fa fa-plus" style={isIcon} />
@@ -199,31 +224,40 @@ class SMKPT extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('bulan', v)}
-                      options={optBulan}
-                      value={bulan}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Bulan"
-                    />
+                  <Col>
+                    <Row>
+                      <Col>
+                        <FormGroup>
+                          <Select
+                            isClearable
+                            placeholder="Pilih Bulan..."
+                            options={optBulan}
+                            name="bulan"
+                            onChange={(e) => this.setState({ bulan: e?.value })}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col>
+                        <FormGroup>
+                          <Select
+                            isClearable
+                            placeholder="Pilih tahun..."
+                            options={optTahun}
+                            name="tahun"
+                            className=""
+                            onChange={(e) => this.setState({ tahun: e?.value })}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col sm="2">
+                        <Button type="submit" color="primary" onClick={(e) => this.filterData(e)}>
+                          <i className="fa fa-filter" />
+                        </Button>
+                      </Col>
+                    </Row>
                   </Col>
 
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('tahun', v)}
-                      options={optTahun}
-                      value={tahun}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Tahun"
-                    />
-                  </Col>
-
-                  <Col sm="8">
+                  <Col>
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -245,11 +279,10 @@ class SMKPT extends Component {
                 <br />
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -262,7 +295,7 @@ class SMKPT extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -298,9 +331,8 @@ class SMKPT extends Component {
                           component={CfInputFile}
                         />
                       </FormGroup>
-                      {console.log(values, 'values')}
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -339,9 +371,10 @@ SMKPT.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createGASmkpt: PropTypes.func.isRequired,
+  updateGASmkpt: PropTypes.func.isRequired,
+  deleteGASmkpt: PropTypes.func.isRequired,
+  uploadGASmkpt: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -353,9 +386,10 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createGASmkpt: (formData, refresh) => dispatch(createGASmkpt(formData, refresh)),
+  updateGASmkpt: (formData, id, refresh) => dispatch(updateGASmkpt(formData, id, refresh)),
+  deleteGASmkpt: (id, refresh) => dispatch(deleteGASmkpt(id, refresh)),
+  uploadGASmkpt: (formData, refresh) => dispatch(uploadGASmkpt(formData, refresh)),
 })
 
 export default connect(
@@ -363,7 +397,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getGASmkpt(p),
     Component: withToggle({
       Component: SMKPT,
       toggles: {

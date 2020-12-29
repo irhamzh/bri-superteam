@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createKebersihanInnovation,
   updateKebersihanInnovation,
@@ -75,9 +75,13 @@ class RuangPendidikan extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, ruangan } = values
     const { createKebersihanInnovation, updateKebersihanInnovation } = this.props
     if (!invalidValues.includes(id)) {
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
       updateKebersihanInnovation(values, id, this.doRefresh)
     } else {
       createKebersihanInnovation(values, this.doRefresh)
@@ -109,7 +113,7 @@ class RuangPendidikan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optRuangan } = this.state
@@ -393,7 +397,7 @@ class RuangPendidikan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -421,6 +425,14 @@ class RuangPendidikan extends Component {
                               isRequired
                               name="ruangan"
                               placeholder="Pilih atau Cari Ruangan"
+                              defaultValue={
+                                values.ruangan
+                                  ? {
+                                      value: values.ruangan.id,
+                                      label: values.ruangan.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -478,8 +490,6 @@ class RuangPendidikan extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

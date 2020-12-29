@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createKebersihanInnovation,
   updateKebersihanInnovation,
@@ -77,9 +77,13 @@ class Toilet extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, location } = values
     const { createKebersihanInnovation, updateKebersihanInnovation } = this.props
     if (!invalidValues.includes(id)) {
+      if (location && Object.keys(location).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.location = location.id || location
+      }
       updateKebersihanInnovation(values, id, this.doRefresh)
     } else {
       createKebersihanInnovation(values, this.doRefresh)
@@ -111,7 +115,7 @@ class Toilet extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optLokasi } = this.state
@@ -457,7 +461,7 @@ class Toilet extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -485,6 +489,11 @@ class Toilet extends Component {
                               isRequired
                               name="location"
                               placeholder="Pilih atau Cari Lokasi"
+                              defaultValue={
+                                values.location
+                                  ? { value: values.location.id, label: values.location.name }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -806,8 +815,6 @@ class Toilet extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementAC,
   updateEngineerBasementAC,
@@ -70,9 +70,21 @@ class AC extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, building, floor, compressor } = values
     const { createEngineerBasementAC, updateEngineerBasementAC } = this.props
     if (!invalidValues.includes(id)) {
+      if (building && Object.keys(building).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.building = building.id || building
+      }
+      if (floor && Object.keys(floor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.floor = floor.id || floor
+      }
+      if (compressor && Object.keys(compressor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.compressor = compressor.id || compressor
+      }
       updateEngineerBasementAC(values, id, this.doRefresh)
     } else {
       createEngineerBasementAC(values, this.doRefresh)
@@ -104,7 +116,7 @@ class AC extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optCompressor, optGedung, optLantai } = this.state
@@ -281,7 +293,7 @@ class AC extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -305,6 +317,11 @@ class AC extends Component {
                           isRequired
                           name="building"
                           placeholder="Pilih atau Cari Gedung"
+                          defaultValue={
+                            values.building
+                              ? { value: values.building.id, label: values.building.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -316,6 +333,11 @@ class AC extends Component {
                           isRequired
                           name="floor"
                           placeholder="Pilih atau Cari Lantai"
+                          defaultValue={
+                            values.floor
+                              ? { value: values.floor.id, label: values.floor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -338,6 +360,11 @@ class AC extends Component {
                           isRequired
                           name="compressor"
                           placeholder="Pilih atau Cari Compressor"
+                          defaultValue={
+                            values.compressor
+                              ? { value: values.compressor.id, label: values.compressor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -374,8 +401,6 @@ class AC extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

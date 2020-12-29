@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementPlumbing,
   updateEngineerBasementPlumbing,
@@ -70,9 +70,17 @@ class Plumbing extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, pump, unit } = values
     const { createEngineerBasementPlumbing, updateEngineerBasementPlumbing } = this.props
     if (!invalidValues.includes(id)) {
+      if (pump && Object.keys(pump).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pump = pump.id || pump
+      }
+      if (unit && Object.keys(unit).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.unit = unit.id || unit
+      }
       updateEngineerBasementPlumbing(values, id, this.doRefresh)
     } else {
       createEngineerBasementPlumbing(values, this.doRefresh)
@@ -104,7 +112,7 @@ class Plumbing extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optPompa, optUnitPompa } = this.state
@@ -302,7 +310,7 @@ class Plumbing extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -326,6 +334,9 @@ class Plumbing extends Component {
                           isRequired
                           name="pump"
                           placeholder="Pilih atau Cari Pompa"
+                          defaultValue={
+                            values.pump ? { value: values.pump.id, label: values.pump.name } : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -337,6 +348,11 @@ class Plumbing extends Component {
                           isRequired
                           name="unit"
                           placeholder="Pilih atau Cari Unit"
+                          defaultValue={
+                            values.unit
+                              ? { value: values.unit.id, label: values.unit.nameUnit }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -430,8 +446,6 @@ class Plumbing extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

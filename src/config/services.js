@@ -2047,6 +2047,74 @@ class Service {
     return axios.delete(`ga-employees/formation/${id}`)
   }
 
+  // General Affair - Penilaian Outsourcing
+
+  static getGAPenilaianOutsourcing(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/outsourcing${params}`)
+  }
+
+  static getGAPenilaianOutsourcingById(id) {
+    return axios.get(`ga-employees/outsourcing/${id}`)
+  }
+
+  static createGAPenilaianOutsourcing(values) {
+    return axios.post('ga-employees/outsourcing', values)
+  }
+
+  static updateGAPenilaianOutsourcing(values, id) {
+    return axios.put(`ga-employees/outsourcing/${id}`, values)
+  }
+
+  static deleteGAPenilaianOutsourcing(id) {
+    return axios.delete(`ga-employees/outsourcing/${id}`)
+  }
+
+  static uploadGAPenilaianOutsourcing(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post(`ga-employees/outsourcing/excel`, formData)
+  }
+
+  // General Affair - SMKPT
+
+  static getGASmkpt(params) {
+    if (!params) params = ''
+    return axios.get(`ga-employees/performance-management${params}`)
+  }
+
+  static getGASmkptById(id) {
+    return axios.get(`ga-employees/performance-management/${id}`)
+  }
+
+  static createGASmkpt(values) {
+    return axios.post('ga-employees/performance-management', values)
+  }
+
+  static updateGASmkpt(values, id) {
+    return axios.put(`ga-employees/performance-management/${id}`, values)
+  }
+
+  static deleteGASmkpt(id) {
+    return axios.delete(`ga-employees/performance-management/${id}`)
+  }
+
+  static uploadGASmkpt(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+    }
+
+    return axios.post(`ga-employees/performance-management/excel`, formData)
+  }
+
   // Dashboard
   static getDashboardProcurement(params) {
     if (!params) params = ''

@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementWM,
   updateEngineerBasementWM,
@@ -60,9 +60,13 @@ class WaterMeter extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, waterMeter } = values
     const { createEngineerBasementWM, updateEngineerBasementWM } = this.props
     if (!invalidValues.includes(id)) {
+      if (waterMeter && Object.keys(waterMeter).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.waterMeter = waterMeter.id || waterMeter
+      }
       updateEngineerBasementWM(values, id, this.doRefresh)
     } else {
       createEngineerBasementWM(values, this.doRefresh)
@@ -94,7 +98,7 @@ class WaterMeter extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optWaterMeter } = this.state
@@ -260,7 +264,7 @@ class WaterMeter extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -284,6 +288,11 @@ class WaterMeter extends Component {
                           isRequired
                           name="waterMeter"
                           placeholder="Pilih atau Cari Water Meter"
+                          defaultValue={
+                            values.waterMeter
+                              ? { value: values.waterMeter.id, label: values.waterMeter.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -321,7 +330,7 @@ class WaterMeter extends Component {
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPersediaan,
   updatePersediaan,
@@ -60,9 +60,13 @@ class Aktivitas extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, jenisBarang } = values
     const { createPersediaan, updatePersediaan } = this.props
     if (!invalidValues.includes(id)) {
+      if (jenisBarang && Object.keys(jenisBarang).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.jenisBarang = jenisBarang.id || jenisBarang
+      }
       updatePersediaan(values, id, this.doRefresh)
     } else {
       createPersediaan(values, this.doRefresh)
@@ -94,7 +98,7 @@ class Aktivitas extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optJenisBarang } = this.state
@@ -291,6 +295,11 @@ class Aktivitas extends Component {
                           isRequired
                           name="jenisBarang"
                           placeholder="Pilih atau Cari Jenis Barang"
+                          defaultValue={
+                            values.jenisBarang
+                              ? { value: values.jenisBarang.id, label: values.jenisBarang.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -356,7 +365,7 @@ class Aktivitas extends Component {
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

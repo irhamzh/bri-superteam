@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../../helpers'
 import {
   createEngineerGedungRoom,
   updateEngineerGedungRoom,
@@ -83,9 +83,21 @@ class Ruangan extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, buildingType, ruangan, roomType } = values
     const { createEngineerGedungRoom, updateEngineerGedungRoom } = this.props
     if (!invalidValues.includes(id)) {
+      if (buildingType && Object.keys(buildingType).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.buildingType = buildingType.id || buildingType
+      }
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
+      if (roomType && Object.keys(roomType).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.roomType = roomType.id || roomType
+      }
       updateEngineerGedungRoom(values, id, this.doRefresh)
     } else {
       createEngineerGedungRoom(values, this.doRefresh)
@@ -117,7 +129,7 @@ class Ruangan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optJenisGedung, optJenisRuangan, optRuangan } = this.state
@@ -359,7 +371,7 @@ class Ruangan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -387,6 +399,14 @@ class Ruangan extends Component {
                               isRequired
                               name="buildingType"
                               placeholder="Pilih atau Cari Jenis Gedung"
+                              defaultValue={
+                                values.buildingType
+                                  ? {
+                                      value: values.buildingType.id,
+                                      label: values.buildingType.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -400,6 +420,11 @@ class Ruangan extends Component {
                               isRequired
                               name="roomType"
                               placeholder="Pilih atau Cari Jenis Ruangan"
+                              defaultValue={
+                                values.roomType
+                                  ? { value: values.roomType.id, label: values.roomType.name }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -413,6 +438,11 @@ class Ruangan extends Component {
                               isRequired
                               name="ruangan"
                               placeholder="Pilih atau Cari Ruangan"
+                              defaultValue={
+                                values.ruangan
+                                  ? { value: values.ruangan.id, label: values.ruangan.name }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -679,8 +709,6 @@ class Ruangan extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

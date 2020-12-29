@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerGedungME,
   updateEngineerGedungME,
@@ -85,9 +85,17 @@ class ME extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, buildingType, floor } = values
     const { createEngineerGedungME, updateEngineerGedungME } = this.props
     if (!invalidValues.includes(id)) {
+      if (buildingType && Object.keys(buildingType).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.buildingType = buildingType.id || buildingType
+      }
+      if (floor && Object.keys(floor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.floor = floor.id || floor
+      }
       updateEngineerGedungME(values, id, this.doRefresh)
     } else {
       createEngineerGedungME(values, this.doRefresh)
@@ -119,7 +127,7 @@ class ME extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optJenisGedung, optLantai } = this.state
@@ -435,7 +443,7 @@ class ME extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Mechanical Electrical</ModalHeader>
                     <ModalBody>
@@ -448,6 +456,14 @@ class ME extends Component {
                               isRequired
                               name="buildingType"
                               placeholder="Pilih atau Cari Jenis Gedung"
+                              defaultValue={
+                                values.buildingType
+                                  ? {
+                                      value: values.buildingType.id,
+                                      label: values.buildingType.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -460,6 +476,11 @@ class ME extends Component {
                               isRequired
                               name="floor"
                               placeholder="Pilih atau Cari Lantai"
+                              defaultValue={
+                                values.floor
+                                  ? { value: values.floor.id, label: values.floor.name }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -942,7 +963,6 @@ class ME extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

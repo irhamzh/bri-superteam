@@ -26,7 +26,7 @@ import {
   updatePeralatanIT,
   deletePeralatanIT,
 } from '../../../../modules/peralatan-it/actions'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../helpers'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 // import { createPeralatanSchema } from '../../../../validations/mvPeralatanIT'
@@ -61,9 +61,13 @@ class PrinterScanner extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, ruangan } = values
     const { createPeralatanIT, updatePeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
       updatePeralatanIT(values, id, this.doRefresh)
     } else {
       createPeralatanIT(values, this.doRefresh)
@@ -95,7 +99,7 @@ class PrinterScanner extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { optRuangan } = this.state
 
@@ -228,7 +232,7 @@ class PrinterScanner extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
@@ -272,6 +276,11 @@ class PrinterScanner extends Component {
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
+                          defaultValue={
+                            values.ruangan
+                              ? { value: values.ruangan.id, label: values.ruangan.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -301,7 +310,7 @@ class PrinterScanner extends Component {
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

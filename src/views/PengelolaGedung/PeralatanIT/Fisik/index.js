@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfInputRadio, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createPGPeralatanIT,
   updatePGPeralatanIT,
@@ -68,9 +68,21 @@ class PeralatanFisik extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, floor, item, ruangan } = values
     const { createPGPeralatanIT, updatePGPeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
+      if (floor && Object.keys(floor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.floor = floor.id || floor
+      }
+      if (item && Object.keys(item).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.item = item.id || item
+      }
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
       updatePGPeralatanIT(values, id, this.doRefresh)
     } else {
       createPGPeralatanIT(values, this.doRefresh)
@@ -102,7 +114,7 @@ class PeralatanFisik extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { optRuangan, optLantai, optItem } = this.state
 
@@ -225,7 +237,7 @@ class PeralatanFisik extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -236,6 +248,11 @@ class PeralatanFisik extends Component {
                           isRequired
                           name="floor"
                           placeholder="Pilih atau Cari Lantai"
+                          defaultValue={
+                            values.floor
+                              ? { value: values.floor.id, label: values.floor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -247,6 +264,11 @@ class PeralatanFisik extends Component {
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
+                          defaultValue={
+                            values.ruangan
+                              ? { value: values.ruangan.id, label: values.ruangan.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -258,6 +280,9 @@ class PeralatanFisik extends Component {
                           isRequired
                           name="item"
                           placeholder="Pilih atau Cari item"
+                          defaultValue={
+                            values.item ? { value: values.item.id, label: values.item.name } : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -298,8 +323,6 @@ class PeralatanFisik extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

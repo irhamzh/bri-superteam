@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -61,9 +61,13 @@ class PengangkutanSampah extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, partner } = values
     const { createVendor, updateVendor } = this.props
     if (!invalidValues.includes(id)) {
+      if (partner && Object.keys(partner).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.partner = partner.id || partner
+      }
       updateVendor(values, id, this.doRefresh)
     } else {
       createVendor(values, this.doRefresh)
@@ -95,7 +99,7 @@ class PengangkutanSampah extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optRekanan } = this.state
@@ -248,7 +252,7 @@ class PengangkutanSampah extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Pengangkutan Sampah</ModalHeader>
                     <ModalBody>
@@ -272,6 +276,11 @@ class PengangkutanSampah extends Component {
                           isRequired
                           name="partner"
                           placeholder="Pilih atau Cari Rekanan"
+                          defaultValue={
+                            values.partner
+                              ? { value: values.partner.id, label: values.partner.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -286,7 +295,7 @@ class PengangkutanSampah extends Component {
                         </FormGroup>
                       </div>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

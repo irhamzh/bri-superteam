@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -69,6 +69,11 @@ class PewangiRuangan extends Component {
     const { id } = values
     const { createVendor, updateVendor } = this.props
     if (!invalidValues.includes(id)) {
+      const { partner } = values
+      if (partner && Object.keys(partner).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.partner = partner.id || partner
+      }
       updateVendor(values, id, this.doRefresh)
     } else {
       createVendor(values, this.doRefresh)
@@ -100,7 +105,7 @@ class PewangiRuangan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optRekanan } = this.state
@@ -354,7 +359,7 @@ class PewangiRuangan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
                     <ModalBody>
@@ -378,6 +383,11 @@ class PewangiRuangan extends Component {
                           isRequired
                           name="partner"
                           placeholder="Pilih atau Cari Rekanan"
+                          defaultValue={
+                            values.partner
+                              ? { value: values.partner.id, label: values.partner.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -434,7 +444,7 @@ class PewangiRuangan extends Component {
                         </FormGroup>
                       </div>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

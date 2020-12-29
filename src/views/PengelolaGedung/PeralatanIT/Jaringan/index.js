@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfInputRadio, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createPGPeralatanIT,
   updatePGPeralatanIT,
@@ -34,7 +34,6 @@ class PeralatanJaringan extends Component {
   state = {
     optLantai: [],
     optRuangan: [],
-    optItem: [],
   }
 
   initialValues = {
@@ -54,11 +53,11 @@ class PeralatanJaringan extends Component {
     const dataLantai = resDataLantai.data.data
     const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
 
-    const resDataItem = await Service.getItem()
-    const dataItem = resDataItem.data.data
-    const optItem = dataItem.map((row) => ({ label: row.name, value: row.id }))
+    // const resDataItem = await Service.getItem()
+    // const dataItem = resDataItem.data.data
+    // const optItem = dataItem.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optRuangan, optLantai, optItem })
+    this.setState({ optRuangan, optLantai })
   }
 
   doRefresh = () => {
@@ -68,9 +67,17 @@ class PeralatanJaringan extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, floor, ruangan } = values
     const { createPGPeralatanIT, updatePGPeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
+      if (floor && Object.keys(floor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.floor = floor.id || floor
+      }
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
       updatePGPeralatanIT(values, id, this.doRefresh)
     } else {
       createPGPeralatanIT(values, this.doRefresh)
@@ -102,9 +109,9 @@ class PeralatanJaringan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
-    const { optRuangan, optLantai, optItem } = this.state
+    const { optRuangan, optLantai } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -122,7 +129,7 @@ class PeralatanJaringan extends Component {
       },
       {
         Header: 'Item',
-        accessor: 'item.name',
+        accessor: 'item',
         filterable: false,
       },
       {
@@ -236,6 +243,11 @@ class PeralatanJaringan extends Component {
                           isRequired
                           name="floor"
                           placeholder="Pilih atau Cari Lantai"
+                          defaultValue={
+                            values.floor
+                              ? { value: values.floor.id, label: values.floor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -247,6 +259,11 @@ class PeralatanJaringan extends Component {
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
+                          defaultValue={
+                            values.ruangan
+                              ? { value: values.ruangan.id, label: values.ruangan.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -303,8 +320,6 @@ class PeralatanJaringan extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

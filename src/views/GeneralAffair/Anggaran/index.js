@@ -19,49 +19,31 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Select from 'react-select'
 import Service from '../../../config/services'
 import { CfInput, CfInputDate, CfInputFile, CfSelect } from '../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../helpers'
+import { AlertMessage, invalidValues } from '../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    code: 1234567,
-    nama: 'Elektronik',
-    kondisi: 'Baik',
-  },
-  {
-    code: 989667,
-    nama: 'Perkakas',
-    kondisi: 'Tidak Baik',
-  },
-]
 
 class Anggaran extends Component {
   state = {
     tahun: '',
     bulan: '',
     optBulan: [
-      { label: 'Januari', value: 'Januari' },
-      { label: 'Februari', value: 'Februari' },
-      { label: 'Maret', value: 'Maret' },
-      { label: 'April', value: 'April' },
-      { label: 'Mei', value: 'Mei' },
-      { label: 'Juni', value: 'Juni' },
-      { label: 'Juli', value: 'Juli' },
-      { label: 'Agustus', value: 'Agustus' },
-      { label: 'September', value: 'September' },
-      { label: 'Oktober', value: 'Oktober' },
-      { label: 'November', value: 'November' },
-      { label: 'Desember', value: 'Desember' },
+      { label: 'Januari', value: '1' },
+      { label: 'Februari', value: '2' },
+      { label: 'Maret', value: '3' },
+      { label: 'April', value: '4' },
+      { label: 'Mei', value: '5' },
+      { label: 'Juni', value: '6' },
+      { label: 'Juli', value: '7' },
+      { label: 'Agustus', value: '8' },
+      { label: 'September', value: '9' },
+      { label: 'Oktober', value: '10' },
+      { label: 'November', value: '11' },
+      { label: 'Desember', value: '12' },
     ],
     optTahun: [
       { label: '2015', value: '2015' },
@@ -137,16 +119,18 @@ class Anggaran extends Component {
 
   render() {
     const { optBulan, optTahun, tahun, bulan } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tampilan Kolom-kolom tabel disamakan dengan file excel yang diberikan',
-        accessor: 'note',
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
         filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
       },
       // {
       //   Header: 'Aksi',
@@ -175,11 +159,15 @@ class Anggaran extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -187,7 +175,7 @@ class Anggaran extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-1"
                       >
                         <i className="fa fa-plus" style={isIcon} />
@@ -199,31 +187,41 @@ class Anggaran extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('bulan', v)}
-                      options={optBulan}
-                      value={bulan}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Bulan"
-                    />
+                  <Col>
+                    <Row>
+                      <Col>
+                        <FormGroup>
+                          <Select
+                            isClearable
+                            placeholder="Pilih Bulan..."
+                            options={optBulan}
+                            name="bulan"
+                            onChange={(e) => this.setState({ bulan: e?.value })}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col>
+                        <FormGroup>
+                          <Select
+                            isClearable
+                            placeholder="Pilih tahun..."
+                            options={optTahun}
+                            name="tahun"
+                            className=""
+                            onChange={(e) => this.setState({ tahun: e?.value })}
+                          />
+                        </FormGroup>
+                      </Col>
+
+                      <Col sm="2">
+                        <Button type="submit" color="primary" onClick={(e) => this.filterData(e)}>
+                          <i className="fa fa-filter" />
+                        </Button>
+                      </Col>
+                    </Row>
                   </Col>
 
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('tahun', v)}
-                      options={optTahun}
-                      value={tahun}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Tahun"
-                    />
-                  </Col>
-
-                  <Col sm="8">
+                  <Col>
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -245,11 +243,10 @@ class Anggaran extends Component {
                 <br />
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -262,7 +259,7 @@ class Anggaran extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -270,37 +267,38 @@ class Anggaran extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Bulan/Tahun"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          // minDate={new Date()}
-                          isRequired
-                          placeholder="Pilih Tanggal"
-                          showMonthYearPicker
-                          showFullMonthYearPicker
-                          dateFormat="MM/yyyy"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
+                      {modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Bulan/Tahun"
+                              name="tanggal"
+                              classIcon="fa fa-calendar"
+                              blockLabel
+                              // minDate={new Date()}
+                              isRequired
+                              placeholder="Pilih Tanggal"
+                              showMonthYearPicker
+                              showFullMonthYearPicker
+                              dateFormat="MM/yyyy"
+                              component={CfInputDate}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="File Excel"
-                          name="file-eksploitasi"
-                          isRequired
-                          component={CfInputFile}
-                        />
-                      </FormGroup>
-                      {console.log(values, 'values')}
-
-                      {ErrorMessage(message)}
+                          <FormGroup>
+                            <Field
+                              label="File Excel"
+                              name="excel"
+                              isRequired
+                              component={CfInputFile}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

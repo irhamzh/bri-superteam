@@ -2051,7 +2051,7 @@ class Service {
 
   static getGAPenilaianOutsourcing(params) {
     if (!params) params = ''
-    return axios.get(`ga-employees/outsourcing${params}`)
+    return axios.get(`ga-employees/outsourcing/formated${params}`)
   }
 
   static getGAPenilaianOutsourcingById(id) {
@@ -2085,7 +2085,7 @@ class Service {
 
   static getGASmkpt(params) {
     if (!params) params = ''
-    return axios.get(`ga-employees/performance-management${params}`)
+    return axios.get(`ga-employees/performance-management/formated${params}`)
   }
 
   static getGASmkptById(id) {

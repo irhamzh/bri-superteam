@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createKebersihanSmart,
   updateKebersihanSmart,
@@ -73,9 +73,17 @@ class SmartBuilding extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
+    const { id, location, ruangan } = values
     const { createKebersihanSmart, updateKebersihanSmart } = this.props
     if (!invalidValues.includes(id)) {
+      if (location && Object.keys(location).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.location = location.id || location
+      }
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
       updateKebersihanSmart(values, id, this.doRefresh)
     } else {
       createKebersihanSmart(values, this.doRefresh)
@@ -107,7 +115,7 @@ class SmartBuilding extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optLokasi, optRuangan } = this.state
@@ -408,7 +416,7 @@ class SmartBuilding extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Smart Building</ModalHeader>
                     <ModalBody>
@@ -432,6 +440,11 @@ class SmartBuilding extends Component {
                           isRequired
                           name="location"
                           placeholder="Pilih atau Cari Lokasi"
+                          defaultValue={
+                            values.location
+                              ? { value: values.location.id, label: values.location.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -443,6 +456,11 @@ class SmartBuilding extends Component {
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
+                          defaultValue={
+                            values.ruangan
+                              ? { value: values.ruangan.id, label: values.ruangan.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -515,8 +533,6 @@ class SmartBuilding extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

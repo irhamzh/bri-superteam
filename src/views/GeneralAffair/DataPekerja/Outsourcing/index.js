@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-wrap-multilines */
+/* eslint-disable eqeqeq */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,9 +21,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import Select from 'react-select'
+import ReactExport from 'react-export-excel'
+// import Select from 'react-select'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputFile, CfSelect } from '../../../../components'
+import { CfInputDate, CfInputFile } from '../../../../components'
 import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createGAPenilaianOutsourcing,
@@ -32,44 +35,45 @@ import {
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Outsourcing extends Component {
   state = {
     tahun: '',
     bulan: '',
-    optBulan: [
-      { label: 'Januari', value: '1' },
-      { label: 'Februari', value: '2' },
-      { label: 'Maret', value: '3' },
-      { label: 'April', value: '4' },
-      { label: 'Mei', value: '5' },
-      { label: 'Juni', value: '6' },
-      { label: 'Juli', value: '7' },
-      { label: 'Agustus', value: '8' },
-      { label: 'September', value: '9' },
-      { label: 'Oktober', value: '10' },
-      { label: 'November', value: '11' },
-      { label: 'Desember', value: '12' },
-    ],
-    optTahun: [
-      { label: '2015', value: '2015' },
-      { label: '2016', value: '2016' },
-      { label: '2017', value: '2017' },
-      { label: '2018', value: '2018' },
-      { label: '2019', value: '2019' },
-      { label: '2020', value: '2020' },
-      { label: '2021', value: '2021' },
-      { label: '2022', value: '2022' },
-      { label: '2023', value: '2023' },
-      { label: '2024', value: '2024' },
-      { label: '2025', value: '2025' },
-      { label: '2026', value: '2026' },
-    ],
+    // optBulan: [
+    //   { label: 'Januari', value: '1' },
+    //   { label: 'Februari', value: '2' },
+    //   { label: 'Maret', value: '3' },
+    //   { label: 'April', value: '4' },
+    //   { label: 'Mei', value: '5' },
+    //   { label: 'Juni', value: '6' },
+    //   { label: 'Juli', value: '7' },
+    //   { label: 'Agustus', value: '8' },
+    //   { label: 'September', value: '9' },
+    //   { label: 'Oktober', value: '10' },
+    //   { label: 'November', value: '11' },
+    //   { label: 'Desember', value: '12' },
+    // ],
+    // optTahun: [
+    //   { label: '2015', value: '2015' },
+    //   { label: '2016', value: '2016' },
+    //   { label: '2017', value: '2017' },
+    //   { label: '2018', value: '2018' },
+    //   { label: '2019', value: '2019' },
+    //   { label: '2020', value: '2020' },
+    //   { label: '2021', value: '2021' },
+    //   { label: '2022', value: '2022' },
+    //   { label: '2023', value: '2023' },
+    //   { label: '2024', value: '2024' },
+    //   { label: '2025', value: '2025' },
+    //   { label: '2026', value: '2026' },
+    // ],
   }
 
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -153,9 +157,10 @@ class Outsourcing extends Component {
   }
 
   render() {
-    const { optBulan, optTahun } = this.state
+    // const { optBulan, optTahun } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -181,41 +186,25 @@ class Outsourcing extends Component {
       },
       {
         Header: 'Tahun Sebelumnya',
-        accessor: `prev`,
+        accessor: `previous`,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
       },
       {
         Header: 'Tahun Sekarang',
         accessor: `current`,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
       },
       {
         Header: 'Tahun Berikutnya',
         accessor: `next`,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
       },
-      // {
-      //   Header: 'Aksi',
-      //   filterable: false,
-      //   Cell: (props) => (
-      //     <>
-      //       <Button
-      //         color="success"
-      //         onClick={() => modalForm.show({ data: props.original, upload: false })}
-      //         className="mr-1"
-      //         title="Edit"
-      //       >
-      //         <i className="fa fa-pencil" />
-      //       </Button>
-      //     </>
-      //   ),
-      // },
     ]
 
     const pageName = 'Penilaian Outsourcing'
@@ -256,7 +245,8 @@ class Outsourcing extends Component {
               <CardBody>
                 <Row>
                   <Col>
-                    <Row>
+                    {/* Filter Bulan tahun */}
+                    {/* <Row>
                       <Col>
                         <FormGroup>
                           <Select
@@ -285,7 +275,7 @@ class Outsourcing extends Component {
                           <i className="fa fa-filter" />
                         </Button>
                       </Col>
-                    </Row>
+                    </Row> */}
                   </Col>
 
                   <Col>
@@ -297,13 +287,30 @@ class Outsourcing extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Nama" value={(col) => col.name} />
+                          <ExcelColumn label="PN" value={(col) => col.pn} />
+                          <ExcelColumn
+                            label="Tahun Sebelumnya"
+                            value={(col) => col.previous.value}
+                          />
+                          <ExcelColumn label="Tahun Sekarang" value={(col) => col.current.value} />
+                          <ExcelColumn label="Tahun Berikutnya" value={(col) => col.next.value} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -334,7 +341,7 @@ class Outsourcing extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
                     <ModalBody>

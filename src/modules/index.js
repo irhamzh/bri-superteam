@@ -75,6 +75,7 @@ import anggaranInvestasi from './anggaran/investasi/reducer'
 import dataPekerja from './generalAffair/dataPekerja/pekerja/reducer'
 import formasi from './master/formasi/reducer'
 import penilaianOutsourcing from './generalAffair/dataPekerja/outsourcing/reducer'
+import anggaranGeneralAffair from './generalAffair/anggaran/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -153,6 +154,7 @@ const rootReducer = combineReducers({
   anggaranInvestasi,
   formasi,
   penilaianOutsourcing,
+  anggaranGeneralAffair,
 })
 
 export default rootReducer

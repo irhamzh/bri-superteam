@@ -2115,6 +2115,29 @@ class Service {
     return axios.post(`ga-employees/performance-management/excel`, formData)
   }
 
+  // General Affair - Anggaran
+
+  static getGAAnggaran(params) {
+    if (!params) params = ''
+    return axios.get(`ga-budgets${params}`)
+  }
+
+  static getGAAnggaranById(id) {
+    return axios.get(`ga-budgets/${id}`)
+  }
+
+  static createGAAnggaran(values) {
+    return axios.post('ga-budgets', values)
+  }
+
+  static updateGAAnggaran(values, id) {
+    return axios.put(`ga-budgets/${id}`, values)
+  }
+
+  static deleteGAAnggaran(id) {
+    return axios.delete(`ga-budgets/${id}`)
+  }
+
   // Dashboard
   static getDashboardProcurement(params) {
     if (!params) params = ''

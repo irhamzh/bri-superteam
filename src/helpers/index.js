@@ -8,6 +8,7 @@ import {
   badgeTypeDokumen,
   checkFilePreview,
   invalidValues,
+  getYearOptions,
 } from './Common'
 
 import {
@@ -38,4 +39,5 @@ export {
   formatMonth,
   formatYear,
   formatTime,
+  getYearOptions,
 }

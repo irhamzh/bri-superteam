@@ -131,7 +131,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -172,7 +172,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Undangan',
         accessor: 'undangan',
-        filterable: true,
+        filterable: false,
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -187,7 +187,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Klarifikasi dan negosiasi',
         accessor: 'klarifikasiNegosiasi',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
 
         Cell: (props) =>
@@ -373,7 +373,7 @@ class PenunjukanLangsung extends Component {
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

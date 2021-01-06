@@ -125,7 +125,7 @@ class Lift extends Component {
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 1',
         accessor: 'cleaningAreaSangkarL1',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -141,7 +141,7 @@ class Lift extends Component {
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 2',
         accessor: 'cleaningAreaSangkarL2',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -157,7 +157,7 @@ class Lift extends Component {
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 3',
         accessor: 'cleaningAreaSangkarL3',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -173,7 +173,7 @@ class Lift extends Component {
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 4',
         accessor: 'cleaningAreaSangkarL4',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -189,7 +189,7 @@ class Lift extends Component {
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 5',
         accessor: 'cleaningAreaSangkarL5',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -205,7 +205,7 @@ class Lift extends Component {
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 6',
         accessor: 'cleaningAreaSangkarL6',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -221,7 +221,7 @@ class Lift extends Component {
       {
         Header: 'Oli di Sangkar Lift dan Packing di Mesin Lift',
         accessor: 'oliRelSangkarLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -237,7 +237,7 @@ class Lift extends Component {
       {
         Header: 'Tali Seling Lift',
         accessor: 'taliSelingLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -253,7 +253,7 @@ class Lift extends Component {
       {
         Header: 'Cek Brake System atau Pengereman Lift',
         accessor: 'pengeremanLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -269,7 +269,7 @@ class Lift extends Component {
       {
         Header: 'Exhaust Fan Lift',
         accessor: 'exhaustFanLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -285,7 +285,7 @@ class Lift extends Component {
       {
         Header: 'Panel atau Drive Unit Lift',
         accessor: 'panelDriveUnitLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -301,7 +301,7 @@ class Lift extends Component {
       {
         Header: 'Mesin Motor Lift',
         accessor: 'mesinMotorLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -317,7 +317,7 @@ class Lift extends Component {
       {
         Header: 'Power Listrik Lift',
         accessor: 'powerListrikLift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -333,7 +333,7 @@ class Lift extends Component {
       {
         Header: 'Keterangan',
         accessor: 'lift',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -479,7 +479,7 @@ class Lift extends Component {
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

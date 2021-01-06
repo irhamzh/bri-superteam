@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -115,7 +116,7 @@ class PenugasanDriver extends Component {
       {
         Header: 'Kendaraan',
         accessor: 'vehicle',
-        filterable: true,
+        filterable: false,
         width: 200,
         headerClassName: 'wordwrap',
         Cell: (row) => (
@@ -127,7 +128,7 @@ class PenugasanDriver extends Component {
       {
         Header: 'Nama Driver',
         accessor: 'driverName',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {

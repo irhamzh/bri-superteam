@@ -107,7 +107,7 @@ class Penghapusbukuan extends Component {
       {
         Header: 'Nama Aset',
         accessor: 'name',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]
@@ -151,7 +151,7 @@ class Penghapusbukuan extends Component {
                 </Row>
                 <br />
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

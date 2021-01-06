@@ -78,7 +78,7 @@ class PenihilanPersekot extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'name',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Nominal Biaya',

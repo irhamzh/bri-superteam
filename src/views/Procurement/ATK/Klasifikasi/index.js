@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +25,7 @@ import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRKlasifikasiAtk,
   updatePRKlasifikasiAtk,
@@ -79,6 +81,13 @@ class Klasifikasi extends Component {
     const { id } = values
     const { createPRKlasifikasiAtk, updatePRKlasifikasiAtk } = this.props
     if (!invalidValues.includes(id)) {
+      const { workingOrder, provider } = values
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
       updatePRKlasifikasiAtk(values, id, this.doRefresh)
     } else {
       createPRKlasifikasiAtk(values, this.doRefresh)
@@ -110,7 +119,7 @@ class Klasifikasi extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optProvider, optWorkingOrder } = this.state
@@ -128,7 +137,7 @@ class Klasifikasi extends Component {
       {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Nomor Surat',
@@ -319,6 +328,14 @@ class Klasifikasi extends Component {
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
+                          defaultValue={
+                            values.workingOrder
+                              ? {
+                                  value: values.workingOrder.id,
+                                  label: values.workingOrder.kodeWorkingOrder,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -349,7 +366,7 @@ class Klasifikasi extends Component {
                       <br />
                       <br />
                       <Row>
-                        <Col sm="4">
+                        <Col>
                           <FormGroup>
                             <Field
                               label="Nama Vendor"
@@ -357,6 +374,14 @@ class Klasifikasi extends Component {
                               isRequired
                               name="provider"
                               placeholder="Pilih atau Cari Vendor"
+                              defaultValue={
+                                values.provider
+                                  ? {
+                                      value: values.provider.id,
+                                      label: values.provider.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -431,7 +456,8 @@ class Klasifikasi extends Component {
                                   arrayHelpers.push({
                                     nama: '',
                                     biaya: '',
-                                  })}
+                                  })
+                                }
                               >
                                 <i className="fa fa-plus" />
                               </Button>
@@ -439,8 +465,6 @@ class Klasifikasi extends Component {
                           </>
                         )}
                       />
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -107,7 +107,7 @@ class Rapat extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

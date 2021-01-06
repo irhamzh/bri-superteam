@@ -154,7 +154,7 @@ class Gondola extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -265,7 +265,7 @@ class Gondola extends Component {
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

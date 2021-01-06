@@ -97,7 +97,7 @@ class PramubaktiKurir extends Component {
       {
         Header: 'Tujuan',
         accessor: 'tujuan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

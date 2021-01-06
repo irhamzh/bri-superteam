@@ -116,7 +116,7 @@ class Aktivitas extends Component {
       {
         Header: 'Jenis Barang',
         accessor: 'jenisBarang.name',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Nama Barang',
@@ -246,7 +246,7 @@ class Aktivitas extends Component {
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

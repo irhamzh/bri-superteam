@@ -118,7 +118,7 @@ class TandaTerima extends Component {
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
 
@@ -136,13 +136,13 @@ class TandaTerima extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah Barang',
         accessor: 'jumlah',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -210,7 +210,7 @@ class TandaTerima extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

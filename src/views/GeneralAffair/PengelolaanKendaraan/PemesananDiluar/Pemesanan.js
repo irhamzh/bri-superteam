@@ -108,7 +108,7 @@ class PemesananKendaraan extends Component {
       {
         Header: 'Nama Pekerja',
         accessor: 'name',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -163,7 +163,7 @@ class PemesananKendaraan extends Component {
       {
         Header: 'Biaya',
         accessor: 'biaya',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

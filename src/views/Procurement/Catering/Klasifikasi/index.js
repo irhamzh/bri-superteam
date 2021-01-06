@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +25,7 @@ import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRKlasifikasiCatering,
   updatePRKlasifikasiCatering,
@@ -79,6 +81,13 @@ class Klasifikasi extends Component {
     const { id } = values
     const { createPRKlasifikasiCatering, updatePRKlasifikasiCatering } = this.props
     if (!invalidValues.includes(id)) {
+      const { workingOrder, catering } = values
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (catering && Object.keys(catering).length > 0) {
+        values.catering = catering.id || catering
+      }
       updatePRKlasifikasiCatering(values, id, this.doRefresh)
     } else {
       createPRKlasifikasiCatering(values, this.doRefresh)
@@ -110,7 +119,7 @@ class Klasifikasi extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optCatering, optWorkingOrder } = this.state
@@ -127,7 +136,7 @@ class Klasifikasi extends Component {
       {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: true,
+        filterable: false,
       },
 
       {
@@ -318,6 +327,14 @@ class Klasifikasi extends Component {
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
+                          defaultValue={
+                            values.workingOrder
+                              ? {
+                                  value: values.workingOrder.id,
+                                  label: values.workingOrder.kodeWorkingOrder,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -356,6 +373,14 @@ class Klasifikasi extends Component {
                               isRequired
                               name="catering"
                               placeholder="Pilih atau Cari Catering"
+                              defaultValue={
+                                values.catering
+                                  ? {
+                                      value: values.catering.id,
+                                      label: values.catering.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -431,8 +456,6 @@ class Klasifikasi extends Component {
                           </>
                         )}
                       />
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

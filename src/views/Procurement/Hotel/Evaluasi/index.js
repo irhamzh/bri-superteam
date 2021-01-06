@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPREvaluasiHotel,
   updatePREvaluasiHotel,
@@ -63,6 +64,10 @@ class Internal extends Component {
     const { id } = values
     const { createPREvaluasiHotel, updatePREvaluasiHotel } = this.props
     if (!invalidValues.includes(id)) {
+      const { hotelName } = values
+      if (hotelName && Object.keys(hotelName).length > 0) {
+        values.hotelName = hotelName.id || hotelName
+      }
       updatePREvaluasiHotel(values, id, this.doRefresh)
     } else {
       createPREvaluasiHotel(values, this.doRefresh)
@@ -94,7 +99,7 @@ class Internal extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optHotel } = this.state
@@ -118,7 +123,7 @@ class Internal extends Component {
       {
         Header: 'Nama Hotel',
         accessor: 'hotelName.name',
-        filterable: true,
+        filterable: false,
       },
 
       {
@@ -256,7 +261,7 @@ class Internal extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Evaluasi</ModalHeader>
                     <ModalBody>
@@ -280,6 +285,11 @@ class Internal extends Component {
                           isRequired
                           name="hotelName"
                           placeholder="Pilih atau Cari Hotel"
+                          defaultValue={
+                            values.hotelName
+                              ? { value: values.hotelName.id, label: values.hotelName.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -321,8 +331,6 @@ class Internal extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

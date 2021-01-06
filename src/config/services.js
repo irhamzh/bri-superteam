@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios'
+import { signOut } from '../modules/auth/actions'
+import { UNAUTHENTICATED } from '../modules/auth/types'
 import { API_URL } from './apiConfig'
+import configStore from './configStore'
 
 axios.defaults.baseURL = `${API_URL}`
 axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
@@ -9,9 +12,15 @@ axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('to
 //     return response
 //   },
 //   (error) => {
-//     if (error.response.status === 401) {
+//     if (error.response.status === 401 && !window.location.href.includes('/login')) {
 //       // window.location.reload()
-//       if (window.location.pathname !== '/login') window.history.go('/login')
+//       localStorage.clear()
+
+//       localStorage.removeItem('token')
+//       localStorage.removeItem('uid')
+//       localStorage.removeItem('rid')
+
+//       window.location = '/#/login'
 //     }
 //     return error
 //   }

@@ -91,7 +91,7 @@ class DaftarAset extends Component {
       {
         Header: 'Nama Aset',
         accessor: 'name',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -152,7 +152,7 @@ class DaftarAset extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: false })}
                         className="mr-3"
                       >
                         Import Data Aset
@@ -171,7 +171,7 @@ class DaftarAset extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

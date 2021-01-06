@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPeralatanIT,
   updatePeralatanIT,
@@ -111,24 +111,26 @@ class Infokus extends Component {
         width: 100,
         filterable: false,
         accessor: 'tanggal',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value ? formatDate(row.value) : row.value}</div>
+        ),
       },
       {
         Header: 'Merk',
         accessor: 'merk',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Model',
         accessor: 'model',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'SN',
         accessor: 'sn',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Lamp Timer',
@@ -154,17 +156,17 @@ class Infokus extends Component {
       {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Kondisi',
         accessor: 'condition',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Aksi',

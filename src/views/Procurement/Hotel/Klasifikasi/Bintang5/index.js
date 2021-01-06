@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +25,7 @@ import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPRKlasifikasiHotel,
   updatePRKlasifikasiHotel,
@@ -86,6 +88,13 @@ class Bintang5 extends Component {
     const { id } = values
     const { createPRKlasifikasiHotel, updatePRKlasifikasiHotel } = this.props
     if (!invalidValues.includes(id)) {
+      const { workingOrder, hotelName } = values
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (hotelName && Object.keys(hotelName).length > 0) {
+        values.hotelName = hotelName.id || hotelName
+      }
       updatePRKlasifikasiHotel(values, id, this.doRefresh)
     } else {
       createPRKlasifikasiHotel(values, this.doRefresh)
@@ -117,7 +126,7 @@ class Bintang5 extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optWorkingOrder, optHotel } = this.state
@@ -135,7 +144,7 @@ class Bintang5 extends Component {
       {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'No. Surat Pesanan',
@@ -327,6 +336,14 @@ class Bintang5 extends Component {
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
+                          defaultValue={
+                            values.workingOrder
+                              ? {
+                                  value: values.workingOrder.id,
+                                  label: values.workingOrder.kodeWorkingOrder,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -364,6 +381,11 @@ class Bintang5 extends Component {
                               isRequired
                               name="hotelName"
                               placeholder="Pilih atau Cari"
+                              defaultValue={
+                                values.hotelName
+                                  ? { value: values.hotelName.id, label: values.hotelName.name }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -457,8 +479,6 @@ class Bintang5 extends Component {
                           </>
                         )}
                       />
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

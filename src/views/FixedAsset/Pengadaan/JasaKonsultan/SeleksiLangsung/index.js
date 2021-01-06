@@ -132,7 +132,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -173,7 +173,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Undangan',
         accessor: 'undangan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
 
         Cell: (props) =>
@@ -190,7 +190,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Aanwijzing',
         accessor: 'aanwijzing',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
 
         Cell: (props) =>
@@ -207,7 +207,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Klarifikasi dan negosiasi',
         accessor: 'klarifikasiNegosiasi',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
 
         Cell: (props) =>
@@ -241,7 +241,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Pengumuman Pemenang',
         accessor: 'pengumumanPemenang',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
 
         Cell: (props) =>
@@ -418,7 +418,7 @@ class SeleksiLangsung extends Component {
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

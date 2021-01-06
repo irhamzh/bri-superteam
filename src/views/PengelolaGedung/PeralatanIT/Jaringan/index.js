@@ -119,7 +119,7 @@ class PeralatanJaringan extends Component {
       {
         Header: 'Lantai',
         accessor: 'floor.name',
-        filterable: true,
+        filterable: false,
       },
 
       {
@@ -135,12 +135,12 @@ class PeralatanJaringan extends Component {
       {
         Header: 'Status',
         accessor: 'status',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Aksi',

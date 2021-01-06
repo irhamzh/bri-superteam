@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -107,7 +108,7 @@ class KegiatanPendidikan extends Component {
       {
         Header: 'Nama Pendidikan',
         accessor: 'namaKegiatan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -306,7 +307,8 @@ class KegiatanPendidikan extends Component {
                               Math.round(
                                 (new Date(col.tanggalKonfirmasi) - new Date(col.tanggalTerima)) /
                                   (1000 * 24 * 3600)
-                              )}
+                              )
+                            }
                           />
                           <ExcelColumn
                             label="Kebutuhan - Catering"

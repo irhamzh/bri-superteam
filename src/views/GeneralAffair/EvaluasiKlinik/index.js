@@ -104,7 +104,7 @@ class EvaluasiKlinik extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

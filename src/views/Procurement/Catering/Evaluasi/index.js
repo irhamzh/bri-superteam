@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPREvaluasiCatering,
   updatePREvaluasiCatering,
@@ -77,6 +78,13 @@ class Internal extends Component {
     const { id } = values
     const { createPREvaluasiCatering, updatePREvaluasiCatering } = this.props
     if (!invalidValues.includes(id)) {
+      const { workingOrder, catering } = values
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (catering && Object.keys(catering).length > 0) {
+        values.catering = catering.id || catering
+      }
       updatePREvaluasiCatering(values, id, this.doRefresh)
     } else {
       createPREvaluasiCatering(values, this.doRefresh)
@@ -108,7 +116,7 @@ class Internal extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optCatering, optWorkingOrder } = this.state
@@ -288,7 +296,7 @@ class Internal extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Evaluasi</ModalHeader>
                     <ModalBody>
@@ -312,6 +320,14 @@ class Internal extends Component {
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
+                          defaultValue={
+                            values.workingOrder
+                              ? {
+                                  value: values.workingOrder.id,
+                                  label: values.workingOrder.kodeWorkingOrder,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -323,6 +339,14 @@ class Internal extends Component {
                           isRequired
                           name="catering"
                           placeholder="Pilih atau Cari Catering"
+                          defaultValue={
+                            values.catering
+                              ? {
+                                  value: values.catering.id,
+                                  label: values.catering.name,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -368,8 +392,6 @@ class Internal extends Component {
                           component={CfSelect}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

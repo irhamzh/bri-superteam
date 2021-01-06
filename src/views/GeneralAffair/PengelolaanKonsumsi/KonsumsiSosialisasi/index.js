@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -145,7 +146,7 @@ class KonsumsiSosialisasi extends Component {
       {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -459,7 +460,8 @@ class KonsumsiSosialisasi extends Component {
                                   arrayHelpers.push({
                                     nama: '',
                                     biaya: '',
-                                  })}
+                                  })
+                                }
                               >
                                 <i className="fa fa-plus" />
                               </Button>

@@ -97,14 +97,14 @@ class RekreasiSiswa extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'name',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'PIC',
         accessor: 'pic',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

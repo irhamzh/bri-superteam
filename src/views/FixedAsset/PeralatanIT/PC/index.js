@@ -126,19 +126,19 @@ class PersonalComputer extends Component {
       {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Merk',
         accessor: 'merk',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'SN PC',
         accessor: 'sn',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -156,7 +156,7 @@ class PersonalComputer extends Component {
       {
         Header: 'SN Monitor',
         accessor: 'snMonitor',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -168,7 +168,7 @@ class PersonalComputer extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

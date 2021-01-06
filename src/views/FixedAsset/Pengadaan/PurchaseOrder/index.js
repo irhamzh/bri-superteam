@@ -118,7 +118,7 @@ class PurchaseOrder extends Component {
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
 
@@ -134,25 +134,25 @@ class PurchaseOrder extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Barang',
         accessor: 'jumlah',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Harga Barang',
         accessor: 'hargaSatuan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Total Harga',
         accessor: 'totalHarga',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -220,7 +220,7 @@ class PurchaseOrder extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

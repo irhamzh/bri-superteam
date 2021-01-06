@@ -549,7 +549,7 @@ class EksploitasiAnggaran extends Component {
                 </Row>
                 <br />
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"

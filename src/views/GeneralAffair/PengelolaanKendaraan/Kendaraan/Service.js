@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -114,7 +115,7 @@ class ServiceKendaraan extends Component {
       {
         Header: 'Kendaraan',
         accessor: 'vehicle',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => (
           <div style={{ textAlign: 'center' }}>

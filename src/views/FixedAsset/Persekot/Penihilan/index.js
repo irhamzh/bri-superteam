@@ -76,7 +76,7 @@ class PenihilanPersekot extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'name',
-        filterable: true,
+        filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

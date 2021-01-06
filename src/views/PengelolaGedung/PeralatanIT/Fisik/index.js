@@ -140,12 +140,12 @@ class PeralatanFisik extends Component {
       {
         Header: 'Hekonismenya',
         accessor: 'hekonisme',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
       },
       {
         Header: 'Aksi',

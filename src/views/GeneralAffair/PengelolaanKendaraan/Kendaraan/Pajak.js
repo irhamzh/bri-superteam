@@ -113,7 +113,7 @@ class PajakKendaran extends Component {
       {
         Header: 'Kendaraan',
         accessor: 'vehicle',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => (
           <div style={{ textAlign: 'center' }}>

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPRBarangJasaPengadaan,
   updatePRBarangJasaPengadaan,
@@ -77,6 +78,13 @@ class PemilihanLangsung extends Component {
     const { id } = values
     const { createPRBarangJasaPengadaan, updatePRBarangJasaPengadaan } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider, namaPendidikan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
+      if (namaPendidikan && Object.keys(namaPendidikan).length > 0) {
+        values.namaPendidikan = namaPendidikan.id || namaPendidikan
+      }
       updatePRBarangJasaPengadaan(values, id, this.doRefresh)
     } else {
       createPRBarangJasaPengadaan(values, this.doRefresh)
@@ -108,7 +116,7 @@ class PemilihanLangsung extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { dataProvider, optProvider, optPendidikan } = this.state
@@ -126,13 +134,13 @@ class PemilihanLangsung extends Component {
       {
         Header: 'Jenis Pengadaan',
         accessor: 'jenisPengadaan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -445,7 +453,7 @@ class PemilihanLangsung extends Component {
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
@@ -594,6 +602,11 @@ class PemilihanLangsung extends Component {
                             isRequired
                             name="provider"
                             placeholder="Pilih atau Cari Nama Provider"
+                            defaultValue={
+                              values.provider
+                                ? { value: values.provider.id, label: values.provider.name }
+                                : null
+                            }
                             component={CfSelect}
                           />
                         </FormGroup>
@@ -605,7 +618,12 @@ class PemilihanLangsung extends Component {
                             name="address"
                             isRequired
                             disabled
-                            value={dataProvider.find((obj) => obj.id === values.provider)?.address}
+                            value={
+                              dataProvider.find(
+                                (obj) =>
+                                  obj.id === values.provider || obj.id === values.provider?.id
+                              )?.address
+                            }
                             placeholder="Masukkan Alamat Provider"
                             component={CfInput}
                           />
@@ -618,7 +636,12 @@ class PemilihanLangsung extends Component {
                             name="contact"
                             isRequired
                             disabled
-                            value={dataProvider.find((obj) => obj.id === values.provider)?.contact}
+                            value={
+                              dataProvider.find(
+                                (obj) =>
+                                  obj.id === values.provider || obj.id === values.provider?.id
+                              )?.contact
+                            }
                             placeholder="Masukkan No. Kontak Provider"
                             component={CfInput}
                           />
@@ -631,6 +654,14 @@ class PemilihanLangsung extends Component {
                             isRequired
                             name="namaPendidikan"
                             placeholder="Pilih atau Cari Nama Pendidikan"
+                            defaultValue={
+                              values.namaPendidikan
+                                ? {
+                                    value: values.namaPendidikan.id,
+                                    label: values.namaPendidikan.name,
+                                  }
+                                : null
+                            }
                             component={CfSelect}
                           />
                         </FormGroup>
@@ -679,8 +710,6 @@ class PemilihanLangsung extends Component {
                           />
                         </FormGroup>
                       </div>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

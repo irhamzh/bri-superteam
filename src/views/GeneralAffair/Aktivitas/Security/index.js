@@ -112,7 +112,7 @@ class SecurityLayout extends Component {
       {
         Header: 'Checkpoint',
         accessor: 'checkpoint.name',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

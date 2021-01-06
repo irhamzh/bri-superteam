@@ -157,7 +157,7 @@ class MonitorCCTV extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {

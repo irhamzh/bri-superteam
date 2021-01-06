@@ -2,26 +2,26 @@ import * as yup from 'yup'
 import validationWording from './validationWording'
 
 const createPeralatanSchema = yup.object().shape({
-  jenisPeralatan: yup.string().required(validationWording.required('jenis peralatan')),
-  merk: yup.string().required(validationWording.required('merk')),
-  sn: yup.string().required(validationWording.required('sn')),
-  ruangan: yup.string().required(validationWording.required('ruangan')),
-  kondisi: yup.string().required(validationWording.required('kondisi')),
+  jenisPeralatan: yup.string().required(validationWording.required('Jenis Peralatan')),
+  merk: yup.string().required(validationWording.required('Merk')),
+  sn: yup.string().required(validationWording.required('SN')),
+  ruangan: yup.string().required(validationWording.required('Ruangan')),
+  kondisi: yup.string().required(validationWording.required('Kondisi')),
   // keterangan: yup.string().required(validationWording.required('keterangan')),
-  model: yup.string().required(validationWording.required('model')),
+  model: yup.string().required(validationWording.required('Model')),
 })
 
 const createInfokusSchema = yup.object().shape({
-  jenisPeralatan: yup.string().required(validationWording.required('jenis peralatan')),
-  merk: yup.string().required(validationWording.required('merk')),
-  sn: yup.string().required(validationWording.required('sn')),
-  ruangan: yup.string().required(validationWording.required('ruangan')),
-  kondisi: yup.string().required(validationWording.required('kondisi')),
-  keterangan: yup.string().required(validationWording.required('keterangan')),
-  model: yup.string().required(validationWording.required('model')),
-  tanggal: yup.date().required(validationWording).required('tanggal'),
-  lampTimer: yup.string().required(validationWording.required('lampTimer')),
-  gantiLampu: yup.string().required(validationWording.required('gantiLampu')),
+  jenisPeralatan: yup.string().required(validationWording.required('Jenis Peralatan')),
+  merk: yup.string().required(validationWording.required('Merk')),
+  sn: yup.string().required(validationWording.required('SN')),
+  ruangan: yup.string().required(validationWording.required('Ruangan')),
+  kondisi: yup.string().required(validationWording.required('Kondisi')),
+  keterangan: yup.string().required(validationWording.required('Keterangan')),
+  model: yup.string().required(validationWording.required('Model')),
+  tanggal: yup.date().required(validationWording).required('Tanggal'),
+  lampTimer: yup.string().required(validationWording.required('Lamp Timer')),
+  gantiLampu: yup.string().required(validationWording.required('Ganti Lampu')),
 })
 
 export { createPeralatanSchema, createInfokusSchema }

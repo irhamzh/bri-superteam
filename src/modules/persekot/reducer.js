@@ -8,6 +8,12 @@ import {
   DELETE_PERSEKOT_LOADING,
   DELETE_PERSEKOT_SUCCESS,
   DELETE_PERSEKOT_ERROR,
+  APPROVE_PERSEKOT_LOADING,
+  APPROVE_PERSEKOT_SUCCESS,
+  APPROVE_PERSEKOT_ERROR,
+  PENIHILAN_PERSEKOT_LOADING,
+  PENIHILAN_PERSEKOT_SUCCESS,
+  PENIHILAN_PERSEKOT_ERROR,
 } from './types'
 
 const persekotReducer = (state = {}, action) => {
@@ -60,6 +66,40 @@ const persekotReducer = (state = {}, action) => {
         isLoading: action.isLoading,
       }
     case DELETE_PERSEKOT_ERROR:
+      return {
+        ...state,
+        message: action.payload,
+        isLoading: action.isLoading,
+      }
+    // approved
+    case APPROVE_PERSEKOT_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    case APPROVE_PERSEKOT_SUCCESS:
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    case APPROVE_PERSEKOT_ERROR:
+      return {
+        ...state,
+        message: action.payload,
+        isLoading: action.isLoading,
+      }
+    // penihilan
+    case PENIHILAN_PERSEKOT_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    case PENIHILAN_PERSEKOT_SUCCESS:
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    case PENIHILAN_PERSEKOT_ERROR:
       return {
         ...state,
         message: action.payload,

@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAKelengkapanKendaraan,
   updateGAKelengkapanKendaraan,
@@ -72,6 +74,10 @@ class KelengkapanKendaraan extends Component {
     const { id } = values
     const { createGAKelengkapanKendaraan, updateGAKelengkapanKendaraan } = this.props
     if (!invalidValues.includes(id)) {
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
       updateGAKelengkapanKendaraan(values, id, this.doRefresh)
     } else {
       createGAKelengkapanKendaraan(values, this.doRefresh)
@@ -103,7 +109,7 @@ class KelengkapanKendaraan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optKendaraan } = this.state
@@ -373,7 +379,7 @@ class KelengkapanKendaraan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Kelengkapan Kendaraan</ModalHeader>
                     <ModalBody>
@@ -397,6 +403,14 @@ class KelengkapanKendaraan extends Component {
                           isRequired
                           name="vehicle"
                           placeholder="Pilih atau Cari Kendaraan"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -436,8 +450,6 @@ class KelengkapanKendaraan extends Component {
                           />
                         </FormGroup>
                       </div>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
@@ -24,7 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGABahanBakar,
   updateGABahanBakar,
@@ -68,6 +69,10 @@ class BahanBakar extends Component {
     const { id } = values
     const { createGABahanBakar, updateGABahanBakar } = this.props
     if (!invalidValues.includes(id)) {
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
       updateGABahanBakar(values, id, this.doRefresh)
     } else {
       createGABahanBakar(values, this.doRefresh)
@@ -99,7 +104,7 @@ class BahanBakar extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optKendaraan, dataKendaraan } = this.state
@@ -297,6 +302,14 @@ class BahanBakar extends Component {
                           isRequired
                           name="vehicle"
                           placeholder="Pilih atau Cari Kendaraan"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -308,7 +321,11 @@ class BahanBakar extends Component {
                           name="kmAwal"
                           isRequired
                           disabled
-                          value={dataKendaraan.find((obj) => obj.id === values.vehicle)?.kmAkhir}
+                          value={
+                            dataKendaraan.find(
+                              (obj) => obj.id === values.vehicle || obj.id === values.vehicle?.id
+                            )?.kmAkhir
+                          }
                           placeholder="Masukkan Km Awal"
                           component={CfInput}
                         />
@@ -334,8 +351,6 @@ class BahanBakar extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

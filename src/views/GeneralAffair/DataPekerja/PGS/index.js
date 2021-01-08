@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAPgsPjs,
   updateGAPgsPjs,
@@ -65,6 +66,10 @@ class DataPGS extends Component {
     const { id } = values
     const { createGAPgsPjs, updateGAPgsPjs } = this.props
     if (!invalidValues.includes(id)) {
+      const { uker } = values
+      if (uker && Object.keys(uker).length > 0) {
+        values.uker = uker.id || uker
+      }
       updateGAPgsPjs(values, id, this.doRefresh)
     } else {
       createGAPgsPjs(values, this.doRefresh)
@@ -107,7 +112,7 @@ class DataPGS extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optUker } = this.state
@@ -166,6 +171,7 @@ class DataPGS extends Component {
       },
       {
         Header: 'Aksi',
+        width: 170,
         filterable: false,
         Cell: (props) => (
           <>
@@ -296,7 +302,7 @@ class DataPGS extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
@@ -336,6 +342,14 @@ class DataPGS extends Component {
                           isRequired
                           name="uker"
                           placeholder="Pilih atau Cari Uker"
+                          defaultValue={
+                            values.uker
+                              ? {
+                                  value: values.uker.id,
+                                  label: values.uker.name,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -390,8 +404,6 @@ class DataPGS extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createAktivitasFirstAid,
   updateAktivitasFirstAid,
@@ -69,6 +70,13 @@ class P3K extends Component {
     const { id } = values
     const { createAktivitasFirstAid, updateAktivitasFirstAid } = this.props
     if (!invalidValues.includes(id)) {
+      const { area, medicineType } = values
+      if (area && Object.keys(area).length > 0) {
+        values.area = area.id || area
+      }
+      if (medicineType && Object.keys(medicineType).length > 0) {
+        values.medicineType = medicineType.id || medicineType
+      }
       updateAktivitasFirstAid(values, id, this.doRefresh)
     } else {
       createAktivitasFirstAid(values, this.doRefresh)
@@ -100,7 +108,7 @@ class P3K extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optJenisObat, optArea } = this.state
@@ -277,7 +285,7 @@ class P3K extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data P3K</ModalHeader>
                     <ModalBody>
@@ -301,6 +309,14 @@ class P3K extends Component {
                           isRequired
                           name="area"
                           placeholder="Pilih atau Cari Area"
+                          defaultValue={
+                            values.area
+                              ? {
+                                  value: values.area.id,
+                                  label: values.area.name,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -312,6 +328,14 @@ class P3K extends Component {
                           isRequired
                           name="medicineType"
                           placeholder="Pilih atau Cari"
+                          defaultValue={
+                            values.medicineType
+                              ? {
+                                  value: values.medicineType.id,
+                                  label: values.medicineType.name,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -350,8 +374,6 @@ class P3K extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

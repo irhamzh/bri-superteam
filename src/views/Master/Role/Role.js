@@ -23,6 +23,7 @@ const initialValues = {
     dashboard: false,
     approvalKabag: false,
     approvalWakabag: false,
+    approvalSupervisor: false,
   },
   procurement: {
     create: false,
@@ -32,6 +33,7 @@ const initialValues = {
     dashboard: false,
     approvalKabag: false,
     approvalWakabag: false,
+    approvalSupervisor: false,
   },
   generalAffair: {
     create: false,
@@ -41,6 +43,7 @@ const initialValues = {
     dashboard: false,
     approvalKabag: false,
     approvalWakabag: false,
+    approvalSupervisor: false,
   },
   financialAdmin: {
     create: false,
@@ -50,6 +53,7 @@ const initialValues = {
     dashboard: false,
     approvalKabag: false,
     approvalWakabag: false,
+    approvalSupervisor: false,
   },
   masterData: {
     create: false,
@@ -152,6 +156,13 @@ function Role(props) {
           headerClassName: 'wordwrap',
           Cell: (row) => <IconSuccessOrFailed value={row.value} />,
         },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'fixedAsset.approvalSupervisor',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
       ],
     },
     {
@@ -202,6 +213,13 @@ function Role(props) {
         {
           Header: 'Approval Wakabag',
           accessor: 'procurement.approvalWakabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'procurement.approvalSupervisor',
           filterable: false,
           headerClassName: 'wordwrap',
           Cell: (row) => <IconSuccessOrFailed value={row.value} />,
@@ -260,6 +278,13 @@ function Role(props) {
           headerClassName: 'wordwrap',
           Cell: (row) => <IconSuccessOrFailed value={row.value} />,
         },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'generalAffair.approvalSupervisor',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
       ],
     },
     {
@@ -310,6 +335,13 @@ function Role(props) {
         {
           Header: 'Approval Wakabag',
           accessor: 'financialAdmin.approvalWakabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'financialAdmin.approvalSupervisor',
           filterable: false,
           headerClassName: 'wordwrap',
           Cell: (row) => <IconSuccessOrFailed value={row.value} />,
@@ -414,7 +446,7 @@ function Role(props) {
             </CardHeader>
             <CardBody>
               <ReactTable
-                filterable
+                filterable={false}
                 columns={columns}
                 defaultPageSize={10}
                 className="-highlight"

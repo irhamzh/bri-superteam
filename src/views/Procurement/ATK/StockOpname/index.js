@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +25,7 @@ import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRStokOpnameAtk,
   updatePRStokOpnameAtk,
@@ -79,6 +81,13 @@ class StockOpname extends Component {
     const { id } = values
     const { createPRStokOpnameAtk, updatePRStokOpnameAtk } = this.props
     if (!invalidValues.includes(id)) {
+      const { workingOrder, education } = values
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (education && Object.keys(education).length > 0) {
+        values.education = education.id || education
+      }
       updatePRStokOpnameAtk(values, id, this.doRefresh)
     } else {
       createPRStokOpnameAtk(values, this.doRefresh)
@@ -110,7 +119,7 @@ class StockOpname extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optPendidikan, optWorkingOrder } = this.state
@@ -341,6 +350,14 @@ class StockOpname extends Component {
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
+                          defaultValue={
+                            values.workingOrder
+                              ? {
+                                  value: values.workingOrder.id,
+                                  label: values.workingOrder.kodeWorkingOrder,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -352,6 +369,14 @@ class StockOpname extends Component {
                           isRequired
                           name="education"
                           placeholder="Pilih atau Cari Nama Pendidikan"
+                          defaultValue={
+                            values.education
+                              ? {
+                                  value: values.education.id,
+                                  label: values.education.name,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -466,7 +491,8 @@ class StockOpname extends Component {
                                     jumlahMasuk: '',
                                     jumlahKeluar: '',
                                     stockAkhir: '',
-                                  })}
+                                  })
+                                }
                               >
                                 <i className="fa fa-plus" />
                               </Button>
@@ -474,8 +500,6 @@ class StockOpname extends Component {
                           </>
                         )}
                       />
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

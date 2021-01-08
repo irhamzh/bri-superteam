@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
@@ -25,7 +26,7 @@ import ReactExport from 'react-export-excel'
 import ReactStars from 'react-rating-stars-component'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPenugasanDriver,
   updatePenugasanDriver,
@@ -67,6 +68,10 @@ class PenugasanDriver extends Component {
     const { id } = values
     const { createPenugasanDriver, updatePenugasanDriver } = this.props
     if (!invalidValues.includes(id)) {
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
       updatePenugasanDriver(values, id, this.doRefresh)
     } else {
       createPenugasanDriver(values, this.doRefresh)
@@ -98,7 +103,7 @@ class PenugasanDriver extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optKendaraan } = this.state
@@ -322,6 +327,14 @@ class PenugasanDriver extends Component {
                           isRequired
                           name="vehicle"
                           placeholder="Pilih atau Cari"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -375,8 +388,6 @@ class PenugasanDriver extends Component {
                           </FormGroup>
                         </>
                       )}
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -132,7 +132,7 @@ function User(props) {
             </CardHeader>
             <CardBody>
               <ReactTable
-                filterable
+                filterable={false}
                 columns={columns}
                 defaultPageSize={10}
                 className="-highlight"

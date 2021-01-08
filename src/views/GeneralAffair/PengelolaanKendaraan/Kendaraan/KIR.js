@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -22,7 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAKirKendaraan,
   updateGAKirKendaraan,
@@ -64,6 +67,10 @@ class KIR extends Component {
     const { id } = values
     const { createGAKirKendaraan, updateGAKirKendaraan } = this.props
     if (!invalidValues.includes(id)) {
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
       updateGAKirKendaraan(values, id, this.doRefresh)
     } else {
       createGAKirKendaraan(values, this.doRefresh)
@@ -95,7 +102,7 @@ class KIR extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optKendaraan } = this.state
@@ -255,7 +262,7 @@ class KIR extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Pajak Kendaraan</ModalHeader>
                     <ModalBody>
@@ -279,6 +286,14 @@ class KIR extends Component {
                           isRequired
                           name="vehicle"
                           placeholder="Pilih atau Cari Kendaraan"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -293,8 +308,6 @@ class KIR extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

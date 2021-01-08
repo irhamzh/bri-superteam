@@ -23,11 +23,18 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  AlertMessage,
+  ErrorMessage,
+  formatDate,
+  invalidValues,
+  userData,
+} from '../../../../helpers'
 import {
   createPersekot,
   updatePersekot,
   deletePersekot,
+  approvePersekot,
 } from '../../../../modules/persekot/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -45,6 +52,7 @@ class InputPersekot extends Component {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       division: 'Fixed Asset',
+      status: 'Unapproved',
     })
   }
 
@@ -88,6 +96,35 @@ class InputPersekot extends Component {
       })
   }
 
+  handleApprove = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { approvePersekot } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approvePersekot(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -116,7 +153,46 @@ class InputPersekot extends Component {
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+      {
+        Header: 'Status',
+        width: 250,
+        accessor: 'status',
+        align: 'center',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
     ]
+
+    const user = userData()
+    if (user && user.role?.name === 'Admin') {
+      columns.push({
+        Header: 'Aksi',
+        width: 200,
+        accessor: 'id',
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      })
+    }
 
     const pageName = 'Input Persekot'
     // const isIcon = { paddingRight: '7px' }
@@ -179,6 +255,7 @@ class InputPersekot extends Component {
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.date)} />
                           <ExcelColumn label="Nama Kegiatan" value="name" />
                           <ExcelColumn label="Nominal Biaya" value="costNominal" />
+                          <ExcelColumn label="Status" value="status" />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>
@@ -292,6 +369,7 @@ InputPersekot.propTypes = {
   createPersekot: PropTypes.func.isRequired,
   updatePersekot: PropTypes.func.isRequired,
   deletePersekot: PropTypes.func.isRequired,
+  approvePersekot: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -306,6 +384,7 @@ const mapDispatchToProps = (dispatch) => ({
   createPersekot: (formData, refresh) => dispatch(createPersekot(formData, refresh)),
   updatePersekot: (formData, id, refresh) => dispatch(updatePersekot(formData, id, refresh)),
   deletePersekot: (id, refresh) => dispatch(deletePersekot(id, refresh)),
+  approvePersekot: (formData, id, refresh) => dispatch(approvePersekot(formData, id, refresh)),
 })
 
 export default connect(

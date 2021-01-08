@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../config/services'
-import { CfInput, CfInputDate, CfInputFile } from '../../../components'
+import { CfInput, CfInputDate, CfInputMultiFile } from '../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../helpers'
 import {
   createFITambahanKas,
@@ -102,7 +102,17 @@ class TambahanKas extends Component {
         Header: 'Lampiran',
         accessor: 'lampiran',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value ? 'Download' : ''}</div>,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+        },
       },
       {
         Header: 'Keterangan',
@@ -112,6 +122,7 @@ class TambahanKas extends Component {
       },
       {
         Header: 'Aksi',
+        width: 170,
         filterable: false,
         Cell: (props) => (
           <>
@@ -218,7 +229,7 @@ class TambahanKas extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data Kas</ModalHeader>
                     <ModalBody>
@@ -264,10 +275,9 @@ class TambahanKas extends Component {
                           isRequired
                           accept="image/*"
                           multiple
-                          component={CfInputFile}
+                          component={CfInputMultiFile}
                         />
                       </FormGroup>
-                      {console.log(values?.lampiran)}
 
                       <FormGroup>
                         <Field

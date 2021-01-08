@@ -24,7 +24,7 @@ import {
   CfInput,
   CfInputCheckbox,
   CfInputDate,
-  CfInputFile,
+  CfInputMultiFile,
   CfSelect,
 } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
@@ -217,7 +217,17 @@ class Catering extends Component {
         Header: 'Lampiran',
         accessor: 'lampiran',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value ? 'Download' : ''}</div>,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+        },
       },
       {
         Header: 'Keterangan',
@@ -434,7 +444,7 @@ class Catering extends Component {
                           isRequired
                           accept="image/*"
                           multiple
-                          component={CfInputFile}
+                          component={CfInputMultiFile}
                         />
                       </FormGroup>
 

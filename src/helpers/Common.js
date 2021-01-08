@@ -9,13 +9,13 @@ const userData = () => {
   let User = ''
 
   if (token) {
-    let getToken = ''
-    const splitToken = token.split(' ')
-    if (splitToken.length === 2) {
-      ;[, getToken] = splitToken
-    }
+    // let getToken = ''
+    // const splitToken = token.split(' ')
+    // if (splitToken.length === 2) {
+    //   ;[, getToken] = splitToken
+    // }
 
-    User = jwt.decode(getToken)
+    User = jwt.decode(token)
   }
   return User
 }

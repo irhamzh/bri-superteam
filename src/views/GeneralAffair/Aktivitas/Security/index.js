@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInputDate, CfInputFile, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createAktivitasSecurity,
   updateAktivitasSecurity,
@@ -63,6 +64,10 @@ class SecurityLayout extends Component {
     const { id } = values
     const { createAktivitasSecurity, updateAktivitasSecurity } = this.props
     if (!invalidValues.includes(id)) {
+      const { checkpoint } = values
+      if (checkpoint && Object.keys(checkpoint).length > 0) {
+        values.checkpoint = checkpoint.id || checkpoint
+      }
       updateAktivitasSecurity(values, id, this.doRefresh)
     } else {
       createAktivitasSecurity(values, this.doRefresh)
@@ -94,7 +99,7 @@ class SecurityLayout extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optCheckpoint } = this.state
@@ -249,7 +254,7 @@ class SecurityLayout extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Security</ModalHeader>
                     <ModalBody>
@@ -273,6 +278,14 @@ class SecurityLayout extends Component {
                           isRequired
                           name="checkpoint"
                           placeholder="Pilih atau Cari Checkpoint"
+                          defaultValue={
+                            values.checkpoint
+                              ? {
+                                  value: values.checkpoint.id,
+                                  label: values.checkpoint.name,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -286,8 +299,6 @@ class SecurityLayout extends Component {
                           component={CfInputFile}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

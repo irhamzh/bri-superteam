@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect, CfInputRadio } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAAps,
   updateGAAps,
@@ -65,6 +66,10 @@ class APS extends Component {
     const { id } = values
     const { createGAAps, updateGAAps } = this.props
     if (!invalidValues.includes(id)) {
+      const { uker } = values
+      if (uker && Object.keys(uker).length > 0) {
+        values.uker = uker.id || uker
+      }
       updateGAAps(values, id, this.doRefresh)
     } else {
       createGAAps(values, this.doRefresh)
@@ -107,7 +112,7 @@ class APS extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optUker } = this.state
@@ -275,7 +280,7 @@ class APS extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
@@ -302,6 +307,9 @@ class APS extends Component {
                           isRequired
                           name="uker"
                           placeholder="Pilih atau Cari Uker"
+                          defaultValue={
+                            values.uker ? { value: values.uker.id, label: values.uker.name } : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -352,8 +360,6 @@ class APS extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

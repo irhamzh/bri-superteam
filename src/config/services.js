@@ -185,6 +185,14 @@ class Service {
     return axios.delete(`persekots/${id}`)
   }
 
+  static approvePersekot(values, id) {
+    return axios.put(`persekots/${id}/approve`, values)
+  }
+
+  static penihilanPersekot(values) {
+    return axios.post('persekots/penihilan', values)
+  }
+
   // Asset
   static getAsset(params) {
     return axios.get(`assets${params}`)
@@ -1423,23 +1431,23 @@ class Service {
   // Area
   static getArea(params) {
     if (!params) params = ''
-    return axios.get(`area${params}`)
+    return axios.get(`areas${params}`)
   }
 
   static getAreaById(id) {
-    return axios.get(`area/${id}`)
+    return axios.get(`areas/${id}`)
   }
 
   static createArea(values) {
-    return axios.post('area', values)
+    return axios.post('areas', values)
   }
 
   static updateArea(values, id) {
-    return axios.put(`area/${id}`, values)
+    return axios.put(`areas/${id}`, values)
   }
 
   static deleteArea(id) {
-    return axios.delete(`area/${id}`)
+    return axios.delete(`areas/${id}`)
   }
 
   // Jenis Obaat
@@ -2272,6 +2280,10 @@ class Service {
     for (let i = 0; i < keys.length; i += 1) {
       const name = keys[i]
       formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
     }
 
     return axios.post('fa-cashes', formData)
@@ -2283,6 +2295,10 @@ class Service {
     for (let i = 0; i < keys.length; i += 1) {
       const name = keys[i]
       formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
     }
 
     return axios.put(`fa-cashes/${id}`, formData)
@@ -2309,6 +2325,10 @@ class Service {
     for (let i = 0; i < keys.length; i += 1) {
       const name = keys[i]
       formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
     }
 
     return axios.post('fa-payments', formData)
@@ -2320,6 +2340,10 @@ class Service {
     for (let i = 0; i < keys.length; i += 1) {
       const name = keys[i]
       formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
     }
 
     return axios.put(`fa-payments/${id}`, formData)

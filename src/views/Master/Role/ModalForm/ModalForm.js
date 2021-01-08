@@ -114,6 +114,14 @@ function ModalForm(props) {
                           component={CfInputCheckbox}
                         />
                       </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Approval Supervisor"
+                          name="fixedAsset.approvalSupervisor"
+                          component={CfInputCheckbox}
+                        />
+                      </FormGroup>
                     </Col>
                   </Row>
                 </div>
@@ -174,6 +182,14 @@ function ModalForm(props) {
                           component={CfInputCheckbox}
                         />
                       </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Approval Supervisor"
+                          name="procurement.approvalSupervisor"
+                          component={CfInputCheckbox}
+                        />
+                      </FormGroup>
                     </Col>
                   </Row>
                 </div>
@@ -231,6 +247,14 @@ function ModalForm(props) {
                         <Field
                           label="Approval Wakabag"
                           name="generalAffair.approvalWakabag"
+                          component={CfInputCheckbox}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Approval Supervisor"
+                          name="generalAffair.approvalSupervisor"
                           component={CfInputCheckbox}
                         />
                       </FormGroup>
@@ -295,6 +319,14 @@ function ModalForm(props) {
                         <Field
                           label="Approval Wakabag"
                           name="financialAdmin.approvalWakabag"
+                          component={CfInputCheckbox}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Approval Supervisor"
+                          name="financialAdmin.approvalSupervisor"
                           component={CfInputCheckbox}
                         />
                       </FormGroup>

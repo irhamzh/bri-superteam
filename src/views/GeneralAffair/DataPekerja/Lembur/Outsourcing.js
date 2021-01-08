@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -23,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGALembur,
   updateGALembur,
@@ -72,6 +73,10 @@ class Outsourcing extends Component {
     const { id } = values
     const { createGALembur, updateGALembur } = this.props
     if (!invalidValues.includes(id)) {
+      const { uker } = values
+      if (uker && Object.keys(uker).length > 0) {
+        values.uker = uker.id || uker
+      }
       updateGALembur(values, id, this.doRefresh)
     } else {
       createGALembur(values, this.doRefresh)
@@ -114,7 +119,7 @@ class Outsourcing extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optUker } = this.state
@@ -218,6 +223,7 @@ class Outsourcing extends Component {
       },
       {
         Header: 'Aksi',
+        width: 170,
         filterable: false,
         Cell: (props) => (
           <>
@@ -354,7 +360,7 @@ class Outsourcing extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
@@ -392,6 +398,9 @@ class Outsourcing extends Component {
                           isRequired
                           name="uker"
                           placeholder="Pilih atau Cari Uker"
+                          defaultValue={
+                            values.uker ? { value: values.uker.id, label: values.uker.name } : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -425,8 +434,6 @@ class Outsourcing extends Component {
                           <Field label="Absensi" name="absensi" component={CfInputCheckbox} />
                         </FormGroup>
                       </div>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

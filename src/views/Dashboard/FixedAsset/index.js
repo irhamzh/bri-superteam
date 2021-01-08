@@ -175,6 +175,7 @@ const FixedAsset = (props) => {
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'baseline',
+                flexWrap: 'wrap',
               }}
             >
               <Link to="/dashboard/fixed-asset/belum-berjalan" style={{ textDecoration: 'none' }}>

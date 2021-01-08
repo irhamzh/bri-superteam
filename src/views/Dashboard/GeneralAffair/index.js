@@ -173,6 +173,7 @@ const GeneralAffair = () => {
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'baseline',
+                flexWrap: 'wrap',
               }}
             >
               <Link

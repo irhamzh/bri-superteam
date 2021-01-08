@@ -173,6 +173,7 @@ const Procurement = () => {
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'baseline',
+                flexWrap: 'wrap',
               }}
             >
               <Link to="/dashboard/procurement/belum-berjalan" style={{ textDecoration: 'none' }}>

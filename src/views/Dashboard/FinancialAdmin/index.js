@@ -7,46 +7,6 @@ import Swal from 'sweetalert2'
 import Service from '../../../config/services'
 import { AlertMessage, invalidValues } from '../../../helpers'
 
-// const data = {
-//   labels: ['Red', 'Green', 'Yellow', 'Blue'],
-//   datasets: [
-//     {
-//       data: [300, 50, 10, 120],
-//       backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
-//       hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
-//     },
-//   ],
-// }
-
-// const dataBar = {
-//   labels: [
-//     'Belum Diapproved Kabag',
-//     'Approved (Proses Persetujuan)',
-//     'Approved (Kegiatan Selesai)',
-//   ],
-//   datasets: [
-//     {
-//       barThickness: 90,
-//       maxBarThickness: 110,
-//       label: 'Data Fixed Asset',
-//       backgroundColor: [
-//         'rgba(255,99,132, 0.2)',
-//         'rgba(0, 250, 154,0.2)',
-//         'rgba(54, 162, 235, 0.2)',
-//       ],
-//       borderColor: ['rgba(255,99,132, 1)', 'rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
-//       borderWidth: 1,
-//       hoverBackgroundColor: [
-//         'rgba(255,99,132, 0.4)',
-//         'rgba(0, 250, 154,0.4)',
-//         'rgba(54, 162, 235, 0.4)',
-//       ],
-//       hoverBorderColor: ['rgba(255,99,132, 1)', 'rgba(0, 250, 154, 1)', 'rgba(54, 162, 235, 1)'],
-//       data: [20, 40, 30],
-//     },
-//   ],
-// }
-
 const FinancialAdmin = () => {
   const [dataDashboard, setDataDashboard] = useState({})
   const [tahun, setTahun] = useState(null)
@@ -213,6 +173,7 @@ const FinancialAdmin = () => {
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'baseline',
+                flexWrap: 'wrap',
               }}
             >
               <Link

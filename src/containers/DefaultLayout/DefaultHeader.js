@@ -46,14 +46,14 @@ function DefaultHeader(props) {
       */}
 
       <Nav className="ml-auto" navbar>
-        <NavItem className="d-md-down-none">
+        {/* <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">
             <i className="icon-bell" />
             <Badge pill color="danger">
               5
             </Badge>
           </NavLink>
-        </NavItem>
+        </NavItem> */}
 
         <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">

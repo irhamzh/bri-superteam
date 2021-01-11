@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react'
 import {
   Button,
@@ -37,6 +38,10 @@ import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/wi
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class JasaPendidikan extends Component {
+  state = {
+    optProvider: [],
+  }
+
   initialValues = {
     seksi: 'Procurement',
     typePayment: 'Jasa Pendidikan',
@@ -52,11 +57,19 @@ class JasaPendidikan extends Component {
     daftarHadir: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       seksi: 'Procurement',
       typePayment: 'Jasa Pendidikan',
+    })
+
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optProvider,
     })
   }
 
@@ -70,6 +83,10 @@ class JasaPendidikan extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
       updateFIPayment(values, id, this.doRefresh)
     } else {
       createFIPayment(values, this.doRefresh)
@@ -103,6 +120,7 @@ class JasaPendidikan extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optProvider } = this.state
 
     const columns = [
       {
@@ -122,6 +140,14 @@ class JasaPendidikan extends Component {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Provider',
+        accessor: 'provider.name',
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -422,7 +448,7 @@ class JasaPendidikan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -459,6 +485,22 @@ class JasaPendidikan extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pendidikan"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          options={optProvider}
+                          isRequired
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 

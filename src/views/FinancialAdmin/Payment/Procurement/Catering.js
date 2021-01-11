@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react'
 import {
   Button,
@@ -37,6 +38,10 @@ import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/wi
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class Catering extends Component {
+  state = {
+    optCatering: [],
+  }
+
   initialValues = {
     seksi: 'Procurement',
     typePayment: 'Catering',
@@ -47,12 +52,20 @@ class Catering extends Component {
     prd: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       // typePendidikan: 'Pendidikan',
       seksi: 'Procurement',
       typePayment: 'Catering',
+    })
+
+    const resDataCatering = await Service.getCatering()
+    const dataCatering = resDataCatering.data.data
+    const optCatering = dataCatering.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optCatering,
     })
   }
 
@@ -66,6 +79,10 @@ class Catering extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
+      const { catering } = values
+      if (catering && Object.keys(catering).length > 0) {
+        values.catering = catering.id || catering
+      }
       updateFIPayment(values, id, this.doRefresh)
     } else {
       createFIPayment(values, this.doRefresh)
@@ -99,6 +116,7 @@ class Catering extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optCatering } = this.state
 
     const columns = [
       {
@@ -118,7 +136,15 @@ class Catering extends Component {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Catering',
+        accessor: 'catering',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value?.name}</div>,
       },
       {
         Header: 'Periode',
@@ -344,7 +370,7 @@ class Catering extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -381,6 +407,25 @@ class Catering extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pendidikan"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Catering"
+                          options={optCatering}
+                          isRequired
+                          name="catering"
+                          placeholder="Pilih atau Cari Catering"
+                          defaultValue={
+                            values.catering
+                              ? {
+                                  value: values.catering.id,
+                                  label: values.catering.name,
+                                }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 

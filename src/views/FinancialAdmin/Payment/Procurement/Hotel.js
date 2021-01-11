@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react'
 import {
   Button,
@@ -37,6 +38,10 @@ import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/wi
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class Hotel extends Component {
+  state = {
+    optHotel: [],
+  }
+
   initialValues = {
     seksi: 'Procurement',
     typePayment: 'Hotel',
@@ -52,11 +57,19 @@ class Hotel extends Component {
     dinner: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       seksi: 'Procurement',
       typePayment: 'Hotel',
+    })
+
+    const resDataHotel = await Service.getHotel()
+    const dataHotel = resDataHotel.data.data
+    const optHotel = dataHotel.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optHotel,
     })
   }
 
@@ -70,6 +83,10 @@ class Hotel extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
+      const { hotelName } = values
+      if (hotelName && Object.keys(hotelName).length > 0) {
+        values.hotelName = hotelName.id || hotelName
+      }
       updateFIPayment(values, id, this.doRefresh)
     } else {
       createFIPayment(values, this.doRefresh)
@@ -103,6 +120,7 @@ class Hotel extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optHotel } = this.state
 
     const columns = [
       {
@@ -122,6 +140,14 @@ class Hotel extends Component {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Hotel',
+        accessor: 'hotelName.name',
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -435,7 +461,7 @@ class Hotel extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -472,6 +498,22 @@ class Hotel extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pendidikan"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Hotel"
+                          options={optHotel}
+                          isRequired
+                          name="hotelName"
+                          placeholder="Pilih atau Cari Hotel"
+                          defaultValue={
+                            values.hotelName
+                              ? { value: values.hotelName.id, label: values.hotelName.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 

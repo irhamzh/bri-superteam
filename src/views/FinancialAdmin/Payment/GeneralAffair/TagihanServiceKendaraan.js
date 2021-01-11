@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -44,6 +45,10 @@ const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class TagihanServiceKendaraan extends Component {
+  state = {
+    optKendaraan: [],
+  }
+
   initialValues = {
     seksi: 'General Affair',
     typePayment: 'Tagihan Service Kendaraan',
@@ -53,12 +58,23 @@ class TagihanServiceKendaraan extends Component {
     notaPembukuan: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       // typePendidikan: 'Non Pendidikan',
       seksi: 'General Affair',
       typePayment: 'Tagihan Service Kendaraan',
+    })
+
+    const resDataKendaraan = await Service.getKendaraan()
+    const dataKendaraan = resDataKendaraan.data.data
+    const optKendaraan = dataKendaraan.map((row) => ({
+      label: `${row.platNomor}-${row.merk}-${row.color}`,
+      value: row.id,
+    }))
+
+    this.setState({
+      optKendaraan,
     })
   }
 
@@ -72,6 +88,10 @@ class TagihanServiceKendaraan extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
       updateFIPayment(values, id, this.doRefresh)
     } else {
       createFIPayment(values, this.doRefresh)
@@ -106,6 +126,7 @@ class TagihanServiceKendaraan extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { optKendaraan } = this.state
 
     const columns = [
       {
@@ -125,7 +146,19 @@ class TagihanServiceKendaraan extends Component {
         Header: 'Nama Pembayaran',
         accessor: 'namaPembayaran',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Kendaraan',
+        accessor: 'vehicle',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>
+            {row.value ? `${row.value.platNomor} - ${row.value.merk} - ${row.value.color}` : ''}
+          </div>
+        ),
       },
       {
         Header: 'Invoice Bermaterai',
@@ -342,7 +375,7 @@ class TagihanServiceKendaraan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -379,6 +412,25 @@ class TagihanServiceKendaraan extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pembayaran"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kendaraan"
+                          options={optKendaraan}
+                          isRequired
+                          name="vehicle"
+                          placeholder="Pilih atau Cari Kendaraan"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -44,6 +45,10 @@ const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class PembayaranLainnya extends Component {
+  state = {
+    optProvider: [],
+  }
+
   initialValues = {
     seksi: 'Financial Admin',
     typePayment: 'Pembayaran Lainnya',
@@ -51,11 +56,19 @@ class PembayaranLainnya extends Component {
     cekKesesuaianPembayaran: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       seksi: 'Financial Admin',
       typePayment: 'Pembayaran Lainnya',
+    })
+
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optProvider,
     })
   }
 
@@ -69,6 +82,10 @@ class PembayaranLainnya extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
       updateFIPayment(values, id, this.doRefresh)
     } else {
       createFIPayment(values, this.doRefresh)
@@ -103,6 +120,7 @@ class PembayaranLainnya extends Component {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { optProvider } = this.state
 
     const columns = [
       {
@@ -119,9 +137,16 @@ class PembayaranLainnya extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Pembayaran',
-        accessor: 'namaPembayaran',
+        Header: 'Nama Sertifikasi',
+        accessor: 'namaSertifikasi',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Provider',
+        accessor: 'provider.name',
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -316,7 +341,7 @@ class PembayaranLainnya extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -347,12 +372,28 @@ class PembayaranLainnya extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Pembayaran"
+                          label="Nama Sertifikasi"
                           type="text"
-                          name="namaPembayaran"
+                          name="namaSertifikasi"
                           isRequired
                           placeholder="Masukkan Nama Pembayaran"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          options={optProvider}
+                          isRequired
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 

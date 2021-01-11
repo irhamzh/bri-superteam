@@ -123,6 +123,14 @@ class TagihanRohani extends Component {
         Header: 'Nama Pembayaran',
         accessor: 'namaPembayaran',
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Jenis Biaya',
+        accessor: 'jenisBiaya',
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -357,6 +365,22 @@ class TagihanRohani extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pembayaran"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Jenis Biaya"
+                          options={[
+                            { value: 'Rohani', label: 'Rohani' },
+                            { value: 'Rapat', label: 'Rapat' },
+                            { value: 'Humas', label: 'Humas' },
+                            { value: 'Representasi', label: 'Representasi' },
+                          ]}
+                          isRequired
+                          name="jenisBiaya"
+                          placeholder="Pilih atau Cari"
+                          component={CfSelect}
                         />
                       </FormGroup>
 

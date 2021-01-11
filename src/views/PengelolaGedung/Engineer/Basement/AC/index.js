@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,45 +20,47 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createEngineerBasementAC,
+  updateEngineerBasementAC,
+  deleteEngineerBasementAC,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '09/12/2020',
-    gedung: 'Smart Building',
-    lantai: 'Lantai 1',
-    compressor: 'Compressor 1',
-    ampereR: 100,
-    ampereS: 30,
-    ampereT: 20,
-  },
-  {
-    tanggal: '09/12/2020',
-    gedung: 'Innovation Building',
-    lantai: 'Lantai 3',
-    compressor: 'Compressor 2',
-    ampereR: 100,
-    ampereS: 30,
-    ampereT: 20,
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class AC extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optGedung: [],
+    optLantai: [],
+    optCompressor: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataGedung = await Service.getGedung()
+    const dataGedung = resDataGedung.data.data
+    const optGedung = dataGedung.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataLantai = await Service.getLantai()
+    const dataLantai = resDataLantai.data.data
+    const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataCompressor = await Service.getCompressor()
+    const dataCompressor = resDataCompressor.data.data
+    const optCompressor = dataCompressor.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optGedung, optLantai, optCompressor })
   }
 
   doRefresh = () => {
@@ -67,12 +70,24 @@ class AC extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, building, floor, compressor } = values
+    const { createEngineerBasementAC, updateEngineerBasementAC } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (building && Object.keys(building).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.building = building.id || building
+      }
+      if (floor && Object.keys(floor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.floor = floor.id || floor
+      }
+      if (compressor && Object.keys(compressor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.compressor = compressor.id || compressor
+      }
+      updateEngineerBasementAC(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementAC(values, this.doRefresh)
     }
   }
 
@@ -80,13 +95,13 @@ class AC extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementAC } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementAC(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,8 +116,10 @@ class AC extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optCompressor, optGedung, optLantai } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -112,36 +129,36 @@ class AC extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Gedung',
-        accessor: 'gedung',
+        accessor: 'building.name',
         filterable: false,
       },
       {
         Header: 'Lantai',
-        accessor: 'lantai',
+        accessor: 'floor.name',
         filterable: false,
       },
       {
         Header: 'Compressor',
-        accessor: 'compressor',
+        accessor: 'compressor.name',
         filterable: false,
       },
       {
         Header: 'Ampere R',
-        accessor: 'ampereR',
+        accessor: 'ukuranAmpereR',
         filterable: false,
       },
       {
         Header: 'Ampere S',
-        accessor: 'ampereS',
+        accessor: 'ukuranAmpereS',
         filterable: false,
       },
       {
         Header: 'Ampere T',
-        accessor: 'ampereT',
+        accessor: 'ukuranAmpereT',
         filterable: false,
       },
       {
@@ -181,11 +198,15 @@ class AC extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -215,23 +236,42 @@ class AC extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Gedung" value={(col) => col.building?.name} />
+                          <ExcelColumn label="Lantai" value={(col) => col.floor?.name} />
+                          <ExcelColumn label="Compressor" value={(col) => col.compressor?.name} />
+                          <ExcelColumn label="Ampere R" value="ukuranAmpereR" />
+                          <ExcelColumn label="Ampere S" value="ukuranAmpereS" />
+                          <ExcelColumn label="Ampere T" value="ukuranAmpereT" />
+                          <ExcelColumn
+                            label="Penggunaan"
+                            value={(col) => Number(col.meterAkhir) - Number(col.meterAwal)}
+                          />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -245,7 +285,7 @@ class AC extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -253,7 +293,7 @@ class AC extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -273,10 +313,15 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Gedung"
-                          options={[{ value: 'Smart Building', label: 'Smart Building' }]}
+                          options={optGedung}
                           isRequired
-                          name="gedung"
+                          name="building"
                           placeholder="Pilih atau Cari Gedung"
+                          defaultValue={
+                            values.building
+                              ? { value: values.building.id, label: values.building.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -284,17 +329,15 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Lantai"
-                          options={[
-                            { value: '1', label: '1' },
-                            { value: '2', label: '2' },
-                            { value: '3', label: '3' },
-                            { value: '4', label: '4' },
-                            { value: '5', label: '5' },
-                            { value: '6', label: '6' },
-                          ]}
+                          options={optLantai}
                           isRequired
-                          name="lantai"
+                          name="floor"
                           placeholder="Pilih atau Cari Lantai"
+                          defaultValue={
+                            values.floor
+                              ? { value: values.floor.id, label: values.floor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -313,15 +356,15 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Compressor"
-                          options={[
-                            { value: 'Compressor 1', label: 'Compressor 1' },
-                            { value: 'Compressor 2', label: 'Compressor 2' },
-                            { value: 'Compressor 3', label: 'Compressor 3' },
-                            { value: 'Compressor 4', label: 'Compressor 4' },
-                          ]}
+                          options={optCompressor}
                           isRequired
-                          name="Compressor"
+                          name="compressor"
                           placeholder="Pilih atau Cari Compressor"
+                          defaultValue={
+                            values.compressor
+                              ? { value: values.compressor.id, label: values.compressor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -330,7 +373,7 @@ class AC extends Component {
                         <Field
                           label="Ukuran Ampere R"
                           type="text"
-                          name="ampereR"
+                          name="ukuranAmpereR"
                           isRequired
                           placeholder="Masukkan Ampere R"
                           component={CfInput}
@@ -341,7 +384,7 @@ class AC extends Component {
                         <Field
                           label="Ukuran Ampere S"
                           type="text"
-                          name="ampereS"
+                          name="ukuranAmpereS"
                           isRequired
                           placeholder="Masukkan Ampere S"
                           component={CfInput}
@@ -352,14 +395,12 @@ class AC extends Component {
                         <Field
                           label="Ukuran Ampere T"
                           type="text"
-                          name="ampereT"
+                          name="ukuranAmpereT"
                           isRequired
                           placeholder="Masukkan Ampere T"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -398,23 +439,25 @@ AC.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementAC: PropTypes.func.isRequired,
+  updateEngineerBasementAC: PropTypes.func.isRequired,
+  deleteEngineerBasementAC: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementAC: (formData, refresh) =>
+    dispatch(createEngineerBasementAC(formData, refresh)),
+  updateEngineerBasementAC: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementAC(formData, id, refresh)),
+  deleteEngineerBasementAC: (id, refresh) => dispatch(deleteEngineerBasementAC(id, refresh)),
 })
 
 export default connect(
@@ -422,7 +465,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementAC(p),
     Component: withToggle({
       Component: AC,
       toggles: {

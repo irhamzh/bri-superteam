@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,23 +20,27 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createPeralatanKerja,
+  updatePeralatanKerja,
+  deletePeralatanKerja,
+} from '../../../../../modules/peralatankerja/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
+class Chemical extends Component {
+  initialValues = {
+    typePeralatanKerja: 'chemical',
     floorKlin: true,
     glassCleaner: true,
     allPurposeCleaner: true,
@@ -44,36 +49,18 @@ const dataDummy = [
     furniturePolish: true,
     vim: true,
     bubukDetergen: true,
-    thinner: true,
+    thiner: true,
     bayFresh: true,
     fresPhone: true,
     marblePowder: true,
     karbolWangi: true,
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    floorKlin: true,
-    glassCleaner: false,
-    allPurposeCleaner: true,
-    metalPolish: true,
-    handSoap: false,
-    furniturePolish: true,
-    vim: true,
-    bubukDetergen: false,
-    thinner: true,
-    bayFresh: true,
-    fresPhone: false,
-    marblePowder: true,
-    karbolWangi: true,
-    keterangan: 'Lorem ipsum',
-  },
-]
+  }
 
-class Chemical extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePeralatanKerja: 'chemical',
+    })
   }
 
   doRefresh = () => {
@@ -84,11 +71,11 @@ class Chemical extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPeralatanKerja, updatePeralatanKerja } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePeralatanKerja(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPeralatanKerja(values, this.doRefresh)
     }
   }
 
@@ -96,13 +83,13 @@ class Chemical extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePeralatanKerja } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePeralatanKerja(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -117,8 +104,9 @@ class Chemical extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -128,6 +116,7 @@ class Chemical extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Floor Klin',
@@ -257,8 +246,8 @@ class Chemical extends Component {
           ),
       },
       {
-        Header: 'Thinner',
-        accessor: 'thinner',
+        Header: 'Thiner',
+        accessor: 'thiner',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -337,7 +326,7 @@ class Chemical extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -377,11 +366,15 @@ class Chemical extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -411,23 +404,79 @@ class Chemical extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Floor Klin"
+                            value={(col) => (col.floorKlin ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Glass Cleaner"
+                            value={(col) => (col.glassCleaner ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="All Purpose Cleaner"
+                            value={(col) => (col.allPurposeCleaner ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Metal Polish"
+                            value={(col) => (col.metalPolish ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Hand Soap"
+                            value={(col) => (col.handSoap ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Furniture Polish"
+                            value={(col) => (col.furniturePolish ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Vim" value={(col) => (col.vim ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Bubuk Detergen"
+                            value={(col) => (col.bubukDetergen ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Thiner" value={(col) => (col.thiner ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Bay Fresh"
+                            value={(col) => (col.bayFresh ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Fres Phone"
+                            value={(col) => (col.fresPhone ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Marble Powder"
+                            value={(col) => (col.marblePowder ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Karbol Wangi"
+                            value={(col) => (col.karbolWangi ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -441,7 +490,7 @@ class Chemical extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -553,14 +602,12 @@ class Chemical extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -599,23 +646,24 @@ Chemical.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPeralatanKerja: PropTypes.func.isRequired,
+  updatePeralatanKerja: PropTypes.func.isRequired,
+  deletePeralatanKerja: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanKerja.isLoading,
+  message: state.peralatanKerja.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPeralatanKerja: (formData, refresh) => dispatch(createPeralatanKerja(formData, refresh)),
+  updatePeralatanKerja: (formData, id, refresh) =>
+    dispatch(updatePeralatanKerja(formData, id, refresh)),
+  deletePeralatanKerja: (id, refresh) => dispatch(deletePeralatanKerja(id, refresh)),
 })
 
 export default connect(
@@ -623,7 +671,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPeralatanKerja(p),
     Component: withToggle({
       Component: Chemical,
       toggles: {

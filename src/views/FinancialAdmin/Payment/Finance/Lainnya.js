@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,55 +20,43 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  CfInputMultiFile,
+  CfSelect,
+} from '../../../../components'
+import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import {
+  createFIPayment,
+  updateFIPayment,
+  deleteFIPayment,
+} from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    kodePelatihan: 9987,
-    tanggalTerima: '08/12/2020',
-    tanggalRevisi: '10/12/2020',
-    tanggalKonfirmasi: '12/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
-  },
-  {
-    tanggal: '06/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    kodePelatihan: 3245,
-    tanggalTerima: '06/12/2020',
-    tanggalRevisi: '08/12/2020',
-    tanggalKonfirmasi: '10/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
-  },
-]
-
-class Pendidikan extends Component {
+class PembayaranLainnya extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    seksi: 'Financial Admin',
+    typePayment: 'Pembayaran Lainnya',
+    invoiceBermaterai: false,
+    cekKesesuaianPembayaran: false,
+  }
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      seksi: 'Financial Admin',
+      typePayment: 'Pembayaran Lainnya',
+    })
   }
 
   doRefresh = () => {
@@ -78,11 +67,11 @@ class Pendidikan extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateFIPayment(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createFIPayment(values, this.doRefresh)
     }
   }
 
@@ -90,13 +79,13 @@ class Pendidikan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteFIPayment } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -113,84 +102,92 @@ class Pendidikan extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    const { data } = tableProps
 
     const columns = [
       {
-        Header: 'Kode Working Order',
-        accessor: 'workingOrderCode',
+        Header: 'Tanggal',
+        accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
-        Header: 'Nama Kegiatan',
-        accessor: 'namaKegiatan',
-        filterable: true,
-        headerClassName: 'wordwrap',
+        Header: 'Seksi',
+        accessor: 'seksi',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Kode Pelatihan',
-        accessor: 'kodePelatihan',
+        Header: 'Nama Pembayaran',
+        accessor: 'namaPembayaran',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Invoice Bermaterai',
+        accessor: 'invoiceBermaterai',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
-        Header: 'Tanggal Terima',
-        accessor: 'tanggalTerima',
+        Header: 'Cek Pembayaran sesuai Perintah Bayar',
+        accessor: 'cekKesesuaianPembayaran',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) =>
+          props.value ? (
+            <div className="text-center">
+              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
+            </div>
+          ) : (
+            <div className="text-center">
+              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
+            </div>
+          ),
       },
       {
-        Header: 'Tanggal Revisi',
-        accessor: 'tanggalRevisi',
+        Header: 'Biaya',
+        accessor: 'biaya',
         filterable: false,
-        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        filterable: false,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+        },
       },
       {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
+        Header: 'Keterangan',
+        accessor: 'information',
         filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'SLA',
-        accessor: 'sla',
-        filterable: false,
-      },
-      {
-        Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
-        filterable: false,
-        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
-        width: 150,
+        width: 200,
         filterable: false,
         Cell: (props) => (
           <>
@@ -216,7 +213,7 @@ class Pendidikan extends Component {
       },
     ]
 
-    const pageName = 'Kegiatan Pendidikan'
+    const pageName = 'Pembayaran Lainnya'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -225,11 +222,15 @@ class Pendidikan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -257,23 +258,44 @@ class Pendidikan extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Seksi" value={(col) => col.seksi} />
+                          <ExcelColumn label="Nama Asuransi" value={(col) => col.namaAsuransi} />
+                          <ExcelColumn
+                            label="Invoice Bermaterai"
+                            value={(col) => (col.invoiceBermaterai ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cek Nama Pengajar, Daftar Hadir, No. Rekening, Pajak"
+                            value={(col) => (col.cekLainnya ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -286,7 +308,7 @@ class Pendidikan extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -296,131 +318,91 @@ class Pendidikan extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Kegiatan Pendidikan</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Kode Working Order"
-                          type="text"
-                          name="workingOrderCode"
+                          label="Tanggal"
+                          name="tanggal"
+                          classIcon="fa fa-calendar"
+                          blockLabel
+                          minDate={new Date()}
                           isRequired
-                          placeholder="Masukkan Kode Working Order"
-                          component={CfInput}
+                          placeholder="Tanggal"
+                          component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Nama Kegiatan"
-                          type="text"
-                          name="namaKegiatan"
+                          label="Seksi"
+                          options={[{ value: 'Financial Admin', label: 'Financial Admin' }]}
                           isRequired
-                          placeholder="Masukkan nama kegiatan"
-                          component={CfInput}
+                          name="seksi"
+                          isDisabled
+                          placeholder="Pilih atau Cari"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kode Pelatihan"
+                          label="Nama Pembayaran"
+                          type="text"
+                          name="namaPembayaran"
+                          isRequired
+                          placeholder="Masukkan Nama Pembayaran"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <div style={{ marginLeft: '20px' }}>
+                        <FormGroup>
+                          <Field
+                            label="Invoice Bermaterai"
+                            name="invoiceBermaterai"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Cek Pembayaran sesuai Perintah Bayar"
+                            name="cekKesesuaianPembayaran"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+                      </div>
+
+                      <FormGroup>
+                        <Field
+                          label="Lampiran"
+                          name="lampiran"
+                          isRequired
+                          accept="image/*"
+                          multiple
+                          component={CfInputMultiFile}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Biaya"
                           type="number"
-                          name="kodePelatihan"
+                          name="biaya"
                           isRequired
-                          placeholder="Masukkan kode Pelatihan"
+                          placeholder="Masukkan Biaya"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Tanggal Terima"
-                          name="tanggalTerima"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Terima"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Revisi"
-                          name="tanggalRevisi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Revisi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Konfirmasi"
-                          name="tanggalKonfirmasi"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          minDate={new Date()}
-                          isRequired
-                          placeholder="Tanggal Konfirmasi"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
+                          label="Keterangan"
                           type="text"
-                          name="kebutuhanCatering"
+                          name="information"
                           isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="kebutuhanATK"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="kebutuhanHotel"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Akomodasi"
-                          type="text"
-                          name="kebutuhanAkomodasi"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="kebutuhanPengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
+                          placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -459,28 +441,28 @@ class Pendidikan extends Component {
   }
 }
 
-Pendidikan.propTypes = {
+PembayaranLainnya.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createFIPayment: PropTypes.func.isRequired,
+  updateFIPayment: PropTypes.func.isRequired,
+  deleteFIPayment: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.payment.isLoading,
+  message: state.payment.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createFIPayment: (formData, refresh) => dispatch(createFIPayment(formData, refresh)),
+  updateFIPayment: (formData, id, refresh) => dispatch(updateFIPayment(formData, id, refresh)),
+  deleteFIPayment: (id, refresh) => dispatch(deleteFIPayment(id, refresh)),
 })
 
 export default connect(
@@ -488,9 +470,9 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getFIPayment(p),
     Component: withToggle({
-      Component: Pendidikan,
+      Component: PembayaranLainnya,
       toggles: {
         modalForm: false,
       },

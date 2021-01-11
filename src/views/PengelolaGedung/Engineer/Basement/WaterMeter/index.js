@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,41 +20,37 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createEngineerBasementWM,
+  updateEngineerBasementWM,
+  deleteEngineerBasementWM,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '02/12/2020',
-    jenis: 'PDAM',
-    meterAwal: 100,
-    meterAkhir: 120,
-    penggunaan: 20,
-  },
-  {
-    tanggal: '05/12/2020',
-    jenis: 'Deep Well',
-    meterAwal: 100,
-    meterAkhir: 120,
-    penggunaan: 20,
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class WaterMeter extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optWaterMeter: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataWaterMeter = await Service.getWaterMeter()
+    const dataWaterMeter = resDataWaterMeter.data.data
+    const optWaterMeter = dataWaterMeter.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optWaterMeter })
   }
 
   doRefresh = () => {
@@ -63,12 +60,16 @@ class WaterMeter extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, waterMeter } = values
+    const { createEngineerBasementWM, updateEngineerBasementWM } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (waterMeter && Object.keys(waterMeter).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.waterMeter = waterMeter.id || waterMeter
+      }
+      updateEngineerBasementWM(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementWM(values, this.doRefresh)
     }
   }
 
@@ -76,13 +77,13 @@ class WaterMeter extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementWM } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementWM(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -97,8 +98,10 @@ class WaterMeter extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optWaterMeter } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -108,10 +111,11 @@ class WaterMeter extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Jenis',
-        accessor: 'jenis',
+        accessor: 'waterMeter.name',
         filterable: false,
       },
       {
@@ -168,11 +172,15 @@ class WaterMeter extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -202,23 +210,39 @@ class WaterMeter extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Jenis" value={(col) => col.waterMeter?.name} />
+                          <ExcelColumn label="Meter Awal" value="meterAwal" />
+                          <ExcelColumn label="Meter Akhir" value="meterAkhir" />
+                          <ExcelColumn
+                            label="Penggunaan"
+                            value={(col) => Number(col.meterAkhir) - Number(col.meterAwal)}
+                          />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -232,7 +256,7 @@ class WaterMeter extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -240,7 +264,7 @@ class WaterMeter extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -260,10 +284,15 @@ class WaterMeter extends Component {
                       <FormGroup>
                         <Field
                           label="Water Meter"
-                          options={[{ value: 'PDAM', label: 'PDAM' }]}
+                          options={optWaterMeter}
                           isRequired
                           name="waterMeter"
                           placeholder="Pilih atau Cari Water Meter"
+                          defaultValue={
+                            values.waterMeter
+                              ? { value: values.waterMeter.id, label: values.waterMeter.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -301,7 +330,7 @@ class WaterMeter extends Component {
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -340,23 +369,25 @@ WaterMeter.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementWM: PropTypes.func.isRequired,
+  updateEngineerBasementWM: PropTypes.func.isRequired,
+  deleteEngineerBasementWM: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementWM: (formData, refresh) =>
+    dispatch(createEngineerBasementWM(formData, refresh)),
+  updateEngineerBasementWM: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementWM(formData, id, refresh)),
+  deleteEngineerBasementWM: (id, refresh) => dispatch(deleteEngineerBasementWM(id, refresh)),
 })
 
 export default connect(
@@ -364,7 +395,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementWM(p),
     Component: withToggle({
       Component: WaterMeter,
       toggles: {

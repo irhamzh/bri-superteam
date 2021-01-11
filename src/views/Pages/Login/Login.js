@@ -28,7 +28,7 @@ class Login extends Component {
       <div className="app flex-row align-items-center">
         <Container>
           <Row className="justify-content-center">
-            <Col md="8">
+            <Col md="6">
               <CardGroup>
                 <Card className="p-4">
                   <CardBody>
@@ -83,9 +83,9 @@ class Login extends Component {
                               </Button>
                             </Col>
                             <Col xs="6" className="text-right">
-                              <Button color="link" className="px-0">
+                              {/* <Button color="link" className="px-0">
                                 Forgot password?
-                              </Button>
+                              </Button> */}
                             </Col>
                           </Row>
                         </Form>
@@ -100,7 +100,7 @@ class Login extends Component {
                     ) : null}
                   </CardBody>
                 </Card>
-                <Card
+                {/* <Card
                   className="text-white bg-primary py-5 d-md-down-none"
                   style={{ width: '44%' }}
                 >
@@ -118,7 +118,7 @@ class Login extends Component {
                       </Link>
                     </div>
                   </CardBody>
-                </Card>
+                </Card> */}
               </CardGroup>
             </Col>
           </Row>

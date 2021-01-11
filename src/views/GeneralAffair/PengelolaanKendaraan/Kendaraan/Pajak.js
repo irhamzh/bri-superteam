@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-wrap-multilines */
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,37 +22,39 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createGAPajakKendaraan,
+  updateGAPajakKendaraan,
+  deleteGAPajakKendaraan,
+} from '../../../../modules/generalAffair/pengelolaanKendaraan/kendaraan/pajakKendaraan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    kendaraan: 'B 1234 XY - Avanza - Merah',
-    tanggalBerakhir: '09/12/2020',
-    biayaPajak: 'Rp 500.000',
-  },
-  {
-    tanggal: '06/12/2020',
-    kendaraan: 'B 2323 XA - Avanza - Hitam',
-    tanggalBerakhir: '09/12/2020',
-    biayaPajak: 'Rp 900.000',
-  },
-]
-
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class PajakKendaran extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optKendaraan: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataKendaraan = await Service.getKendaraan()
+    const dataKendaraan = resDataKendaraan.data.data
+    const optKendaraan = dataKendaraan.map((row) => ({
+      label: `${row.platNomor}-${row.merk}-${row.color}`,
+      value: row.id,
+    }))
+
+    this.setState({
+      optKendaraan,
+    })
   }
 
   doRefresh = () => {
@@ -60,11 +65,15 @@ class PajakKendaran extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createGAPajakKendaraan, updateGAPajakKendaraan } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
+      updateGAPajakKendaraan(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createGAPajakKendaraan(values, this.doRefresh)
     }
   }
 
@@ -72,13 +81,13 @@ class PajakKendaran extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteGAPajakKendaraan } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteGAPajakKendaraan(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -93,8 +102,10 @@ class PajakKendaran extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optKendaraan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -104,22 +115,28 @@ class PajakKendaran extends Component {
         accessor: 'tanggal',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Kendaraan',
-        accessor: 'kendaraan',
-        filterable: true,
+        accessor: 'vehicle',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>
+            {row.value ? `${row.value.platNomor} - ${row.value.merk} - ${row.value.color}` : ''}
+          </div>
+        ),
       },
       {
-        Header: 'Tanggal Berakhir',
-        accessor: 'tanggalBerakhir',
+        Header: 'Jatuh Tempo',
+        accessor: 'jatuhTempo',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Biaya Pajak',
-        accessor: 'biayaPajak',
+        accessor: 'biaya',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -160,11 +177,15 @@ class PajakKendaran extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -192,23 +213,42 @@ class PajakKendaran extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Kendaraan"
+                            value={(col) =>
+                              col.vehicle
+                                ? `${col.vehicle.platNomor} - ${col.vehicle.merk} - ${col.vehicle.color}`
+                                : ''
+                            }
+                          />
+                          <ExcelColumn label="Jatuh Tempo" value={(col) => col.jatuhTempo} />
+                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -221,7 +261,7 @@ class PajakKendaran extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -229,7 +269,7 @@ class PajakKendaran extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Pajak Kendaraan</ModalHeader>
                     <ModalBody>
@@ -249,27 +289,26 @@ class PajakKendaran extends Component {
                       <FormGroup>
                         <Field
                           label="Kendaraan"
-                          options={[
-                            {
-                              value: 'B 1234 XY - Avanza - Merah',
-                              label: 'B 1234 XY - Avanza - Merah',
-                            },
-                            {
-                              value: 'B 2323 AB - Avanza - Hitam',
-                              label: 'B 2323 AB - Avanza - Hitam',
-                            },
-                          ]}
+                          options={optKendaraan}
                           isRequired
-                          name="kendaraan"
+                          name="vehicle"
                           placeholder="Pilih atau Cari Kendaraan"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
-                          label="Tanggal Berakhir"
-                          name="tanggalBerakhir"
+                          label="Jatuh Tempo"
+                          name="jatuhTempo"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
@@ -277,20 +316,29 @@ class PajakKendaran extends Component {
                           placeholder="Tanggal Berakhir"
                           component={CfInputDate}
                         />
+                      </FormGroup> */}
+
+                      <FormGroup>
+                        <Field
+                          label="Jatuh Tempo"
+                          type="text"
+                          name="jatuhTempo"
+                          isRequired
+                          placeholder="Masukkan Jatuh Tempo"
+                          component={CfInput}
+                        />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Biaya Pajak"
-                          type="text"
-                          name="biayaPajak"
+                          type="number"
+                          name="biaya"
                           isRequired
                           placeholder="Masukkan Biaya Pajak"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -329,23 +377,25 @@ PajakKendaran.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createGAPajakKendaraan: PropTypes.func.isRequired,
+  updateGAPajakKendaraan: PropTypes.func.isRequired,
+  deleteGAPajakKendaraan: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.generalAffairPajakKendaraan.isLoading,
+  message: state.generalAffairPajakKendaraan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createGAPajakKendaraan: (formData, refresh) =>
+    dispatch(createGAPajakKendaraan(formData, refresh)),
+  updateGAPajakKendaraan: (formData, id, refresh) =>
+    dispatch(updateGAPajakKendaraan(formData, id, refresh)),
+  deleteGAPajakKendaraan: (id, refresh) => dispatch(deleteGAPajakKendaraan(id, refresh)),
 })
 
 export default connect(
@@ -353,7 +403,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getGAPajakKendaraan(p),
     Component: withToggle({
       Component: PajakKendaran,
       toggles: {

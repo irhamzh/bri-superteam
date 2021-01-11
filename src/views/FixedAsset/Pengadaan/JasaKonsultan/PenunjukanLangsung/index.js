@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,69 +20,51 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createKonsultanPenunjukanLangsung,
+  updateKonsultanPenunjukanLangsung,
+  deleteKonsultanPenunjukanLangsung,
+} from '../../../../../modules/pengadaan/penunjukanLangsung/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 1',
-    izinPrinsipUser: true,
-    izinPrinsipPengadaan: false,
-    izinHasilPengadaan: true,
-    undangan: true,
-    aanwijzing: false,
-    klasifikasiNotifikasi: false,
-    jenisAnggaran: 'Investasi',
-    biayaPutusan: 100000,
-    nomorSPK: 123456,
-    tanggalSPK: '12/12/2020',
-    namaProvider: 'PT. XXX',
-    alamatProvider: 'Alamat 1',
-    contactProvider: '08XXXXX',
-    jenisPekerjaan: 'Pegawai',
-    jumlahBiaya: 12345,
-    jenisBarang: 'Perkakas',
-    masaBerlaku: '12/12/2020',
-  },
-  {
-    tanggal: '12/12/2020',
-    namaPengadaan: 'Pengadaan 2',
-    izinPrinsipUser: true,
-    undangan: false,
-    aanwijzing: true,
-    izinPrinsiPengadaan: true,
-    izinHasilPengadaan: true,
-    klasifikasiNotifikasi: true,
-    jenisAnggaran: 'Eksploitasi',
-    biayaPutusan: 10000000,
-    tanggalSPK: '12/12/2020',
-    nomorSPK: 98776554,
-    namaProvider: 'PT. YYY',
-    alamatProvider: 'Alamat 2',
-    contactProvider: '08XXXXX',
-    jenisPekerjaan: 'Kontraktor',
-    jumlahBiaya: 12345,
-    jenisBarang: 'Elektronik',
-    masaBerlaku: '12/12/2020',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class PenunjukanLangsung extends Component {
+  state = {
+    optProvider: [],
+    dataProvider: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    jenisPengadaan: 'Penunjukan Langsung',
+    typePengadaan: 'konsultan',
+    izinPrinsipUser: false,
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: false,
+    undangan: false,
+    aanwijzing: false,
+    klarifikasiNegosiasi: false,
+    pengumumanPemenang: false,
+  }
+
+  async componentDidMount() {
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optProvider,
+      dataProvider,
+    })
   }
 
   doRefresh = () => {
@@ -92,11 +75,16 @@ class PenunjukanLangsung extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createKonsultanPenunjukanLangsung, updateKonsultanPenunjukanLangsung } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      updateKonsultanPenunjukanLangsung(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKonsultanPenunjukanLangsung(values, this.doRefresh)
     }
   }
 
@@ -104,13 +92,13 @@ class PenunjukanLangsung extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKonsultanPenunjukanLangsung } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKonsultanPenunjukanLangsung(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -125,23 +113,27 @@ class PenunjukanLangsung extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optProvider, dataProvider } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Tanggal',
         width: 100,
-        accessor: 'tanggal',
+        accessor: 'tanggalPengadaan',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Izin Prinsip User',
@@ -180,7 +172,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Undangan',
         accessor: 'undangan',
-        filterable: true,
+        filterable: false,
         Cell: (props) =>
           props.value ? (
             <div className="text-center">
@@ -195,7 +187,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Klarifikasi dan negosiasi',
         accessor: 'klarifikasiNegosiasi',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
 
         Cell: (props) =>
@@ -231,24 +223,28 @@ class PenunjukanLangsung extends Component {
         accessor: 'jenisAnggaran',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Biaya Putusan',
         accessor: 'biayaPutusan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Tanggal SPK',
         accessor: 'tanggalSPK',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'No. SPK',
         accessor: 'nomorSPK',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -287,11 +283,15 @@ class PenunjukanLangsung extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -320,23 +320,64 @@ class PenunjukanLangsung extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn
+                            label="Tanggal"
+                            value={(col) => formatDate(col.tanggalPengadaan)}
+                          />
+                          <ExcelColumn label="Nama Pengadaan" value={(col) => col.namaPengadaan} />
+                          <ExcelColumn
+                            label="Izin Prinsip User"
+                            value={(col) => (col.izinPrinsipUser ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Izin Prinsip Pengadaan"
+                            value={(col) => (col.izinPrinsipPengadaan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Undangan"
+                            value={(col) => (col.undangan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Klasifikasi dan Negosiasi"
+                            value={(col) => (col.klarifikasiNegosiasi ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Izin Hasil Pengadaan"
+                            value={(col) => (col.izinHasilPengadaan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Jenis Anggaran" value={(col) => col.jenisAnggaran} />
+                          <ExcelColumn label="Biaya Putusan" value={(col) => col.biayaPutusan} />
+                          <ExcelColumn label="Nama Pengadaan" value={(col) => col.namaPengadaan} />
+                          <ExcelColumn
+                            label="Tanggal SPK"
+                            value={(col) => formatDate(col.tanggalSPK)}
+                          />
+                          <ExcelColumn label="No. SPK" value={(col) => col.nomorSPK} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
-                  data={dataDummy}
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -349,7 +390,7 @@ class PenunjukanLangsung extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -357,17 +398,16 @@ class PenunjukanLangsung extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
                           label="Jenis Pengadaan"
-                          options={[
-                            { value: 'Penunjukkan Langsung', label: 'Penunjukkan Langsung' },
-                          ]}
+                          options={[{ value: 'Penunjukan Langsung', label: 'Penunjukan Langsung' }]}
                           isRequired
+                          isDisabled
                           name="jenisPengadaan"
                           placeholder="Pilih atau Cari Jenis Pengadaan"
                           component={CfSelect}
@@ -422,7 +462,7 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Klarifikasi dan negosiasi"
-                            name="klarifikasi"
+                            name="klarifikasiNegosiasi"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -440,8 +480,8 @@ class PenunjukanLangsung extends Component {
                         <Field
                           label="Jenis Anggaran"
                           options={[
-                            { value: 'Investasi', label: 'Investasi' },
-                            { value: 'Epsloitasi', label: 'Eksploitasi' },
+                            { value: 'investasi', label: 'Investasi' },
+                            { value: 'eksploitasi', label: 'Eksploitasi' },
                           ]}
                           isRequired
                           name="jenisAnggaran"
@@ -490,13 +530,15 @@ class PenunjukanLangsung extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          options={[
-                            { value: 'PT. XXXX', label: 'PT. XXXX' },
-                            { value: 'PT. YYYY', label: 'PT. YYYY' },
-                          ]}
+                          options={optProvider}
                           isRequired
-                          name="namaProvider"
+                          name="provider"
                           placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -505,8 +547,14 @@ class PenunjukanLangsung extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamatProvider"
+                          name="address"
                           isRequired
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
                           placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
@@ -516,8 +564,14 @@ class PenunjukanLangsung extends Component {
                         <Field
                           label="No. Kontak Provider"
                           type="text"
-                          name="kontakProvider"
+                          name="contact"
                           isRequired
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
                           placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
@@ -560,7 +614,7 @@ class PenunjukanLangsung extends Component {
                         <Col sm="6">
                           <Field
                             label="Masa Berlaku"
-                            name="tanggalAwalBerlaku"
+                            name="masaBerlaku"
                             classIcon="fa fa-calendar"
                             blockLabel
                             minDate={new Date()}
@@ -573,7 +627,7 @@ class PenunjukanLangsung extends Component {
                         <Col sm="6">
                           <Field
                             label="Sampai"
-                            name="tanggalAkhirBerlaku"
+                            name="sampai"
                             classIcon="fa fa-calendar"
                             blockLabel
                             minDate={new Date()}
@@ -584,7 +638,7 @@ class PenunjukanLangsung extends Component {
                         </Col>
                       </Row>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -623,23 +677,26 @@ PenunjukanLangsung.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKonsultanPenunjukanLangsung: PropTypes.func.isRequired,
+  updateKonsultanPenunjukanLangsung: PropTypes.func.isRequired,
+  deleteKonsultanPenunjukanLangsung: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.barangPenunjukanLangsung.isLoading,
+  message: state.barangPenunjukanLangsung.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKonsultanPenunjukanLangsung: (formData, refresh) =>
+    dispatch(createKonsultanPenunjukanLangsung(formData, refresh)),
+  updateKonsultanPenunjukanLangsung: (formData, id, refresh) =>
+    dispatch(updateKonsultanPenunjukanLangsung(formData, id, refresh)),
+  deleteKonsultanPenunjukanLangsung: (id, refresh) =>
+    dispatch(deleteKonsultanPenunjukanLangsung(id, refresh)),
 })
 
 export default connect(
@@ -647,7 +704,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKonsultanPenunjukanLangsung(p),
     Component: withToggle({
       Component: PenunjukanLangsung,
       toggles: {

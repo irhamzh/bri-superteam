@@ -1,0 +1,12 @@
+// created
+export const CREATE_PENUGASAN_DRIVER_LOADING = 'create_PENUGASAN_DRIVER_loading'
+export const CREATE_PENUGASAN_DRIVER_SUCCESS = 'create_PENUGASAN_DRIVER_success'
+export const CREATE_PENUGASAN_DRIVER_ERROR = 'create_PENUGASAN_DRIVER_error'
+// updated
+export const UPDATE_PENUGASAN_DRIVER_LOADING = 'update_PENUGASAN_DRIVER_loading'
+export const UPDATE_PENUGASAN_DRIVER_SUCCESS = 'update_PENUGASAN_DRIVER_success'
+export const UPDATE_PENUGASAN_DRIVER_ERROR = 'update_PENUGASAN_DRIVER_error'
+// deleted
+export const DELETE_PENUGASAN_DRIVER_LOADING = 'delete_PENUGASAN_DRIVER_loading'
+export const DELETE_PENUGASAN_DRIVER_SUCCESS = 'delete_PENUGASAN_DRIVER_success'
+export const DELETE_PENUGASAN_DRIVER_ERROR = 'delete_PENUGASAN_DRIVER_error'

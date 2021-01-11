@@ -1,4 +1,5 @@
 import { cloneDeep, get, isFunction, isNil } from 'lodash'
+import { invalidValues } from './Common'
 
 const GET_CONFIG = () => ({
   initFilter: {},
@@ -62,6 +63,11 @@ class QueryTableManager {
     } else {
       filter.value = curVal
     }
+
+    if (invalidValues.includes(value)) {
+      this.filtered = this.filtered.filter((x) => !invalidValues.includes(x.value))
+    }
+    console.log(this.filtered, filter)
     if (callback) {
       callback()
     }
@@ -88,7 +94,9 @@ class QueryTableManager {
     for (let i = 0; i < filterKeys.length; i += 1) {
       const filterKey = filterKeys[i]
       const value = obj[filterKey]
+      // if (!invalidValues.includes(value)) {
       this.setFilteredValue(filterKey, value)
+      // }
     }
   }
 

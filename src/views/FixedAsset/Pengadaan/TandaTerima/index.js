@@ -19,43 +19,36 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createTandaTerima,
+  updateTandaTerima,
+  deleteTandaTerima,
+} from '../../../../modules/tandaTerima/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Samsung',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 10,
-    hargaBarang: 200000,
-  },
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Apple',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 50,
-    hargaBarang: 20000000,
-  },
-]
-
 class TandaTerima extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optPengadaan: [],
+    optProvider: [],
+    dataProvider: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataPengadaan = await Service.getAllPengadaan()
+    const dataPengadaan = resDataPengadaan.data.data
+    const optPengadaan = dataPengadaan.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optPengadaan, optProvider, dataProvider })
   }
 
   doRefresh = () => {
@@ -66,11 +59,20 @@ class TandaTerima extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createTandaTerima, updateTandaTerima } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { provider, pengadaan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      if (pengadaan && Object.keys(pengadaan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pengadaan = pengadaan.id || pengadaan
+      }
+      updateTandaTerima(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createTandaTerima(values, this.doRefresh)
     }
   }
 
@@ -78,13 +80,13 @@ class TandaTerima extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteTandaTerima } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteTandaTerima(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -99,8 +101,9 @@ class TandaTerima extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optPengadaan, optProvider, dataProvider } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -109,32 +112,38 @@ class TandaTerima extends Component {
         Header: 'Tanggal',
         width: 100,
         filterable: false,
-        accessor: 'tanggal',
+        accessor: 'createdAt',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
-        filterable: true,
+        accessor: 'provider.name',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
 
       {
         Header: 'Alamat',
         filterable: false,
-        accessor: 'alamat',
+        accessor: 'provider.address',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kontak',
-        accessor: 'contact',
+        accessor: 'provider.contact',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
-        filterable: true,
+        accessor: 'pengadaan.namaPengadaan',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah Barang',
-        accessor: 'jumlahBarang',
-        filterable: true,
+        accessor: 'jumlah',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -173,11 +182,15 @@ class TandaTerima extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -197,12 +210,11 @@ class TandaTerima extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
-                  data={dataDummy}
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -215,7 +227,7 @@ class TandaTerima extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -223,17 +235,25 @@ class TandaTerima extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tanda Terima Barang</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
+                          options={optPengadaan}
                           isRequired
-                          name="namaPengadaan"
+                          name="pengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -241,11 +261,16 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          type="text"
-                          name="namaProvider"
+                          options={optProvider}
                           isRequired
-                          placeholder="Masukkan nama provider"
-                          component={CfInput}
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -253,20 +278,32 @@ class TandaTerima extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamat"
+                          name="address"
                           isRequired
-                          placeholder="Masukkan alamat provider"
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
+                          placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kontak"
+                          label="No. Kontak Provider"
                           type="text"
                           name="contact"
                           isRequired
-                          placeholder="Masukkan No. Kontak provider"
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
+                          placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -275,14 +312,14 @@ class TandaTerima extends Component {
                         <Field
                           label="Jumlah"
                           type="text"
-                          name="jumlahBarang"
+                          name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -321,23 +358,23 @@ TandaTerima.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createTandaTerima: PropTypes.func.isRequired,
+  updateTandaTerima: PropTypes.func.isRequired,
+  deleteTandaTerima: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.tandaTerima.isLoading,
+  message: state.tandaTerima.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createTandaTerima: (formData, refresh) => dispatch(createTandaTerima(formData, refresh)),
+  updateTandaTerima: (formData, id, refresh) => dispatch(updateTandaTerima(formData, id, refresh)),
+  deleteTandaTerima: (id, refresh) => dispatch(deleteTandaTerima(id, refresh)),
 })
 
 export default connect(
@@ -345,7 +382,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getTandaTerima(p),
     Component: withToggle({
       Component: TandaTerima,
       toggles: {

@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -18,44 +21,54 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import { Formik, Form, Field, FieldArray } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPRKlasifikasiCatering,
+  updatePRKlasifikasiCatering,
+  deletePRKlasifikasiCatering,
+} from '../../../../modules/procurement/catering/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 1234565,
-    nomorSurat: '232224',
-    kebutuhan: 'Prasmanan',
-    namaCatering: 'Catering A',
-    menu: 'Ayam Taliwang',
-    biaya: 'IDR 500.000',
-  },
-  {
-    tanggal: '06/06/2020',
-    nomorWorkingOrder: 6364,
-    nomorSurat: '235466',
-    kebutuhan: 'Hajatan',
-    namaCatering: 'Catering A',
-    menu: 'Nasi Kotak',
-    biaya: 'IDR 40.000',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Klasifikasi extends Component {
+  state = {
+    optCatering: [],
+    optWorkingOrder: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    menu: [{ name: '', price: '' }],
+  }
+
+  async componentDidMount() {
+    const resDataCatering = await Service.getCatering()
+    const dataCatering = resDataCatering.data.data
+    const optCatering = dataCatering.map((row) => ({ label: row.name, value: row.id }))
+
+    const filteredDivision = [{ id: 'division', value: 'Procurement' }]
+    const filterString = JSON.stringify(filteredDivision)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+
+    const resDataWorkingOrder = await Service.getWorkingOrder(paramsEncoded)
+    const dataWorkingOrder = resDataWorkingOrder.data.data
+    const optWorkingOrder = dataWorkingOrder.map((row) => ({
+      label: row.kodeWorkingOrder,
+      value: row.id,
+    }))
+
+    this.setState({
+      optCatering,
+      optWorkingOrder,
+    })
   }
 
   doRefresh = () => {
@@ -66,11 +79,18 @@ class Klasifikasi extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPRKlasifikasiCatering, updatePRKlasifikasiCatering } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { workingOrder, catering } = values
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (catering && Object.keys(catering).length > 0) {
+        values.catering = catering.id || catering
+      }
+      updatePRKlasifikasiCatering(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPRKlasifikasiCatering(values, this.doRefresh)
     }
   }
 
@@ -78,13 +98,13 @@ class Klasifikasi extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePRKlasifikasiCatering } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePRKlasifikasiCatering(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -99,9 +119,10 @@ class Klasifikasi extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
-
+    const { data } = tableProps
+    const { optCatering, optWorkingOrder } = this.state
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
@@ -110,17 +131,17 @@ class Klasifikasi extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
-        Cell: (props) => <span>{props.value}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'No. WO',
-        accessor: 'nomorWorkingOrder',
-        filterable: true,
+        accessor: 'workingOrder.kodeWorkingOrder',
+        filterable: false,
       },
 
       {
         Header: 'Nomor Surat',
-        accessor: 'nomorSurat',
+        accessor: 'noSuratPesanan',
         filterable: false,
       },
       {
@@ -130,18 +151,28 @@ class Klasifikasi extends Component {
       },
       {
         Header: 'Nama Catering',
-        accessor: 'namaCatering',
+        accessor: 'catering.name',
         filterable: false,
       },
       {
         Header: 'Menu',
         accessor: 'menu',
         filterable: false,
+        Cell: (props) => {
+          const { menu } = props.original
+          const listMenu = menu.map((row) => <div>{`${row.name}`}</div>)
+          return listMenu
+        },
       },
       {
         Header: 'Biaya',
         accessor: 'biaya',
         filterable: false,
+        Cell: (props) => {
+          const { menu } = props.original
+          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
+          return listBiaya
+        },
       },
       {
         Header: 'Aksi',
@@ -180,11 +211,15 @@ class Klasifikasi extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -214,23 +249,40 @@ class Klasifikasi extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="No. WO"
+                            value={(col) => col.workingOrder?.kodeWorkingOrder}
+                          />
+                          <ExcelColumn label="Nomor Surat" value="noSuratPesanan" />
+                          <ExcelColumn label="Kebutuhan" value={(col) => col.kebutuhan} />
+                          <ExcelColumn label="Nama Catering" value={(col) => col.catering?.name} />
+                          <ExcelColumn label="Menu" value={(col) => JSON.stringify(col.menu)} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -243,7 +295,7 @@ class Klasifikasi extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -251,7 +303,7 @@ class Klasifikasi extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -271,10 +323,18 @@ class Klasifikasi extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
-                          options={[{ value: '12345', label: '12345' }]}
+                          options={optWorkingOrder}
                           isRequired
                           name="workingOrder"
                           placeholder="Pilih atau Cari Working Order"
+                          defaultValue={
+                            values.workingOrder
+                              ? {
+                                  value: values.workingOrder.id,
+                                  label: values.workingOrder.kodeWorkingOrder,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -283,7 +343,7 @@ class Klasifikasi extends Component {
                         <Field
                           label="No. Surat"
                           type="text"
-                          name="nomorSurat"
+                          name="noSuratPesanan"
                           isRequired
                           placeholder="Masukkan Nomor Surat"
                           component={CfInput}
@@ -305,45 +365,97 @@ class Klasifikasi extends Component {
                       <br />
                       <br />
                       <Row>
-                        <Col sm="4">
+                        <Col>
                           <FormGroup>
                             <Field
                               label="Nama Catering"
-                              options={[{ value: 'Catering A', label: 'Catering A' }]}
+                              options={optCatering}
                               isRequired
-                              name="namaCatering"
+                              name="catering"
                               placeholder="Pilih atau Cari Catering"
+                              defaultValue={
+                                values.catering
+                                  ? {
+                                      value: values.catering.id,
+                                      label: values.catering.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col sm="4">
-                          <FormGroup>
-                            <Field
-                              label="Nama Menu"
-                              type="text"
-                              name="menu"
-                              isRequired
-                              placeholder="Masukkan Nama Menu"
-                              component={CfInput}
-                            />
-                          </FormGroup>
-                        </Col>
-                        <Col sm="4">
-                          <FormGroup>
-                            <Field
-                              label="Biaya"
-                              type="text"
-                              name="biaya"
-                              isRequired
-                              placeholder="Masukkan biaya"
-                              component={CfInput}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
 
-                      {ErrorMessage(message)}
+                      <FieldArray
+                        name="menu"
+                        render={(arrayHelpers) => (
+                          <>
+                            {values.menu && values.menu.length > 0 ? (
+                              values.menu.map((menu, index) => (
+                                <Row form key={`key ${menu.name}`}>
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Nama Menu"
+                                        type="text"
+                                        name={`menu[${index}].name`}
+                                        isRequired
+                                        placeholder="Masukkan Nama Menu"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Biaya"
+                                        type="text"
+                                        name={`menu[${index}].price`}
+                                        isRequired
+                                        placeholder="Masukkan biaya"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  {values.menu && values.menu.length > 1 && (
+                                    <Col sm="2">
+                                      <FormGroup style={{ paddingTop: '50%' }}>
+                                        <Button
+                                          type="button"
+                                          color="danger"
+                                          onClick={() => arrayHelpers.remove(index)}
+                                          style={{ display: 'block' }}
+                                        >
+                                          <i className="fa fa-times" />
+                                        </Button>
+                                      </FormGroup>
+                                    </Col>
+                                  )}
+                                </Row>
+                              ))
+                            ) : (
+                              <>&nbsp;</>
+                            )}
+                            <div style={{ marginLeft: '90%' }}>
+                              <Button
+                                type="button"
+                                color="success"
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    nama: '',
+                                    biaya: '',
+                                  })
+                                }
+                              >
+                                <i className="fa fa-plus" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      />
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -382,23 +494,25 @@ Klasifikasi.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPRKlasifikasiCatering: PropTypes.func.isRequired,
+  updatePRKlasifikasiCatering: PropTypes.func.isRequired,
+  deletePRKlasifikasiCatering: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.procurementCatering.isLoading,
+  message: state.procurementCatering.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPRKlasifikasiCatering: (formData, refresh) =>
+    dispatch(createPRKlasifikasiCatering(formData, refresh)),
+  updatePRKlasifikasiCatering: (formData, id, refresh) =>
+    dispatch(updatePRKlasifikasiCatering(formData, id, refresh)),
+  deletePRKlasifikasiCatering: (id, refresh) => dispatch(deletePRKlasifikasiCatering(id, refresh)),
 })
 
 export default connect(
@@ -406,7 +520,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPRKlasifikasiCatering(p),
     Component: withToggle({
       Component: Klasifikasi,
       toggles: {

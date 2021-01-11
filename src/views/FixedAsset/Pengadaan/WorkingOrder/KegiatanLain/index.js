@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,57 +21,36 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
+import {
+  createWorkingOrder,
+  updateWorkingOrder,
+  deleteWorkingOrder,
+} from '../../../../../modules/workingOrder/actions'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '08/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 1',
-    kodePelatihan: 9987,
-    tanggalTerima: '08/12/2020',
-    tanggalRevisi: '10/12/2020',
-    tanggalKonfirmasi: '12/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
-  },
-  {
-    tanggal: '06/12/2020',
-    workingOrderCode: 123456,
-    namaKegiatan: 'Kegiatan 2',
-    kodePelatihan: 3245,
-    tanggalTerima: '06/12/2020',
-    tanggalRevisi: '08/12/2020',
-    tanggalKonfirmasi: '10/12/2020',
-    sla: 4,
-    kebutuhanCatering: 'lorem ipsum',
-    kebutuhanATK: 'lorem ipsum',
-    kebutuhanHotel: 'lorem ipsum',
-    kebutuhanAkomodasi: 'lorem ipsum',
-    kebutuhanPengajarEksternal: 'lorem ipsum',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class KegiatanLain extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    typeKegiatan: 'Kegiatan Lain',
+    division: 'Fixed Asset',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeKegiatan: 'Kegiatan Lain',
+      division: 'Fixed Asset',
+    })
   }
 
   doRefresh = () => {
@@ -80,11 +61,11 @@ class KegiatanLain extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createWorkingOrder, updateWorkingOrder } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateWorkingOrder(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createWorkingOrder(values, this.doRefresh)
     }
   }
 
@@ -92,13 +73,13 @@ class KegiatanLain extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteWorkingOrder } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteWorkingOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -113,81 +94,112 @@ class KegiatanLain extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Kode Working Order',
-        accessor: 'workingOrderCode',
+        accessor: 'kodeWorkingOrder',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
-        filterable: true,
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Kode Pelatihan',
         accessor: 'kodePelatihan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Tanggal Terima',
         accessor: 'tanggalTerima',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Tanggal Revisi',
         accessor: 'tanggalRevisi',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Tanggal Konfirmasi',
         accessor: 'tanggalKonfirmasi',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'SLA',
         accessor: 'sla',
         filterable: false,
+        Cell: (props) => (
+          <div style={{ textAlign: 'center' }}>
+            {Math.round(
+              (new Date(props.original.tanggalKonfirmasi) -
+                new Date(props.original.tanggalTerima)) /
+                (1000 * 24 * 3600)
+            )}
+          </div>
+        ),
       },
       {
         Header: 'Kebutuhan - Catering',
-        accessor: 'kebutuhanCatering',
+        accessor: 'catering',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - ATK',
-        accessor: 'kebutuhanATK',
+        accessor: 'atk',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - Hotel',
-        accessor: 'kebutuhanHotel',
+        accessor: 'hotel',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - Akomodasi',
-        accessor: 'kebutuhanAkomodasi',
+        accessor: 'akomodasi',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'kebutuhanPengajarEksternal',
+        accessor: 'pengajarEksternal',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
       },
       {
         Header: 'Aksi',
@@ -226,11 +238,15 @@ class KegiatanLain extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -258,23 +274,75 @@ class KegiatanLain extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Kode Working Order" value="kodeWorkingOrder" />
+                          <ExcelColumn label="Nama Kegiatan" value="namaKegiatan" />
+                          <ExcelColumn label="Kode Pelatihan" value="kodePelatihan" />
+                          <ExcelColumn
+                            label="Tanggal Terima"
+                            value={(col) => formatDate(col.tanggalTerima)}
+                          />
+                          <ExcelColumn
+                            label="Tanggal Revisi"
+                            value={(col) => formatDate(col.tanggalRevisi)}
+                          />
+                          <ExcelColumn
+                            label="Tanggal Konfirmasi"
+                            value={(col) => formatDate(col.tanggalKonfirmasi)}
+                          />
+                          <ExcelColumn
+                            label="SLA"
+                            value={(col) =>
+                              Math.round(
+                                (new Date(col.tanggalKonfirmasi) - new Date(col.tanggalTerima)) /
+                                  (1000 * 24 * 3600)
+                              )
+                            }
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Catering"
+                            value={(col) => (col.catering === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - ATK"
+                            value={(col) => (col.atk === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Hotel"
+                            value={(col) => (col.hotel === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Akomodasi"
+                            value={(col) => (col.akomodasi === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                          <ExcelColumn
+                            label="Kebutuhan - Pengajar Eksternal"
+                            value={(col) => (col.pengajarEksternal === 'yes' ? 'Ada' : 'Tidak Ada')}
+                          />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -287,7 +355,7 @@ class KegiatanLain extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -299,16 +367,16 @@ class KegiatanLain extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Kegiatan Lain</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Kode Working Order"
                           type="text"
-                          name="workingOrderCode"
+                          name="kodeWorkingOrder"
                           isRequired
                           placeholder="Masukkan Kode Working Order"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field
@@ -371,62 +439,115 @@ class KegiatanLain extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Catering"
-                          type="text"
-                          name="kebutuhanCatering"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Catering"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <strong>Kebutuhan :</strong>
+                      <br />
+                      <br />
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Catering</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="catering" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="catering"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - ATK"
-                          type="text"
-                          name="kebutuhanATK"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan ATK"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Hotel (Nama Hotel)</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="hotel" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="hotel"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Hotel"
-                          type="text"
-                          name="kebutuhanHotel"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Hotel"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">ATK</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="atk" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Tidak Ada" name="atk" id="no" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Akomodasi"
-                          type="text"
-                          name="kebutuhanAkomodasi"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Akomodasi"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Akomodasi</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field label="Ada" name="akomodasi" id="yes" component={CfInputRadio} />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="akomodasi"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      <FormGroup>
-                        <Field
-                          label="Kebutuhan - Pengajar Eksternal"
-                          type="text"
-                          name="kebutuhanPengajarEksternal"
-                          isRequired
-                          placeholder="Masukkan Kebutuhan Pengajar Eksternal"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                      <Row>
+                        <Col sm="6">
+                          <h6 className="pl-4">Pengajar Eksternal</h6>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Ada"
+                              name="pengajarEksternal"
+                              id="yes"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tidak Ada"
+                              name="pengajarEksternal"
+                              id="no"
+                              component={CfInputRadio}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -465,23 +586,24 @@ KegiatanLain.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createWorkingOrder: PropTypes.func.isRequired,
+  updateWorkingOrder: PropTypes.func.isRequired,
+  deleteWorkingOrder: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.workingOrder.isLoading,
+  message: state.workingOrder.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createWorkingOrder: (formData, refresh) => dispatch(createWorkingOrder(formData, refresh)),
+  updateWorkingOrder: (formData, id, refresh) =>
+    dispatch(updateWorkingOrder(formData, id, refresh)),
+  deleteWorkingOrder: (id, refresh) => dispatch(deleteWorkingOrder(id, refresh)),
 })
 
 export default connect(
@@ -489,7 +611,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getWorkingOrder(p),
     Component: withToggle({
       Component: KegiatanLain,
       toggles: {

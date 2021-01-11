@@ -15,6 +15,7 @@ const CfSelect = ({
   field,
   form: { setFieldValue, setFieldTouched },
   onSelectChange,
+  defaultValue,
   ...props
 }) => {
   // Handle Select Multi or Single
@@ -56,6 +57,8 @@ const CfSelect = ({
       <Select
         {...field}
         {...props}
+        defaultValue
+        defaultInputValue={defaultValue?.label}
         isMulti={isMulti}
         options={options}
         className="basic-single"
@@ -191,6 +194,7 @@ CfSelect.propTypes = {
     PropTypes.object,
     PropTypes.func,
   ]),
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
 }
 
 CfAsyncSelect.propTypes = {

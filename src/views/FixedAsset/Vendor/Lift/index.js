@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,59 +20,50 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    lantai1: true,
-    lantai2: false,
-    lantai3: true,
-    lantai4: true,
-    lantai5: true,
-    lantai6: true,
-    oliPacking: true,
-    taliSeling: false,
-    brakeSystem: true,
-    exhaustFan: true,
-    panelDriveUnit: false,
-    mesinMotor: true,
-    powerListrik: true,
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '13/12/2020',
-    lantai1: true,
-    lantai2: false,
-    lantai3: false,
-    lantai4: true,
-    lantai5: false,
-    lantai6: true,
-    oliPacking: false,
-    taliSeling: true,
-    brakeSystem: true,
-    exhaustFan: false,
-    panelDriveUnit: true,
-    mesinMotor: true,
-    powerListrik: true,
-    keterangan: 'Lorem ipsum',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Lift extends Component {
+  state = {
+    // optRekanan: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    typeMonitoring: 'Lift',
+    cleaningAreaSangkarL1: false,
+    cleaningAreaSangkarL2: false,
+    cleaningAreaSangkarL3: false,
+    cleaningAreaSangkarL4: false,
+    cleaningAreaSangkarL5: false,
+    cleaningAreaSangkarL6: false,
+    oliRelSangkarLift: false,
+    taliSelingLift: false,
+    pengeremanLift: false,
+    exhaustFanLift: false,
+    panelDriveUnitLift: false,
+    mesinMotorLift: false,
+    powerListrikLift: false,
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeMonitoring: 'Lift',
+    })
+    // const resDataRekanan = await Service.getPartner()
+    // const dataRekanan = resDataRekanan.data.data
+    // const optRekanan = dataRekanan.map((row) => ({ label: row.name, value: row.id }))
+
+    // this.setState({ optRekanan })
   }
 
   doRefresh = () => {
@@ -82,11 +74,11 @@ class Lift extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createVendor, updateVendor } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateVendor(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createVendor(values, this.doRefresh)
     }
   }
 
@@ -94,13 +86,13 @@ class Lift extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteVendor } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteVendor(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -115,10 +107,12 @@ class Lift extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    // const { optRekanan } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
@@ -126,11 +120,12 @@ class Lift extends Component {
         width: 100,
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 1',
-        accessor: 'lantai1',
-        filterable: true,
+        accessor: 'cleaningAreaSangkarL1',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -145,8 +140,8 @@ class Lift extends Component {
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 2',
-        accessor: 'lantai2',
-        filterable: true,
+        accessor: 'cleaningAreaSangkarL2',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -161,8 +156,8 @@ class Lift extends Component {
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 3',
-        accessor: 'lantai3',
-        filterable: true,
+        accessor: 'cleaningAreaSangkarL3',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -177,8 +172,8 @@ class Lift extends Component {
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 4',
-        accessor: 'lantai4',
-        filterable: true,
+        accessor: 'cleaningAreaSangkarL4',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -193,8 +188,8 @@ class Lift extends Component {
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 5',
-        accessor: 'lantai5',
-        filterable: true,
+        accessor: 'cleaningAreaSangkarL5',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -209,8 +204,8 @@ class Lift extends Component {
       },
       {
         Header: 'Cleaning Area Sangkar dan Pintu Lift - Lantai 6',
-        accessor: 'lantai6',
-        filterable: true,
+        accessor: 'cleaningAreaSangkarL6',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -225,8 +220,8 @@ class Lift extends Component {
       },
       {
         Header: 'Oli di Sangkar Lift dan Packing di Mesin Lift',
-        accessor: 'oliPacking',
-        filterable: true,
+        accessor: 'oliRelSangkarLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -241,8 +236,8 @@ class Lift extends Component {
       },
       {
         Header: 'Tali Seling Lift',
-        accessor: 'taliSeling',
-        filterable: true,
+        accessor: 'taliSelingLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -257,8 +252,8 @@ class Lift extends Component {
       },
       {
         Header: 'Cek Brake System atau Pengereman Lift',
-        accessor: 'brakeSystem',
-        filterable: true,
+        accessor: 'pengeremanLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -273,8 +268,8 @@ class Lift extends Component {
       },
       {
         Header: 'Exhaust Fan Lift',
-        accessor: 'exhaustFan',
-        filterable: true,
+        accessor: 'exhaustFanLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -289,8 +284,8 @@ class Lift extends Component {
       },
       {
         Header: 'Panel atau Drive Unit Lift',
-        accessor: 'panelDriveUnit',
-        filterable: true,
+        accessor: 'panelDriveUnitLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -305,8 +300,8 @@ class Lift extends Component {
       },
       {
         Header: 'Mesin Motor Lift',
-        accessor: 'mesinMotor',
-        filterable: true,
+        accessor: 'mesinMotorLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -321,8 +316,8 @@ class Lift extends Component {
       },
       {
         Header: 'Power Listrik Lift',
-        accessor: 'powerListrik',
-        filterable: true,
+        accessor: 'powerListrikLift',
+        filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) =>
           props.value ? (
@@ -337,8 +332,8 @@ class Lift extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
-        filterable: true,
+        accessor: 'lift',
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -370,7 +365,7 @@ class Lift extends Component {
     ]
 
     const pageName = 'Lift'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -378,11 +373,15 @@ class Lift extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -410,23 +409,81 @@ class Lift extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Cleaning Area Sangkar dan Pintu Lift - Lantai 1"
+                            value={(col) => (col.cleaningAreaSangkarL1 ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cleaning Area Sangkar dan Pintu Lift - Lantai 2"
+                            value={(col) => (col.cleaningAreaSangkarL2 ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cleaning Area Sangkar dan Pintu Lift - Lantai 3"
+                            value={(col) => (col.cleaningAreaSangkarL3 ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cleaning Area Sangkar dan Pintu Lift - Lantai 4"
+                            value={(col) => (col.cleaningAreaSangkarL4 ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cleaning Area Sangkar dan Pintu Lift - Lantai 5"
+                            value={(col) => (col.cleaningAreaSangkarL5 ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cleaning Area Sangkar dan Pintu Lift - Lantai 6"
+                            value={(col) => (col.cleaningAreaSangkarL6 ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tali Seling Lift"
+                            value={(col) => (col.taliSelingLift ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Cek Brake System atau Pengereman Lift"
+                            value={(col) => (col.pengeremanLift ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Exhaust Fan Lift"
+                            value={(col) => (col.exhaustFanLift ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Panel atau Drive Unit Lift"
+                            value={(col) => (col.panelDriveUnitLift ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Mesin Motor Lift"
+                            value={(col) => (col.mesinMotorLift ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Power Listrik Lift"
+                            value={(col) => (col.powerListrikLift ? '✓' : '❌')}
+                          />
+
+                          <ExcelColumn label="Keterangan" value={(col) => col.lift} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
-                  filterable
-                  data={dataDummy}
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -439,7 +496,7 @@ class Lift extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -468,27 +525,51 @@ class Lift extends Component {
                       <br />
                       <div style={{ marginLeft: '40px' }}>
                         <FormGroup>
-                          <Field label="Lantai 1" name="lantai1" component={CfInputCheckbox} />
+                          <Field
+                            label="Lantai 1"
+                            name="cleaningAreaSangkarL1"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 2" name="lantai2" component={CfInputCheckbox} />
+                          <Field
+                            label="Lantai 2"
+                            name="cleaningAreaSangkarL2"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 3" name="lantai3" component={CfInputCheckbox} />
+                          <Field
+                            label="Lantai 3"
+                            name="cleaningAreaSangkarL3"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 4" name="lantai4" component={CfInputCheckbox} />
+                          <Field
+                            label="Lantai 4"
+                            name="cleaningAreaSangkarL4"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 5" name="lantai5" component={CfInputCheckbox} />
+                          <Field
+                            label="Lantai 5"
+                            name="cleaningAreaSangkarL5"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
 
                         <FormGroup>
-                          <Field label="Lantai 6" name="lantai6" component={CfInputCheckbox} />
+                          <Field
+                            label="Lantai 6"
+                            name="cleaningAreaSangkarL6"
+                            component={CfInputCheckbox}
+                          />
                         </FormGroup>
                       </div>
 
@@ -502,7 +583,7 @@ class Lift extends Component {
                             { value: 'Lift 4', label: 'Lift 4' },
                           ]}
                           isRequired
-                          name="keterangan"
+                          name="lift"
                           placeholder="Pilih atau Cari Lift"
                           component={CfSelect}
                         />
@@ -512,7 +593,7 @@ class Lift extends Component {
                         <FormGroup>
                           <Field
                             label="Oli di Rel Sangkar Lift dan Packing di Mesin"
-                            name="oliPacking"
+                            name="oliRelSangkarLift"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -520,7 +601,7 @@ class Lift extends Component {
                         <FormGroup>
                           <Field
                             label="Tali Seling Lift"
-                            name="taliSeling"
+                            name="taliSelingLift"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -528,7 +609,7 @@ class Lift extends Component {
                         <FormGroup>
                           <Field
                             label="Cek Brake System atau Pengereman Lift"
-                            name="brakeSystem"
+                            name="pengeremanLift"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -536,7 +617,15 @@ class Lift extends Component {
                         <FormGroup>
                           <Field
                             label="Exhaust Fan Lift"
-                            name="exhaustFan"
+                            name="exhaustFanLift"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Panel atai Drive Unit Lift"
+                            name="panelDriveUnitLift"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -544,7 +633,7 @@ class Lift extends Component {
                         <FormGroup>
                           <Field
                             label="Mesin Motor Lift"
-                            name="mesinMotor"
+                            name="mesinMotorLift"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
@@ -552,13 +641,24 @@ class Lift extends Component {
                         <FormGroup>
                           <Field
                             label="Power Listrik Lift"
-                            name="powerListrik"
+                            name="powerListrikLift"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
                       </div>
+                      {/* <br />
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="information"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup> */}
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -597,23 +697,23 @@ Lift.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createVendor: PropTypes.func.isRequired,
+  updateVendor: PropTypes.func.isRequired,
+  deleteVendor: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.vendor.isLoading,
+  message: state.vendor.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createVendor: (formData, refresh) => dispatch(createVendor(formData, refresh)),
+  updateVendor: (formData, id, refresh) => dispatch(updateVendor(formData, id, refresh)),
+  deleteVendor: (id, refresh) => dispatch(deleteVendor(id, refresh)),
 })
 
 export default connect(
@@ -621,7 +721,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getVendor(p),
     Component: withToggle({
       Component: Lift,
       toggles: {

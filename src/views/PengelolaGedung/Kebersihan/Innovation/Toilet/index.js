@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,30 +20,31 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
-  CfInput,
-  CfInputCheckbox,
-  CfInputDate,
-  CfInputRadio,
-  CfSelect,
-} from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+  createKebersihanInnovation,
+  updateKebersihanInnovation,
+  deleteKebersihanInnovation,
+} from '../../../../../modules/kebersihan/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
+class Toilet extends Component {
+  state = {
+    optLokasi: [],
+  }
 
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    lokasi: 'Lantai 1 - Pria',
+  initialValues = {
+    typeInnovationBuilding: 'Toilet',
     wastafel: true,
     kloset: true,
     urinoir: true,
@@ -54,30 +56,18 @@ const dataDummy = [
     handSoap: true,
     tissue: true,
     pengharum: true,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '02/06/2020',
-    lokasi: 'Lantai 1 - Wanita',
-    wastafel: true,
-    kloset: false,
-    urinoir: true,
-    kaca: false,
-    lantai: true,
-    dinding: false,
-    tempatSampah: true,
-    handDryer: true,
-    handSoap: false,
-    tissue: true,
-    pengharum: true,
-    keterangan: 'Lorem Ipsum',
-  },
-]
+  }
 
-class Toilet extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeInnovationBuilding: 'Toilet',
+    })
+    const resDataLokasi = await Service.getLokasi()
+    const dataLokasi = resDataLokasi.data.data
+    const optLokasi = dataLokasi.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optLokasi })
   }
 
   doRefresh = () => {
@@ -87,12 +77,16 @@ class Toilet extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, location } = values
+    const { createKebersihanInnovation, updateKebersihanInnovation } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (location && Object.keys(location).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.location = location.id || location
+      }
+      updateKebersihanInnovation(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKebersihanInnovation(values, this.doRefresh)
     }
   }
 
@@ -100,13 +94,13 @@ class Toilet extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKebersihanInnovation } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKebersihanInnovation(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -121,8 +115,10 @@ class Toilet extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optLokasi } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -131,10 +127,11 @@ class Toilet extends Component {
         Header: 'Tanggal',
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Lokasi',
-        accessor: 'lokasi',
+        accessor: 'location.name',
         filterable: false,
       },
       {
@@ -305,7 +302,7 @@ class Toilet extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -345,11 +342,15 @@ class Toilet extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -379,23 +380,66 @@ class Toilet extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Lokasi" value={(col) => col.location?.name} />
+                          <ExcelColumn
+                            label="Wastafel"
+                            value={(col) => (col.wastafel ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Kloset" value={(col) => (col.kloset ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Urinoir"
+                            value={(col) => (col.urinoir ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Kaca" value={(col) => (col.kaca ? '✓' : '❌')} />
+                          <ExcelColumn label="Lantai" value={(col) => (col.lantai ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Dinding"
+                            value={(col) => (col.dinding ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tempat Sampah"
+                            value={(col) => (col.tempatSampah ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Hand Dryer"
+                            value={(col) => (col.handDryer ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Hand Soap"
+                            value={(col) => (col.handSoap ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Tissue" value={(col) => (col.tissue ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Pengharum"
+                            value={(col) => (col.pengharum ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -409,7 +453,7 @@ class Toilet extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -417,7 +461,7 @@ class Toilet extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -441,13 +485,15 @@ class Toilet extends Component {
                           <FormGroup>
                             <Field
                               label="Lokasi"
-                              options={[
-                                { value: 'Lantai 1 - Pria', label: 'Lantai 1 - Pria' },
-                                { value: 'Lantai 1 - Wanita', label: 'Lantai 1 - Wanita' },
-                              ]}
+                              options={optLokasi}
                               isRequired
-                              name="lokasi"
+                              name="location"
                               placeholder="Pilih atau Cari Lokasi"
+                              defaultValue={
+                                values.location
+                                  ? { value: values.location.id, label: values.location.name }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -761,7 +807,7 @@ class Toilet extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -769,8 +815,6 @@ class Toilet extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -809,23 +853,25 @@ Toilet.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKebersihanInnovation: PropTypes.func.isRequired,
+  updateKebersihanInnovation: PropTypes.func.isRequired,
+  deleteKebersihanInnovation: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.kebersihan.isLoading,
+  message: state.kebersihan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKebersihanInnovation: (formData, refresh) =>
+    dispatch(createKebersihanInnovation(formData, refresh)),
+  updateKebersihanInnovation: (formData, id, refresh) =>
+    dispatch(updateKebersihanInnovation(formData, id, refresh)),
+  deleteKebersihanInnovation: (id, refresh) => dispatch(deleteKebersihanInnovation(id, refresh)),
 })
 
 export default connect(
@@ -833,7 +879,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKebersihanInnovation(p),
     Component: withToggle({
       Component: Toilet,
       toggles: {

@@ -19,42 +19,17 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInputDate, CfInputFile } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfInputFile } from '../../../../components'
+import { AlertMessage } from '../../../../helpers'
+import {
+  createGAPekerja,
+  updateGAPekerja,
+  deleteGAPekerja,
+  uploadGAPekerja,
+} from '../../../../modules/generalAffair/dataPekerja/pekerja/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    nama: 'Ammaruddin',
-    nip: 123456789,
-    pernr: 464,
-    levelJabatan: 'Executive Vice President',
-    jobgrade: 'JG10',
-    mkjg: '6 tahun 1 bulan',
-    pg: 'PG12',
-    mkpg: '6 tahun 1 bulan',
-    unitKerja: 'Main Campus',
-  },
-  {
-    nama: 'Mamamia',
-    nip: 123456789,
-    pernr: 464,
-    levelJabatan: 'Vice President',
-    jobgrade: 'JG10',
-    mkjg: '6 tahun 1 bulan',
-    pg: 'PG12',
-    mkpg: '6 tahun 1 bulan',
-    unitKerja: 'Campus B',
-  },
-]
 
 class UploadData extends Component {
   state = {}
@@ -71,12 +46,12 @@ class UploadData extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
-    if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+    const { excel, id } = values
+    const { updateGAPekerja, uploadGAPekerja } = this.props
+    if (excel) {
+      uploadGAPekerja(values, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      updateGAPekerja(values, id, this.doRefresh)
     }
   }
 
@@ -95,13 +70,13 @@ class UploadData extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteGAPekerja } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteGAPekerja(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -116,7 +91,7 @@ class UploadData extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -124,13 +99,25 @@ class UploadData extends Component {
     const columns = [
       {
         Header: 'Nama',
-        accessor: 'nama',
+        accessor: 'name',
         filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'NIP',
         accessor: 'nip',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Umur',
+        accessor: 'age',
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Deksripsi Posisi',
+        accessor: 'position',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -172,12 +159,13 @@ class UploadData extends Component {
       },
       {
         Header: 'Aksi',
+        width: 150,
         filterable: false,
         Cell: (props) => (
           <>
             <Button
               color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              onClick={() => modalForm.show({ data: props.original, upload: false })}
               className="mr-1"
               title="Edit"
             >
@@ -206,11 +194,15 @@ class UploadData extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -218,7 +210,7 @@ class UploadData extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-1"
                       >
                         <i className="fa fa-plus" style={isIcon} />
@@ -231,11 +223,10 @@ class UploadData extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -248,7 +239,7 @@ class UploadData extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -256,36 +247,154 @@ class UploadData extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Tanggal"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          // minDate={new Date()}
-                          isRequired
-                          placeholder="Pilih Tanggal"
-                          // showMonthYearPicker
-                          // showFullMonthYearPicker
-                          // dateFormat="MM/yyyy"
-                          component={CfInputDate}
-                        />
-                      </FormGroup>
+                      {modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Tanggal"
+                              name="tanggal"
+                              classIcon="fa fa-calendar"
+                              blockLabel
+                              // minDate={new Date()}
+                              isRequired
+                              placeholder="Pilih Tanggal"
+                              // showMonthYearPicker
+                              // showFullMonthYearPicker
+                              // dateFormat="MM/yyyy"
+                              component={CfInputDate}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="File Excel"
-                          name="file-eksploitasi"
-                          isRequired
-                          component={CfInputFile}
-                        />
-                      </FormGroup>
+                          <FormGroup>
+                            <Field
+                              label="File Excel"
+                              name="excel"
+                              isRequired
+                              component={CfInputFile}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
 
-                      {ErrorMessage(message)}
+                      {!modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Nama"
+                              type="text"
+                              name="name"
+                              isRequired
+                              placeholder="Masukkan Nama"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="NIP"
+                              type="text"
+                              name="nip"
+                              isRequired
+                              placeholder="Masukkan NIP"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="PERNR"
+                              type="text"
+                              name="pernr"
+                              isRequired
+                              placeholder="Masukkan PERNR"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Umur"
+                              type="number"
+                              name="age"
+                              isRequired
+                              placeholder="Masukkan Umur"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Posisi"
+                              type="text"
+                              name="position"
+                              isRequired
+                              placeholder="Masukkan Jabatan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Level Jabatan"
+                              type="text"
+                              name="levelJabatan"
+                              isRequired
+                              placeholder="Masukkan Level Jabatan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Jobgrade"
+                              type="text"
+                              name="jobgrade"
+                              isRequired
+                              placeholder="Masukkan Jobgrade"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="MKJG"
+                              type="text"
+                              name="mkjg"
+                              isRequired
+                              placeholder="Masukkan MKJG"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="PG"
+                              type="text"
+                              name="pg"
+                              isRequired
+                              placeholder="Masukkan PG"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="MKPG"
+                              type="text"
+                              name="mkpg"
+                              isRequired
+                              placeholder="Masukkan MKPG"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
+
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -324,9 +433,10 @@ UploadData.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createGAPekerja: PropTypes.func.isRequired,
+  updateGAPekerja: PropTypes.func.isRequired,
+  deleteGAPekerja: PropTypes.func.isRequired,
+  uploadGAPekerja: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -338,9 +448,10 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createGAPekerja: (formData, refresh) => dispatch(createGAPekerja(formData, refresh)),
+  updateGAPekerja: (formData, id, refresh) => dispatch(updateGAPekerja(formData, id, refresh)),
+  deleteGAPekerja: (id, refresh) => dispatch(deleteGAPekerja(id, refresh)),
+  uploadGAPekerja: (id, refresh) => dispatch(uploadGAPekerja(id, refresh)),
 })
 
 export default connect(
@@ -348,7 +459,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getGAPekerja(p),
     Component: withToggle({
       Component: UploadData,
       toggles: {

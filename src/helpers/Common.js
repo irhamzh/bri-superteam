@@ -9,13 +9,13 @@ const userData = () => {
   let User = ''
 
   if (token) {
-    let getToken = ''
-    const splitToken = token.split(' ')
-    if (splitToken.length === 2) {
-      ;[, getToken] = splitToken
-    }
+    // let getToken = ''
+    // const splitToken = token.split(' ')
+    // if (splitToken.length === 2) {
+    //   ;[, getToken] = splitToken
+    // }
 
-    User = jwt.decode(getToken)
+    User = jwt.decode(token)
   }
   return User
 }
@@ -121,6 +121,20 @@ const requireLabel = () => (
   </span>
 )
 
+const getYearOptions = (option = 5) => {
+  const options = []
+  const thisYear = new Date().getFullYear()
+  for (let i = option; i > 0; i -= 1) {
+    options.push({ value: thisYear - i, label: thisYear - i })
+  }
+
+  for (let i = 0; i < option; i += 1) {
+    options.push({ value: thisYear + i, label: thisYear + i })
+  }
+
+  return options
+}
+
 export {
   userData,
   formDataFilterByKeys,
@@ -131,4 +145,5 @@ export {
   badgeTypeDokumen,
   checkFilePreview,
   invalidValues,
+  getYearOptions,
 }

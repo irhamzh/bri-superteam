@@ -19,57 +19,46 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfSelect } from '../../../../components'
+import { AlertMessage, invalidValues } from '../../../../helpers'
+import {
+  createPeralatanIT,
+  updatePeralatanIT,
+  deletePeralatanIT,
+} from '../../../../modules/peralatan-it/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaPengguna: 'Parksis',
-    merk: 'HP',
-    model: 'Standard',
-    serialNumberPC: 1234556677,
-    jumlahPC: 1,
-    jenisPC: 'HIGH END',
-    jumlahMonitor: 1,
-    serialNumberMonitor: 2987592375,
-    ruangan: '101',
-    kondisi: 'Baik',
-    lampTimer: '30 Hari',
-    gantiLampu: true,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '12/12/2020',
-    namaPengguna: 'Semongko',
-    merk: 'Samsung',
-    model: 'Standard',
-    serialNumberPC: 1234556677,
-    jumlahPC: 1,
-    jumlahMonitor: 1,
-    serialNumberMonitor: 2987592375,
-    ruangan: '101',
-    kondisi: 'Baik',
-    jenisPC: 'HIGH END',
-    lampTimer: '30 Hari',
-    gantiLampu: false,
-    keterangan: 'Lorem Ipsum',
-  },
-]
-
 class PersonalComputer extends Component {
+  state = {
+    optRuangan: [],
+    optJenisPC: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    jenisPeralatan: 'PC',
+    condition: 'Baik',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      jenisPeralatan: 'PC',
+    })
+
+    const resDataRuangan = await Service.getRoom()
+    const dataRuangan = resDataRuangan.data.data
+    const resDataJenisPC = await Service.getJenisPC()
+    const dataJenisPC = resDataJenisPC.data.data
+
+    const optJenisPC = dataJenisPC.map((row) => ({ label: row.name, value: row.id }))
+    const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optRuangan,
+      optJenisPC,
+    })
   }
 
   doRefresh = () => {
@@ -79,12 +68,20 @@ class PersonalComputer extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, jenisPc, ruangan } = values
+    const { createPeralatanIT, updatePeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (jenisPc && Object.keys(jenisPc).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.jenisPc = jenisPc.id || jenisPc
+      }
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
+      updatePeralatanIT(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPeralatanIT(values, this.doRefresh)
     }
   }
 
@@ -92,13 +89,13 @@ class PersonalComputer extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePeralatanIT } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePeralatanIT(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -113,8 +110,9 @@ class PersonalComputer extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optJenisPC, optRuangan } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -123,46 +121,55 @@ class PersonalComputer extends Component {
         Header: 'Nama Pengguna',
         accessor: 'namaPengguna',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Ruangan',
-        accessor: 'ruangan',
-        filterable: true,
+        accessor: 'ruangan.name',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Merk',
         accessor: 'merk',
-        filterable: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'SN PC',
-        accessor: 'serialNumberPC',
-        filterable: true,
+        accessor: 'sn',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jenis PC',
-        accessor: 'jenisPC',
+        accessor: 'jenisPc.name',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah PC',
-        accessor: 'jumlahPC',
+        accessor: 'jumlahPc',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'SN Monitor',
-        accessor: 'serialNumberMonitor',
-        filterable: true,
+        accessor: 'snMonitor',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah Monitor',
-        accessor: 'jumlahPC',
+        accessor: 'jumlahMonitor',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
-        filterable: true,
+        accessor: 'information',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -201,11 +208,15 @@ class PersonalComputer extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -226,11 +237,10 @@ class PersonalComputer extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -243,7 +253,7 @@ class PersonalComputer extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -251,25 +261,22 @@ class PersonalComputer extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
                           label="Jenis PC"
-                          options={[
-                            { value: 'HPPRO XP', label: 'HPPRO XP' },
-                            { value: 'CBT', label: 'CBT' },
-                            { value: 'HPDX', label: 'HPDX' },
-                            { value: 'Acer', label: 'Acer' },
-                            { value: 'HPPROP W7', label: 'HPPROP W7' },
-                            { value: 'HPPRO WIN10', label: 'HPPRO WIN10' },
-                            { value: 'HIGH END', label: 'HIGH END' },
-                          ]}
+                          options={optJenisPC}
                           isRequired
-                          name="jenisPC"
+                          name="jenisPc"
                           placeholder="Pilih atau Cari Jenis PC"
+                          defaultValue={
+                            values.jenisPc
+                              ? { value: values.jenisPc.id, label: values.jenisPc.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -300,7 +307,7 @@ class PersonalComputer extends Component {
                         <Field
                           label="SN PC"
                           type="text"
-                          name="serialNumberPC"
+                          name="sn"
                           isRequired
                           placeholder="Masukkan Serial Number PC"
                           component={CfInput}
@@ -311,7 +318,7 @@ class PersonalComputer extends Component {
                         <Field
                           label="Jumlah PC"
                           type="number"
-                          name="jumlahPC"
+                          name="jumlahPc"
                           isRequired
                           placeholder="Masukkan Jumlah PC"
                           component={CfInput}
@@ -322,7 +329,7 @@ class PersonalComputer extends Component {
                         <Field
                           label="SN Monitor"
                           type="text"
-                          name="serialNumberMonitor"
+                          name="snMonitor"
                           isRequired
                           placeholder="Masukkan Serial Number Monitor"
                           component={CfInput}
@@ -343,13 +350,15 @@ class PersonalComputer extends Component {
                       <FormGroup>
                         <Field
                           label="Ruangan"
-                          options={[
-                            { value: '101', label: '1010' },
-                            { value: '102', label: '102' },
-                          ]}
+                          options={optRuangan}
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
+                          defaultValue={
+                            values.ruangan
+                              ? { value: values.ruangan.id, label: values.ruangan.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -358,14 +367,14 @@ class PersonalComputer extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -404,23 +413,23 @@ PersonalComputer.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPeralatanIT: PropTypes.func.isRequired,
+  updatePeralatanIT: PropTypes.func.isRequired,
+  deletePeralatanIT: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanIt.isLoading,
+  message: state.peralatanIt.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPeralatanIT: (formData, refresh) => dispatch(createPeralatanIT(formData, refresh)),
+  updatePeralatanIT: (formData, id, refresh) => dispatch(updatePeralatanIT(formData, id, refresh)),
+  deletePeralatanIT: (id, refresh) => dispatch(deletePeralatanIT(id, refresh)),
 })
 
 export default connect(
@@ -428,7 +437,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPeralatanIT(p),
     Component: withToggle({
       Component: PersonalComputer,
       toggles: {

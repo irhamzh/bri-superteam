@@ -19,45 +19,36 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPurchaseOrder,
+  updatePurchaseOrder,
+  deletePurchaseOrder,
+} from '../../../../modules/purchaseOrder/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Samsung',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 10,
-    hargaBarang: 200000,
-    total: 2000000,
-  },
-  {
-    tanggal: '12/12/2020',
-    namaProvider: 'Apple',
-    alamat: 'Lorem Ipsum Jl. XXX',
-    contact: '08777XXXXX',
-    namaPengadaan: 'Pengadaan 1',
-    jumlahBarang: 50,
-    hargaBarang: 20000000,
-    total: 1000000000,
-  },
-]
-
 class PurchaseOrder extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optPengadaan: [],
+    optProvider: [],
+    dataProvider: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataPengadaan = await Service.getAllPengadaan()
+    const dataPengadaan = resDataPengadaan.data.data
+    const optPengadaan = dataPengadaan.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optPengadaan, optProvider, dataProvider })
   }
 
   doRefresh = () => {
@@ -68,11 +59,20 @@ class PurchaseOrder extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPurchaseOrder, updatePurchaseOrder } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { provider, pengadaan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      if (pengadaan && Object.keys(pengadaan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pengadaan = pengadaan.id || pengadaan
+      }
+      updatePurchaseOrder(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPurchaseOrder(values, this.doRefresh)
     }
   }
 
@@ -80,13 +80,13 @@ class PurchaseOrder extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePurchaseOrder } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePurchaseOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,8 +101,9 @@ class PurchaseOrder extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optPengadaan, optProvider, dataProvider } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -111,46 +112,47 @@ class PurchaseOrder extends Component {
         Header: 'Tanggal',
         width: 100,
         filterable: false,
-        accessor: 'tanggal',
+        accessor: 'createdAt',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
-        filterable: true,
+        accessor: 'provider.name',
+        filterable: false,
         headerClassName: 'wordwrap',
       },
 
       {
         Header: 'Alamat',
         filterable: false,
-        accessor: 'alamat',
+        accessor: 'provider.address',
       },
       {
         Header: 'Kontak',
-        accessor: 'contact',
+        accessor: 'provider.contact',
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
-        filterable: true,
+        accessor: 'pengadaan.namaPengadaan',
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Barang',
-        accessor: 'jumlahBarang',
-        filterable: true,
+        accessor: 'jumlah',
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Harga Barang',
-        accessor: 'hargaBarang',
-        filterable: true,
+        accessor: 'hargaSatuan',
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Total Harga',
-        accessor: 'total',
-        filterable: true,
+        accessor: 'totalHarga',
+        filterable: false,
         headerClassName: 'wordwrap',
       },
       {
@@ -190,11 +192,15 @@ class PurchaseOrder extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -214,12 +220,11 @@ class PurchaseOrder extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
-                  data={dataDummy}
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -232,7 +237,7 @@ class PurchaseOrder extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -240,17 +245,25 @@ class PurchaseOrder extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Purchase Order</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Pengadaan 1', label: 'Pengadaan 1' }]}
+                          options={optPengadaan}
                           isRequired
-                          name="namaPengadaan"
+                          name="pengadaan"
                           placeholder="Pilih atau Cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -258,11 +271,16 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          type="text"
-                          name="namaProvider"
+                          options={optProvider}
                           isRequired
-                          placeholder="Masukkan nama provider"
-                          component={CfInput}
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -270,9 +288,15 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamat"
+                          name="address"
                           isRequired
-                          placeholder="Masukkan alamat provider"
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
+                          placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -283,7 +307,13 @@ class PurchaseOrder extends Component {
                           type="text"
                           name="contact"
                           isRequired
-                          placeholder="Masukkan No. Kontak provider"
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
+                          placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -292,7 +322,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Jumlah"
                           type="text"
-                          name="jumlahBarang"
+                          name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah PO"
                           component={CfInput}
@@ -303,7 +333,7 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Harga Satuan"
                           type="text"
-                          name="hargaBarang"
+                          name="hargaSatuan"
                           isRequired
                           placeholder="Masukkan harga"
                           component={CfInput}
@@ -314,14 +344,14 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Total Harga"
                           type="text"
-                          name="total"
+                          name="totalHarga"
                           isRequired
                           placeholder="Masukkan Total Harga"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -360,23 +390,24 @@ PurchaseOrder.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPurchaseOrder: PropTypes.func.isRequired,
+  updatePurchaseOrder: PropTypes.func.isRequired,
+  deletePurchaseOrder: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.purchaseOrder.isLoading,
+  message: state.purchaseOrder.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPurchaseOrder: (formData, refresh) => dispatch(createPurchaseOrder(formData, refresh)),
+  updatePurchaseOrder: (formData, id, refresh) =>
+    dispatch(updatePurchaseOrder(formData, id, refresh)),
+  deletePurchaseOrder: (id, refresh) => dispatch(deletePurchaseOrder(id, refresh)),
 })
 
 export default connect(
@@ -384,7 +415,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPurchaseOrder(p),
     Component: withToggle({
       Component: PurchaseOrder,
       toggles: {

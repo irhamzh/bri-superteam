@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,51 +21,48 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPREvaluasiPengadaan,
+  updatePREvaluasiPengadaan,
+  deletePREvaluasiPengadaan,
+} from '../../../../modules/procurement/pengadaan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    namaPengadaan: 'Pengadaan 1',
-    namaProvider: 'Provider 1',
-    alamatProvider: 'Jalan R. XXXX',
-    contactProvider: '087XXXXXX',
-    jumlahBarang: 23,
-    jenisPekerjaan: 'Perbankan',
-    hargaBarang: 10000,
-    totalHarga: 230000,
-    penilaian: 1,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    namaPengadaan: 'Pengadaan 2',
-    namaProvider: 'Provider 2',
-    alamatProvider: 'Jalan R. XXXX',
-    contactProvider: '087XXXXXX',
-    jenisPekerjaan: 'Properti',
-    jumlahBarang: 23,
-    hargaBarang: 10000,
-    totalHarga: 230000,
-    penilaian: 3,
-    keterangan: 'Lorem Ipsum',
-  },
-]
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Evaluasi extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optPRPengadaan: [],
+    optProvider: [],
+    dataProvider: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataPRPengadaan = await Service.getPRBarangJasaPengadaan()
+    const dataPRPengadaan = resDataPRPengadaan.data.data
+    const optPRPengadaan = dataPRPengadaan.map((row) => ({
+      label: row.namaPengadaan,
+      value: row.id,
+    }))
+
+    this.setState({
+      optProvider,
+      optPRPengadaan,
+      dataProvider,
+    })
   }
 
   doRefresh = () => {
@@ -74,11 +73,18 @@ class Evaluasi extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPREvaluasiPengadaan, updatePREvaluasiPengadaan } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { provider, pengadaan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
+      if (pengadaan && Object.keys(pengadaan).length > 0) {
+        values.pengadaan = pengadaan.id || pengadaan
+      }
+      updatePREvaluasiPengadaan(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPREvaluasiPengadaan(values, this.doRefresh)
     }
   }
 
@@ -86,13 +92,13 @@ class Evaluasi extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePREvaluasiPengadaan } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePREvaluasiPengadaan(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -107,8 +113,10 @@ class Evaluasi extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optPRPengadaan, optProvider, dataProvider } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -118,47 +126,48 @@ class Evaluasi extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
-        filterable: true,
+        accessor: 'pengadaan.namaPengadaan',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
-        filterable: true,
+        accessor: 'provider.name',
+        filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Alamat Provider',
-        accessor: 'alamatProvider',
+        accessor: 'provider.address',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nomor Contact Provider',
-        accessor: 'nomorKontak',
+        accessor: 'provider.contact',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
 
       {
-        Header: 'Jumlah Barang',
-        accessor: 'jumlahBarang',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
         Header: 'Penilaian',
-        accessor: 'penilaian',
+        accessor: 'nilai',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
-        filterable: true,
+        accessor: 'information',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -197,11 +206,15 @@ class Evaluasi extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -231,23 +244,47 @@ class Evaluasi extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Nama Pengadaan"
+                            value={(col) => col.pengadaan?.namaPengadaan}
+                          />
+                          <ExcelColumn label="Nama Provider" value={(col) => col.provider?.name} />
+                          <ExcelColumn
+                            label="Alamat Provider"
+                            value={(col) => col.provider?.address}
+                          />
+                          <ExcelColumn
+                            label="Kontak Provider"
+                            value={(col) => col.provider?.contact}
+                          />
+                          <ExcelColumn label="Penilaian" value="nilai" />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -260,7 +297,7 @@ class Evaluasi extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -272,7 +309,7 @@ class Evaluasi extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Pengadaan</ModalHeader>
                     <ModalBody>
-                      <h6>Data Vendor</h6>
+                      <b>Data Vendor</b>
                       <div style={{ marginLeft: '1rem' }}>
                         <FormGroup>
                           <Field
@@ -282,7 +319,7 @@ class Evaluasi extends Component {
                             blockLabel
                             minDate={new Date()}
                             isRequired
-                            placeholder="Pilih Tanggal Purchase Order"
+                            placeholder="Pilih Tanggal"
                             component={CfInputDate}
                           />
                         </FormGroup>
@@ -290,13 +327,18 @@ class Evaluasi extends Component {
                         <FormGroup>
                           <Field
                             label="Nama Pengadaan"
-                            options={[
-                              { value: 'Pengadaan 1', label: 'Pengadaan 1' },
-                              { value: 'Pengadaan 2', label: 'Pengadaan 2' },
-                            ]}
+                            options={optPRPengadaan}
                             isRequired
-                            name="namaPengadaan"
+                            name="pengadaan"
                             placeholder="Pilih atau Cari Nama Pengadaan"
+                            defaultValue={
+                              values.pengadaan
+                                ? {
+                                    value: values.pengadaan.id,
+                                    label: values.pengadaan.namaPengadaan,
+                                  }
+                                : null
+                            }
                             component={CfSelect}
                           />
                         </FormGroup>
@@ -304,11 +346,16 @@ class Evaluasi extends Component {
                         <FormGroup>
                           <Field
                             label="Nama Provider"
-                            type="text"
-                            name="namaProvider"
+                            options={optProvider}
                             isRequired
-                            placeholder="Masukkan Nama Provider"
-                            component={CfInput}
+                            name="provider"
+                            placeholder="Pilih atau Cari Nama Provider"
+                            defaultValue={
+                              values.provider
+                                ? { value: values.provider.id, label: values.provider.name }
+                                : null
+                            }
+                            component={CfSelect}
                           />
                         </FormGroup>
 
@@ -316,8 +363,15 @@ class Evaluasi extends Component {
                           <Field
                             label="Alamat Provider"
                             type="text"
-                            name="alamatProvider"
+                            name="address"
                             isRequired
+                            disabled
+                            value={
+                              dataProvider.find(
+                                (obj) =>
+                                  obj.id === values.provider || obj.id === values.provider?.id
+                              )?.address
+                            }
                             placeholder="Masukkan Alamat Provider"
                             component={CfInput}
                           />
@@ -327,8 +381,15 @@ class Evaluasi extends Component {
                           <Field
                             label="No. Kontak Provider"
                             type="text"
-                            name="kontakProvider"
+                            name="contact"
                             isRequired
+                            disabled
+                            value={
+                              dataProvider.find(
+                                (obj) =>
+                                  obj.id === values.provider || obj.id === values.provider?.id
+                              )?.contact
+                            }
                             placeholder="Masukkan No. Kontak Provider"
                             component={CfInput}
                           />
@@ -338,32 +399,29 @@ class Evaluasi extends Component {
                           <Field
                             label="Keterangan"
                             type="text"
-                            name="keterangan"
+                            name="information"
                             isRequired
                             placeholder="Masukkan Keterangan"
                             component={CfInput}
                           />
                         </FormGroup>
-                      </div>
 
-                      <h6>Penilaian Vendor</h6>
-                      <div style={{ marginLeft: '4rem' }}>
                         <FormGroup>
-                          <Field label="1" name="penilaian" id={1} component={CfInputRadio} />
-                        </FormGroup>
-                        <FormGroup>
-                          <Field label="2" name="penilaian" id={2} component={CfInputRadio} />
-                        </FormGroup>
-                        <FormGroup>
-                          <Field label="3" name="penilaian" id={3} component={CfInputRadio} />
-                        </FormGroup>
-                        <FormGroup>
-                          <Field label="4" name="penilaian" id={4} component={CfInputRadio} />
+                          <Field
+                            label="Penilaian Vendor"
+                            options={[
+                              { value: 1, label: '1' },
+                              { value: 2, label: '2' },
+                              { value: 3, label: '3' },
+                              { value: 4, label: '4' },
+                            ]}
+                            isRequired
+                            name="nilai"
+                            placeholder="Pilih atau Cari Nilai"
+                            component={CfSelect}
+                          />
                         </FormGroup>
                       </div>
-                      {console.log(values)}
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -402,23 +460,25 @@ Evaluasi.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPREvaluasiPengadaan: PropTypes.func.isRequired,
+  updatePREvaluasiPengadaan: PropTypes.func.isRequired,
+  deletePREvaluasiPengadaan: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.procurementPengadaan.isLoading,
+  message: state.procurementPengadaan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPREvaluasiPengadaan: (formData, refresh) =>
+    dispatch(createPREvaluasiPengadaan(formData, refresh)),
+  updatePREvaluasiPengadaan: (formData, id, refresh) =>
+    dispatch(updatePREvaluasiPengadaan(formData, id, refresh)),
+  deletePREvaluasiPengadaan: (id, refresh) => dispatch(deletePREvaluasiPengadaan(id, refresh)),
 })
 
 export default connect(
@@ -426,7 +486,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPREvaluasiPengadaan(p),
     Component: withToggle({
       Component: Evaluasi,
       toggles: {

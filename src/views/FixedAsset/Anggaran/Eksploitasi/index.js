@@ -19,49 +19,31 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Select from 'react-select'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputFile, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInputDate, CfInputFile } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { uploadAnggaranEksploitasi } from '../../../../modules/anggaran/eksploitasi/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    code: 1234567,
-    nama: 'Elektronik',
-    kondisi: 'Baik',
-  },
-  {
-    code: 989667,
-    nama: 'Perkakas',
-    kondisi: 'Tidak Baik',
-  },
-]
-
 class EksploitasiAnggaran extends Component {
   state = {
-    tahun: '',
-    bulan: '',
+    tahun: null,
+    bulan: null,
     optBulan: [
-      { label: 'Januari', value: 'Januari' },
-      { label: 'Februari', value: 'Februari' },
-      { label: 'Maret', value: 'Maret' },
-      { label: 'April', value: 'April' },
-      { label: 'Mei', value: 'Mei' },
-      { label: 'Juni', value: 'Juni' },
-      { label: 'Juli', value: 'Juli' },
-      { label: 'Agustus', value: 'Agustus' },
-      { label: 'September', value: 'September' },
-      { label: 'Oktober', value: 'Oktober' },
-      { label: 'November', value: 'November' },
-      { label: 'Desember', value: 'Desember' },
+      { label: 'Januari', value: '1' },
+      { label: 'Februari', value: '2' },
+      { label: 'Maret', value: '3' },
+      { label: 'April', value: '4' },
+      { label: 'Mei', value: '5' },
+      { label: 'Juni', value: '6' },
+      { label: 'Juli', value: '7' },
+      { label: 'Agustus', value: '8' },
+      { label: 'September', value: '9' },
+      { label: 'Oktober', value: '10' },
+      { label: 'November', value: '11' },
+      { label: 'Desember', value: '12' },
     ],
     optTahun: [
       { label: '2015', value: '2015' },
@@ -91,13 +73,8 @@ class EksploitasiAnggaran extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
-    if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
-    } else {
-      createRole(values, this.doRefresh)
-    }
+    const { uploadAnggaranEksploitasi } = this.props
+    uploadAnggaranEksploitasi(values, this.doRefresh)
   }
 
   handleChangeSelect = (name, value) => {
@@ -111,59 +88,371 @@ class EksploitasiAnggaran extends Component {
     )
   }
 
-  handleDelete = (e, state) => {
+  filterData = async (e) => {
     e.preventDefault()
+    const { bulan, tahun } = this.state
+    if (invalidValues.includes(bulan)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+    if (invalidValues.includes(tahun)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
 
-    const { id } = state
-    const { deleteRole } = this.props
+    try {
+      const { fetchQueryProps } = this.props
+      fetchQueryProps.setFilteredByObject({
+        'month-year$createdAt': `${tahun}-${bulan}`,
+      })
 
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
+      this.doRefresh()
+    } catch (error) {
+      AlertMessage.error(error)
+    }
   }
 
   render() {
-    const { optBulan, optTahun, tahun, bulan } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { optBulan, optTahun } = this.state
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tampilan Kolom-kolom tabel disamakan dengan file excel yang diberikan',
-        accessor: 'note',
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
         filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
       },
-      // {
-      //   Header: 'Aksi',
-      //   filterable: false,
-      //   Cell: (props) => (
-      //     <>
-      //       <Button
-      //         color="success"
-      //         onClick={() => modalForm.show({ data: props.original })}
-      //         className="mr-1"
-      //         title="Edit"
-      //       >
-      //         <i className="fa fa-pencil" />
-      //       </Button>
-      //     </>
-      //   ),
-      // },
+      {
+        Header: 'Tanggal',
+        accessor: `tanggal`,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatDate(props.value)}</p>,
+      },
+      {
+        Header: 'Kode',
+        accessor: `kode`,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Deskripsi',
+        accessor: `deskripsi`,
+        filterable: false,
+        width: 200,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p className="wordwrap">{props.value}</p>,
+      },
+      {
+        Header: 'BRI CORPU',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'briCorpuBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'briCorpuRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'briCorpuSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'briCorpu',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Bandung',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusBandungBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusBandungRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusBandungSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusBandung',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Jakarta',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusJakartaBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusJakartaRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusJakartaSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusJakarta',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Makassar',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusMakassarBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusMakassarRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusMakassarSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusMakassar',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Medan',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusMedanBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusMedanRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusMedanSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusMedan',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Padang',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusPadangBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusPadangRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusPadangSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusPadang',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Surabaya',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusSurabayaBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusSurabayaRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusSurabayaSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusSurabaya',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Campus Yogyakarta',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'campusYogyakartaBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'campusYogyakartaRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'campusYogyakartaSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'campusYogyakarta',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
+      {
+        Header: 'Total Campus',
+        filterable: false,
+        columns: [
+          {
+            Header: 'Breakdown Anggaran (Rp)',
+            accessor: 'totalCampusBreakdownAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Realisasi Anggaran (Rp)',
+            accessor: 'totalCampusRealisasiAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: 'Sisa Anggaran (Rp)',
+            accessor: 'totalCampusSisaAnggaran',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+          {
+            Header: '%',
+            accessor: 'totalCampus',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
+          },
+        ],
+      },
     ]
 
     const pageName = 'Eksploitasi Anggaran'
@@ -175,11 +464,15 @@ class EksploitasiAnggaran extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -199,31 +492,43 @@ class EksploitasiAnggaran extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('bulan', v)}
-                      options={optBulan}
-                      value={bulan}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Bulan"
-                    />
+                  <Col>
+                    <div>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih Bulan..."
+                              options={optBulan}
+                              name="bulan"
+                              onChange={(e) => this.setState({ bulan: e?.value })}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih tahun..."
+                              options={optTahun}
+                              name="tahun"
+                              className=""
+                              onChange={(e) => this.setState({ tahun: e?.value })}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col sm="2">
+                          <Button type="submit" color="primary" onClick={(e) => this.filterData(e)}>
+                            <i className="fa fa-filter" />
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
                   </Col>
 
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('tahun', v)}
-                      options={optTahun}
-                      value={tahun}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Tahun"
-                    />
-                  </Col>
-
-                  <Col sm="8">
+                  <Col>
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -244,12 +549,11 @@ class EksploitasiAnggaran extends Component {
                 </Row>
                 <br />
                 <ReactTable
-                  filterable
-                  data={dataDummy}
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -262,7 +566,7 @@ class EksploitasiAnggaran extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -270,7 +574,7 @@ class EksploitasiAnggaran extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
                     <ModalBody>
@@ -291,16 +595,10 @@ class EksploitasiAnggaran extends Component {
                       </FormGroup>
 
                       <FormGroup>
-                        <Field
-                          label="File Excel"
-                          name="file-eksploitasi"
-                          isRequired
-                          component={CfInputFile}
-                        />
+                        <Field label="File Excel" name="excel" isRequired component={CfInputFile} />
                       </FormGroup>
-                      {console.log(values, 'values')}
 
-                      {ErrorMessage(message)}
+                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -339,23 +637,20 @@ EksploitasiAnggaran.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  uploadAnggaranEksploitasi: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.anggaranEksploitasi.isLoading,
+  message: state.anggaranEksploitasi.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  uploadAnggaranEksploitasi: (formData, refresh) =>
+    dispatch(uploadAnggaranEksploitasi(formData, refresh)),
 })
 
 export default connect(
@@ -363,7 +658,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getAnggaranEksploitasi(p),
     Component: withToggle({
       Component: EksploitasiAnggaran,
       toggles: {

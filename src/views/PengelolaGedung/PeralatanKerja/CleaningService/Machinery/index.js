@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,45 +21,40 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createPeralatanKerja,
+  updatePeralatanKerja,
+  deletePeralatanKerja,
+} from '../../../../../modules/peralatankerja/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    polisherMachine: 'Baik',
-    vacuumCleaner: 'Baik',
-    jetSprayer: 'Baik',
-    blower: 'Baik',
-    signed: 'Baik',
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    polisherMachine: 'Baik',
-    vacuumCleaner: 'Tidak Baik',
-    jetSprayer: 'Baik',
-    blower: 'Tidak Baik',
-    signed: 'Baik',
-    keterangan: 'Lorem ipsum',
-  },
-]
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class Machinery extends Component {
   initialValues = {
-    nama: '',
-    id: '',
+    typePeralatanKerja: 'machinery',
+    lowSpeedPolisherMachine: 'yes',
+    wetDryVacuumCleaner: 'yes',
+    jetSprayer: 'yes',
+    blower: 'yes',
+    signed: 'yes',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePeralatanKerja: 'machinery',
+    })
   }
 
   doRefresh = () => {
@@ -68,11 +65,11 @@ class Machinery extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPeralatanKerja, updatePeralatanKerja } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updatePeralatanKerja(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPeralatanKerja(values, this.doRefresh)
     }
   }
 
@@ -80,13 +77,13 @@ class Machinery extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePeralatanKerja } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePeralatanKerja(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -101,8 +98,9 @@ class Machinery extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -112,38 +110,54 @@ class Machinery extends Component {
         accessor: 'tanggal',
         width: 100,
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Low Speed Polisher Machine 17"',
-        accessor: 'polisherMachine',
+        accessor: 'lowSpeedPolisherMachine',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Wet & Dry Vacuum Cleaner 20 lt',
-        accessor: 'vacuumCleaner',
+        accessor: 'wetDryVacuumCleaner',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Jet Sprayer',
         accessor: 'jetSprayer',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Blower',
         accessor: 'blower',
         filterable: false,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Signed',
         accessor: 'signed',
         filterable: false,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -183,11 +197,15 @@ class Machinery extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -217,23 +235,57 @@ class Machinery extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label='Low Speed Polisher Machine 17"'
+                            value={(col) =>
+                              col.lowSpeedPolisherMachine === 'yes' ? 'Baik' : 'Tidak Baik'
+                            }
+                          />
+                          <ExcelColumn
+                            label="Wet &amp; Dry Vacuum Cleaner 20 lt"
+                            value={(col) =>
+                              col.wetDryVacuumCleaner === 'yes' ? 'Baik' : 'Tidak Baik'
+                            }
+                          />
+                          <ExcelColumn
+                            label="Jet Sprayer"
+                            value={(col) => (col.jetSprayer === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Blower"
+                            value={(col) => (col.blower === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Signed"
+                            value={(col) => (col.signed === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -247,7 +299,7 @@ class Machinery extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -274,14 +326,14 @@ class Machinery extends Component {
 
                       <Row>
                         <Col sm="6">
-                          <h6>Low Speed Polisher Machine 17"</h6>
+                          <h6>Low Speed Polisher Machine 17&quot;</h6>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="polisherMachine"
-                              id="Baik"
+                              name="lowSpeedPolisherMachine"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -290,8 +342,8 @@ class Machinery extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="polisherMachine"
-                              id="Tidak Baik"
+                              name="lowSpeedPolisherMachine"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -306,8 +358,8 @@ class Machinery extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="vacuumCleaner"
-                              id="Baik"
+                              name="wetDryVacuumCleaner"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -316,8 +368,8 @@ class Machinery extends Component {
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="vacuumCleaner"
-                              id="Tidak Baik"
+                              name="wetDryVacuumCleaner"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -333,7 +385,7 @@ class Machinery extends Component {
                             <Field
                               label="Baik"
                               name="jetSprayer"
-                              id="Baik"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -343,7 +395,7 @@ class Machinery extends Component {
                             <Field
                               label="Tidak Baik"
                               name="jetSprayer"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -356,7 +408,7 @@ class Machinery extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="blower" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="blower" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -364,7 +416,7 @@ class Machinery extends Component {
                             <Field
                               label="Tidak Baik"
                               name="blower"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -377,7 +429,7 @@ class Machinery extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="signed" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="signed" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
@@ -385,7 +437,7 @@ class Machinery extends Component {
                             <Field
                               label="Tidak Baik"
                               name="signed"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -396,14 +448,12 @@ class Machinery extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -442,23 +492,24 @@ Machinery.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPeralatanKerja: PropTypes.func.isRequired,
+  updatePeralatanKerja: PropTypes.func.isRequired,
+  deletePeralatanKerja: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanKerja.isLoading,
+  message: state.peralatanKerja.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPeralatanKerja: (formData, refresh) => dispatch(createPeralatanKerja(formData, refresh)),
+  updatePeralatanKerja: (formData, id, refresh) =>
+    dispatch(updatePeralatanKerja(formData, id, refresh)),
+  deletePeralatanKerja: (id, refresh) => dispatch(deletePeralatanKerja(id, refresh)),
 })
 
 export default connect(
@@ -466,7 +517,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPeralatanKerja(p),
     Component: withToggle({
       Component: Machinery,
       toggles: {

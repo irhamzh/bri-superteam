@@ -21,7 +21,7 @@ const Lembur = () => {
               toggle('1')
             }}
           >
-            Outsourcing Man Power
+            Pramubakti
           </NavLink>
         </NavItem>
         <NavItem>

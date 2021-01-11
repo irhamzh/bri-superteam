@@ -57,40 +57,62 @@ export default {
           url: '/fixed-asset/peralatan-it',
           icon: 'fa fa-angle-double-right',
         },
-        // {
-        //   name: 'Reporting',
-        //   url: '/fixed-asset/reporting',
-        //   icon: 'fa fa-angle-double-right',
-        // },
-      ],
-    },
-    {
-      name: 'Pengelola Gedung',
-      url: '/pengelola-gedung',
-      icon: 'icon-layers',
-      children: [
         {
-          name: 'Engineer',
-          url: '/pengelola-gedung/engineer',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'Peralatan IT',
-          url: '/pengelola-gedung/peralatan-it',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'Kebersihan',
-          url: '/pengelola-gedung/kebersihan',
-          icon: 'fa fa-angle-double-right',
-        },
-        {
-          name: 'Peralatan Kerja',
-          url: '/pengelola-gedung/peralatan-kerja',
-          icon: 'fa fa-angle-double-right',
+          name: 'Pengelola Gedung',
+          url: '/pengelola-gedung',
+          icon: 'icon-layers',
+          children: [
+            {
+              name: 'Engineer',
+              url: '/pengelola-gedung/engineer',
+              icon: 'fa fa-angle-double-right',
+            },
+            {
+              name: 'Peralatan IT',
+              url: '/pengelola-gedung/peralatan-it',
+              icon: 'fa fa-angle-double-right',
+            },
+            {
+              name: 'Kebersihan',
+              url: '/pengelola-gedung/kebersihan',
+              icon: 'fa fa-angle-double-right',
+            },
+            {
+              name: 'Peralatan Kerja',
+              url: '/pengelola-gedung/peralatan-kerja',
+              icon: 'fa fa-angle-double-right',
+            },
+          ],
         },
       ],
     },
+    // {
+    //   name: 'Pengelola Gedung',
+    //   url: '/pengelola-gedung',
+    //   icon: 'icon-layers',
+    //   children: [
+    //     {
+    //       name: 'Engineer',
+    //       url: '/pengelola-gedung/engineer',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'Peralatan IT',
+    //       url: '/pengelola-gedung/peralatan-it',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'Kebersihan',
+    //       url: '/pengelola-gedung/kebersihan',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //     {
+    //       name: 'Peralatan Kerja',
+    //       url: '/pengelola-gedung/peralatan-kerja',
+    //       icon: 'fa fa-angle-double-right',
+    //     },
+    //   ],
+    // },
     {
       name: 'Procurement',
       url: '/procurement',
@@ -189,15 +211,37 @@ export default {
       name: 'Financial Adm',
       url: '/financial-admin',
       icon: 'icon-layers',
+      children: [
+        {
+          name: 'Tambahan Kas',
+          url: '/financial-admin/tambahan-kas',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Payment',
+          url: '/financial-admin/payment',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Persekot',
+          url: '/financial-admin/persekot',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Upload',
+          url: '/financial-admin/upload',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
     },
-    // {
-    //   title: true,
-    //   name: 'M A S T E R',
-    //   wrapper: {
-    //     element: '',
-    //     attributes: {},
-    //   },
-    // },
+    {
+      title: true,
+      name: 'M A S T E R',
+      wrapper: {
+        element: '',
+        attributes: {},
+      },
+    },
     // {
     //   name: 'Account',
     //   url: '/akun',
@@ -215,17 +259,142 @@ export default {
     //     },
     //   ],
     // },
-    // {
-    //   name: 'Data Master',
-    //   url: '/master',
-    //   icon: 'fa fa-tasks',
-    //   children: [
-    //     {
-    //       name: 'Position',
-    //       url: '/master/position',
-    //       icon: 'fa fa-angle-double-right',
-    //     },
-    //   ],
-    // },
+    {
+      name: 'Data Master',
+      url: '/master',
+      icon: 'fa fa-tasks',
+      children: [
+        {
+          name: 'User',
+          url: '/master/users',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Roles',
+          url: '/master/roles',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Lantai',
+          url: '/master/lantai',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Ruangan',
+          url: '/master/rooms',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Gedung',
+          url: '/master/gedung',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Lokasi',
+          url: '/master/lokasi',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Provider',
+          url: '/master/providers',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Formasi',
+          url: '/master/formasi',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Compressor',
+          url: '/master/compressor',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pompa',
+          url: '/master/pompa',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Unit Pompa',
+          url: '/master/unit-pompa',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Item',
+          url: '/master/item',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Water Meter',
+          url: '/master/water-meter',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Rekanan',
+          url: '/master/partners',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Catering',
+          url: '/master/catering',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pendidikan',
+          url: '/master/pendidikan',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Barang',
+          url: '/master/type-item',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis PC',
+          url: '/master/type-pc',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Gedung',
+          url: '/master/building-types',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Ruangan',
+          url: '/master/room-types',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Hotel',
+          url: '/master/hotel',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Checkpoint',
+          url: '/master/checkpoint',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Area',
+          url: '/master/area',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Jenis Obat',
+          url: '/master/jenis-obat',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Kendaraan',
+          url: '/master/vehicles',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Uker',
+          url: '/master/ukers',
+          icon: 'fa fa-angle-double-right',
+        },
+      ],
+    },
   ],
 }

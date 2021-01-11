@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,57 +20,50 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
+import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
-  CfInput,
-  CfInputCheckbox,
-  CfInputDate,
-  CfInputRadio,
-  CfSelect,
-} from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+  createKebersihanPendukung,
+  updateKebersihanPendukung,
+  deleteKebersihanPendukung,
+} from '../../../../../modules/kebersihan/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
+class Musholla extends Component {
+  state = {
+    optLokasi: [],
+  }
 
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    lokasi: 'Gedung 1',
-    pintuList: true,
+  initialValues = {
+    typeSaranaPendukung: 'Musholla',
     dinding: true,
+    pintu: true,
     ceiling: true,
     carpetSholat: true,
     sajadah: true,
     jamDinding: true,
     pajangan: true,
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    lokasi: 'Gedung 2',
-    pintuList: true,
-    dinding: false,
-    ceiling: true,
-    carpetSholat: false,
-    sajadah: true,
-    jamDinding: false,
-    pajangan: true,
-    keterangan: 'Lorem Ipsum',
-  },
-]
+  }
 
-class Musholla extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeSaranaPendukung: 'Musholla',
+    })
+    const resDataLokasi = await Service.getLokasi()
+    const dataLokasi = resDataLokasi.data.data
+    const optLokasi = dataLokasi.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optLokasi })
   }
 
   doRefresh = () => {
@@ -79,12 +73,16 @@ class Musholla extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, location } = values
+    const { createKebersihanPendukung, updateKebersihanPendukung } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (location && Object.keys(location).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.location = location.id || location
+      }
+      updateKebersihanPendukung(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKebersihanPendukung(values, this.doRefresh)
     }
   }
 
@@ -92,13 +90,13 @@ class Musholla extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKebersihanPendukung } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKebersihanPendukung(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -113,8 +111,10 @@ class Musholla extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optLokasi } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -123,15 +123,16 @@ class Musholla extends Component {
         Header: 'Tanggal',
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Lokasi',
-        accessor: 'lokasi',
+        accessor: 'location.name',
         filterable: false,
       },
       {
         Header: 'Pintu & List',
-        accessor: 'pintuList',
+        accessor: 'pintu',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -236,7 +237,7 @@ class Musholla extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -276,11 +277,15 @@ class Musholla extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -310,23 +315,62 @@ class Musholla extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Lokasi" value={(col) => col.location?.name} />
+                          <ExcelColumn
+                            label="Pintu & List"
+                            value={(col) => (col.pintu ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Dinding"
+                            value={(col) => (col.dinding ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ceiling"
+                            value={(col) => (col.ceiling ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Carpet Sholat"
+                            value={(col) => (col.carpetSholat ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Sajadah"
+                            value={(col) => (col.sajadah ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Jam Dinding"
+                            value={(col) => (col.jamDinding ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pajangan"
+                            value={(col) => (col.pajangan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -340,7 +384,7 @@ class Musholla extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -348,7 +392,7 @@ class Musholla extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -372,13 +416,18 @@ class Musholla extends Component {
                           <FormGroup>
                             <Field
                               label="Lokasi"
-                              options={[
-                                { value: 'Musholla 1', label: 'Musholla 1' },
-                                { value: 'Musholla 2', label: 'Musholla 2' },
-                              ]}
+                              options={optLokasi}
                               isRequired
-                              name="lokasi"
+                              name="location"
                               placeholder="Pilih atau Cari Lokasi"
+                              defaultValue={
+                                values.location
+                                  ? {
+                                      value: values.location.id,
+                                      label: values.location.name,
+                                    }
+                                  : null
+                              }
                               component={CfSelect}
                             />
                           </FormGroup>
@@ -389,11 +438,7 @@ class Musholla extends Component {
                       <br />
                       <div style={{ marginLeft: '40px' }}>
                         <FormGroup>
-                          <Field
-                            label="Pintu & List"
-                            name="pintuList"
-                            component={CfInputCheckbox}
-                          />
+                          <Field label="Pintu & List" name="pintu" component={CfInputCheckbox} />
                         </FormGroup>
 
                         <FormGroup>
@@ -435,7 +480,7 @@ class Musholla extends Component {
                             <Field
                               label="Keterangan"
                               type="text"
-                              name="keterangan"
+                              name="information"
                               isRequired
                               placeholder="Masukkan Keterangan"
                               component={CfInput}
@@ -443,8 +488,6 @@ class Musholla extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -483,23 +526,25 @@ Musholla.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKebersihanPendukung: PropTypes.func.isRequired,
+  updateKebersihanPendukung: PropTypes.func.isRequired,
+  deleteKebersihanPendukung: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.kebersihan.isLoading,
+  message: state.kebersihan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKebersihanPendukung: (formData, refresh) =>
+    dispatch(createKebersihanPendukung(formData, refresh)),
+  updateKebersihanPendukung: (formData, id, refresh) =>
+    dispatch(updateKebersihanPendukung(formData, id, refresh)),
+  deleteKebersihanPendukung: (id, refresh) => dispatch(deleteKebersihanPendukung(id, refresh)),
 })
 
 export default connect(
@@ -507,7 +552,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKebersihanPendukung(p),
     Component: withToggle({
       Component: Musholla,
       toggles: {

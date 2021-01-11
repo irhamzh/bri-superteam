@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,49 +20,47 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect, CfTextQuil } from '../../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../../modules/master/role/actions'
+import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import {
+  createEngineerBasementPlumbing,
+  updateEngineerBasementPlumbing,
+  deleteEngineerBasementPlumbing,
+} from '../../../../../modules/engineer/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
 } from '../../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    pompa: 'Pompa Riser',
-    unit: 'Riser 1',
-    voltase: 100,
-    kondisiValve: 'Baik',
-    kondisiBearing: 'Tidak Baik',
-    oli: 'Baik',
-    kebocoran: 'Tidak Ada Kebocoran',
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '08/06/2020',
-    pompa: 'Pompa Booster',
-    unit: 'Booster 3',
-    voltase: 100,
-    kondisiValve: 'Baik',
-    kondisiBearing: 'Baik',
-    oli: 'Baik',
-    kebocoran: 'Tidak Ada Kebocoran',
-    keterangan: 'Lorem Ipsum',
-  },
-]
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class Plumbing extends Component {
+  state = {
+    optPompa: [],
+    optUnitPompa: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    valve: 'Baik',
+    bearing: 'Baik',
+    oli: 'Baik',
+  }
+
+  async componentDidMount() {
+    const resDataPompa = await Service.getPompa()
+    const dataPompa = resDataPompa.data.data
+    const optPompa = dataPompa.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataUnitPompa = await Service.getUnitPompa()
+    const dataUnitPompa = resDataUnitPompa.data.data
+    const optUnitPompa = dataUnitPompa.map((row) => ({ label: row.nameUnit, value: row.id }))
+
+    this.setState({ optPompa, optUnitPompa })
   }
 
   doRefresh = () => {
@@ -71,12 +70,20 @@ class Plumbing extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, pump, unit } = values
+    const { createEngineerBasementPlumbing, updateEngineerBasementPlumbing } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (pump && Object.keys(pump).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pump = pump.id || pump
+      }
+      if (unit && Object.keys(unit).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.unit = unit.id || unit
+      }
+      updateEngineerBasementPlumbing(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createEngineerBasementPlumbing(values, this.doRefresh)
     }
   }
 
@@ -84,13 +91,13 @@ class Plumbing extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteEngineerBasementPlumbing } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteEngineerBasementPlumbing(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -105,8 +112,10 @@ class Plumbing extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optPompa, optUnitPompa } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -119,12 +128,12 @@ class Plumbing extends Component {
       },
       {
         Header: 'Pompa',
-        accessor: 'pompa',
+        accessor: 'pump.name',
         filterable: false,
       },
       {
         Header: 'Unit',
-        accessor: 'unit',
+        accessor: 'unit.nameUnit',
         filterable: false,
       },
       {
@@ -134,20 +143,23 @@ class Plumbing extends Component {
       },
       {
         Header: 'Kondisi Valve',
-        accessor: 'kondisiValve',
+        accessor: 'valve',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Kondisi Bearing',
-        accessor: 'kondisiBearing',
+        accessor: 'bearing',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Oli',
         accessor: 'oli',
         filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
       },
       {
         Header: 'Kebocoran',
@@ -156,7 +168,7 @@ class Plumbing extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -196,11 +208,15 @@ class Plumbing extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -230,23 +246,49 @@ class Plumbing extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Pompa" value={(col) => col.pump?.name} />
+                          <ExcelColumn label="Unit Pompa" value={(col) => col.unit?.nameUnit} />
+                          <ExcelColumn label="Voltase" value="voltase" />
+                          <ExcelColumn
+                            label="Kondisi Valve"
+                            value={(col) => (col.valve === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Kondisi Bearing"
+                            value={(col) => (col.bearing === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn
+                            label="Oli"
+                            value={(col) => (col.oli === 'yes' ? 'Baik' : 'Tidak Baik')}
+                          />
+                          <ExcelColumn label="Kebocoran" value="kebocoran" />
+                          <ExcelColumn label="Keterangan" value="information" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -260,7 +302,7 @@ class Plumbing extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -268,7 +310,7 @@ class Plumbing extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -288,10 +330,13 @@ class Plumbing extends Component {
                       <FormGroup>
                         <Field
                           label="Pompa"
-                          options={[{ value: 'Pompa Riser', label: 'Pompa Riser' }]}
+                          options={optPompa}
                           isRequired
-                          name="pompa"
+                          name="pump"
                           placeholder="Pilih atau Cari Pompa"
+                          defaultValue={
+                            values.pump ? { value: values.pump.id, label: values.pump.name } : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -299,10 +344,15 @@ class Plumbing extends Component {
                       <FormGroup>
                         <Field
                           label="Unit"
-                          options={[{ value: 'Riser 1', label: 'Riser 1' }]}
+                          options={optUnitPompa}
                           isRequired
                           name="unit"
                           placeholder="Pilih atau Cari Unit"
+                          defaultValue={
+                            values.unit
+                              ? { value: values.unit.id, label: values.unit.nameUnit }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -324,20 +374,15 @@ class Plumbing extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="kondisiValve"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="valve" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kondisiValve"
-                              id="Tidak Baik"
+                              name="valve"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -350,20 +395,15 @@ class Plumbing extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Baik"
-                              name="kondisiBearing"
-                              id="Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Baik" name="bearing" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
                             <Field
                               label="Tidak Baik"
-                              name="kondisiBearing"
-                              id="Tidak Baik"
+                              name="bearing"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -376,17 +416,12 @@ class Plumbing extends Component {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field label="Baik" name="oli" id="Baik" component={CfInputRadio} />
+                            <Field label="Baik" name="oli" id="yes" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Field
-                              label="Tidak Baik"
-                              name="oli"
-                              id="Tidak Baik"
-                              component={CfInputRadio}
-                            />
+                            <Field label="Tidak Baik" name="oli" id="no" component={CfInputRadio} />
                           </FormGroup>
                         </Col>
                       </Row>
@@ -406,13 +441,11 @@ class Plumbing extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           placeholder="Masukkan Keterangan"
-                          component={CfTextQuil}
+                          component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -451,23 +484,26 @@ Plumbing.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createEngineerBasementPlumbing: PropTypes.func.isRequired,
+  updateEngineerBasementPlumbing: PropTypes.func.isRequired,
+  deleteEngineerBasementPlumbing: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.engineer.isLoading,
+  message: state.engineer.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createEngineerBasementPlumbing: (formData, refresh) =>
+    dispatch(createEngineerBasementPlumbing(formData, refresh)),
+  updateEngineerBasementPlumbing: (formData, id, refresh) =>
+    dispatch(updateEngineerBasementPlumbing(formData, id, refresh)),
+  deleteEngineerBasementPlumbing: (id, refresh) =>
+    dispatch(deleteEngineerBasementPlumbing(id, refresh)),
 })
 
 export default connect(
@@ -475,7 +511,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getEngineerBasementPlumbing(p),
     Component: withToggle({
       Component: Plumbing,
       toggles: {

@@ -12,10 +12,55 @@ import { deleteRole } from '../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
 import ModalForm from './ModalForm/ModalForm'
+import IconSuccessOrFailed from '../../../components/IconSuccessOrFailed'
 
 const initialValues = {
-  nama: '',
-  id: '',
+  fixedAsset: {
+    create: false,
+    update: false,
+    delete: false,
+    read: false,
+    dashboard: false,
+    approvalKabag: false,
+    approvalWakabag: false,
+    approvalSupervisor: false,
+  },
+  procurement: {
+    create: false,
+    update: false,
+    delete: false,
+    read: false,
+    dashboard: false,
+    approvalKabag: false,
+    approvalWakabag: false,
+    approvalSupervisor: false,
+  },
+  generalAffair: {
+    create: false,
+    update: false,
+    delete: false,
+    read: false,
+    dashboard: false,
+    approvalKabag: false,
+    approvalWakabag: false,
+    approvalSupervisor: false,
+  },
+  financialAdmin: {
+    create: false,
+    update: false,
+    delete: false,
+    read: false,
+    dashboard: false,
+    approvalKabag: false,
+    approvalWakabag: false,
+    approvalSupervisor: false,
+  },
+  masterData: {
+    create: false,
+    update: false,
+    delete: false,
+    read: false,
+  },
 }
 
 function Role(props) {
@@ -57,7 +102,284 @@ function Role(props) {
     },
     {
       Header: 'Role',
-      accessor: 'nama',
+      accessor: 'name',
+    },
+    {
+      Header: 'Fixed Asset',
+      columns: [
+        {
+          Header: 'Create',
+          accessor: 'fixedAsset.create',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Update',
+          accessor: 'fixedAsset.update',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Delete',
+          accessor: 'fixedAsset.delete',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Read',
+          accessor: 'fixedAsset.read',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Dashboard',
+          accessor: 'fixedAsset.dashboard',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Kabag',
+          accessor: 'fixedAsset.approvalKabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Wakabag',
+          accessor: 'fixedAsset.approvalWakabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'fixedAsset.approvalSupervisor',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+      ],
+    },
+    {
+      Header: 'Procurement',
+      columns: [
+        {
+          Header: 'Create',
+          accessor: 'procurement.create',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Update',
+          accessor: 'procurement.update',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Delete',
+          accessor: 'procurement.delete',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Read',
+          accessor: 'procurement.read',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Dashboard',
+          accessor: 'procurement.dashboard',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Kabag',
+          accessor: 'procurement.approvalKabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Wakabag',
+          accessor: 'procurement.approvalWakabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'procurement.approvalSupervisor',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+      ],
+    },
+    {
+      Header: 'General Affair',
+      columns: [
+        {
+          Header: 'Create',
+          accessor: 'generalAffair.create',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Update',
+          accessor: 'generalAffair.update',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Delete',
+          accessor: 'generalAffair.delete',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Read',
+          accessor: 'generalAffair.read',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Dashboard',
+          accessor: 'generalAffair.dashboard',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Kabag',
+          accessor: 'generalAffair.approvalKabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Wakabag',
+          accessor: 'generalAffair.approvalWakabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'generalAffair.approvalSupervisor',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+      ],
+    },
+    {
+      Header: 'Financial Admin',
+      columns: [
+        {
+          Header: 'Create',
+          accessor: 'financialAdmin.create',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Update',
+          accessor: 'financialAdmin.update',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Delete',
+          accessor: 'financialAdmin.delete',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Read',
+          accessor: 'financialAdmin.read',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Dashboard',
+          accessor: 'financialAdmin.dashboard',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Kabag',
+          accessor: 'financialAdmin.approvalKabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Wakabag',
+          accessor: 'financialAdmin.approvalWakabag',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Approval Supervisor',
+          accessor: 'financialAdmin.approvalSupervisor',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+      ],
+    },
+    {
+      Header: 'Master Data',
+      columns: [
+        {
+          Header: 'Create',
+          accessor: 'masterData.create',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Update',
+          accessor: 'masterData.update',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Delete',
+          accessor: 'masterData.delete',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+        {
+          Header: 'Read',
+          accessor: 'masterData.read',
+          filterable: false,
+          headerClassName: 'wordwrap',
+          Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+        },
+      ],
     },
     {
       Header: 'Edit',
@@ -124,7 +446,7 @@ function Role(props) {
             </CardHeader>
             <CardBody>
               <ReactTable
-                filterable
+                filterable={false}
                 columns={columns}
                 defaultPageSize={10}
                 className="-highlight"
@@ -165,7 +487,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRole(p),
+    API: (p) => Service.getRoles(p),
     Component: withToggle({
       Component: Role,
       toggles: {

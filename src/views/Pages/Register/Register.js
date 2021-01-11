@@ -6,7 +6,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Formik, Form, Field } from 'formik'
 import { signUp } from '../../../modules/auth/actions'
-import { CfInputGroup } from '../../../components'
+import { CfInputGroup, CfSelect } from '../../../components'
+import Service from '../../../config/services'
 
 const initialValues = {
   email: '',
@@ -15,18 +16,35 @@ const initialValues = {
 }
 
 const registerSchema = Yup.object().shape({
+  name: Yup.string().required('name belum diisi'),
+  role: Yup.string().required('role belum diisi'),
   email: Yup.string().email('gunakan email yang valid').required('email belum diisi'),
   password: Yup.string().required('password belum diisi').min(6),
   passwordConfirm: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
 })
 
 class Register extends Component {
+  state = {
+    optRole: [],
+  }
+
+  async componentDidMount() {
+    const resDataRole = await Service.getRoles()
+    const dataRole = resDataRole.data.data
+    const optRole = dataRole.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({
+      optRole,
+    })
+  }
+
   handleRegister = (values) => {
     const { signUp } = this.props
     signUp(values)
   }
 
   render() {
+    const { optRole } = this.state
     const { auth, isLoading, message } = this.props
     if (auth) return (window.location.href = '/')
 
@@ -55,27 +73,47 @@ class Register extends Component {
                         <Field
                           classGroup="mb-3"
                           classIcon="icon-user"
+                          type="text"
+                          name="name"
+                          placeholder="Name"
+                          component={CfInputGroup}
+                        />
+                        <Field
+                          classGroup="mb-3"
+                          classIcon="icon-envelope"
                           type="email"
                           name="email"
                           placeholder="example@mail.com"
                           component={CfInputGroup}
                         />
+
                         <Field
-                          classGroup="mb-4"
+                          classGroup="mb-3"
                           classIcon="icon-lock"
                           type="password"
                           name="password"
-                          placeholder="*****"
+                          placeholder="Password"
                           component={CfInputGroup}
                         />
                         <Field
-                          classGroup="mb-4"
+                          // classGroup="mb-3"
                           classIcon="icon-lock"
                           type="password"
                           name="passwordConfirm"
-                          placeholder="*****"
+                          placeholder="Confirm Password"
                           component={CfInputGroup}
                         />
+
+                        <Field
+                          classGroup="mb-4"
+                          classIcon="icon-people"
+                          options={optRole}
+                          name="role"
+                          placeholder="Pilih atau Cari Role"
+                          component={CfSelect}
+                        />
+                        <br />
+
                         <Row>
                           <Col xs="12">
                             <Button

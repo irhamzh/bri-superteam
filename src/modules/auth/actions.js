@@ -26,7 +26,7 @@ export const signIn = (credentials) => async (dispatch) => {
     // Call API
     const res = await Service.signIn(credentials)
     console.log(res, 'ini response')
-    // localStorage.setItem('token', res.data.token)
+    localStorage.setItem('token', res.data.token)
     // localStorage.setItem('uid', res.data.uid)
     // localStorage.setItem('rid', res.data.rid)
     dispatch({ type: AUTHENTICATED, isLoading: false })
@@ -131,10 +131,23 @@ export const resetPass = (rowData, id) => async (dispatch) => {
   }
 }
 
-export const signOut = () => (dispatch) => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('uid')
-  localStorage.removeItem('rid')
-  dispatch({ type: UNAUTHENTICATED })
-  window.location.href = '/login'
+// export const signOut = () => (dispatch) => {
+//   localStorage.removeItem('token')
+//   localStorage.removeItem('uid')
+//   localStorage.removeItem('rid')
+//   dispatch({ type: UNAUTHENTICATED })
+//   window.location.href = '/login'
+// }
+
+export const signOut = () => async (dispatch) => {
+  try {
+    // await Service.logout()
+    localStorage.removeItem('token')
+
+    dispatch({ type: UNAUTHENTICATED })
+
+    window.location.href = '/login'
+  } catch (err) {
+    AlertMessage.error(err)
+  }
 }

@@ -19,41 +19,46 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfInputRadio, CfSelect } from '../../../../components'
+import { AlertMessage, invalidValues } from '../../../../helpers'
+import {
+  createPGPeralatanIT,
+  updatePGPeralatanIT,
+  deletePGPeralatanIT,
+} from '../../../../modules/peralatan-it/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
-    lantai: 'Lantai 1',
-    ruangan: 'Ruangan X',
-    item: 'Komputer 1',
-    hekonismenya: 'Baik',
-    keterangan: 'Lorem Ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    lantai: 'Lantai 3',
-    ruangan: 'Ruangan Y',
-    item: 'Komputer 2',
-    hekonismenya: 'Tidak Baik',
-    keterangan: 'Lorem Ipsum',
-  },
-]
-
 class PeralatanFisik extends Component {
+  state = {
+    optLantai: [],
+    optRuangan: [],
+    optItem: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    typePeralatanIT: 'fisik',
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePeralatanIT: 'fisik',
+    })
+    const resDataRuangan = await Service.getRoom()
+    const dataRuangan = resDataRuangan.data.data
+    const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataLantai = await Service.getLantai()
+    const dataLantai = resDataLantai.data.data
+    const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataItem = await Service.getItem()
+    const dataItem = resDataItem.data.data
+    const optItem = dataItem.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optRuangan, optLantai, optItem })
   }
 
   doRefresh = () => {
@@ -63,12 +68,24 @@ class PeralatanFisik extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, floor, item, ruangan } = values
+    const { createPGPeralatanIT, updatePGPeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (floor && Object.keys(floor).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.floor = floor.id || floor
+      }
+      if (item && Object.keys(item).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.item = item.id || item
+      }
+      if (ruangan && Object.keys(ruangan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.ruangan = ruangan.id || ruangan
+      }
+      updatePGPeralatanIT(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPGPeralatanIT(values, this.doRefresh)
     }
   }
 
@@ -76,13 +93,13 @@ class PeralatanFisik extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePGPeralatanIT } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePGPeralatanIT(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -97,36 +114,38 @@ class PeralatanFisik extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { optRuangan, optLantai, optItem } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Lantai',
-        accessor: 'lantai',
+        accessor: 'floor.name',
         filterable: false,
       },
 
       {
         Header: 'Ruangan',
-        accessor: 'ruangan',
+        accessor: 'ruangan.name',
         filterable: false,
       },
       {
         Header: 'Item',
-        accessor: 'item',
+        accessor: 'item.name',
+        filterable: false,
       },
       {
         Header: 'Hekonismenya',
-        accessor: 'hekonismenya',
-        filterable: true,
+        accessor: 'hekonisme',
+        filterable: false,
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
-        filterable: true,
+        accessor: 'information',
+        filterable: false,
       },
       {
         Header: 'Aksi',
@@ -165,11 +184,15 @@ class PeralatanFisik extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -190,11 +213,10 @@ class PeralatanFisik extends Component {
               <CardBody>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -207,7 +229,7 @@ class PeralatanFisik extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -215,24 +237,22 @@ class PeralatanFisik extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
                           label="Lantai"
-                          options={[
-                            { value: 'Lantai 1', label: 'Lantai 1' },
-                            { value: 'Lantai 2', label: 'Lantai 2' },
-                            { value: 'Lantai 3', label: 'Lantai 3' },
-                            { value: 'Lantai 4', label: 'Lantai 4' },
-                            { value: 'Lantai 5', label: 'Lantai 5' },
-                            { value: 'Lantai 6', label: 'Lantai 6' },
-                          ]}
+                          options={optLantai}
                           isRequired
-                          name="lantai"
+                          name="floor"
                           placeholder="Pilih atau Cari Lantai"
+                          defaultValue={
+                            values.floor
+                              ? { value: values.floor.id, label: values.floor.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -240,14 +260,15 @@ class PeralatanFisik extends Component {
                       <FormGroup>
                         <Field
                           label="Ruangan"
-                          options={[
-                            { value: 'Ruangan X', label: 'Ruangan X' },
-                            { value: 'Ruangan Y', label: 'Ruangan Y' },
-                            { value: 'Ruangan Z', label: 'Ruangan Z' },
-                          ]}
+                          options={optRuangan}
                           isRequired
                           name="ruangan"
                           placeholder="Pilih atau Cari Ruangan"
+                          defaultValue={
+                            values.ruangan
+                              ? { value: values.ruangan.id, label: values.ruangan.name }
+                              : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -255,14 +276,13 @@ class PeralatanFisik extends Component {
                       <FormGroup>
                         <Field
                           label="Item"
-                          options={[
-                            { value: 'Komputer 1', label: 'Komputer 1' },
-                            { value: 'Komputer 2', label: 'Komputer 2' },
-                            { value: 'Printer 1', label: 'Printer 1' },
-                          ]}
+                          options={optItem}
                           isRequired
                           name="item"
                           placeholder="Pilih atau Cari item"
+                          defaultValue={
+                            values.item ? { value: values.item.id, label: values.item.name } : null
+                          }
                           component={CfSelect}
                         />
                       </FormGroup>
@@ -275,8 +295,8 @@ class PeralatanFisik extends Component {
                           <FormGroup>
                             <Field
                               label="Baik"
-                              name="hekonismenya"
-                              id="Baik"
+                              name="hekonisme"
+                              id="yes"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -286,7 +306,7 @@ class PeralatanFisik extends Component {
                             <Field
                               label="Tidak Baik"
                               name="hekonismenya"
-                              id="Tidak Baik"
+                              id="no"
                               component={CfInputRadio}
                             />
                           </FormGroup>
@@ -297,14 +317,12 @@ class PeralatanFisik extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -343,23 +361,24 @@ PeralatanFisik.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPGPeralatanIT: PropTypes.func.isRequired,
+  updatePGPeralatanIT: PropTypes.func.isRequired,
+  deletePGPeralatanIT: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.peralatanIt.isLoading,
+  message: state.peralatanIt.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPGPeralatanIT: (formData, refresh) => dispatch(createPGPeralatanIT(formData, refresh)),
+  updatePGPeralatanIT: (formData, id, refresh) =>
+    dispatch(updatePGPeralatanIT(formData, id, refresh)),
+  deletePGPeralatanIT: (id, refresh) => dispatch(deletePGPeralatanIT(id, refresh)),
 })
 
 export default connect(
@@ -367,7 +386,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPGPeralatanIT(p),
     Component: withToggle({
       Component: PeralatanFisik,
       toggles: {

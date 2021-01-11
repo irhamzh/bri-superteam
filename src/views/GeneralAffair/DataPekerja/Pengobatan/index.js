@@ -246,7 +246,7 @@ class Pengobatan extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>

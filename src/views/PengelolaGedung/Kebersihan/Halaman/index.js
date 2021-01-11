@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,21 +20,25 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createKebersihanHalaman,
+  updateKebersihanHalaman,
+  deleteKebersihanHalaman,
+} from '../../../../modules/kebersihan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
-const dataDummy = [
-  {
-    tanggal: '06/06/2020',
+class Halaman extends Component {
+  initialValues = {
     rumput: true,
     pohon: true,
     kolamIkan: true,
@@ -43,34 +48,10 @@ const dataDummy = [
     penyiraman: true,
     pendangiran: true,
     pemupukan: true,
-    pemangkas: true,
+    pemangkasan: true,
     pengendalianHama: true,
     penyulamanTanaman: true,
     penambahanMediaTanam: true,
-    keterangan: 'Lorem ipsum',
-  },
-  {
-    tanggal: '06/06/2020',
-    rumput: true,
-    pohon: false,
-    kolamIkan: true,
-    airMancur: false,
-    pavingBlock: true,
-    sampahGulma: false,
-    penyiraman: true,
-    pendangiran: false,
-    pemupukan: true,
-    pemangkas: false,
-    pengendalianHama: true,
-    penyulamanTanaman: false,
-    penambahanMediaTanam: true,
-    keterangan: 'Lorem ipsum',
-  },
-]
-class Halaman extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
   }
 
   doRefresh = () => {
@@ -81,11 +62,11 @@ class Halaman extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createKebersihanHalaman, updateKebersihanHalaman } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateKebersihanHalaman(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createKebersihanHalaman(values, this.doRefresh)
     }
   }
 
@@ -93,13 +74,13 @@ class Halaman extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteKebersihanHalaman } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteKebersihanHalaman(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -114,10 +95,11 @@ class Halaman extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
@@ -125,6 +107,7 @@ class Halaman extends Component {
         width: 100,
         accessor: 'tanggal',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Rumput',
@@ -266,8 +249,8 @@ class Halaman extends Component {
           ),
       },
       {
-        Header: 'Pemangkas',
-        accessor: 'pemangkas',
+        Header: 'Pemangkasan',
+        accessor: 'pemangkasan',
         filterable: false,
         Cell: (props) =>
           props.value ? (
@@ -330,7 +313,7 @@ class Halaman extends Component {
       },
       {
         Header: 'Keterangan',
-        accessor: 'keterangan',
+        accessor: 'information',
         filterable: false,
       },
       {
@@ -362,7 +345,7 @@ class Halaman extends Component {
     ]
 
     const pageName = 'Halaman'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -370,11 +353,15 @@ class Halaman extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -402,23 +389,79 @@ class Halaman extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Rumput" value={(col) => (col.rumput ? '✓' : '❌')} />
+                          <ExcelColumn label="Pohon" value={(col) => (col.pohon ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Kolam Ikan"
+                            value={(col) => (col.kolamIkan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Air Mancur"
+                            value={(col) => (col.airMancur ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Paving Block"
+                            value={(col) => (col.pavingBlock ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Sampah dan Gulma"
+                            value={(col) => (col.sampahGulma ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Penyiraman"
+                            value={(col) => (col.penyiraman ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pendangiran"
+                            value={(col) => (col.pendangiran ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pemupukan"
+                            value={(col) => (col.pemupukan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pemangkasan"
+                            value={(col) => (col.pemangkasan ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Pengendalian Hama"
+                            value={(col) => (col.pengendalianHama ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Penyulaman Tanaman"
+                            value={(col) => (col.penyulamanTanaman ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Penambahan Media Tanam"
+                            value={(col) => (col.penambahanMediaTanam ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
-                  // {...tableProps}
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -431,7 +474,7 @@ class Halaman extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -544,14 +587,12 @@ class Halaman extends Component {
                         <Field
                           label="Keterangan"
                           type="text"
-                          name="keterangan"
+                          name="information"
                           isRequired
                           placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -590,23 +631,25 @@ Halaman.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createKebersihanHalaman: PropTypes.func.isRequired,
+  updateKebersihanHalaman: PropTypes.func.isRequired,
+  deleteKebersihanHalaman: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.kebersihan.isLoading,
+  message: state.kebersihan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createKebersihanHalaman: (formData, refresh) =>
+    dispatch(createKebersihanHalaman(formData, refresh)),
+  updateKebersihanHalaman: (formData, id, refresh) =>
+    dispatch(updateKebersihanHalaman(formData, id, refresh)),
+  deleteKebersihanHalaman: (id, refresh) => dispatch(deleteKebersihanHalaman(id, refresh)),
 })
 
 export default connect(
@@ -614,7 +657,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getKebersihanHalaman(p),
     Component: withToggle({
       Component: Halaman,
       toggles: {

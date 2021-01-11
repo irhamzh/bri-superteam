@@ -22,7 +22,12 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../../components'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  IconSuccessOrFailed,
+} from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPeralatanKerja,
@@ -123,206 +128,89 @@ class Chemical extends Component {
         accessor: 'floorKlin',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Glass Cleaner',
         accessor: 'glassCleaner',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'All Purpose Cleaner',
         accessor: 'allPurposeCleaner',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Metal Polish',
         accessor: 'metalPolish',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Hand Soap',
         accessor: 'handSoap',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Furniture Polish',
         accessor: 'furniturePolish',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Vim',
         accessor: 'vim',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Bubuk Detergen',
         accessor: 'bubukDetergen',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Thiner',
         accessor: 'thiner',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Bay Fresh',
         accessor: 'bayFresh',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Fres Phone',
         accessor: 'fresPhone',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Marble Powder',
         accessor: 'marblePowder',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Karbol Wangi',
         accessor: 'karbolWangi',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Keterangan',

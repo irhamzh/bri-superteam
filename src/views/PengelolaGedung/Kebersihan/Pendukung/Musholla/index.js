@@ -22,7 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../../components'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  CfSelect,
+  IconSuccessOrFailed,
+} from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createKebersihanPendukung,
@@ -134,106 +140,43 @@ class Musholla extends Component {
         Header: 'Pintu & List',
         accessor: 'pintu',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Dinding',
         accessor: 'dinding',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Ceiling',
         accessor: 'ceiling',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Carpet Sholat',
         accessor: 'carpetSholat',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Sajadah',
         accessor: 'sajadah',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Jam Dinding',
         accessor: 'jamDinding',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Pajangan',
         accessor: 'pajangan',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Keterangan',

@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, IconSuccessOrFailed } from '../../../components'
 import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../helpers'
 import {
   createMonitorCCTV,
@@ -109,48 +109,21 @@ class MonitorCCTV extends Component {
             accessor: 'gedungAlantai1',
             filterable: false,
             headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
           },
           {
             Header: 'Gedung A - Lantai 2',
             accessor: 'gedungAlantai2',
             filterable: false,
             headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
           },
           {
             Header: 'CCTV Outdoor',
             accessor: 'cctvOutdoor',
             filterable: false,
             headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
           },
         ],
       },

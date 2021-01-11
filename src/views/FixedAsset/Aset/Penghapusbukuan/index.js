@@ -20,13 +20,15 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, ErrorMessage, invalidValues, userData } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class Penghapusbukuan extends Component {
-  state = {}
+  state = {
+    assetIds: [],
+  }
 
   initialValues = {}
 
@@ -81,6 +83,77 @@ class Penghapusbukuan extends Component {
       })
   }
 
+  // handleApprove = (e, state) => {
+  //   e.preventDefault()
+
+  //   const { id } = state
+  //   const { approvePersekot } = this.props
+  //   const message = {
+  //     title: 'Apa kamu yakin?',
+  //     text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+  //     confirmButtonText: 'Ya, Approve!',
+  //     cancelButtonText: 'Kembali',
+  //   }
+
+  //   AlertMessage.warning(message)
+  //     .then((result) => {
+  //       if (result.value) {
+  //         approvePersekot(state, id, this.doRefresh)
+  //       } else {
+  //         const paramsResponse = {
+  //           title: 'Notice!',
+  //           text: 'Proses Approval Dibatalkan',
+  //         }
+  //         AlertMessage.info(paramsResponse)
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       AlertMessage.error(err) // Internal Server Error
+  //     })
+  // }
+
+  // handlePenihilan = (e) => {
+  //   e.preventDefault()
+
+  //   const { persekotIds } = this.state
+  //   const { penihilanPersekot } = this.props
+
+  //   AlertMessage.warning()
+  //     .then((result) => {
+  //       if (result.value) {
+  //         penihilanPersekot({ persekotIds }, this.doRefresh)
+  //       } else {
+  //         const paramsResponse = {
+  //           title: 'Notice!',
+  //           text: 'Proses Penghapusbukuan Dibatalkan',
+  //         }
+  //         AlertMessage.info(paramsResponse)
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       AlertMessage.error(err) // Internal Server Error
+  //     })
+  // }
+
+  isSelected = (id) => {
+    const { assetIds } = this.state
+    return assetIds.includes(id)
+  }
+
+  onCheckboxChange = (id) => {
+    const { assetIds } = this.state
+
+    const selected = [...assetIds]
+    const keyIndex = selected.indexOf(id)
+    if (keyIndex > -1) {
+      selected.splice(keyIndex, 1)
+    } else {
+      selected.push(id)
+    }
+
+    this.setState({ assetIds: selected })
+  }
+
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -89,12 +162,17 @@ class Penghapusbukuan extends Component {
 
     const columns = [
       {
-        Header: 'Pilih',
-        width: 80,
+        Header: 'Checked',
+        width: 100,
+        accessor: 'id',
         filterable: false,
-        Cell: () => (
+        Cell: (row) => (
           <span>
-            <Checkbox />
+            <Checkbox
+              color="primary"
+              checked={this.isSelected(row.value)}
+              onChange={() => this.onCheckboxChange(row.value)}
+            />
           </span>
         ),
       },
@@ -110,7 +188,45 @@ class Penghapusbukuan extends Component {
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+      {
+        Header: 'Status',
+        accessor: 'status',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
     ]
+
+    const user = userData()
+    const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    if (user && allowedRole.includes(user.role?.name.toLowerCase())) {
+      columns.push({
+        Header: 'Aksi',
+        width: 200,
+        accessor: 'id',
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              // onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      })
+    }
 
     const pageName = 'Penghapusbukuan Aset'
     // const isIcon = { paddingRight: '7px' }

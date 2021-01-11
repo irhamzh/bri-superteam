@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../components'
+import { CfInput, CfInputCheckbox, CfInputDate, IconSuccessOrFailed } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createAktivitasRekreasi,
@@ -120,64 +120,28 @@ class RekreasiSiswa extends Component {
         accessor: 'formPermintaanLop',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Izin Penugasan',
         accessor: 'ijinPenugasan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya Rekreasi',
         accessor: 'biayaRekreasi',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Laporan Rekreasi',
         accessor: 'laporanRekreasi',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Aksi',

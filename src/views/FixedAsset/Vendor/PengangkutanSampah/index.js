@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
+import { CfInputCheckbox, CfInputDate, CfSelect, IconSuccessOrFailed } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -118,16 +118,7 @@ class PengangkutanSampah extends Component {
         Header: 'Status',
         accessor: 'pengangkutanSampah',
         filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Aksi',

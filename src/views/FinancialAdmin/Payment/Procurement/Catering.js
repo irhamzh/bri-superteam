@@ -27,6 +27,7 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
 } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
 import {
@@ -157,80 +158,35 @@ class Catering extends Component {
         accessor: 'invoiceBermaterai',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Copy SPK / PKS',
         accessor: 'copySPKPKS',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Evaluasi Brismart',
         accessor: 'evaluasiBrismart',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Surat Pemesanan',
         accessor: 'suratPemesanan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Faktur Pajak Bagi Wapu / Surat Bebas Pajak (PRD)',
         accessor: 'prd',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya',

@@ -28,6 +28,7 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
 } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
 import {
@@ -131,48 +132,21 @@ class TagihanBBM extends Component {
         accessor: 'invoiceSPBUBermaterai',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Rekap Struk Per Transaksi',
         accessor: 'rekapStrukPerTransaksi',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Nota Pembukuan',
         accessor: 'notaPembukuan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya',

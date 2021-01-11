@@ -14,13 +14,12 @@ axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('to
 //   (error) => {
 //     if (error.response.status === 401 && !window.location.href.includes('/login')) {
 //       // window.location.reload()
-//       localStorage.clear()
 
 //       localStorage.removeItem('token')
 //       localStorage.removeItem('uid')
 //       localStorage.removeItem('rid')
 
-//       window.location = '/#/login'
+//       window.location = "/logout"
 //     }
 //     return error
 //   }

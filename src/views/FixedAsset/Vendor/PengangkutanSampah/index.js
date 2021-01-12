@@ -209,7 +209,7 @@ class PengangkutanSampah extends Component {
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
                           <ExcelColumn
                             label="Status"
-                            value={(col) => (col.PengangkutanSampah ? '✓' : '❌')}
+                            value={(col) => (col.pengangkutanSampah ? '✓' : '❌')}
                           />
                           <ExcelColumn label="Rekanan" value={(col) => col.partner?.name} />
                         </ExcelSheet>

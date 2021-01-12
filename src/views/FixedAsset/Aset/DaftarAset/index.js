@@ -228,7 +228,7 @@ class DaftarAset extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues, upload: false })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-3"
                       >
                         Import Data Aset

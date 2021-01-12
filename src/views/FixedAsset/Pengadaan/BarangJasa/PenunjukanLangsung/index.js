@@ -29,7 +29,7 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createBarangPenunjukanLangsung,
   updateBarangPenunjukanLangsung,
@@ -187,6 +187,7 @@ class PenunjukanLangsung extends Component {
           {
             Header: 'Tanggal',
             accessor: 'tanggalSPK',
+            Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
           },
           {
             Header: 'Nomor SPK',
@@ -217,6 +218,7 @@ class PenunjukanLangsung extends Component {
             Header: 'Jumlah Biaya',
             accessor: 'jumlahBiaya',
             headerClassName: 'wordwrap',
+            Cell: (row) => (row.value ? formatCurrencyIDR(row.value) : row.value),
           },
           {
             Header: 'Jenis Barang',
@@ -227,11 +229,13 @@ class PenunjukanLangsung extends Component {
             Header: 'Masa Berlaku',
             accessor: 'masaBerlaku',
             headerClassName: 'wordwrap',
+            Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
           },
           {
             Header: 'Sampai',
             accessor: 'sampai',
             headerClassName: 'wordwrap',
+            Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
           },
         ],
       },
@@ -367,7 +371,10 @@ class PenunjukanLangsung extends Component {
                             label="Jenis Pekerjaan"
                             value={(col) => col.jenisPekerjaan}
                           />
-                          <ExcelColumn label="Jumlah Biaya" value={(col) => col.jumlahBiaya} />
+                          <ExcelColumn
+                            label="Jumlah Biaya"
+                            value={(col) => formatCurrencyIDR(col.jumlahBiaya)}
+                          />
                           <ExcelColumn
                             label="Masa Berlaku"
                             value={(col) => formatDate(col.masaBerlaku)}

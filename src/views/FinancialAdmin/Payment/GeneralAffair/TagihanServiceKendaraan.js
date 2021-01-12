@@ -152,6 +152,7 @@ class TagihanServiceKendaraan extends Component {
       },
       {
         Header: 'Kendaraan',
+        width: 200,
         accessor: 'vehicle',
         filterable: false,
         headerClassName: 'wordwrap',

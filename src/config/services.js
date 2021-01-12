@@ -7,26 +7,27 @@ import configStore from './configStore'
 
 axios.defaults.baseURL = `${API_URL}`
 axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
-axios.interceptors.response.use(
-  (response) => {
-    return response
-  },
-  (error) => {
-    if (
-      error.response.status === 401 &&
-      error.response.message.includes === 'Session expired, please login again'
-    ) {
-      // window.location.reload()
+// axios.interceptors.response.use(
+//   (response) => {
+//     return response
+//   },
+//   (error) => {
+//     if (
+//       error.response?.status === 401 &&
+//       error.response?.message === 'Session expired, please login again'
+//     ) {
+//       // window.location.reload()
 
-      localStorage.removeItem('token')
-      localStorage.removeItem('uid')
-      localStorage.removeItem('rid')
+//       localStorage.removeItem('token')
+//       localStorage.removeItem('uid')
+//       localStorage.removeItem('rid')
 
-      window.location = '/logout'
-    }
-    return error
-  }
-)
+//       window.location = '/logout'
+//     }
+
+//     return error
+//   }
+// )
 class Service {
   // Authentication
   static signIn(values) {

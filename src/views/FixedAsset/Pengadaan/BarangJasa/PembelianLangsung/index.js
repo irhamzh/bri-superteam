@@ -29,7 +29,7 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createBarangPembelianLangsung,
   updateBarangPembelianLangsung,
@@ -168,6 +168,7 @@ class PembelianLangsung extends Component {
         accessor: 'biayaPutusan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => (row.value ? formatCurrencyIDR(row.value) : row.value),
       },
       {
         Header: 'Aksi',
@@ -275,7 +276,10 @@ class PembelianLangsung extends Component {
                             value={(col) => (col.izinHasilPengadaan ? '✓' : '❌')}
                           />
                           <ExcelColumn label="Jenis Anggaran" value={(col) => col.jenisAnggaran} />
-                          <ExcelColumn label="Biaya Putusan" value={(col) => col.biayaPutusan} />
+                          <ExcelColumn
+                            label="Biaya Putusan"
+                            value={(col) => formatCurrencyIDR(col.biayaPutusan)}
+                          />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>

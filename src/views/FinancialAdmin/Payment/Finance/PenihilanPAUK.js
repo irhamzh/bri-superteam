@@ -29,17 +29,13 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../components'
-import {
-  AlertMessage,
-  ErrorMessage,
-  invalidValues,
-  formatDate,
-  userData,
-} from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate, userData } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
   deleteFIPayment,
+  penihilanFIPayment,
+  approveFIPayment,
 } from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -104,57 +100,57 @@ class PenihilanPAUK extends Component {
       })
   }
 
-  // handleApprove = (e, state) => {
-  //   e.preventDefault()
+  handleApprove = (e, state) => {
+    e.preventDefault()
 
-  //   const { id } = state
-  //   const { approvePersekot } = this.props
-  //   const message = {
-  //     title: 'Apa kamu yakin?',
-  //     text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
-  //     confirmButtonText: 'Ya, Approve!',
-  //     cancelButtonText: 'Kembali',
-  //   }
+    const { id } = state
+    const { approveFIPayment } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
 
-  //   AlertMessage.warning(message)
-  //     .then((result) => {
-  //       if (result.value) {
-  //         approvePersekot(state, id, this.doRefresh)
-  //       } else {
-  //         const paramsResponse = {
-  //           title: 'Notice!',
-  //           text: 'Proses Approval Dibatalkan',
-  //         }
-  //         AlertMessage.info(paramsResponse)
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       AlertMessage.error(err) // Internal Server Error
-  //     })
-  // }
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approveFIPayment(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
 
-  // handlePenihilan = (e) => {
-  //   e.preventDefault()
+  handlePenihilan = (e) => {
+    e.preventDefault()
 
-  //   const { paukIds } = this.state
-  //   const { penihilanPersekot } = this.props
+    const { paukIds } = this.state
+    const { penihilanFIPayment } = this.props
 
-  //   AlertMessage.warning()
-  //     .then((result) => {
-  //       if (result.value) {
-  //         penihilanPersekot({ persekotIds }, this.doRefresh)
-  //       } else {
-  //         const paramsResponse = {
-  //           title: 'Notice!',
-  //           text: 'Proses Penihilan Dibatalkan',
-  //         }
-  //         AlertMessage.info(paramsResponse)
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       AlertMessage.error(err) // Internal Server Error
-  //     })
-  // }
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          penihilanFIPayment({ paukIds }, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Penihilan Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
 
   isSelected = (id) => {
     const { paukIds } = this.state
@@ -176,7 +172,7 @@ class PenihilanPAUK extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const columns = [
@@ -305,7 +301,7 @@ class PenihilanPAUK extends Component {
           <>
             <Button
               color="success"
-              // onClick={(e) => this.handleApprove(e, props.original)}
+              onClick={(e) => this.handleApprove(e, props.original)}
               className="mr-1"
               title="Approve"
             >
@@ -365,6 +361,7 @@ class PenihilanPAUK extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-1 mb-2 px-4"
+                        onClick={(e) => this.handlePenihilan(e)}
                         color="secondary"
                         style={{ borderRadius: '20px' }}
                       >
@@ -485,8 +482,6 @@ class PenihilanPAUK extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -528,6 +523,8 @@ PenihilanPAUK.propTypes = {
   createFIPayment: PropTypes.func.isRequired,
   updateFIPayment: PropTypes.func.isRequired,
   deleteFIPayment: PropTypes.func.isRequired,
+  approveFIPayment: PropTypes.func.isRequired,
+  penihilanFIPayment: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -542,6 +539,8 @@ const mapDispatchToProps = (dispatch) => ({
   createFIPayment: (formData, refresh) => dispatch(createFIPayment(formData, refresh)),
   updateFIPayment: (formData, id, refresh) => dispatch(updateFIPayment(formData, id, refresh)),
   deleteFIPayment: (id, refresh) => dispatch(deleteFIPayment(id, refresh)),
+  penihilanFIPayment: (formData, refresh) => dispatch(penihilanFIPayment(formData, refresh)),
+  approveFIPayment: (formData, id, refresh) => dispatch(approveFIPayment(formData, id, refresh)),
 })
 
 export default connect(

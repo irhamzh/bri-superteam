@@ -68,6 +68,11 @@ function User(props) {
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {
+      Header: 'Division',
+      accessor: 'division',
+      Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+    },
+    {
       Header: 'Edit',
       width: 60,
       filterable: false,

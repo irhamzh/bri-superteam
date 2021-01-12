@@ -123,6 +123,7 @@ class KondisiAset extends Component {
       },
       {
         Header: 'Aksi',
+        width: 60,
         filterable: false,
         Cell: (props) => (
           <>

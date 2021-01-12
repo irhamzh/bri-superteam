@@ -22,41 +22,32 @@ import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../config/services'
 import { CfInputDate, CfInputFile } from '../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../modules/master/role/actions'
+import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
+import {
+  createFIUpload,
+  updateFIUpload,
+  deleteFIUpload,
+} from '../../../modules/financialAdmin/uploads/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
-
-const dataDummy = [
-  {
-    code: 1234567,
-    nama: 'Elektronik',
-    kondisi: 'Baik',
-  },
-  {
-    code: 989667,
-    nama: 'Perkakas',
-    kondisi: 'Tidak Baik',
-  },
-]
 
 class Titipan extends Component {
   state = {
     tahun: '',
     bulan: '',
     optBulan: [
-      { label: 'Januari', value: 'Januari' },
-      { label: 'Februari', value: 'Februari' },
-      { label: 'Maret', value: 'Maret' },
-      { label: 'April', value: 'April' },
-      { label: 'Mei', value: 'Mei' },
-      { label: 'Juni', value: 'Juni' },
-      { label: 'Juli', value: 'Juli' },
-      { label: 'Agustus', value: 'Agustus' },
-      { label: 'September', value: 'September' },
-      { label: 'Oktober', value: 'Oktober' },
-      { label: 'November', value: 'November' },
-      { label: 'Desember', value: 'Desember' },
+      { label: 'Januari', value: '1' },
+      { label: 'Februari', value: '2' },
+      { label: 'Maret', value: '3' },
+      { label: 'April', value: '4' },
+      { label: 'Mei', value: '5' },
+      { label: 'Juni', value: '6' },
+      { label: 'Juli', value: '7' },
+      { label: 'Agustus', value: '8' },
+      { label: 'September', value: '9' },
+      { label: 'Oktober', value: '10' },
+      { label: 'November', value: '11' },
+      { label: 'Desember', value: '12' },
     ],
     optTahun: [
       { label: '2015', value: '2015' },
@@ -75,8 +66,14 @@ class Titipan extends Component {
   }
 
   initialValues = {
-    nama: '',
-    id: '',
+    typeUpload: 'Titipan',
+  }
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeUpload: 'Titipan',
+    })
   }
 
   doRefresh = () => {
@@ -87,11 +84,11 @@ class Titipan extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createFIUpload, updateFIUpload } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateFIUpload(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createFIUpload(values, this.doRefresh)
     }
   }
 
@@ -110,13 +107,12 @@ class Titipan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteFIUpload } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteFIUpload(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -130,35 +126,93 @@ class Titipan extends Component {
       })
   }
 
+  filterData = async (e) => {
+    e.preventDefault()
+    const { bulan, tahun } = this.state
+    if (invalidValues.includes(bulan)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+    if (invalidValues.includes(tahun)) {
+      AlertMessage.custom({ title: 'Error!', text: 'Pilih Bulan dan Tahun!', icon: 'error' })
+      return false
+    }
+
+    try {
+      const { fetchQueryProps } = this.props
+      fetchQueryProps.setFilteredByObject({
+        'month-year$tanggal': `${tahun}-${bulan}`,
+      })
+
+      this.doRefresh()
+    } catch (error) {
+      AlertMessage.error(error)
+    }
+  }
+
   render() {
-    const { optBulan, optTahun, tahun, bulan } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { optBulan, optTahun } = this.state
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: 'Tampilan Kolom-kolom tabel disamakan dengan file excel yang diberikan',
-        accessor: 'note',
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
         filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
       },
-      // {
-      //   Header: 'Aksi',
-      //   filterable: false,
-      //   Cell: (props) => (
-      //     <>
-      //       <Button
-      //         color="success"
-      //         onClick={() => modalForm.show({ data: props.original })}
-      //         className="mr-1"
-      //         title="Edit"
-      //       >
-      //         <i className="fa fa-pencil" />
-      //       </Button>
-      //     </>
-      //   ),
-      // },
+      {
+        Header: 'Tanggal',
+        accessor: `tanggal`,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatDate(props.value)}</p>,
+      },
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        filterable: false,
+        Cell: (row) => {
+          if (row.value) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <a href={row.value} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            )
+          }
+        },
+      },
+      {
+        Header: 'Aksi',
+        width: 200,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
     ]
 
     const pageName = 'Titipan'
@@ -198,31 +252,43 @@ class Titipan extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('bulan', v)}
-                      options={optBulan}
-                      value={bulan}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Bulan"
-                    />
+                  <Col>
+                    <div>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih Bulan..."
+                              options={optBulan}
+                              name="bulan"
+                              onChange={(e) => this.setState({ bulan: e?.value })}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Select
+                              isClearable
+                              placeholder="Pilih tahun..."
+                              options={optTahun}
+                              name="tahun"
+                              className=""
+                              onChange={(e) => this.setState({ tahun: e?.value })}
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col sm="2">
+                          <Button type="submit" color="primary" onClick={(e) => this.filterData(e)}>
+                            <i className="fa fa-filter" />
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
                   </Col>
 
-                  <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('tahun', v)}
-                      options={optTahun}
-                      value={tahun}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Tahun"
-                    />
-                  </Col>
-
-                  <Col sm="8">
+                  <Col>
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
@@ -244,10 +310,10 @@ class Titipan extends Component {
                 <br />
                 <ReactTable
                   filterable
-                  data={dataDummy}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
+                  {...tableProps}
                 />
               </CardBody>
             </Card>
@@ -268,7 +334,7 @@ class Titipan extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
                     <ModalBody>
@@ -281,24 +347,22 @@ class Titipan extends Component {
                           // minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal"
-                          showMonthYearPicker
-                          showFullMonthYearPicker
-                          dateFormat="MM/yyyy"
+                          // showMonthYearPicker
+                          // showFullMonthYearPicker
+                          // dateFormat="MM/yyyy"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="File Excel"
-                          name="file-eksploitasi"
+                          label="File PDF"
+                          name="lampiran"
                           isRequired
+                          accept=".pdf"
                           component={CfInputFile}
                         />
                       </FormGroup>
-                      {console.log(values, 'values')}
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -337,23 +401,23 @@ Titipan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createFIUpload: PropTypes.func.isRequired,
+  updateFIUpload: PropTypes.func.isRequired,
+  deleteFIUpload: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.uploadFinancialAdmin.isLoading,
+  message: state.uploadFinancialAdmin.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createFIUpload: (formData, refresh) => dispatch(createFIUpload(formData, refresh)),
+  updateFIUpload: (formData, id, refresh) => dispatch(updateFIUpload(formData, id, refresh)),
+  deleteFIUpload: (id, refresh) => dispatch(deleteFIUpload(id, refresh)),
 })
 
 export default connect(
@@ -361,7 +425,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getFIUpload(p),
     Component: withToggle({
       Component: Titipan,
       toggles: {

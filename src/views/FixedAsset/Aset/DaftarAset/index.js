@@ -21,12 +21,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfInputFile } from '../../../../components'
-import { AlertMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues, userData } from '../../../../helpers'
 import {
   createAsset,
   updateAsset,
   deleteAsset,
   uploadAsset,
+  approveAsset,
 } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -34,6 +35,13 @@ import { createAssetSchema } from '../../../../validations/mvAsset'
 
 class DaftarAset extends Component {
   initialValues = {}
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      status: 'Unapproved',
+    })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -77,6 +85,35 @@ class DaftarAset extends Component {
       })
   }
 
+  handleApprove = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { approveAsset } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approveAsset(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -101,7 +138,14 @@ class DaftarAset extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Aksi',
+        Header: 'Status',
+        accessor: 'status',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Edit',
+        width: 60,
         filterable: false,
         Cell: (props) => (
           <>
@@ -113,7 +157,7 @@ class DaftarAset extends Component {
             >
               <i className="fa fa-pencil" />
             </Button>
-            &nbsp; | &nbsp;
+            {/* &nbsp; | &nbsp;
             <Button
               color="danger"
               onClick={(e) => this.handleDelete(e, props.original)}
@@ -121,11 +165,43 @@ class DaftarAset extends Component {
               title="Delete"
             >
               <i className="fa fa-trash" />
-            </Button>
+            </Button> */}
           </>
         ),
       },
     ]
+
+    const user = userData()
+    const allowedRole = ['admin', 'supervisor']
+    if (user && allowedRole.includes(user.role?.name.toLowerCase())) {
+      columns.push({
+        Header: 'Approval',
+        width: 200,
+        accessor: 'id',
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      })
+    }
 
     const pageName = 'Daftar Aset'
     // const isIcon = { paddingRight: '7px' }
@@ -290,6 +366,7 @@ DaftarAset.propTypes = {
   updateAsset: PropTypes.func.isRequired,
   deleteAsset: PropTypes.func.isRequired,
   uploadAsset: PropTypes.func.isRequired,
+  approveAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -305,6 +382,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
   deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
   uploadAsset: (formData, refresh) => dispatch(uploadAsset(formData, refresh)),
+  approveAsset: (formData, id, refresh) => dispatch(approveAsset(formData, id, refresh)),
 })
 
 export default connect(

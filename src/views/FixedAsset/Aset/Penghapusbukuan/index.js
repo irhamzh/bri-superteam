@@ -20,8 +20,8 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { AlertMessage, ErrorMessage, invalidValues, userData } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, ErrorMessage, userData } from '../../../../helpers'
+import { approveAsset, penghapusbukuanAsset, deleteAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
@@ -32,20 +32,23 @@ class Penghapusbukuan extends Component {
 
   initialValues = {}
 
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      in$status: [
+        'Approved oleh Supervisor I',
+        'Diajukan Penihilan',
+        'Approved oleh Supervisor II',
+        'Approved oleh Wakabag',
+        'Approved oleh Kabag',
+      ],
+    })
+  }
+
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
     modalForm.hide()
     fetchQueryProps.refresh()
-  }
-
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
-    if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
-    } else {
-      createRole(values, this.doRefresh)
-    }
   }
 
   handleChangeSelect = (name, value) => {
@@ -63,13 +66,13 @@ class Penghapusbukuan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteAsset } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteAsset(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -83,57 +86,57 @@ class Penghapusbukuan extends Component {
       })
   }
 
-  // handleApprove = (e, state) => {
-  //   e.preventDefault()
+  handleApprove = (e, state) => {
+    e.preventDefault()
 
-  //   const { id } = state
-  //   const { approvePersekot } = this.props
-  //   const message = {
-  //     title: 'Apa kamu yakin?',
-  //     text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
-  //     confirmButtonText: 'Ya, Approve!',
-  //     cancelButtonText: 'Kembali',
-  //   }
+    const { id } = state
+    const { approveAsset } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
 
-  //   AlertMessage.warning(message)
-  //     .then((result) => {
-  //       if (result.value) {
-  //         approvePersekot(state, id, this.doRefresh)
-  //       } else {
-  //         const paramsResponse = {
-  //           title: 'Notice!',
-  //           text: 'Proses Approval Dibatalkan',
-  //         }
-  //         AlertMessage.info(paramsResponse)
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       AlertMessage.error(err) // Internal Server Error
-  //     })
-  // }
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approveAsset(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
 
-  // handlePenihilan = (e) => {
-  //   e.preventDefault()
+  handlePenghapusbukuan = (e) => {
+    e.preventDefault()
 
-  //   const { persekotIds } = this.state
-  //   const { penihilanPersekot } = this.props
+    const { assetIds } = this.state
+    const { penghapusbukuanAsset } = this.props
 
-  //   AlertMessage.warning()
-  //     .then((result) => {
-  //       if (result.value) {
-  //         penihilanPersekot({ persekotIds }, this.doRefresh)
-  //       } else {
-  //         const paramsResponse = {
-  //           title: 'Notice!',
-  //           text: 'Proses Penghapusbukuan Dibatalkan',
-  //         }
-  //         AlertMessage.info(paramsResponse)
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       AlertMessage.error(err) // Internal Server Error
-  //     })
-  // }
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          penghapusbukuanAsset({ assetIds }, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Penghapusbukuan Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
 
   isSelected = (id) => {
     const { assetIds } = this.state
@@ -208,7 +211,7 @@ class Penghapusbukuan extends Component {
           <>
             <Button
               color="success"
-              // onClick={(e) => this.handleApprove(e, props.original)}
+              onClick={(e) => this.handleApprove(e, props.original)}
               className="mr-1"
               title="Approve"
             >
@@ -257,7 +260,7 @@ class Penghapusbukuan extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        // onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={(e) => this.handlePenghapusbukuan(e)}
                         className="mr-1"
                       >
                         Submit
@@ -333,9 +336,9 @@ Penghapusbukuan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  penghapusbukuanAsset: PropTypes.func.isRequired,
+  approveAsset: PropTypes.func.isRequired,
+  deleteAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -347,9 +350,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  penghapusbukuanAsset: (formData, refresh) => dispatch(penghapusbukuanAsset(formData, refresh)),
+  approveAsset: (formData, id, refresh) => dispatch(approveAsset(formData, id, refresh)),
+  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
 })
 
 export default connect(

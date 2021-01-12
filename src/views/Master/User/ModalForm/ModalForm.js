@@ -112,6 +112,23 @@ function ModalForm(props) {
                     component={CfSelect}
                   />
                 </FormGroup>
+
+                <FormGroup>
+                  <Field
+                    label="Division"
+                    options={[
+                      { label: 'Fixed Asset', value: 'Fixed Asset' },
+                      { label: 'Procurement', value: 'Procurement' },
+                      { label: 'General Affair', value: 'General Affair' },
+                      { label: 'Financial Admin', value: 'Financial Admin' },
+                      { label: 'All', value: 'All' },
+                    ]}
+                    isRequired
+                    name="division"
+                    placeholder="Pilih atau Cari divisi"
+                    component={CfSelect}
+                  />
+                </FormGroup>
               </ModalBody>
 
               <ModalFooter>

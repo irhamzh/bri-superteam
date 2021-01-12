@@ -7,23 +7,26 @@ import configStore from './configStore'
 
 axios.defaults.baseURL = `${API_URL}`
 axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
-// axios.interceptors.response.use(
-//   (response) => {
-//     return response
-//   },
-//   (error) => {
-//     if (error.response.status === 401 && !window.location.href.includes('/login')) {
-//       // window.location.reload()
+axios.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    if (
+      error.response.status === 401 &&
+      error.response.message.includes === 'Session expired, please login again'
+    ) {
+      // window.location.reload()
 
-//       localStorage.removeItem('token')
-//       localStorage.removeItem('uid')
-//       localStorage.removeItem('rid')
+      localStorage.removeItem('token')
+      localStorage.removeItem('uid')
+      localStorage.removeItem('rid')
 
-//       window.location = "/logout"
-//     }
-//     return error
-//   }
-// )
+      window.location = '/logout'
+    }
+    return error
+  }
+)
 class Service {
   // Authentication
   static signIn(values) {
@@ -222,6 +225,14 @@ class Service {
     }
     console.log(values, formData)
     return axios.post('assets/excel', formData)
+  }
+
+  static penghapusbukuanAsset(values) {
+    return axios.post('assets/penghapusbukuan', values)
+  }
+
+  static approveAsset(values, id) {
+    return axios.put(`assets/penghapusbukuan/${id}/approve`, values)
   }
 
   // Room
@@ -2350,6 +2361,59 @@ class Service {
 
   static deleteFIPayment(id) {
     return axios.delete(`fa-payments/${id}`)
+  }
+
+  static penihilanFIPayment(values) {
+    return axios.post('fa-payments/penihilan', values)
+  }
+
+  static approveFIPayment(values, id) {
+    return axios.put(`fa-payments/penihilan/${id}/approve`, values)
+  }
+
+  // Financial Admin - Upload
+
+  static getFIUpload(params) {
+    if (!params) params = ''
+    return axios.get(`fa-uploads${params}`)
+  }
+
+  static getFIUploadById(id) {
+    return axios.get(`fa-uploads/${id}`)
+  }
+
+  static createFIUpload(values) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
+    }
+
+    return axios.post('fa-uploads', formData)
+  }
+
+  static updateFIUpload(values, id) {
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
+    }
+
+    return axios.put(`fa-uploads/${id}`, formData)
+  }
+
+  static deleteFIUpload(id) {
+    return axios.delete(`fa-uploads/${id}`)
   }
 
   // Anggaran

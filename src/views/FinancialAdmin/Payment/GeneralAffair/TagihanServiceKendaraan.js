@@ -31,7 +31,13 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import {
+  AlertMessage,
+  ErrorMessage,
+  invalidValues,
+  formatDate,
+  formatCurrencyIDR,
+} from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -108,7 +114,6 @@ class TagihanServiceKendaraan extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -187,7 +192,7 @@ class TagihanServiceKendaraan extends Component {
         Header: 'Biaya',
         accessor: 'biaya',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
 
       {
@@ -317,7 +322,10 @@ class TagihanServiceKendaraan extends Component {
                             label="Nota Pembukuan"
                             value={(col) => (col.notaPembukuan ? '✓' : '❌')}
                           />
-                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn
+                            label="Biaya"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                           <ExcelColumn label="Keterangan" value={(col) => col.information} />
                         </ExcelSheet>
                       </ExcelFile>

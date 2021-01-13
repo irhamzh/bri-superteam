@@ -3,11 +3,11 @@ import { Card, CardBody, Col, Row } from 'reactstrap'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect, Link } from 'react-router-dom'
-import Service from '../../../config/services'
-import withTableFetchQuery from '../../../HOC/withTableFetchQuery'
-import withToggle from '../../../HOC/withToggle'
+import Service from '../../config/services'
+import withTableFetchQuery from '../../HOC/withTableFetchQuery'
+import withToggle from '../../HOC/withToggle'
 
-const Pengadaan = (props) => {
+const FixedAsset = (props) => {
   const { auth } = props
   if (!auth) return <Redirect to="/login" />
 
@@ -15,59 +15,80 @@ const Pengadaan = (props) => {
     <div className="animated fadeIn">
       <Row>
         <Col xs="8">
-          <Link to="/fixed-asset/pengadaan/working-order" style={{ textDecoration: 'none' }}>
+          <Link to="/fixed-asset/anggaran" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Working Order</div>
+                <div className="text-value">Anggaran</div>
               </CardBody>
             </Card>
           </Link>
         </Col>
 
         <Col xs="8">
-          <Link to="/fixed-asset/pengadaan/barang-jasa" style={{ textDecoration: 'none' }}>
+          <Link to="/fixed-asset/pengadaan" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Pengadaan Barang dan/atau Jasa (IT &amp; Non IT)</div>
+                <div className="text-value">Pengadaan</div>
               </CardBody>
             </Card>
           </Link>
         </Col>
 
         <Col xs="8">
-          <Link to="/fixed-asset/pengadaan/jasa-konsultan" style={{ textDecoration: 'none' }}>
+          <Link to="/fixed-asset/aset" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Pengadaan Jasa Konsultan</div>
+                <div className="text-value">Aset</div>
               </CardBody>
             </Card>
           </Link>
         </Col>
 
         <Col xs="8">
-          <Link to="/fixed-asset/pengadaan/purchase-order" style={{ textDecoration: 'none' }}>
+          <Link to="/fixed-asset/vendor" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Purchase Order</div>
+                <div className="text-value">Vendor</div>
               </CardBody>
             </Card>
           </Link>
         </Col>
 
         <Col xs="8">
-          <Link to="/fixed-asset/pengadaan/tanda-terima" style={{ textDecoration: 'none' }}>
+          <Link to="/fixed-asset/persediaan" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Tanda Terima Barang</div>
+                <div className="text-value">Persediaan</div>
               </CardBody>
             </Card>
           </Link>
         </Col>
+
         <Col xs="8">
-          <Link to="/fixed-asset/pengadaan/evaluasi-supplier" style={{ textDecoration: 'none' }}>
+          <Link to="/fixed-asset/persekot" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
-                <div className="text-value">Evaluasi Supplier</div>
+                <div className="text-value">Persekot</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
+          <Link to="/fixed-asset/peralatan-it" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Peralatan IT</div>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+
+        <Col xs="8">
+          <Link to="/pengelola-gedung" style={{ textDecoration: 'none' }}>
+            <Card className="" outline color="info">
+              <CardBody>
+                <div className="text-value">Pengelola Gedung</div>
               </CardBody>
             </Card>
           </Link>
@@ -77,14 +98,12 @@ const Pengadaan = (props) => {
   )
 }
 
-Pengadaan.propTypes = {
+FixedAsset.propTypes = {
   auth: PropTypes.bool.isRequired,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
 })
 
 const mapDispatchToProps = () => ({})
@@ -96,7 +115,7 @@ export default connect(
   withTableFetchQuery({
     API: (p) => Service.getRoles(p),
     Component: withToggle({
-      Component: Pengadaan,
+      Component: FixedAsset,
       toggles: {
         modalForm: false,
       },

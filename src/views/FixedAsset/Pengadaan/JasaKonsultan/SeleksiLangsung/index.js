@@ -29,7 +29,7 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createKonsultanSeleksiLangsung,
   updateKonsultanSeleksiLangsung,
@@ -104,7 +104,6 @@ class SeleksiLangsung extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteKonsultanSeleksiLangsung(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -203,14 +202,14 @@ class SeleksiLangsung extends Component {
         accessor: 'biayaPutusan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Tanggal SPK',
         accessor: 'tanggalSPK',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'No. SPK',
@@ -341,7 +340,10 @@ class SeleksiLangsung extends Component {
                             value={(col) => (col.pengumumanPemenang ? '✓' : '❌')}
                           />
                           <ExcelColumn label="Jenis Anggaran" value={(col) => col.jenisAnggaran} />
-                          <ExcelColumn label="Biaya Putusan" value={(col) => col.biayaPutusan} />
+                          <ExcelColumn
+                            label="Biaya Putusan"
+                            value={(col) => formatCurrencyIDR(col.biayaPutusan)}
+                          />
                           <ExcelColumn label="Nama Pengadaan" value={(col) => col.namaPengadaan} />
                           <ExcelColumn
                             label="Tanggal SPK"

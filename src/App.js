@@ -2,6 +2,7 @@ import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 // import { renderRoutes } from 'react-router-config';
 import './App.scss'
+import { jwtVerify } from './config/configStore'
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>
 
@@ -15,6 +16,11 @@ const Page404 = React.lazy(() => import('./views/Pages/Page404'))
 const Page500 = React.lazy(() => import('./views/Pages/Page500'))
 
 const App = () => {
+  ;(function checkToken() {
+    setInterval(() => {
+      jwtVerify()
+    }, 3601 * 1000)
+  })()
   return (
     <HashRouter>
       <React.Suspense fallback={loading()}>

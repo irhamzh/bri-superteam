@@ -24,4 +24,4 @@ async function jwtVerify() {
 
 jwtVerify()
 
-export default configStore
+export { configStore, jwtVerify }

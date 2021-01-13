@@ -25,7 +25,7 @@ import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRKlasifikasiCatering,
   updatePRKlasifikasiCatering,
@@ -103,7 +103,6 @@ class Klasifikasi extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePRKlasifikasiCatering(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -143,6 +142,7 @@ class Klasifikasi extends Component {
         Header: 'Nomor Surat',
         accessor: 'noSuratPesanan',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Kebutuhan',
@@ -153,6 +153,7 @@ class Klasifikasi extends Component {
         Header: 'Nama Catering',
         accessor: 'catering.name',
         filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Menu',
@@ -170,7 +171,7 @@ class Klasifikasi extends Component {
         filterable: false,
         Cell: (props) => {
           const { menu } = props.original
-          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
+          const listBiaya = menu.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
         },
       },

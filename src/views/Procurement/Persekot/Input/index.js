@@ -82,7 +82,6 @@ class InputPersekot extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePersekot(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -145,12 +144,14 @@ class InputPersekot extends Component {
         Header: 'Nama Kegiatan',
         accessor: 'name',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nominal Biaya',
         accessor: 'costNominal',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

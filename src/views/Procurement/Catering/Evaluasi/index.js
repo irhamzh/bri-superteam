@@ -100,7 +100,6 @@ class Internal extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePREvaluasiCatering(id, this.doRefresh)
         } else {
           const paramsResponse = {

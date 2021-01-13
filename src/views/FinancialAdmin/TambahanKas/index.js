@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,9 +20,16 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../config/services'
 import { CfInput, CfInputDate, CfInputMultiFile } from '../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../helpers'
+import {
+  AlertMessage,
+  ErrorMessage,
+  invalidValues,
+  formatDate,
+  formatCurrencyIDR,
+} from '../../../helpers'
 import {
   createFITambahanKas,
   updateFITambahanKas,
@@ -30,6 +38,10 @@ import {
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class TambahanKas extends Component {
   initialValues = {}
 
@@ -58,7 +70,6 @@ class TambahanKas extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFITambahanKas(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -76,6 +87,7 @@ class TambahanKas extends Component {
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const columns = [
       {
@@ -89,7 +101,7 @@ class TambahanKas extends Component {
         Header: 'Nominal',
         accessor: 'nominal',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Unit Kerja Tujuan',
@@ -193,13 +205,32 @@ class TambahanKas extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Nominal"
+                            value={(col) => formatCurrencyIDR(col.nominal)}
+                          />
+                          <ExcelColumn
+                            label="Unit Kerja Tujuan"
+                            value={(col) => col.unitKerjaTujuan}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

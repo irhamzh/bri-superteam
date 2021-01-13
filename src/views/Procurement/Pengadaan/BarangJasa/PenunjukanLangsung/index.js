@@ -30,7 +30,7 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPRBarangJasaPengadaan,
   updatePRBarangJasaPengadaan,
@@ -108,7 +108,6 @@ class PenunjukanLangsung extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePRBarangJasaPengadaan(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -254,6 +253,7 @@ class PenunjukanLangsung extends Component {
         accessor: 'jumlahBiaya',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Masa Berlaku',
@@ -406,7 +406,10 @@ class PenunjukanLangsung extends Component {
                           />
                           <ExcelColumn label="Jumlah Peserta" value="jumlahPeserta" />
                           <ExcelColumn label="Durasi" value="durasi" />
-                          <ExcelColumn label="Jumlah Biaya" value="jumlahBiaya" />
+                          <ExcelColumn
+                            label="Jumlah Biaya"
+                            value={(col) => formatCurrencyIDR(col.jumlahBiaya)}
+                          />
                           <ExcelColumn label="Masa Berlaku" value="masaBerlaku" />
                           <ExcelColumn label="Keterangan" value="information" />
                         </ExcelSheet>

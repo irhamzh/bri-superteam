@@ -24,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRTandaTerimaPengadaan,
   updatePRTandaTerimaPengadaan,
@@ -97,7 +97,6 @@ class TandaTerima extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePRTandaTerimaPengadaan(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -173,6 +172,7 @@ class TandaTerima extends Component {
         accessor: 'hargaBarang',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Keterangan',

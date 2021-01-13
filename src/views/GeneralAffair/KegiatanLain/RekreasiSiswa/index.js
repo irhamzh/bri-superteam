@@ -64,7 +64,6 @@ class RekreasiSiswa extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteAktivitasRekreasi(id, this.doRefresh)
         } else {
           const paramsResponse = {

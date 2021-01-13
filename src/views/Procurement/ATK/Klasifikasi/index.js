@@ -25,7 +25,7 @@ import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRKlasifikasiAtk,
   updatePRKlasifikasiAtk,
@@ -103,7 +103,6 @@ class Klasifikasi extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePRKlasifikasiAtk(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -170,7 +169,7 @@ class Klasifikasi extends Component {
         filterable: false,
         Cell: (props) => {
           const { barang } = props.original
-          const listBiaya = barang.map((row) => <div>{`${row.price}`}</div>)
+          const listBiaya = barang.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
         },
       },

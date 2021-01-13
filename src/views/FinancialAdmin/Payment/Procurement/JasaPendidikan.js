@@ -103,7 +103,6 @@ class JasaPendidikan extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {

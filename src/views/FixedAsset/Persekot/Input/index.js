@@ -23,13 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate } from '../../../../components'
-import {
-  AlertMessage,
-  ErrorMessage,
-  formatDate,
-  invalidValues,
-  userData,
-} from '../../../../helpers'
+import { AlertMessage, formatDate, invalidValues, userData } from '../../../../helpers'
 import {
   createPersekot,
   updatePersekot,
@@ -126,7 +120,7 @@ class InputPersekot extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
 
@@ -319,15 +313,13 @@ class InputPersekot extends Component {
                       <FormGroup>
                         <Field
                           label="Nominal Biaya"
-                          type="text"
+                          type="number"
                           name="costNominal"
                           isRequired
                           placeholder="Masukkan Nominal Biaya"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

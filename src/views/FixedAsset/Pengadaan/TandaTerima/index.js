@@ -85,7 +85,6 @@ class TandaTerima extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteTandaTerima(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -119,6 +118,7 @@ class TandaTerima extends Component {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
 
@@ -137,12 +137,14 @@ class TandaTerima extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah Barang',
         accessor: 'jumlah',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Select from 'react-select'
 import Service from '../../../config/services'
 import { CfInputDate, CfInputFile } from '../../../components'
@@ -30,6 +32,11 @@ import {
 } from '../../../modules/financialAdmin/uploads/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
+
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class Brismart extends Component {
   state = {
@@ -112,7 +119,6 @@ class Brismart extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFIUpload(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -155,6 +161,7 @@ class Brismart extends Component {
     const { optBulan, optTahun } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -298,13 +305,24 @@ class Brismart extends Component {
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Lampiran" value={(col) => col.lampiran} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>

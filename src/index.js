@@ -8,7 +8,7 @@ import './index.css'
 import { Provider } from 'react-redux'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import configStore from './config/configStore'
+import { configStore } from './config/configStore'
 
 ReactDOM.render(
   <Provider store={configStore}>

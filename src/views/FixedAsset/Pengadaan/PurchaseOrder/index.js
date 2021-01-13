@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPurchaseOrder,
   updatePurchaseOrder,
@@ -85,7 +85,6 @@ class PurchaseOrder extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePurchaseOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -148,12 +147,14 @@ class PurchaseOrder extends Component {
         accessor: 'hargaSatuan',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Total Harga',
         accessor: 'totalHarga',
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Aksi',

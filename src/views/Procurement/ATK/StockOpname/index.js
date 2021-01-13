@@ -103,7 +103,6 @@ class StockOpname extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePRStokOpnameAtk(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -149,6 +148,7 @@ class StockOpname extends Component {
         Header: 'Nama Barang',
         accessor: 'barang',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
           const listBarang = barang.map((row) => <div>{`${row.name}`}</div>)
@@ -159,6 +159,7 @@ class StockOpname extends Component {
         Header: 'Stok Awal',
         accessor: 'stokAwal',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
           const listStokAwal = barang.map((row) => <div>{`${row.stockAwal}`}</div>)
@@ -169,6 +170,7 @@ class StockOpname extends Component {
         Header: 'Jumlah Masuk',
         accessor: 'jumlahMasuk',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
           const listJumlahMasuk = barang.map((row) => <div>{`${row.jumlahMasuk}`}</div>)
@@ -179,6 +181,7 @@ class StockOpname extends Component {
         Header: 'Jumlah Keluar',
         accessor: 'jumlahKeluar',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
           const listJumlahKeluar = barang.map((row) => <div>{`${row.jumlahKeluar}`}</div>)
@@ -189,6 +192,7 @@ class StockOpname extends Component {
         Header: 'Stok Akhir',
         accessor: 'stokAkhir',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
           const listStockAkhir = barang.map((row) => <div>{`${row.stockAkhir}`}</div>)

@@ -25,7 +25,13 @@ import ReactExport from 'react-export-excel'
 import Select from 'react-select'
 import Service from '../../../config/services'
 import { CfInput, CfInputDate, CfSelect } from '../../../components'
-import { AlertMessage, formatDate, getYearOptions, invalidValues } from '../../../helpers'
+import {
+  AlertMessage,
+  formatCurrencyIDR,
+  formatDate,
+  getYearOptions,
+  invalidValues,
+} from '../../../helpers'
 import {
   createGAAnggaran,
   updateGAAnggaran,
@@ -110,7 +116,6 @@ class AnggaranHumas extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteGAAnggaran(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -199,7 +204,7 @@ class AnggaranHumas extends Component {
         accessor: `nilai`,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatCurrencyIDR(props.value)}</p>,
       },
       {
         Header: 'Tanggal Pembukuan',
@@ -384,7 +389,10 @@ class AnggaranHumas extends Component {
                             value={() => data[0]?.categoryAnggaran}
                           />
                           <ExcelColumn label="Tipe Anggaran" value={(col) => col.type} />
-                          <ExcelColumn label="Nilai" value={(col) => col.nilai} />
+                          <ExcelColumn
+                            label="Nilai"
+                            value={(col) => formatCurrencyIDR(col.nilai)}
+                          />
                           <ExcelColumn
                             label="Tanggal Pembukuan"
                             value={(col) =>

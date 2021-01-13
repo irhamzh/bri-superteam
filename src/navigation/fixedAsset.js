@@ -1,6 +1,7 @@
 import React from 'react'
 
 // Fixed Asset / Anggaran
+const FixedAsset = React.lazy(() => import('../views/FixedAsset'))
 const AnggaranFA = React.lazy(() => import('../views/FixedAsset/Anggaran'))
 const EksploitasiAnggaran = React.lazy(() => import('../views/FixedAsset/Anggaran/Eksploitasi'))
 const InvestasiAnggaran = React.lazy(() => import('../views/FixedAsset/Anggaran/Investasi'))
@@ -47,7 +48,7 @@ const fixedAsset = [
     path: '/fixed-asset',
     exact: true,
     name: 'Fixed Asset',
-    component: Pengadaan,
+    component: FixedAsset,
   },
   // Fixed Asset / Anggaran
   {

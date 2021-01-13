@@ -29,7 +29,7 @@ import {
   CfSelect,
   IconSuccessOrFailed,
 } from '../../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createKonsultanPenunjukanLangsung,
   updateKonsultanPenunjukanLangsung,
@@ -103,7 +103,6 @@ class PenunjukanLangsung extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteKonsultanPenunjukanLangsung(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -187,14 +186,14 @@ class PenunjukanLangsung extends Component {
         accessor: 'biayaPutusan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Tanggal SPK',
         accessor: 'tanggalSPK',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'No. SPK',

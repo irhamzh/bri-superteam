@@ -24,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../components'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../components'
 import {
   AlertMessage,
   formatCurrencyIDR,
@@ -48,6 +48,8 @@ class AnggaranHumas extends Component {
   state = {
     tahun: '',
     bulan: '',
+    isShow: false,
+    columns: [],
     optBulan: [
       { label: 'Januari', value: 1 },
       { label: 'Februari', value: 2 },
@@ -78,6 +80,149 @@ class AnggaranHumas extends Component {
       year: thisYear,
       month: thisMonth,
     })
+
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+    const { data } = tableProps
+
+    const columns = [
+      {
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
+      },
+      {
+        Header: 'Bulan',
+        accessor: `month`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.month}</p>,
+      },
+      {
+        Header: 'Tahun',
+        accessor: `year`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.year}</p>,
+      },
+      {
+        Header: 'Kategori Anggaran',
+        accessor: `categoryAnggaran`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.categoryAnggaran}</p>,
+      },
+      {
+        Header: 'Tipe Anggaran',
+        accessor: `type`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Nilai',
+        accessor: `nilai`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatCurrencyIDR(props.value)}</p>,
+      },
+      {
+        Header: 'Tanggal Pembukuan',
+        accessor: `tanggalPembukuan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (
+          <p style={{ textAlign: 'center' }}>
+            {props.value ? formatDate(props.value) : props.value}
+          </p>
+        ),
+      },
+      {
+        Header: 'Keperluan',
+        accessor: `keperluan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Pelimpahan',
+        accessor: `pelimpahan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Tanggal Pelimpahan',
+        accessor: `tanggalPelimpahan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (
+          <p style={{ textAlign: 'center' }}>
+            {props.value ? formatDate(props.value) : props.value}
+          </p>
+        ),
+      },
+      {
+        Header: 'Status',
+        accessor: `status`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() =>
+                modalForm.show({
+                  data: {
+                    ...props.original,
+                    year: data[0]?.year,
+                    month: data[0]?.month,
+                    categoryAnggaran: data[0]?.categoryAnggaran,
+                    parent: data[0]?.id,
+                  },
+                })
+              }
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -155,138 +300,37 @@ class AnggaranHumas extends Component {
     }
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { optBulan, optTahun } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { isShow, columns } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'No.',
-        width: 50,
-        // accessor: `none`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
-      },
-      {
-        Header: 'Bulan',
-        accessor: `month`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.month}</p>,
-      },
-      {
-        Header: 'Tahun',
-        accessor: `year`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.year}</p>,
-      },
-      {
-        Header: 'Kategori Anggaran',
-        accessor: `categoryAnggaran`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.categoryAnggaran}</p>,
-      },
-      {
-        Header: 'Tipe Anggaran',
-        accessor: `type`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Nilai',
-        accessor: `nilai`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatCurrencyIDR(props.value)}</p>,
-      },
-      {
-        Header: 'Tanggal Pembukuan',
-        accessor: `tanggalPembukuan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (
-          <p style={{ textAlign: 'center' }}>
-            {props.value ? formatDate(props.value) : props.value}
-          </p>
-        ),
-      },
-      {
-        Header: 'Keperluan',
-        accessor: `keperluan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Pelimpahan',
-        accessor: `pelimpahan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Tanggal Pelimpahan',
-        accessor: `tanggalPelimpahan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (
-          <p style={{ textAlign: 'center' }}>
-            {props.value ? formatDate(props.value) : props.value}
-          </p>
-        ),
-      },
-      {
-        Header: 'Status',
-        accessor: `status`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() =>
-                modalForm.show({
-                  data: {
-                    ...props.original,
-                    year: data[0]?.year,
-                    month: data[0]?.month,
-                    categoryAnggaran: data[0]?.categoryAnggaran,
-                    parent: data[0]?.id,
-                  },
-                })
-              }
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Humas'
     const isIcon = { paddingRight: '7px' }
@@ -365,6 +409,7 @@ class AnggaranHumas extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -417,7 +462,12 @@ class AnggaranHumas extends Component {
                     </div>
                   </Col>
                 </Row>
-                <br />
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

@@ -28,6 +28,7 @@ import {
   CfInputDate,
   CfSelect,
   IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
@@ -48,6 +49,8 @@ class PenunjukanLangsung extends Component {
   state = {
     optProvider: [],
     dataProvider: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -63,13 +66,136 @@ class PenunjukanLangsung extends Component {
   }
 
   async componentDidMount() {
+    const { fetchQueryProps } = this.props
+
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
     const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggalPengadaan',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Nama Pengadaan',
+        accessor: 'namaPengadaan',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Izin Prinsip User',
+        accessor: 'izinPrinsipUser',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Izin Prinsip Pengadaan',
+        accessor: 'izinPrinsipPengadaan',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Undangan',
+        accessor: 'undangan',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Klarifikasi dan negosiasi',
+        accessor: 'klarifikasiNegosiasi',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Izin Hasil Pengadaan',
+        accessor: 'izinHasilPengadaan',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Jenis Anggaran',
+        accessor: 'jenisAnggaran',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Biaya Putusan',
+        accessor: 'biayaPutusan',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
+      },
+      {
+        Header: 'Tanggal SPK',
+        accessor: 'tanggalSPK',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'No. SPK',
+        accessor: 'nomorSPK',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        filterable: false,
+        show: true,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
     this.setState({
       optProvider,
       dataProvider,
+      columns,
     })
   }
 
@@ -117,118 +243,36 @@ class PenunjukanLangsung extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optProvider, dataProvider } = this.state
+    const { optProvider, dataProvider, isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        accessor: 'tanggalPengadaan',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Izin Prinsip User',
-        accessor: 'izinPrinsipUser',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Izin Prinsip Pengadaan',
-        accessor: 'izinPrinsipPengadaan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Undangan',
-        accessor: 'undangan',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Klarifikasi dan negosiasi',
-        accessor: 'klarifikasiNegosiasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Izin Hasil Pengadaan',
-        accessor: 'izinHasilPengadaan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Jenis Anggaran',
-        accessor: 'jenisAnggaran',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Biaya Putusan',
-        accessor: 'biayaPutusan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
-      },
-      {
-        Header: 'Tanggal SPK',
-        accessor: 'tanggalSPK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'No. SPK',
-        accessor: 'nomorSPK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Penunjukan Langsung'
     const isIcon = { paddingRight: '7px' }
@@ -273,6 +317,7 @@ class PenunjukanLangsung extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -328,6 +373,12 @@ class PenunjukanLangsung extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable={false}
                   columns={columns}

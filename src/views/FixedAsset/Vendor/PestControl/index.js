@@ -22,7 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInputCheckbox, CfInputDate, CfSelect, IconSuccessOrFailed } from '../../../../components'
+import {
+  CfInputCheckbox,
+  CfInputDate,
+  CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -36,6 +42,8 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class PestControl extends Component {
   state = {
     optRekanan: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -63,7 +71,139 @@ class PestControl extends Component {
     const dataRekanan = resDataRekanan.data.data
     const optRekanan = dataRekanan.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optRekanan })
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggal',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Toilet',
+        accessor: 'toilet',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Musholla',
+        accessor: 'musholla',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Lobby Lounge',
+        accessor: 'lobbyLounge',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'R. Meeting',
+        accessor: 'ruangMeeting',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'R. Kelas',
+        accessor: 'ruangKelas',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'R. Kerja',
+        accessor: 'ruangKerja',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Koridor',
+        accessor: 'corridor',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Tangga Darurat',
+        accessor: 'tanggaDarurat',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Tempat Sampah',
+        accessor: 'ruangSampah',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Shaft',
+        accessor: 'ruangShaft',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Parkir Motor',
+        accessor: 'parkirMotor',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Halaman',
+        accessor: 'halaman',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Rekanan',
+        accessor: 'partner.name',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ optRekanan, columns })
   }
 
   doRefresh = () => {
@@ -96,7 +236,6 @@ class PestControl extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteVendor(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -111,127 +250,36 @@ class PestControl extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optRekanan } = this.state
+    const { optRekanan, isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        accessor: 'tanggal',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Toilet',
-        accessor: 'toilet',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Musholla',
-        accessor: 'musholla',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Lobby Lounge',
-        accessor: 'lobbyLounge',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'R. Meeting',
-        accessor: 'ruangMeeting',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'R. Kelas',
-        accessor: 'ruangKelas',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'R. Kerja',
-        accessor: 'ruangKerja',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Koridor',
-        accessor: 'corridor',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Tangga Darurat',
-        accessor: 'tanggaDarurat',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Tempat Sampah',
-        accessor: 'ruangSampah',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Shaft',
-        accessor: 'ruangShaft',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Parkir Motor',
-        accessor: 'parkirMotor',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Halaman',
-        accessor: 'halaman',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Rekanan',
-        accessor: 'partner.name',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Pest Control'
     // const isIcon = { paddingRight: '7px' }
@@ -275,6 +323,7 @@ class PestControl extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -344,6 +393,12 @@ class PestControl extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

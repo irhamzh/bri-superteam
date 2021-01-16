@@ -28,6 +28,7 @@ import {
   CfInputDate,
   CfSelect,
   IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
@@ -47,6 +48,8 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class Musholla extends Component {
   state = {
     optLokasi: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -69,7 +72,108 @@ class Musholla extends Component {
     const dataLokasi = resDataLokasi.data.data
     const optLokasi = dataLokasi.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optLokasi })
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Lokasi',
+        accessor: 'location.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Pintu & List',
+        accessor: 'pintu',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Dinding',
+        accessor: 'dinding',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Ceiling',
+        accessor: 'ceiling',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Carpet Sholat',
+        accessor: 'carpetSholat',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Sajadah',
+        accessor: 'sajadah',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Jam Dinding',
+        accessor: 'jamDinding',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Pajangan',
+        accessor: 'pajangan',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ optLokasi, columns })
   }
 
   doRefresh = () => {
@@ -101,7 +205,6 @@ class Musholla extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteKebersihanPendukung(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -116,100 +219,36 @@ class Musholla extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optLokasi } = this.state
+    const { optLokasi, isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Lokasi',
-        accessor: 'location.name',
-        filterable: false,
-      },
-      {
-        Header: 'Pintu & List',
-        accessor: 'pintu',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Dinding',
-        accessor: 'dinding',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Ceiling',
-        accessor: 'ceiling',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Carpet Sholat',
-        accessor: 'carpetSholat',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Sajadah',
-        accessor: 'sajadah',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Jam Dinding',
-        accessor: 'jamDinding',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Pajangan',
-        accessor: 'pajangan',
-        filterable: false,
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Musholla'
     // const isIcon = { paddingRight: '7px' }
@@ -255,6 +294,7 @@ class Musholla extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -308,6 +348,12 @@ class Musholla extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

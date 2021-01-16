@@ -24,7 +24,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRStokOpnameAtk,
@@ -42,6 +42,8 @@ class StockOpname extends Component {
   state = {
     optPendidikan: [],
     optWorkingOrder: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -49,6 +51,8 @@ class StockOpname extends Component {
   }
 
   async componentDidMount() {
+    const { fetchQueryProps } = this.props
+
     const resDataPendidikan = await Service.getPendidikan()
     const dataPendidikan = resDataPendidikan.data.data
     const optPendidikan = dataPendidikan.map((row) => ({ label: row.name, value: row.id }))
@@ -65,9 +69,124 @@ class StockOpname extends Component {
       value: row.id,
     }))
 
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        width: 100,
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'No. WO',
+        accessor: 'workingOrder.kodeWorkingOrder',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Nama Pendidikan',
+        accessor: 'education.name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Nama Barang',
+        accessor: 'barang',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { barang } = props.original
+          const listBarang = barang.map((row) => <div>{`${row.name}`}</div>)
+          return listBarang
+        },
+      },
+      {
+        Header: 'Stok Awal',
+        accessor: 'stokAwal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { barang } = props.original
+          const listStokAwal = barang.map((row) => <div>{`${row.stockAwal}`}</div>)
+          return listStokAwal
+        },
+      },
+      {
+        Header: 'Jumlah Masuk',
+        accessor: 'jumlahMasuk',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { barang } = props.original
+          const listJumlahMasuk = barang.map((row) => <div>{`${row.jumlahMasuk}`}</div>)
+          return listJumlahMasuk
+        },
+      },
+      {
+        Header: 'Jumlah Keluar',
+        accessor: 'jumlahKeluar',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { barang } = props.original
+          const listJumlahKeluar = barang.map((row) => <div>{`${row.jumlahKeluar}`}</div>)
+          return listJumlahKeluar
+        },
+      },
+      {
+        Header: 'Stok Akhir',
+        accessor: 'stokAkhir',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { barang } = props.original
+          const listStockAkhir = barang.map((row) => <div>{`${row.stockAkhir}`}</div>)
+          return listStockAkhir
+        },
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
     this.setState({
       optPendidikan,
       optWorkingOrder,
+      columns,
     })
   }
 
@@ -117,115 +236,36 @@ class StockOpname extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optPendidikan, optWorkingOrder } = this.state
+    const { optPendidikan, optWorkingOrder, isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'No. WO',
-        accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: false,
-      },
-      {
-        Header: 'Nama Pendidikan',
-        accessor: 'education.name',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Nama Barang',
-        accessor: 'barang',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => {
-          const { barang } = props.original
-          const listBarang = barang.map((row) => <div>{`${row.name}`}</div>)
-          return listBarang
-        },
-      },
-      {
-        Header: 'Stok Awal',
-        accessor: 'stokAwal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => {
-          const { barang } = props.original
-          const listStokAwal = barang.map((row) => <div>{`${row.stockAwal}`}</div>)
-          return listStokAwal
-        },
-      },
-      {
-        Header: 'Jumlah Masuk',
-        accessor: 'jumlahMasuk',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => {
-          const { barang } = props.original
-          const listJumlahMasuk = barang.map((row) => <div>{`${row.jumlahMasuk}`}</div>)
-          return listJumlahMasuk
-        },
-      },
-      {
-        Header: 'Jumlah Keluar',
-        accessor: 'jumlahKeluar',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => {
-          const { barang } = props.original
-          const listJumlahKeluar = barang.map((row) => <div>{`${row.jumlahKeluar}`}</div>)
-          return listJumlahKeluar
-        },
-      },
-      {
-        Header: 'Stok Akhir',
-        accessor: 'stokAkhir',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => {
-          const { barang } = props.original
-          const listStockAkhir = barang.map((row) => <div>{`${row.stockAkhir}`}</div>)
-          return listStockAkhir
-        },
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Stock Opname'
     // const isIcon = { paddingRight: '7px' }
@@ -271,6 +311,7 @@ class StockOpname extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -303,6 +344,12 @@ class StockOpname extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

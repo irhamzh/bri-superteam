@@ -28,6 +28,7 @@ import {
   CfInputMultiFile,
   CfSelect,
   IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../components'
 import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
 import {
@@ -41,6 +42,8 @@ import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 class Catering extends Component {
   state = {
     optCatering: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -65,8 +68,152 @@ class Catering extends Component {
     const dataCatering = resDataCatering.data.data
     const optCatering = dataCatering.map((row) => ({ label: row.name, value: row.id }))
 
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Seksi',
+        accessor: 'seksi',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Pendidikan',
+        accessor: 'namaPendidikan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Catering',
+        accessor: 'catering',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value?.name}</div>,
+      },
+      {
+        Header: 'Periode',
+        accessor: 'periode',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Invoice Bermaterai',
+        accessor: 'invoiceBermaterai',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Copy SPK / PKS',
+        accessor: 'copySPKPKS',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Evaluasi Brismart',
+        accessor: 'evaluasiBrismart',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Surat Pemesanan',
+        accessor: 'suratPemesanan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Faktur Pajak Bagi Wapu / Surat Bebas Pajak (PRD)',
+        accessor: 'prd',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Biaya',
+        accessor: 'biaya',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        show: true,
+        filterable: false,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+        },
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Aksi',
+        width: 200,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
     this.setState({
       optCatering,
+      columns,
     })
   }
 
@@ -114,136 +261,33 @@ class Catering extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
-    const { optCatering } = this.state
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Seksi',
-        accessor: 'seksi',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Catering',
-        accessor: 'catering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value?.name}</div>,
-      },
-      {
-        Header: 'Periode',
-        accessor: 'periode',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Invoice Bermaterai',
-        accessor: 'invoiceBermaterai',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Copy SPK / PKS',
-        accessor: 'copySPKPKS',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Evaluasi Brismart',
-        accessor: 'evaluasiBrismart',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Surat Pemesanan',
-        accessor: 'suratPemesanan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Faktur Pajak Bagi Wapu / Surat Bebas Pajak (PRD)',
-        accessor: 'prd',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Biaya',
-        accessor: 'biaya',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-
-      {
-        Header: 'Lampiran',
-        accessor: 'lampiran',
-        filterable: false,
-        Cell: (row) => {
-          if (row.value && row.value.length > 0) {
-            return row.value.map((item) => (
-              <div>
-                <a href={item} target="_blank" rel="noreferrer">
-                  Download
-                </a>
-              </div>
-            ))
-          }
-        },
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 200,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
+    const { optCatering, isShow, columns } = this.state
 
     const pageName = 'Catering'
     // const isIcon = { paddingRight: '7px' }
@@ -287,6 +331,7 @@ class Catering extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -300,6 +345,12 @@ class Catering extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

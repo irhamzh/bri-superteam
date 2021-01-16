@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -28,6 +29,7 @@ import {
   CfInputDate,
   CfSelect,
   IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
@@ -48,6 +50,8 @@ class Lelang extends Component {
   state = {
     optProvider: [],
     dataProvider: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -62,68 +66,13 @@ class Lelang extends Component {
   }
 
   async componentDidMount() {
+    const { fetchQueryProps } = this.props
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
     const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({
-      optProvider,
-      dataProvider,
-    })
-  }
-
-  doRefresh = () => {
-    const { fetchQueryProps, modalForm } = this.props
-    modalForm.hide()
-    fetchQueryProps.refresh()
-  }
-
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createBarangLelang, updateBarangLelang } = this.props
-    if (!invalidValues.includes(id)) {
-      const { provider } = values
-      if (provider && Object.keys(provider).length > 0) {
-        // eslint-disable-next-line no-param-reassign
-        values.provider = provider.id || provider
-      }
-      updateBarangLelang(values, id, this.doRefresh)
-    } else {
-      createBarangLelang(values, this.doRefresh)
-    }
-  }
-
-  handleDelete = (e, state) => {
-    e.preventDefault()
-
-    const { id } = state
-    const { deleteBarangLelang } = this.props
-
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          console.log('delete object', id)
-          deleteBarangLelang(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
-  }
-
-  render() {
-    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
-    const { data } = tableProps
-    const { optProvider, dataProvider } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    const { modalForm } = tableProps
 
     const columns = [
       {
@@ -131,12 +80,14 @@ class Lelang extends Component {
         width: 100,
         accessor: 'tanggalPengadaan',
         filterable: false,
+        show: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         filterable: false,
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -144,6 +95,7 @@ class Lelang extends Component {
         Header: 'Izin Prinsip User',
         accessor: 'izinPrinsipUser',
         filterable: false,
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
@@ -151,53 +103,62 @@ class Lelang extends Component {
         Header: 'Izin Prinsip Pengadaan',
         accessor: 'izinPrinsipPengadaan',
         filterable: false,
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Undangan',
         accessor: 'undangan',
+        show: true,
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Aanwijzing',
         accessor: 'aanwijzing',
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Pemasukan Sampul Proposal Teknis',
         accessor: 'pemasukanSampulProposalTeknis',
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Penilaian Proposal Teknis',
         accessor: 'penilaianProposalTeknis',
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Pembukuan Proposal Financial',
         accessor: 'pembukuanProposalFinancial',
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Klarifikasi dan negosiasi',
         accessor: 'klarifikasiNegosiasi',
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Pengumuman Pemenang',
         accessor: 'pengumumanPemenang',
+        show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Izin Hasil Pengadaan',
         accessor: 'izinHasilPengadaan',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
@@ -206,10 +167,12 @@ class Lelang extends Component {
         Header: 'Jenis Anggaran',
         accessor: 'jenisAnggaran',
         filterable: false,
+        show: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Pembuatan SPK / PKS',
+        show: true,
         columns: [
           {
             Header: 'Tanggal',
@@ -270,6 +233,7 @@ class Lelang extends Component {
         Header: 'Aksi',
         width: 150,
         filterable: false,
+        show: true,
         Cell: (props) => (
           <>
             <Button
@@ -293,6 +257,98 @@ class Lelang extends Component {
         ),
       },
     ]
+
+    this.setState({
+      optProvider,
+      dataProvider,
+      columns,
+    })
+  }
+
+  doRefresh = () => {
+    const { fetchQueryProps, modalForm } = this.props
+    modalForm.hide()
+    fetchQueryProps.refresh()
+  }
+
+  handleSaveChanges = (values) => {
+    const { id } = values
+    const { createBarangLelang, updateBarangLelang } = this.props
+    if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      updateBarangLelang(values, id, this.doRefresh)
+    } else {
+      createBarangLelang(values, this.doRefresh)
+    }
+  }
+
+  handleDelete = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { deleteBarangLelang } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          deleteBarangLelang(id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Huff',
+            text: 'Hampir saja kamu kehilangan data ini',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+      if (selected[keyIndex].columns) {
+        selected[keyIndex].columns.forEach(function (item) {
+          item.show = true
+        })
+      }
+    } else {
+      selected[keyIndex].show = false
+      if (selected[keyIndex].columns) {
+        selected[keyIndex].columns.forEach(function (item) {
+          item.show = false
+        })
+      }
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optProvider, dataProvider, isShow, columns } = this.state
+
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Lelang'
     const isIcon = { paddingRight: '7px' }
@@ -337,6 +393,7 @@ class Lelang extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -432,6 +489,12 @@ class Lelang extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable={false}
                   columns={columns}

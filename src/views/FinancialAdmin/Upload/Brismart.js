@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInputDate, CfInputFile } from '../../../components'
+import { CfInputDate, CfInputFile, ListCheckboxShow } from '../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
 import {
   createFIUpload,
@@ -42,6 +42,8 @@ class Brismart extends Component {
   state = {
     tahun: '',
     bulan: '',
+    isShow: false,
+    columns: [],
     optBulan: [
       { label: 'Januari', value: '1' },
       { label: 'Februari', value: '2' },
@@ -81,6 +83,73 @@ class Brismart extends Component {
     fetchQueryProps.setFilteredByObject({
       typeUpload: 'Brismart',
     })
+
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
+      },
+      {
+        Header: 'Tanggal',
+        accessor: `tanggal`,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatDate(props.value)}</p>,
+      },
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        show: true,
+        filterable: false,
+        Cell: (row) => {
+          if (row.value) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <a href={row.value} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            )
+          }
+        },
+      },
+      {
+        Header: 'Aksi',
+        width: 200,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -157,71 +226,36 @@ class Brismart extends Component {
     }
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
-    const { optBulan, optTahun } = this.state
+    const { optBulan, optTahun, isShow, columns } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'No.',
-        width: 50,
-        // accessor: `none`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
-      },
-      {
-        Header: 'Tanggal',
-        accessor: `tanggal`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatDate(props.value)}</p>,
-      },
-      {
-        Header: 'Lampiran',
-        accessor: 'lampiran',
-        filterable: false,
-        Cell: (row) => {
-          if (row.value) {
-            return (
-              <div style={{ textAlign: 'center' }}>
-                <a href={row.value} target="_blank" rel="noreferrer">
-                  Download
-                </a>
-              </div>
-            )
-          }
-        },
-      },
-      {
-        Header: 'Aksi',
-        width: 200,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Brismart'
     const isIcon = { paddingRight: '7px' }
@@ -302,6 +336,7 @@ class Brismart extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -326,7 +361,12 @@ class Brismart extends Component {
                     </div>
                   </Col>
                 </Row>
-                <br />
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

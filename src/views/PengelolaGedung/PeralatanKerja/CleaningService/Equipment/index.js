@@ -23,7 +23,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio } from '../../../../../components'
+import { CfInput, CfInputDate, CfInputRadio, ListCheckboxShow } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPeralatanKerja,
@@ -41,6 +41,11 @@ const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class Equipment extends Component {
+  state = {
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     typePeralatanKerja: 'equipment consumable',
     doubleBucket: 'yes',
@@ -61,6 +66,163 @@ class Equipment extends Component {
     fetchQueryProps.setFilteredByObject({
       typePeralatanKerja: 'equipment consumable',
     })
+
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        width: 100,
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Double Bucket',
+        accessor: 'doubleBucket',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Single Bucket',
+        accessor: 'singleBucket',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Lobby Duster-stick',
+        accessor: 'lobbyDusterStick',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Mop Set',
+        accessor: 'mopSet',
+        show: true,
+        filterable: false,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Window Squeeze',
+        accessor: 'windowSqueeze',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Window Washer',
+        accessor: 'windowWasher',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Teleskop Pool 6',
+        accessor: 'teleskopicPool',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Floor Squeeze',
+        accessor: 'floorSqueeze',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Ember 15 lt',
+        accessor: 'ember',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Gayung',
+        accessor: 'gayung',
+        show: true,
+        filterable: false,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Tangga Alumunium 2 M',
+        accessor: 'tanggaAlumunium',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
+        ),
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -88,7 +250,6 @@ class Equipment extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePeralatanKerja(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -103,150 +264,36 @@ class Equipment extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Double Bucket',
-        accessor: 'doubleBucket',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Single Bucket',
-        accessor: 'singleBucket',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Lobby Duster-stick',
-        accessor: 'lobbyDusterStick',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Mop Set',
-        accessor: 'mopSet',
-        filterable: false,
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Window Squeeze',
-        accessor: 'windowSqueeze',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Window Washer',
-        accessor: 'windowWasher',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Teleskop Pool 6',
-        accessor: 'teleskopicPool',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Floor Squeeze',
-        accessor: 'floorSqueeze',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Ember 15 lt',
-        accessor: 'ember',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Gayung',
-        accessor: 'gayung',
-        filterable: false,
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Tangga Alumunium 2 M',
-        accessor: 'tanggaAlumunium',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Baik' : 'Tidak Baik'}</div>
-        ),
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Equipment & Consumable'
     // const isIcon = { paddingRight: '7px' }
@@ -292,6 +339,7 @@ class Equipment extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -362,6 +410,12 @@ class Equipment extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

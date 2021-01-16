@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementWM,
@@ -41,16 +41,87 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class WaterMeter extends Component {
   state = {
     optWaterMeter: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {}
 
   async componentDidMount() {
+    const { fetchQueryProps } = this.props
+
     const resDataWaterMeter = await Service.getWaterMeter()
     const dataWaterMeter = resDataWaterMeter.data.data
     const optWaterMeter = dataWaterMeter.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optWaterMeter })
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        width: 100,
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Jenis',
+        accessor: 'waterMeter.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Meter Awal',
+        accessor: 'meterAwal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Meter Akhir',
+        accessor: 'meterAkhir',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Penggunaan',
+        accessor: 'penggunaan',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ optWaterMeter, columns })
   }
 
   doRefresh = () => {
@@ -82,7 +153,6 @@ class WaterMeter extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteEngineerBasementWM(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -97,71 +167,36 @@ class WaterMeter extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optWaterMeter } = this.state
+    const { optWaterMeter, columns, isShow } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Jenis',
-        accessor: 'waterMeter.name',
-        filterable: false,
-      },
-      {
-        Header: 'Meter Awal',
-        accessor: 'meterAwal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Meter Akhir',
-        accessor: 'meterAkhir',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Penggunaan',
-        accessor: 'penggunaan',
-        filterable: false,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Water Meter'
     // const isIcon = { paddingRight: '7px' }
@@ -207,6 +242,7 @@ class WaterMeter extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -237,6 +273,12 @@ class WaterMeter extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}

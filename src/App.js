@@ -19,7 +19,7 @@ const App = () => {
   ;(function checkToken() {
     setInterval(() => {
       jwtVerify()
-    }, 3601 * 1000)
+    }, 1000 * 60 * 60)
   })()
   return (
     <HashRouter>

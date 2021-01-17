@@ -51,8 +51,8 @@ class LOP extends Component {
       typePersekot: 'LOP',
     })
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -83,32 +83,6 @@ class LOP extends Component {
         show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -183,7 +157,35 @@ class LOP extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     const pageName = 'LOP'
     // const isIcon = { paddingRight: '7px' }
 
@@ -261,7 +263,7 @@ class LOP extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

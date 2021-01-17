@@ -73,8 +73,8 @@ class TanggaDarurat extends Component {
     const dataLokasi = resDataLokasi.data.data
     const optLokasi = dataLokasi.map((row) => ({ label: row.name, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -155,33 +155,6 @@ class TanggaDarurat extends Component {
         show: true,
         filterable: false,
       },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
     ]
 
     this.setState({ optLokasi, columns })
@@ -258,7 +231,36 @@ class TanggaDarurat extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optLokasi, isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Tangga Darurat'
@@ -367,7 +369,7 @@ class TanggaDarurat extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

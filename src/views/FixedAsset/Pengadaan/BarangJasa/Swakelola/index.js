@@ -61,13 +61,10 @@ class Swakelola extends Component {
   }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
     const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
     const columns = [
       {
         Header: 'Tanggal',
@@ -123,33 +120,6 @@ class Swakelola extends Component {
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => (row.value ? formatCurrencyIDR(row.value) : row.value),
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        show: true,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -234,6 +204,36 @@ class Swakelola extends Component {
     const { optProvider, dataProvider, isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        filterable: false,
+        show: true,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     const pageName = 'Swakelola'
     const isIcon = { paddingRight: '7px' }
@@ -331,7 +331,7 @@ class Swakelola extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

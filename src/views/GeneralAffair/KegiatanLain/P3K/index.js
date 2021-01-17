@@ -48,7 +48,7 @@ class P3K extends Component {
   initialValues = {}
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataJenisObat = await Service.getJenisObat()
     const dataJenisObat = resDataJenisObat.data.data
@@ -58,8 +58,8 @@ class P3K extends Component {
     const dataArea = resDataArea.data.data
     const optArea = dataArea.map((row) => ({ label: row.name, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -109,33 +109,6 @@ class P3K extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -221,7 +194,36 @@ class P3K extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optJenisObat, optArea, isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'P3K'
@@ -306,7 +308,7 @@ class P3K extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

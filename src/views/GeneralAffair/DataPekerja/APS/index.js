@@ -52,7 +52,7 @@ class APS extends Component {
   initialValues = {}
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataUker = await Service.getUker()
     const dataUker = resDataUker.data.data
@@ -61,8 +61,8 @@ class APS extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -105,32 +105,6 @@ class APS extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -223,7 +197,35 @@ class APS extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optUker, isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Input Data APS'
@@ -305,7 +307,7 @@ class APS extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

@@ -60,7 +60,7 @@ class Plumbing extends Component {
   }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataPompa = await Service.getPompa()
     const dataPompa = resDataPompa.data.data
@@ -70,8 +70,8 @@ class Plumbing extends Component {
     const dataUnitPompa = resDataUnitPompa.data.data
     const optUnitPompa = dataUnitPompa.map((row) => ({ label: row.nameUnit, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -133,33 +133,6 @@ class Plumbing extends Component {
         accessor: 'information',
         show: true,
         filterable: false,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -241,7 +214,36 @@ class Plumbing extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optPompa, optUnitPompa, isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Evaluasi Plumbing'
@@ -337,7 +339,7 @@ class Plumbing extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

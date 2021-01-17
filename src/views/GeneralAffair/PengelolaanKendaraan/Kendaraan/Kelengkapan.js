@@ -60,7 +60,7 @@ class KelengkapanKendaraan extends Component {
   }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataKendaraan = await Service.getKendaraan()
     const dataKendaraan = resDataKendaraan.data.data
@@ -69,8 +69,8 @@ class KelengkapanKendaraan extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -140,33 +140,6 @@ class KelengkapanKendaraan extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <IconSuccessOrFailed value={row.value} />,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -248,7 +221,36 @@ class KelengkapanKendaraan extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optKendaraan, isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Kelengkapan Kendaraan'
@@ -354,7 +356,7 @@ class KelengkapanKendaraan extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

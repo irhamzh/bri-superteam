@@ -48,7 +48,7 @@ class PenugasanDriver extends Component {
   initialValues = { rate: 0 }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataKendaraan = await Service.getKendaraan()
     const dataKendaraan = resDataKendaraan.data.data
@@ -57,8 +57,8 @@ class PenugasanDriver extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
     const columns = [
       {
         Header: 'Tanggal',
@@ -108,42 +108,6 @@ class PenugasanDriver extends Component {
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Aksi',
-        width: 200,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="info"
-              onClick={() => modalForm.show({ data: props.original, evaluasi: true })}
-              className="mr-1"
-              title="Evaluasi"
-            >
-              <i className="icon-star" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -225,7 +189,45 @@ class PenugasanDriver extends Component {
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optKendaraan, isShow, columns } = this.state
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 200,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="info"
+              onClick={() => modalForm.show({ data: props.original, evaluasi: true })}
+              className="mr-1"
+              title="Evaluasi"
+            >
+              <i className="icon-star" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const starOptions = {
@@ -322,7 +324,7 @@ class PenugasanDriver extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

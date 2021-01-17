@@ -82,7 +82,7 @@ class AnggaranRapat extends Component {
     })
 
     const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { modalForm } = tableProps
     const { data } = tableProps
 
     const columns = [
@@ -181,44 +181,6 @@ class AnggaranRapat extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() =>
-                modalForm.show({
-                  data: {
-                    ...props.original,
-                    year: data[0]?.year,
-                    month: data[0]?.month,
-                    categoryAnggaran: data[0]?.categoryAnggaran,
-                    parent: data[0]?.id,
-                  },
-                })
-              }
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -328,7 +290,46 @@ class AnggaranRapat extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() =>
+                modalForm.show({
+                  data: {
+                    ...props.original,
+                    year: data[0]?.year,
+                    month: data[0]?.month,
+                    categoryAnggaran: data[0]?.categoryAnggaran,
+                    parent: data[0]?.id,
+                  },
+                })
+              }
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Rapat'
@@ -469,7 +470,7 @@ class AnggaranRapat extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

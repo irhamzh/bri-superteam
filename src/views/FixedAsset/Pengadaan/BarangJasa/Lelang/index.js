@@ -66,13 +66,13 @@ class Lelang extends Component {
   }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
     const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -229,33 +229,6 @@ class Lelang extends Component {
           },
         ],
       },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        show: true,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
     ]
 
     this.setState({
@@ -348,6 +321,36 @@ class Lelang extends Component {
     const { data } = tableProps
     const { optProvider, dataProvider, isShow, columns } = this.state
 
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        filterable: false,
+        show: true,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Lelang'
@@ -497,7 +500,7 @@ class Lelang extends Component {
                 />
                 <ReactTable
                   filterable={false}
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

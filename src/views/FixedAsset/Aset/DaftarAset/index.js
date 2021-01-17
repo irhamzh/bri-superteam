@@ -173,7 +173,11 @@ class DaftarAset extends Component {
 
     const user = userData()
     const allowedRole = ['admin', 'supervisor']
-    if (user && allowedRole.includes(user.role?.name.toLowerCase())) {
+    if (
+      user &&
+      (allowedRole.includes(user.role?.name.toLowerCase()) ||
+        user.role?.name.includes('Supervisor'))
+    ) {
       columns.push({
         Header: 'Approval',
         width: 200,

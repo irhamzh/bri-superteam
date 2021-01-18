@@ -23,7 +23,7 @@ const App = () => {
       if (resVerify.status === 401) {
         jwtVerify()
       }
-    }, 60000)
+    }, 1000 * 60 * 5)
   })()
   return (
     <HashRouter>

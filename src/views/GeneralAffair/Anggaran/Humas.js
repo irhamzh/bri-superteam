@@ -81,43 +81,11 @@ class AnggaranHumas extends Component {
       month: thisMonth,
     })
 
-    const { tableProps } = fetchQueryProps
+    // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
-    const { data } = tableProps
+    // const { data } = tableProps
 
     const columns = [
-      {
-        Header: 'No.',
-        width: 50,
-        // accessor: `none`,
-        show: true,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
-      },
-      {
-        Header: 'Bulan',
-        accessor: `month`,
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.month}</p>,
-      },
-      {
-        Header: 'Tahun',
-        accessor: `year`,
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.year}</p>,
-      },
-      {
-        Header: 'Kategori Anggaran',
-        accessor: `categoryAnggaran`,
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.categoryAnggaran}</p>,
-      },
       {
         Header: 'Tipe Anggaran',
         accessor: `type`,
@@ -292,6 +260,38 @@ class AnggaranHumas extends Component {
     const { data } = tableProps
     const { isShow, columns } = this.state
     const tableCols = [
+      {
+        Header: 'No.',
+        width: 50,
+        // accessor: `none`,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
+      },
+      {
+        Header: 'Bulan',
+        accessor: `month`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.month}</p>,
+      },
+      {
+        Header: 'Tahun',
+        accessor: `year`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.year}</p>,
+      },
+      {
+        Header: 'Kategori Anggaran',
+        accessor: `categoryAnggaran`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.categoryAnggaran}</p>,
+      },
       ...columns,
       {
         Header: 'Aksi',

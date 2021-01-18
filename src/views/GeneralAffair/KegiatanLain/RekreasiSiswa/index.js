@@ -48,7 +48,12 @@ class RekreasiSiswa extends Component {
     columns: [],
   }
 
-  initialValues = {}
+  initialValues = {
+    formPermintaanLop: false,
+    ijinPenugasan: false,
+    biayaRekreasi: false,
+    laporanRekreasi: false,
+  }
 
   componentDidMount() {
     // const { fetchQueryProps } = this.props

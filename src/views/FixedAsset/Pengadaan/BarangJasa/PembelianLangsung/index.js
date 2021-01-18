@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
@@ -145,14 +146,19 @@ class PembelianLangsung extends Component {
   handleSaveChanges = (values) => {
     const { id } = values
     const { createBarangPembelianLangsung, updateBarangPembelianLangsung } = this.props
+    const { provider, pihakKetiga } = values
     if (!invalidValues.includes(id)) {
-      const { provider } = values
       if (provider && Object.keys(provider).length > 0) {
-        // eslint-disable-next-line no-param-reassign
         values.provider = provider.id || provider
+      }
+      if (!pihakKetiga) {
+        values.provider = ''
       }
       updateBarangPembelianLangsung(values, id, this.doRefresh)
     } else {
+      if (!pihakKetiga) {
+        values.provider = ''
+      }
       createBarangPembelianLangsung(values, this.doRefresh)
     }
   }
@@ -231,7 +237,11 @@ class PembelianLangsung extends Component {
           <>
             <Button
               color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              onClick={() =>
+                modalForm.show({
+                  data: { ...props.original, pihakKetiga: !!props.original.provider },
+                })
+              }
               className="mr-1"
               title="Edit"
             >

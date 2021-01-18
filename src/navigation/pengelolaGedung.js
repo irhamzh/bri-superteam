@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Dashboard = React.lazy(() => import('../views/Dashboard'))
+const PengelolaGedung = React.lazy(() => import('../views/PengelolaGedung'))
 
 // Pengelola Gedung
 // Pengelola Gedung / Engineering
@@ -30,7 +30,7 @@ const pengelolaGedung = [
     path: '/pengelola-gedung',
     exact: true,
     name: 'Pengelola Gedung',
-    component: Dashboard,
+    component: PengelolaGedung,
   },
   // Pengelola Gedung / Engineer
   {

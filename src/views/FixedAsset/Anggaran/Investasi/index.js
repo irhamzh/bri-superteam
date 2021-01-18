@@ -870,8 +870,6 @@ class InvestasiAnggaran extends Component {
                       <FormGroup>
                         <Field label="File Excel" name="excel" isRequired component={CfInputFile} />
                       </FormGroup>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -89,7 +89,6 @@ class EvaluasiSupplier extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteEvaluasiSupplier(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -116,6 +115,7 @@ class EvaluasiSupplier extends Component {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -133,12 +133,14 @@ class EvaluasiSupplier extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Penilaian Vendor',
         accessor: 'nilai',
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -320,8 +322,6 @@ class EvaluasiSupplier extends Component {
                           component={CfSelect}
                         />
                       </FormGroup>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

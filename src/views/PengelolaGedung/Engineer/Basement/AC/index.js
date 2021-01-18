@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../../components'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementAC,
@@ -43,11 +43,15 @@ class AC extends Component {
     optGedung: [],
     optLantai: [],
     optCompressor: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {}
 
   async componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
     const resDataGedung = await Service.getGedung()
     const dataGedung = resDataGedung.data.data
     const optGedung = dataGedung.map((row) => ({ label: row.name, value: row.id }))
@@ -60,7 +64,57 @@ class AC extends Component {
     const dataCompressor = resDataCompressor.data.data
     const optCompressor = dataCompressor.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optGedung, optLantai, optCompressor })
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        width: 100,
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Gedung',
+        accessor: 'building.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Lantai',
+        accessor: 'floor.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Compressor',
+        accessor: 'compressor.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Ampere R',
+        accessor: 'ukuranAmpereR',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Ampere S',
+        accessor: 'ukuranAmpereS',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Ampere T',
+        accessor: 'ukuranAmpereT',
+        show: true,
+        filterable: false,
+      },
+    ]
+
+    this.setState({ optGedung, optLantai, optCompressor, columns })
   }
 
   doRefresh = () => {
@@ -100,7 +154,6 @@ class AC extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteEngineerBasementAC(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -115,55 +168,40 @@ class AC extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optCompressor, optGedung, optLantai } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Gedung',
-        accessor: 'building.name',
-        filterable: false,
-      },
-      {
-        Header: 'Lantai',
-        accessor: 'floor.name',
-        filterable: false,
-      },
-      {
-        Header: 'Compressor',
-        accessor: 'compressor.name',
-        filterable: false,
-      },
-      {
-        Header: 'Ampere R',
-        accessor: 'ukuranAmpereR',
-        filterable: false,
-      },
-      {
-        Header: 'Ampere S',
-        accessor: 'ukuranAmpereS',
-        filterable: false,
-      },
-      {
-        Header: 'Ampere T',
-        accessor: 'ukuranAmpereT',
-        filterable: false,
-      },
+    const { optCompressor, optGedung, optLantai, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -188,6 +226,7 @@ class AC extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'AC'
     // const isIcon = { paddingRight: '7px' }
@@ -233,6 +272,7 @@ class AC extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -266,9 +306,15 @@ class AC extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

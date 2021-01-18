@@ -58,6 +58,21 @@ function Catering(props) {
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {
+      Header: 'Alamat',
+      accessor: 'address',
+      Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+    },
+    {
+      Header: 'PIC',
+      accessor: 'pic',
+      Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+    },
+    {
+      Header: 'Nomor Telepon',
+      accessor: 'telephone',
+      Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+    },
+    {
       Header: 'Edit',
       width: 60,
       filterable: false,

@@ -23,8 +23,8 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio } from '../../../../components'
-import { AlertMessage, ErrorMessage, formatDate, invalidValues } from '../../../../helpers'
+import { CfInput, CfInputDate, CfInputRadio, ListCheckboxShow } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createWorkingOrder,
   updateWorkingOrder,
@@ -37,6 +37,11 @@ const { ExcelFile } = ReactExport
 const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 class KegiatanLain extends Component {
+  state = {
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     typeKegiatan: 'Kegiatan Lain',
     division: 'Procurement',
@@ -48,6 +53,154 @@ class KegiatanLain extends Component {
       typeKegiatan: 'Kegiatan Lain',
       division: 'Procurement',
     })
+
+    const { tableProps } = fetchQueryProps
+    const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Kode Working Order',
+        accessor: 'kodeWorkingOrder',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Kegiatan',
+        accessor: 'namaKegiatan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Kode Pelatihan',
+        accessor: 'kodePelatihan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Tanggal Terima',
+        accessor: 'tanggalTerima',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Tanggal Revisi',
+        accessor: 'tanggalRevisi',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Tanggal Konfirmasi',
+        accessor: 'tanggalKonfirmasi',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'SLA',
+        accessor: 'sla',
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <div style={{ textAlign: 'center' }}>
+            {Math.round(
+              (new Date(props.original.tanggalKonfirmasi) -
+                new Date(props.original.tanggalTerima)) /
+                (1000 * 24 * 3600)
+            )}
+          </div>
+        ),
+      },
+      {
+        Header: 'Kebutuhan - Catering',
+        accessor: 'catering',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
+      },
+      {
+        Header: 'Kebutuhan - Hotel',
+        accessor: 'hotel',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
+      },
+      {
+        Header: 'Kebutuhan - ATK',
+        accessor: 'atk',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
+      },
+      {
+        Header: 'Kebutuhan - Akomodasi',
+        accessor: 'akomodasi',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
+      },
+      {
+        Header: 'Kebutuhan - Pengajar Eksternal',
+        accessor: 'pengajarEksternal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
+        ),
+      },
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -75,7 +228,6 @@ class KegiatanLain extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteWorkingOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -90,142 +242,36 @@ class KegiatanLain extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Kode Working Order',
-        accessor: 'kodeWorkingOrder',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nama Kegiatan',
-        accessor: 'namaKegiatan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Kode Pelatihan',
-        accessor: 'kodePelatihan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Tanggal Terima',
-        accessor: 'tanggalTerima',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Tanggal Revisi',
-        accessor: 'tanggalRevisi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Tanggal Konfirmasi',
-        accessor: 'tanggalKonfirmasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'SLA',
-        accessor: 'sla',
-        filterable: false,
-        Cell: (props) => (
-          <div style={{ textAlign: 'center' }}>
-            {Math.round(
-              (new Date(props.original.tanggalKonfirmasi) -
-                new Date(props.original.tanggalTerima)) /
-                (1000 * 24 * 3600)
-            )}
-          </div>
-        ),
-      },
-      {
-        Header: 'Kebutuhan - Catering',
-        accessor: 'catering',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
-        ),
-      },
-      {
-        Header: 'Kebutuhan - Hotel',
-        accessor: 'hotel',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
-        ),
-      },
-      {
-        Header: 'Kebutuhan - ATK',
-        accessor: 'atk',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
-        ),
-      },
-      {
-        Header: 'Kebutuhan - Akomodasi',
-        accessor: 'akomodasi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
-        ),
-      },
-      {
-        Header: 'Kebutuhan - Pengajar Eksternal',
-        accessor: 'pengajarEksternal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value === 'yes' ? 'Ada' : 'Tidak Ada'}</div>
-        ),
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
-    ]
 
     const pageName = 'Kegiatan Lain'
     // const isIcon = { paddingRight: '7px' }
@@ -269,6 +315,7 @@ class KegiatanLain extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -335,6 +382,12 @@ class KegiatanLain extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}
@@ -533,8 +586,6 @@ class KegiatanLain extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

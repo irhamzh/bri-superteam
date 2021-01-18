@@ -6,7 +6,7 @@ import { Input, Label, InputGroup, InputGroupAddon, InputGroupText } from 'react
 import moment from 'moment'
 import 'moment/locale/id'
 import { id } from 'date-fns/locale'
-import { requireLabel } from '../../helpers'
+import { formatDate, requireLabel } from '../../helpers'
 import ErrorView from './ErrorView'
 
 moment.locale('id')
@@ -18,7 +18,12 @@ const DateCustomInput = ({ classGroup, classIcon, value, onClick, ...props }) =>
         <i className={classIcon} />
       </InputGroupText>
     </InputGroupAddon>
-    <Input {...props} value={value || undefined} onClick={onClick} />
+    <Input
+      {...props}
+      value={value ? formatDate(value) : undefined}
+      onClick={onClick}
+      autocomplete="off"
+    />
   </InputGroup>
 )
 

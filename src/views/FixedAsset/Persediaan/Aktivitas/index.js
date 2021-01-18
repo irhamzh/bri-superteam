@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPersediaan,
@@ -40,16 +40,72 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class Aktivitas extends Component {
   state = {
     optJenisBarang: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {}
 
   async componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
     const resDataJenisBarang = await Service.getJenisBarang()
     const dataJenisBarang = resDataJenisBarang.data.data
     const optJenisBarang = dataJenisBarang.map((row) => ({ label: row.name, value: row.id }))
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggal',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Jenis Barang',
+        accessor: 'jenisBarang.name',
+        filterable: false,
+        show: true,
+      },
+      {
+        Header: 'Nama Barang',
+        accessor: 'name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Stok Awal',
+        accessor: 'stokAwal',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Penambahan',
+        accessor: 'penambahan',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Pengurangan',
+        accessor: 'pengurangan',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Stok Akhir',
+        accessor: 'stokAkhir',
+        show: true,
+        filterable: false,
+      },
+    ]
+
     this.setState({
       optJenisBarang,
+      columns,
     })
   }
 
@@ -82,7 +138,6 @@ class Aktivitas extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePersediaan(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -97,55 +152,41 @@ class Aktivitas extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optJenisBarang } = this.state
+    const { optJenisBarang, isShow, columns } = this.state
 
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        accessor: 'tanggal',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Jenis Barang',
-        accessor: 'jenisBarang.name',
-        filterable: false,
-      },
-      {
-        Header: 'Nama Barang',
-        accessor: 'name',
-        filterable: false,
-      },
-      {
-        Header: 'Stok Awal',
-        accessor: 'stokAwal',
-        filterable: false,
-      },
-      {
-        Header: 'Penambahan',
-        accessor: 'penambahan',
-        filterable: false,
-      },
-      {
-        Header: 'Pengurangan',
-        accessor: 'pengurangan',
-        filterable: false,
-      },
-      {
-        Header: 'Stok Akhir',
-        accessor: 'stokAkhir',
-        filterable: false,
-      },
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -170,6 +211,8 @@ class Aktivitas extends Component {
         ),
       },
     ]
+
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Aktivitas Persediaan'
     // const isIcon = { paddingRight: '7px' }
@@ -214,6 +257,7 @@ class Aktivitas extends Component {
                         color="secondary"
                         namaPengadaan
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -245,9 +289,15 @@ class Aktivitas extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable={false}
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -364,8 +414,6 @@ class Aktivitas extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -22,14 +22,8 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
-import {
-  AlertMessage,
-  ErrorMessage,
-  formatDate,
-  invalidValues,
-  userData,
-} from '../../../../helpers'
+import { CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues, userData } from '../../../../helpers'
 import {
   createPersekot,
   updatePersekot,
@@ -44,6 +38,11 @@ const { ExcelFile } = ReactExport
 const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 class InputPersekot extends Component {
+  state = {
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = { division: 'General Affair' }
 
   async componentDidMount() {
@@ -52,6 +51,79 @@ class InputPersekot extends Component {
       division: 'General Affair',
       status: 'Unapproved',
     })
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        show: true,
+        accessor: 'date',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Nama Kegiatan',
+        accessor: 'name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nominal Biaya',
+        accessor: 'costNominal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Status',
+        width: 250,
+        accessor: 'status',
+        align: 'center',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+    ]
+
+    const user = userData()
+    if (user && user.role?.name.includes('Supervisor')) {
+      columns.push({
+        Header: 'Aksi',
+        width: 200,
+        accessor: 'id',
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      })
+    }
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -79,7 +151,6 @@ class InputPersekot extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePersekot(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -123,73 +194,36 @@ class InputPersekot extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { isShow, columns } = this.state
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        accessor: 'date',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Nama Kegiatan',
-        accessor: 'name',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nominal Biaya',
-        accessor: 'costNominal',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Status',
-        width: 250,
-        accessor: 'status',
-        align: 'center',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-    ]
-
-    const user = userData()
-    if (user && user.role?.name === 'Admin') {
-      columns.push({
-        Header: 'Aksi',
-        width: 200,
-        accessor: 'id',
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={(e) => this.handleApprove(e, props.original)}
-              className="mr-1"
-              title="Approve"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
-          </>
-        ),
-      })
-    }
 
     const pageName = 'Input Persekot'
     // const isIcon = { paddingRight: '7px' }
@@ -233,6 +267,7 @@ class InputPersekot extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -259,6 +294,12 @@ class InputPersekot extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}
@@ -323,8 +364,6 @@ class InputPersekot extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

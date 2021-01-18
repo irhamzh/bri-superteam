@@ -22,7 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
+import {
+  CfInput,
+  CfInputDate,
+  CfInputRadio,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementPlumbing,
@@ -43,6 +49,8 @@ class Plumbing extends Component {
   state = {
     optPompa: [],
     optUnitPompa: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -52,6 +60,8 @@ class Plumbing extends Component {
   }
 
   async componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
     const resDataPompa = await Service.getPompa()
     const dataPompa = resDataPompa.data.data
     const optPompa = dataPompa.map((row) => ({ label: row.name, value: row.id }))
@@ -60,7 +70,73 @@ class Plumbing extends Component {
     const dataUnitPompa = resDataUnitPompa.data.data
     const optUnitPompa = dataUnitPompa.map((row) => ({ label: row.nameUnit, value: row.id }))
 
-    this.setState({ optPompa, optUnitPompa })
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        width: 100,
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Pompa',
+        accessor: 'pump.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Unit',
+        accessor: 'unit.nameUnit',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Voltase',
+        accessor: 'voltase',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Kondisi Valve',
+        accessor: 'valve',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Kondisi Bearing',
+        accessor: 'bearing',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Oli',
+        accessor: 'oli',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Kebocoran',
+        accessor: 'kebocoran',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+      },
+    ]
+
+    this.setState({ optPompa, optUnitPompa, columns })
   }
 
   doRefresh = () => {
@@ -96,7 +172,6 @@ class Plumbing extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteEngineerBasementPlumbing(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -111,69 +186,40 @@ class Plumbing extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optPompa, optUnitPompa } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        width: 100,
-        filterable: false,
-      },
-      {
-        Header: 'Pompa',
-        accessor: 'pump.name',
-        filterable: false,
-      },
-      {
-        Header: 'Unit',
-        accessor: 'unit.nameUnit',
-        filterable: false,
-      },
-      {
-        Header: 'Voltase',
-        accessor: 'voltase',
-        filterable: false,
-      },
-      {
-        Header: 'Kondisi Valve',
-        accessor: 'valve',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Kondisi Bearing',
-        accessor: 'bearing',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Oli',
-        accessor: 'oli',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Kebocoran',
-        accessor: 'kebocoran',
-        filterable: false,
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-      },
+    const { optPompa, optUnitPompa, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -198,6 +244,7 @@ class Plumbing extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Evaluasi Plumbing'
     // const isIcon = { paddingRight: '7px' }
@@ -243,6 +290,7 @@ class Plumbing extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -283,9 +331,15 @@ class Plumbing extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

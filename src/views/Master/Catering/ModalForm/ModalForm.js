@@ -55,6 +55,39 @@ function ModalForm(props) {
                     component={CfInput}
                   />
                 </FormGroup>
+
+                <FormGroup>
+                  <Field
+                    label="Alamat Catering"
+                    type="text"
+                    name="address"
+                    isRequired
+                    placeholder="Masukkan nama"
+                    component={CfInput}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <Field
+                    label="PIC"
+                    type="text"
+                    name="pic"
+                    isRequired
+                    placeholder="Masukkan nama"
+                    component={CfInput}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <Field
+                    label="Nomor Telepon"
+                    type="text"
+                    name="telephone"
+                    isRequired
+                    placeholder="Masukkan nama"
+                    component={CfInput}
+                  />
+                </FormGroup>
               </ModalBody>
 
               <ModalFooter>

@@ -22,7 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
+import {
+  CfInputCheckbox,
+  CfInputDate,
+  CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
@@ -35,6 +41,8 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class TanamanHias extends Component {
   state = {
     optRekanan: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -56,7 +64,76 @@ class TanamanHias extends Component {
     const dataRekanan = resDataRekanan.data.data
     const optRekanan = dataRekanan.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optRekanan })
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggal',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Penggantian Tanaman - Lantai 1',
+        accessor: 'tanamanHiasL1',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Penggantian Tanaman - Lantai 2',
+        accessor: 'tanamanHiasL2',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Penggantian Tanaman - Lantai 3',
+        accessor: 'tanamanHiasL3',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Penggantian Tanaman - Lantai 4',
+        accessor: 'tanamanHiasL4',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Penggantian Tanaman - Lantai 5',
+        accessor: 'tanamanHiasL5',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Penggantian Tanaman - Lantai 6',
+        accessor: 'tanamanHiasL6',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Rekanan',
+        accessor: 'partner.name',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+    ]
+
+    this.setState({ optRekanan, columns })
   }
 
   doRefresh = () => {
@@ -89,7 +166,6 @@ class TanamanHias extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteVendor(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -104,128 +180,41 @@ class TanamanHias extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optRekanan } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        accessor: 'tanggal',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 1',
-        accessor: 'tanamanHiasL1',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 2',
-        accessor: 'tanamanHiasL2',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 3',
-        accessor: 'tanamanHiasL3',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 4',
-        accessor: 'tanamanHiasL4',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 5',
-        accessor: 'tanamanHiasL5',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Penggantian Tanaman - Lantai 6',
-        accessor: 'tanamanHiasL6',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Rekanan',
-        accessor: 'partner.name',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
+    const { optRekanan, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
         filterable: false,
+        show: true,
         Cell: (props) => (
           <>
             <Button
@@ -249,6 +238,7 @@ class TanamanHias extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Tanaman Hias'
     // const isIcon = { paddingRight: '7px' }
@@ -292,6 +282,7 @@ class TanamanHias extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -340,9 +331,15 @@ class TanamanHias extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -450,8 +447,6 @@ class TanamanHias extends Component {
                           />
                         </FormGroup>
                       </div>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

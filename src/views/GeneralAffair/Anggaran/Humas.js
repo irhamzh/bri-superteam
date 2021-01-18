@@ -24,8 +24,14 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Select from 'react-select'
 import Service from '../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../components'
-import { AlertMessage, formatDate, getYearOptions, invalidValues } from '../../../helpers'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../components'
+import {
+  AlertMessage,
+  formatCurrencyIDR,
+  formatDate,
+  getYearOptions,
+  invalidValues,
+} from '../../../helpers'
 import {
   createGAAnggaran,
   updateGAAnggaran,
@@ -42,6 +48,8 @@ class AnggaranHumas extends Component {
   state = {
     tahun: '',
     bulan: '',
+    isShow: false,
+    columns: [],
     optBulan: [
       { label: 'Januari', value: 1 },
       { label: 'Februari', value: 2 },
@@ -72,6 +80,79 @@ class AnggaranHumas extends Component {
       year: thisYear,
       month: thisMonth,
     })
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+    // const { data } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tipe Anggaran',
+        accessor: `type`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Nilai',
+        accessor: `nilai`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatCurrencyIDR(props.value)}</p>,
+      },
+      {
+        Header: 'Tanggal Pembukuan',
+        accessor: `tanggalPembukuan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (
+          <p style={{ textAlign: 'center' }}>
+            {props.value ? formatDate(props.value) : props.value}
+          </p>
+        ),
+      },
+      {
+        Header: 'Keperluan',
+        accessor: `keperluan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Pelimpahan',
+        accessor: `pelimpahan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Tanggal Pelimpahan',
+        accessor: `tanggalPelimpahan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (
+          <p style={{ textAlign: 'center' }}>
+            {props.value ? formatDate(props.value) : props.value}
+          </p>
+        ),
+      },
+      {
+        Header: 'Status',
+        accessor: `status`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -110,7 +191,6 @@ class AnggaranHumas extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteGAAnggaran(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -150,25 +230,48 @@ class AnggaranHumas extends Component {
     }
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { optBulan, optTahun } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
+    const { isShow, columns } = this.state
+    const tableCols = [
       {
         Header: 'No.',
         width: 50,
         // accessor: `none`,
+        show: true,
         filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
       },
       {
         Header: 'Bulan',
         accessor: `month`,
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.month}</p>,
@@ -176,6 +279,7 @@ class AnggaranHumas extends Component {
       {
         Header: 'Tahun',
         accessor: `year`,
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.year}</p>,
@@ -183,71 +287,16 @@ class AnggaranHumas extends Component {
       {
         Header: 'Kategori Anggaran',
         accessor: `categoryAnggaran`,
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.categoryAnggaran}</p>,
       },
-      {
-        Header: 'Tipe Anggaran',
-        accessor: `type`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Nilai',
-        accessor: `nilai`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Tanggal Pembukuan',
-        accessor: `tanggalPembukuan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (
-          <p style={{ textAlign: 'center' }}>
-            {props.value ? formatDate(props.value) : props.value}
-          </p>
-        ),
-      },
-      {
-        Header: 'Keperluan',
-        accessor: `keperluan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Pelimpahan',
-        accessor: `pelimpahan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Tanggal Pelimpahan',
-        accessor: `tanggalPelimpahan`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (
-          <p style={{ textAlign: 'center' }}>
-            {props.value ? formatDate(props.value) : props.value}
-          </p>
-        ),
-      },
-      {
-        Header: 'Status',
-        accessor: `status`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -282,6 +331,7 @@ class AnggaranHumas extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Humas'
     const isIcon = { paddingRight: '7px' }
@@ -360,6 +410,7 @@ class AnggaranHumas extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -384,7 +435,10 @@ class AnggaranHumas extends Component {
                             value={() => data[0]?.categoryAnggaran}
                           />
                           <ExcelColumn label="Tipe Anggaran" value={(col) => col.type} />
-                          <ExcelColumn label="Nilai" value={(col) => col.nilai} />
+                          <ExcelColumn
+                            label="Nilai"
+                            value={(col) => formatCurrencyIDR(col.nilai)}
+                          />
                           <ExcelColumn
                             label="Tanggal Pembukuan"
                             value={(col) =>
@@ -409,10 +463,15 @@ class AnggaranHumas extends Component {
                     </div>
                   </Col>
                 </Row>
-                <br />
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

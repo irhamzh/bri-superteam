@@ -22,7 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate } from '../../../../../components'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
+} from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPeralatanKerja,
@@ -39,6 +45,11 @@ const { ExcelFile } = ReactExport
 const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 class Chemical extends Component {
+  state = {
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     typePeralatanKerja: 'chemical',
     floorKlin: true,
@@ -61,6 +72,130 @@ class Chemical extends Component {
     fetchQueryProps.setFilteredByObject({
       typePeralatanKerja: 'chemical',
     })
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        width: 100,
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Floor Klin',
+        accessor: 'floorKlin',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Glass Cleaner',
+        accessor: 'glassCleaner',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'All Purpose Cleaner',
+        accessor: 'allPurposeCleaner',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Metal Polish',
+        accessor: 'metalPolish',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Hand Soap',
+        accessor: 'handSoap',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Furniture Polish',
+        accessor: 'furniturePolish',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Vim',
+        accessor: 'vim',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Bubuk Detergen',
+        accessor: 'bubukDetergen',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Thiner',
+        accessor: 'thiner',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Bay Fresh',
+        accessor: 'bayFresh',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Fres Phone',
+        accessor: 'fresPhone',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Marble Powder',
+        accessor: 'marblePowder',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Karbol Wangi',
+        accessor: 'karbolWangi',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -88,7 +223,6 @@ class Chemical extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deletePeralatanKerja(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -103,235 +237,40 @@ class Chemical extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Floor Klin',
-        accessor: 'floorKlin',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Glass Cleaner',
-        accessor: 'glassCleaner',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'All Purpose Cleaner',
-        accessor: 'allPurposeCleaner',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Metal Polish',
-        accessor: 'metalPolish',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Hand Soap',
-        accessor: 'handSoap',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Furniture Polish',
-        accessor: 'furniturePolish',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Vim',
-        accessor: 'vim',
-        filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Bubuk Detergen',
-        accessor: 'bubukDetergen',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Thiner',
-        accessor: 'thiner',
-        filterable: false,
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Bay Fresh',
-        accessor: 'bayFresh',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Fres Phone',
-        accessor: 'fresPhone',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Marble Powder',
-        accessor: 'marblePowder',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Karbol Wangi',
-        accessor: 'karbolWangi',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-      },
+    const { isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -356,6 +295,7 @@ class Chemical extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Chemical'
     // const isIcon = { paddingRight: '7px' }
@@ -401,6 +341,7 @@ class Chemical extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -471,9 +412,15 @@ class Chemical extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

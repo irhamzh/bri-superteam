@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -22,7 +23,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
+import {
+  CfInput,
+  CfInputDate,
+  CfInputRadio,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerGedungME,
@@ -42,6 +49,8 @@ class ME extends Component {
   state = {
     optJenisGedung: [],
     optLantai: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -67,6 +76,8 @@ class ME extends Component {
   }
 
   async componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
     const resDataJenisGedung = await Service.getJenisGedung()
     const dataJenisGedung = resDataJenisGedung.data.data
     const optJenisGedung = dataJenisGedung.map((row) => ({ label: row.name, value: row.id }))
@@ -75,7 +86,194 @@ class ME extends Component {
     const dataLantai = resDataLantai.data.data
     const optLantai = dataLantai.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optJenisGedung, optLantai })
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Jenis Gedung',
+        accessor: 'buildingType.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Lantai',
+        accessor: 'floor.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Smoke Detector',
+        accessor: 'smokeDetector',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'AC System',
+        accessor: 'acSystem',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Thermostat',
+        accessor: 'thermostat',
+        filterable: false,
+        show: true,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Telephone',
+        accessor: 'telephone',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Fire Alarm',
+        accessor: 'fireAlarm',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Exhaust',
+        accessor: 'exhaust',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Ceilling Speaker',
+        accessor: 'ceillingSpeaker',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Head Sprinkler',
+        accessor: 'headSprinkler',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'CCTV',
+        accessor: 'cctv',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'MCCB',
+        accessor: 'mccb',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Hydrant Box',
+        show: true,
+        columns: [
+          {
+            Header: 'APAR',
+            accessor: 'apar',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Segel',
+            accessor: 'segel',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'PIN',
+            accessor: 'pin',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Selang',
+            accessor: 'selang',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Nozle',
+            accessor: 'nozle',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Hose',
+            accessor: 'hose',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Valves',
+            accessor: 'valves',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Alarm',
+            accessor: 'alarm',
+            show: true,
+            filterable: false,
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Pintu / Engsel',
+            accessor: 'pintu',
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Lampu Indikator',
+            accessor: 'lampuIndikator',
+            show: true,
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+          },
+          {
+            Header: 'Expired Tabung',
+            accessor: 'expiredTabung',
+            show: true,
+            filterable: false,
+            headerClassName: 'wordwrap',
+          },
+        ],
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+      },
+    ]
+
+    this.setState({ optJenisGedung, optLantai, columns })
   }
 
   doRefresh = () => {
@@ -111,7 +309,6 @@ class ME extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteEngineerGedungME(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -126,175 +323,50 @@ class ME extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+      if (selected[keyIndex].columns) {
+        selected[keyIndex].columns.forEach(function (item) {
+          item.show = true
+        })
+      }
+    } else {
+      selected[keyIndex].show = false
+      if (selected[keyIndex].columns) {
+        selected[keyIndex].columns.forEach(function (item) {
+          item.show = false
+        })
+      }
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optJenisGedung, optLantai } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Jenis Gedung',
-        accessor: 'buildingType.name',
-        filterable: false,
-      },
-      {
-        Header: 'Lantai',
-        accessor: 'floor.name',
-        filterable: false,
-      },
-      {
-        Header: 'Smoke Detector',
-        accessor: 'smokeDetector',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'AC System',
-        accessor: 'acSystem',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Thermostat',
-        accessor: 'thermostat',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Telephone',
-        accessor: 'telephone',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Fire Alarm',
-        accessor: 'fireAlarm',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Exhaust',
-        accessor: 'exhaust',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Ceilling Speaker',
-        accessor: 'ceillingSpeaker',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Head Sprinkler',
-        accessor: 'headSprinkler',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'CCTV',
-        accessor: 'cctv',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'MCCB',
-        accessor: 'mccb',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Hydrant Box',
-        columns: [
-          {
-            Header: 'APAR',
-            accessor: 'apar',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Segel',
-            accessor: 'segel',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'PIN',
-            accessor: 'pin',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Selang',
-            accessor: 'selang',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Nozle',
-            accessor: 'nozle',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Hose',
-            accessor: 'hose',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Valves',
-            accessor: 'valves',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Alarm',
-            accessor: 'alarm',
-            filterable: false,
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Pintu / Engsel',
-            accessor: 'pintu',
-            filterable: false,
-            headerClassName: 'wordwrap',
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Lampu Indikator',
-            accessor: 'lampuIndikator',
-            filterable: false,
-            headerClassName: 'wordwrap',
-            Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-          },
-          {
-            Header: 'Expired Tabung',
-            accessor: 'expiredTabung',
-            filterable: false,
-            headerClassName: 'wordwrap',
-          },
-        ],
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-      },
+    const { optJenisGedung, optLantai, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -319,6 +391,7 @@ class ME extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Mechanical Electrical'
     // const isIcon = { paddingRight: '7px' }
@@ -364,6 +437,7 @@ class ME extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -416,9 +490,15 @@ class ME extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

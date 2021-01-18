@@ -22,7 +22,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfInputRadio, CfSelect } from '../../../../../components'
+import {
+  CfInput,
+  CfInputDate,
+  CfInputRadio,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../../components'
 import { AlertMessage, invalidValues } from '../../../../../helpers'
 import {
   createEngineerGedungRoom,
@@ -43,6 +49,8 @@ class Ruangan extends Component {
     optJenisGedung: [],
     optJenisRuangan: [],
     optRuangan: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -61,6 +69,8 @@ class Ruangan extends Component {
   }
 
   async componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
     const resDataJenisGedung = await Service.getJenisGedung()
     const dataJenisGedung = resDataJenisGedung.data.data
     const optJenisGedung = dataJenisGedung.map((row) => ({ label: row.name, value: row.id }))
@@ -73,7 +83,123 @@ class Ruangan extends Component {
     const dataRuangan = resDataRuangan.data.data
     const optRuangan = dataRuangan.map((row) => ({ label: row.name, value: row.id }))
 
-    this.setState({ optJenisGedung, optJenisRuangan, optRuangan })
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Gedung',
+        accessor: 'buildingType.name',
+        filterable: false,
+        show: true,
+      },
+      {
+        Header: 'Jenis Ruangan',
+        accessor: 'roomType.name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Ruangan',
+        accessor: 'ruangan.name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Plafond',
+        accessor: 'plafond',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Dinding',
+        accessor: 'dinding',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Lantai',
+        accessor: 'lantai',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Pintu',
+        accessor: 'pintu',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Jendela',
+        accessor: 'jendela',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Kursi',
+        accessor: 'kursi',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Meja',
+        accessor: 'meja',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Lampu',
+        accessor: 'lampu',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Kasur',
+        accessor: 'kasur',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Lemari',
+        accessor: 'lemari',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Toilet',
+        accessor: 'toilet',
+        show: true,
+        filterable: false,
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Peralatan Lainnya',
+        accessor: 'peralatanLainnya',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+      },
+    ]
+
+    this.setState({ optJenisGedung, optJenisRuangan, optRuangan, columns })
   }
 
   doRefresh = () => {
@@ -113,7 +239,6 @@ class Ruangan extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteEngineerGedungRoom(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -128,112 +253,40 @@ class Ruangan extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optJenisGedung, optJenisRuangan, optRuangan } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Gedung',
-        accessor: 'buildingType.name',
-        filterable: false,
-      },
-      {
-        Header: 'Jenis Ruangan',
-        accessor: 'roomType.name',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Ruangan',
-        accessor: 'ruangan.name',
-        filterable: false,
-      },
-      {
-        Header: 'Plafond',
-        accessor: 'plafond',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Dinding',
-        accessor: 'dinding',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Lantai',
-        accessor: 'lantai',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Pintu',
-        accessor: 'pintu',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Jendela',
-        accessor: 'jendela',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Kursi',
-        accessor: 'kursi',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Meja',
-        accessor: 'meja',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Lampu',
-        accessor: 'lampu',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Kasur',
-        accessor: 'kasur',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Lemari',
-        accessor: 'lemari',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Toilet',
-        accessor: 'toilet',
-        filterable: false,
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Peralatan Lainnya',
-        accessor: 'peralatanLainnya',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => (props.value === 'yes' ? 'Baik' : 'Tidak Baik'),
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-      },
+    const { optJenisGedung, optJenisRuangan, optRuangan, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -258,6 +311,7 @@ class Ruangan extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Ruangan'
     // const isIcon = { paddingRight: '7px' }
@@ -303,6 +357,7 @@ class Ruangan extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -344,9 +399,15 @@ class Ruangan extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

@@ -87,7 +87,7 @@ const mapStateToProps = (state) => ({
   message: state.role.message,
 })
 
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = () => ({})
 
 export default connect(
   mapStateToProps,

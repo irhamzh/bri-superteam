@@ -309,8 +309,6 @@ class Laptop extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

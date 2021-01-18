@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import {
-  Badge,
+  // Badge,
   UncontrolledDropdown,
   DropdownItem,
   DropdownMenu,
@@ -13,14 +13,18 @@ import PropTypes from 'prop-types'
 import { AppNavbarBrand, AppSidebarToggler } from '@coreui/react'
 import { connect } from 'react-redux'
 import logo from '../../assets/img/brand/bri-logo.png'
-import sygnet from '../../assets/img/brand/sygnet.svg'
+// import sygnet from '../../assets/img/brand/sygnet.svg'
 import withToggle, { WithToggleProps } from '../../HOC/withToggle'
 import ModalForm from './ModalForm/ModalForm'
 import { signOut } from '../../modules/auth/actions'
+import { userData } from '../../helpers'
 
 function DefaultHeader(props) {
   // eslint-disable-next-line
   const { modalForm, isLoading, signOut, className, children, ...attributes } = props
+
+  const user = userData()
+  const username = user?.name
 
   return (
     <>
@@ -46,18 +50,19 @@ function DefaultHeader(props) {
       */}
 
       <Nav className="ml-auto" navbar>
-        <NavItem className="d-md-down-none">
+        {/* <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">
             <i className="icon-bell" />
             <Badge pill color="danger">
               5
             </Badge>
           </NavLink>
-        </NavItem>
+        </NavItem> */}
 
         <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">
-            Hallo, Admin
+            Halo,
+            {username}
           </NavLink>
         </NavItem>
 

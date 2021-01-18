@@ -23,7 +23,14 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputCheckbox, CfInputDate, CfSelect } from '../../../../components'
+import {
+  CfInput,
+  CfInputCheckbox,
+  CfInputDate,
+  CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGALembur,
@@ -39,6 +46,8 @@ const { ExcelColumn } = ReactExport.ExcelFile
 class Driver extends Component {
   state = {
     optUker: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -58,8 +67,82 @@ class Driver extends Component {
     const resDataUker = await Service.getUker()
     const dataUker = resDataUker.data.data
     const optUker = dataUker.map((row) => ({ value: row.id, label: row.name }))
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'month',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+
+      {
+        Header: 'Nama',
+        accessor: 'name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Uker',
+        accessor: 'uker.name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Lembur',
+        accessor: 'lembur',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        columns: [
+          {
+            Header: 'Surat Perintah Lembur',
+            accessor: 'suratPerintahLembur',
+            show: true,
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+          },
+          {
+            Header: 'Rekap Perhitungan Lembur',
+            accessor: 'rekapPerhitunganLembur',
+            show: true,
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+          },
+          {
+            Header: 'Form Pembayaran Uang Lembur',
+            accessor: 'formPembayaranUangLembur',
+            show: true,
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+          },
+          {
+            Header: 'Absensi',
+            accessor: 'absensi',
+            show: true,
+            filterable: false,
+            headerClassName: 'wordwrap',
+            Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+          },
+        ],
+      },
+    ]
+
     this.setState({
       optUker,
+      columns,
     })
   }
 
@@ -118,112 +201,50 @@ class Driver extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+      if (selected[keyIndex].columns) {
+        selected[keyIndex].columns.forEach(function (item) {
+          item.show = true
+        })
+      }
+    } else {
+      selected[keyIndex].show = false
+      if (selected[keyIndex].columns) {
+        selected[keyIndex].columns.forEach(function (item) {
+          item.show = false
+        })
+      }
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optUker } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'month',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-
-      {
-        Header: 'Nama',
-        accessor: 'name',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Uker',
-        accessor: 'uker.name',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Lembur',
-        accessor: 'lembur',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        columns: [
-          {
-            Header: 'Surat Perintah Lembur',
-            accessor: 'suratPerintahLembur',
-            filterable: false,
-            headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
-          },
-          {
-            Header: 'Rekap Perhitungan Lembur',
-            accessor: 'rekapPerhitunganLembur',
-            filterable: false,
-            headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
-          },
-          {
-            Header: 'Form Pembayaran Uang Lembur',
-            accessor: 'formPembayaranUangLembur',
-            filterable: false,
-            headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
-          },
-          {
-            Header: 'Absensi',
-            accessor: 'absensi',
-            filterable: false,
-            headerClassName: 'wordwrap',
-            Cell: (props) =>
-              props.value ? (
-                <div className="text-center">
-                  <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-                </div>
-              ) : (
-                <div className="text-center">
-                  <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-                </div>
-              ),
-          },
-        ],
-      },
+    const { optUker, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 170,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -248,6 +269,7 @@ class Driver extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Driver'
     const isIcon = { paddingRight: '7px' }
@@ -292,6 +314,7 @@ class Driver extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -333,10 +356,15 @@ class Driver extends Component {
                     </div>
                   </Col>
                 </Row>
-                <br />
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

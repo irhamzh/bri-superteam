@@ -24,7 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 // import Select from 'react-select'
 import Service from '../../../../config/services'
-import { CfInputDate, CfInputFile } from '../../../../components'
+import { CfInputDate, CfInputFile, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createGAPenilaianOutsourcing,
@@ -43,37 +43,63 @@ class Outsourcing extends Component {
   state = {
     tahun: '',
     bulan: '',
-    // optBulan: [
-    //   { label: 'Januari', value: '1' },
-    //   { label: 'Februari', value: '2' },
-    //   { label: 'Maret', value: '3' },
-    //   { label: 'April', value: '4' },
-    //   { label: 'Mei', value: '5' },
-    //   { label: 'Juni', value: '6' },
-    //   { label: 'Juli', value: '7' },
-    //   { label: 'Agustus', value: '8' },
-    //   { label: 'September', value: '9' },
-    //   { label: 'Oktober', value: '10' },
-    //   { label: 'November', value: '11' },
-    //   { label: 'Desember', value: '12' },
-    // ],
-    // optTahun: [
-    //   { label: '2015', value: '2015' },
-    //   { label: '2016', value: '2016' },
-    //   { label: '2017', value: '2017' },
-    //   { label: '2018', value: '2018' },
-    //   { label: '2019', value: '2019' },
-    //   { label: '2020', value: '2020' },
-    //   { label: '2021', value: '2021' },
-    //   { label: '2022', value: '2022' },
-    //   { label: '2023', value: '2023' },
-    //   { label: '2024', value: '2024' },
-    //   { label: '2025', value: '2025' },
-    //   { label: '2026', value: '2026' },
-    // ],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {}
+
+  componentDidMount() {
+    const columns = [
+      {
+        Header: 'No.',
+        width: 50,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
+      },
+      {
+        Header: 'Nama',
+        accessor: `name`,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'PN',
+        accessor: `pn`,
+        show: true,
+        filterable: false,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Tahun Sebelumnya',
+        accessor: `previous`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
+      },
+      {
+        Header: 'Tahun Sekarang',
+        accessor: `current`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
+      },
+      {
+        Header: 'Tahun Berikutnya',
+        accessor: `next`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
+      },
+    ]
+
+    this.setState({ columns })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -156,56 +182,37 @@ class Outsourcing extends Component {
     }
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     // const { optBulan, optTahun } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const { isShow, columns } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'No.',
-        width: 50,
-        // accessor: `none`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
-      },
-      {
-        Header: 'Nama',
-        accessor: `name`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'PN',
-        accessor: `pn`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Tahun Sebelumnya',
-        accessor: `previous`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
-      },
-      {
-        Header: 'Tahun Sekarang',
-        accessor: `current`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
-      },
-      {
-        Header: 'Tahun Berikutnya',
-        accessor: `next`,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value?.value}</p>,
-      },
-    ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Penilaian Outsourcing'
     const isIcon = { paddingRight: '7px' }
@@ -284,6 +291,7 @@ class Outsourcing extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -314,7 +322,12 @@ class Outsourcing extends Component {
                     </div>
                   </Col>
                 </Row>
-                <br />
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
                   columns={columns}
@@ -373,8 +386,6 @@ class Outsourcing extends Component {
                           </FormGroup>
                         </>
                       )}
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

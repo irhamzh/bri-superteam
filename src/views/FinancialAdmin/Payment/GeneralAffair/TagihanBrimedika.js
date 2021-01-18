@@ -28,8 +28,10 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate, formatCurrencyIDR } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -44,6 +46,11 @@ const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class TagihanBrimedika extends Component {
+  state = {
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     seksi: 'General Affair',
     typePayment: 'Tagihan Brimedika',
@@ -60,6 +67,85 @@ class TagihanBrimedika extends Component {
       seksi: 'General Affair',
       typePayment: 'Tagihan Brimedika',
     })
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Seksi',
+        accessor: 'seksi',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Invoice Bermaterai',
+        accessor: 'invoiceBermaterai',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Copy SPK',
+        accessor: 'copySPK',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Nota Pembukuan',
+        accessor: 'notaPembukuan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Biaya',
+        accessor: 'biaya',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
+      },
+
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        show: true,
+        filterable: false,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+        },
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -87,7 +173,6 @@ class TagihanBrimedika extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -102,105 +187,40 @@ class TagihanBrimedika extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Seksi',
-        accessor: 'seksi',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Invoice Bermaterai',
-        accessor: 'invoiceBermaterai',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Copy SPK',
-        accessor: 'copySPK',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Nota Pembukuan',
-        accessor: 'notaPembukuan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
-      },
-      {
-        Header: 'Biaya',
-        accessor: 'biaya',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-
-      {
-        Header: 'Lampiran',
-        accessor: 'lampiran',
-        filterable: false,
-        Cell: (row) => {
-          if (row.value && row.value.length > 0) {
-            return row.value.map((item) => (
-              <div>
-                <a href={item} target="_blank" rel="noreferrer">
-                  Download
-                </a>
-              </div>
-            ))
-          }
-        },
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
+    const { isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 200,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -225,7 +245,6 @@ class TagihanBrimedika extends Component {
         ),
       },
     ]
-
     const pageName = 'Tagihan Brimedika'
     // const isIcon = { paddingRight: '7px' }
 
@@ -268,6 +287,7 @@ class TagihanBrimedika extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -299,16 +319,25 @@ class TagihanBrimedika extends Component {
                             label="Nota Pembukuan"
                             value={(col) => (col.notaPembukuan ? '✓' : '❌')}
                           />
-                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn
+                            label="Biaya"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                           <ExcelColumn label="Keterangan" value={(col) => col.information} />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -415,8 +444,6 @@ class TagihanBrimedika extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

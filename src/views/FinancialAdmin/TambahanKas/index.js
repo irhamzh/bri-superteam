@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,9 +20,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Service from '../../../config/services'
-import { CfInput, CfInputDate, CfInputMultiFile } from '../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../helpers'
+import { CfInput, CfInputDate, CfInputMultiFile, ListCheckboxShow } from '../../../components'
+import { AlertMessage, invalidValues, formatDate, formatCurrencyIDR } from '../../../helpers'
 import {
   createFITambahanKas,
   updateFITambahanKas,
@@ -30,8 +32,76 @@ import {
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class TambahanKas extends Component {
+  state = {
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {}
+
+  componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Nominal',
+        accessor: 'nominal',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
+      },
+      {
+        Header: 'Unit Kerja Tujuan',
+        accessor: 'unitKerjaTujuan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        show: true,
+        filterable: false,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+        },
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        show: true,
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+    ]
+
+    this.setState({ columns })
+  }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -58,7 +128,6 @@ class TambahanKas extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFITambahanKas(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -73,56 +142,40 @@ class TambahanKas extends Component {
       })
   }
 
-  render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
-    const { tableProps } = fetchQueryProps
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
 
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Nominal',
-        accessor: 'nominal',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Unit Kerja Tujuan',
-        accessor: 'unitKerjaTujuan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Lampiran',
-        accessor: 'lampiran',
-        filterable: false,
-        Cell: (row) => {
-          if (row.value && row.value.length > 0) {
-            return row.value.map((item) => (
-              <div>
-                <a href={item} target="_blank" rel="noreferrer">
-                  Download
-                </a>
-              </div>
-            ))
-          }
-        },
-      },
-      {
-        Header: 'Keterangan',
-        accessor: 'information',
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 170,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -147,7 +200,6 @@ class TambahanKas extends Component {
         ),
       },
     ]
-
     const pageName = 'Tambahan Kas'
     // const isIcon = { paddingRight: '7px' }
 
@@ -190,22 +242,48 @@ class TambahanKas extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Nominal"
+                            value={(col) => formatCurrencyIDR(col.nominal)}
+                          />
+                          <ExcelColumn
+                            label="Unit Kerja Tujuan"
+                            value={(col) => col.unitKerjaTujuan}
+                          />
+                          <ExcelColumn label="Keterangan" value={(col) => col.information} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -289,8 +367,6 @@ class TambahanKas extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

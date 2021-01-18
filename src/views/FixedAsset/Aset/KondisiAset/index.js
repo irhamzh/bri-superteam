@@ -22,7 +22,7 @@ import { Formik, Form, Field } from 'formik'
 import Select from 'react-select'
 import Service from '../../../../config/services'
 import { CfInput, CfSelect } from '../../../../components'
-import { ErrorMessage, invalidValues } from '../../../../helpers'
+import { invalidValues } from '../../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -97,7 +97,7 @@ class KondisiAset extends Component {
 
   render() {
     const { optKondisiAset, kondisiAsetId } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -123,6 +123,7 @@ class KondisiAset extends Component {
       },
       {
         Header: 'Aksi',
+        width: 60,
         filterable: false,
         Cell: (props) => (
           <>
@@ -239,8 +240,6 @@ class KondisiAset extends Component {
                           component={CfSelect}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

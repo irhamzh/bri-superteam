@@ -27,17 +27,30 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import {
+  AlertMessage,
+  invalidValues,
+  formatDate,
+  userData,
+  formatCurrencyIDR,
+} from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
   deleteFIPayment,
+  penihilanFIPayment,
+  approveFIPayment,
 } from '../../../../modules/financialAdmin/payment/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class PenihilanPAUK extends Component {
+  state = {
+    paukIds: [],
+  }
+
   initialValues = {
     seksi: 'Financial Admin',
     typePayment: 'Penihilan PAUK',
@@ -78,7 +91,6 @@ class PenihilanPAUK extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
           deleteFIPayment(id, this.doRefresh)
         } else {
           const paramsResponse = {
@@ -93,20 +105,95 @@ class PenihilanPAUK extends Component {
       })
   }
 
+  handleApprove = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { approveFIPayment } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approveFIPayment(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  handlePenihilan = (e) => {
+    e.preventDefault()
+
+    const { paukIds } = this.state
+    const { penihilanFIPayment } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          penihilanFIPayment({ paukIds }, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Penihilan Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  isSelected = (id) => {
+    const { paukIds } = this.state
+    return paukIds.includes(id)
+  }
+
+  onCheckboxChange = (id) => {
+    const { paukIds } = this.state
+
+    const selected = [...paukIds]
+    const keyIndex = selected.indexOf(id)
+    if (keyIndex > -1) {
+      selected.splice(keyIndex, 1)
+    } else {
+      selected.push(id)
+    }
+
+    this.setState({ paukIds: selected })
+  }
+
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     const columns = [
       {
-        Header: '',
-        accessor: 'checked',
+        Header: 'Checked',
+        width: 100,
+        accessor: 'id',
         filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: () => (
-          <div style={{ textAlign: 'center' }}>
-            <Checkbox />
-          </div>
+        Cell: (row) => (
+          <span>
+            <Checkbox
+              color="primary"
+              checked={this.isSelected(row.value)}
+              onChange={() => this.onCheckboxChange(row.value)}
+            />
+          </span>
         ),
       },
       {
@@ -133,38 +220,20 @@ class PenihilanPAUK extends Component {
         accessor: 'printPAUK',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Kode Pelatihan',
         accessor: 'kodePelatihan',
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya',
         accessor: 'biaya',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
 
       {
@@ -190,8 +259,16 @@ class PenihilanPAUK extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
+        Header: 'Status',
+        width: 250,
+        accessor: 'status',
+        align: 'center',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
         Header: 'Aksi',
-        width: 200,
+        // width: 200,
         filterable: false,
         Cell: (props) => (
           <>
@@ -203,6 +280,42 @@ class PenihilanPAUK extends Component {
             >
               <i className="fa fa-pencil" />
             </Button>
+            {/* &nbsp; | &nbsp; */}
+            {/* <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button> */}
+          </>
+        ),
+      },
+    ]
+
+    const user = userData()
+    const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    if (
+      user &&
+      (allowedRole.includes(user.role?.name.toLowerCase()) ||
+        user.role?.name.includes('Supervisor'))
+    ) {
+      columns.push({
+        Header: 'Aksi',
+        width: 200,
+        accessor: 'id',
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
             &nbsp; | &nbsp;
             <Button
               color="danger"
@@ -210,12 +323,12 @@ class PenihilanPAUK extends Component {
               className="mr-1"
               title="Delete"
             >
-              <i className="fa fa-trash" />
+              Deny
             </Button>
           </>
         ),
-      },
-    ]
+      })
+    }
 
     const pageName = 'Penihilan PAUK'
     // const isIcon = { paddingRight: '7px' }
@@ -257,6 +370,7 @@ class PenihilanPAUK extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-1 mb-2 px-4"
+                        onClick={(e) => this.handlePenihilan(e)}
                         color="secondary"
                         style={{ borderRadius: '20px' }}
                       >
@@ -377,8 +491,6 @@ class PenihilanPAUK extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -420,6 +532,8 @@ PenihilanPAUK.propTypes = {
   createFIPayment: PropTypes.func.isRequired,
   updateFIPayment: PropTypes.func.isRequired,
   deleteFIPayment: PropTypes.func.isRequired,
+  approveFIPayment: PropTypes.func.isRequired,
+  penihilanFIPayment: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -434,6 +548,8 @@ const mapDispatchToProps = (dispatch) => ({
   createFIPayment: (formData, refresh) => dispatch(createFIPayment(formData, refresh)),
   updateFIPayment: (formData, id, refresh) => dispatch(updateFIPayment(formData, id, refresh)),
   deleteFIPayment: (id, refresh) => dispatch(deleteFIPayment(id, refresh)),
+  penihilanFIPayment: (formData, refresh) => dispatch(penihilanFIPayment(formData, refresh)),
+  approveFIPayment: (formData, id, refresh) => dispatch(approveFIPayment(formData, id, refresh)),
 })
 
 export default connect(

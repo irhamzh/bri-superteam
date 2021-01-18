@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -28,8 +29,10 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate, formatCurrencyIDR } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -44,69 +47,37 @@ const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class AAJIWaperd extends Component {
+  state = {
+    optProvider: [],
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     seksi: 'Financial Admin',
     typePayment: 'Waperd',
     suratPerintahBayar: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       seksi: 'Financial Admin',
       typePayment: 'Waperd',
     })
-  }
 
-  doRefresh = () => {
-    const { fetchQueryProps, modalForm } = this.props
-    modalForm.hide()
-    fetchQueryProps.refresh()
-  }
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createFIPayment, updateFIPayment } = this.props
-    if (!invalidValues.includes(id)) {
-      updateFIPayment(values, id, this.doRefresh)
-    } else {
-      createFIPayment(values, this.doRefresh)
-    }
-  }
-
-  handleDelete = (e, state) => {
-    e.preventDefault()
-
-    const { id } = state
-    const { deleteFIPayment } = this.props
-
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          console.log('delete object', id)
-          deleteFIPayment(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
-  }
-
-  render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
-    const { tableProps } = fetchQueryProps
-    const { data } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
         Header: 'Tanggal',
         accessor: 'tanggal',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
@@ -114,41 +85,46 @@ class AAJIWaperd extends Component {
       {
         Header: 'Seksi',
         accessor: 'seksi',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Asuransi',
-        accessor: 'namaAsuransi',
+        Header: 'Nama Sertifikasi',
+        accessor: 'namaSertifikasi',
+        show: true,
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Provider',
+        accessor: 'provider.name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Surat Perintah Bayar',
         accessor: 'suratPerintahBayar',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya',
         accessor: 'biaya',
+        show: true,
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
 
       {
         Header: 'Lampiran',
         accessor: 'lampiran',
+        show: true,
         filterable: false,
         Cell: (row) => {
           if (row.value && row.value.length > 0) {
@@ -165,12 +141,95 @@ class AAJIWaperd extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+    ]
+
+    this.setState({
+      optProvider,
+      columns,
+    })
+  }
+
+  doRefresh = () => {
+    const { fetchQueryProps, modalForm } = this.props
+    modalForm.hide()
+    fetchQueryProps.refresh()
+  }
+
+  handleSaveChanges = (values) => {
+    const { id } = values
+    const { createFIPayment, updateFIPayment } = this.props
+    if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
+      updateFIPayment(values, id, this.doRefresh)
+    } else {
+      createFIPayment(values, this.doRefresh)
+    }
+  }
+
+  handleDelete = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { deleteFIPayment } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          deleteFIPayment(id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Huff',
+            text: 'Hampir saja kamu kehilangan data ini',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optProvider, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 200,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -195,7 +254,6 @@ class AAJIWaperd extends Component {
         ),
       },
     ]
-
     const pageName = 'AAJI / Waperd'
     // const isIcon = { paddingRight: '7px' }
 
@@ -238,6 +296,7 @@ class AAJIWaperd extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -263,16 +322,25 @@ class AAJIWaperd extends Component {
                             label="Surat Perintah Bayar"
                             value={(col) => (col.suratPerintahBayar ? '✓' : '❌')}
                           />
-                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn
+                            label="Biaya"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                           <ExcelColumn label="Keterangan" value={(col) => col.information} />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -296,7 +364,7 @@ class AAJIWaperd extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -327,12 +395,28 @@ class AAJIWaperd extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Asuransi"
+                          label="Nama Sertifikasi"
                           type="text"
-                          name="namaAsuransi"
+                          name="namaSertifikasi"
                           isRequired
-                          placeholder="Masukkan Nama Asuransi"
+                          placeholder="Masukkan Nama"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          options={optProvider}
+                          isRequired
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -378,8 +462,6 @@ class AAJIWaperd extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

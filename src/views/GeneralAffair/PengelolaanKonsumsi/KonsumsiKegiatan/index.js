@@ -24,7 +24,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPengelolaanKonsumsi,
@@ -41,6 +41,8 @@ class KonsumsiKegiatan extends Component {
   state = {
     optWorkingOrder: [],
     optCatering: [],
+    isShow: false,
+    columns: [],
   }
 
   initialValues = {
@@ -76,9 +78,82 @@ class KonsumsiKegiatan extends Component {
       value: row.id,
     }))
 
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        accessor: 'tanggal',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Jenis',
+        accessor: 'consumptionType',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'No. WO',
+        accessor: 'workingOrder.kodeWorkingOrder',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Nomor Surat',
+        accessor: 'noSuratPesanan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Kebutuhan',
+        accessor: 'kebutuhan',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Nama Catering',
+        accessor: 'catering.name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+      },
+      {
+        Header: 'Menu',
+        accessor: 'menu',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => {
+          const { menu } = props.original
+          const listMenu = menu.map((row) => <div>{`${row.name}`}</div>)
+          return listMenu
+        },
+      },
+      {
+        Header: 'Biaya',
+        accessor: 'biaya',
+        show: true,
+        filterable: false,
+        Cell: (props) => {
+          const { menu } = props.original
+          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
+          return listBiaya
+        },
+      },
+    ]
+
     this.setState({
       optWorkingOrder,
       optCatering,
+      columns,
     })
   }
 
@@ -129,76 +204,40 @@ class KonsumsiKegiatan extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optWorkingOrder, optCatering } = this.state
-
-    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        accessor: 'tanggal',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
-      },
-      {
-        Header: 'Jenis',
-        accessor: 'consumptionType',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'No. WO',
-        accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Nomor Surat',
-        accessor: 'noSuratPesanan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Kebutuhan',
-        accessor: 'kebutuhan',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Nama Catering',
-        accessor: 'catering.name',
-        filterable: false,
-        headerClassName: 'wordwrap',
-      },
-      {
-        Header: 'Menu',
-        accessor: 'menu',
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (props) => {
-          const { menu } = props.original
-          const listMenu = menu.map((row) => <div>{`${row.name}`}</div>)
-          return listMenu
-        },
-      },
-      {
-        Header: 'Biaya',
-        accessor: 'biaya',
-        filterable: false,
-        Cell: (props) => {
-          const { menu } = props.original
-          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
-          return listBiaya
-        },
-      },
+    const { optWorkingOrder, optCatering, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -223,6 +262,7 @@ class KonsumsiKegiatan extends Component {
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Konsumsi Kegiatan'
     // const isIcon = { paddingRight: '7px' }
@@ -266,6 +306,7 @@ class KonsumsiKegiatan extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -297,10 +338,15 @@ class KonsumsiKegiatan extends Component {
                     </div>
                   </Col>
                 </Row>
-
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}

@@ -1,6 +1,7 @@
 import React from 'react'
 
 // Procurement
+const Procurement = React.lazy(() => import('../views/Procurement'))
 // Procurement / Working Order
 const WorkingOrder = React.lazy(() => import('../views/Procurement/WorkingOrder'))
 const KegiatanLain = React.lazy(() => import('../views/Procurement/WorkingOrder/KegiatanLain'))
@@ -43,7 +44,7 @@ const procurement = [
     path: '/procurement',
     exact: true,
     name: 'Procurement',
-    component: WorkingOrder,
+    component: Procurement,
   },
   {
     path: '/procurement/working-order',

@@ -14,3 +14,11 @@ export const DELETE_ASSET_ERROR = 'delete_asset_error'
 export const UPLOAD_ASSET_LOADING = 'UPLOAD_asset_loading'
 export const UPLOAD_ASSET_SUCCESS = 'UPLOAD_asset_success'
 export const UPLOAD_ASSET_ERROR = 'UPLOAD_asset_error'
+// penghapusbukuan
+export const PENGHAPUSBUKUAN_ASSET_LOADING = 'PENGHAPUSBUKUAN_asset_loading'
+export const PENGHAPUSBUKUAN_ASSET_SUCCESS = 'PENGHAPUSBUKUAN_asset_success'
+export const PENGHAPUSBUKUAN_ASSET_ERROR = 'PENGHAPUSBUKUAN_asset_error'
+// Approval
+export const APPROVAL_ASSET_LOADING = 'APPROVAL_asset_loading'
+export const APPROVAL_ASSET_SUCCESS = 'APPROVAL_asset_success'
+export const APPROVAL_ASSET_ERROR = 'APPROVAL_asset_error'

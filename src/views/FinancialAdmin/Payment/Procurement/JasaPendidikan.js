@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react'
 import {
   Button,
@@ -26,8 +27,10 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -37,6 +40,12 @@ import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/wi
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
 class JasaPendidikan extends Component {
+  state = {
+    optProvider: [],
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     seksi: 'Procurement',
     typePayment: 'Jasa Pendidikan',
@@ -52,62 +61,25 @@ class JasaPendidikan extends Component {
     daftarHadir: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       seksi: 'Procurement',
       typePayment: 'Jasa Pendidikan',
     })
-  }
 
-  doRefresh = () => {
-    const { fetchQueryProps, modalForm } = this.props
-    modalForm.hide()
-    fetchQueryProps.refresh()
-  }
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createFIPayment, updateFIPayment } = this.props
-    if (!invalidValues.includes(id)) {
-      updateFIPayment(values, id, this.doRefresh)
-    } else {
-      createFIPayment(values, this.doRefresh)
-    }
-  }
-
-  handleDelete = (e, state) => {
-    e.preventDefault()
-
-    const { id } = state
-    const { deleteFIPayment } = this.props
-
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          console.log('delete object', id)
-          deleteFIPayment(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
-  }
-
-  render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
-    const { tableProps } = fetchQueryProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
         Header: 'Tanggal',
         accessor: 'tanggal',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
@@ -115,178 +87,110 @@ class JasaPendidikan extends Component {
       {
         Header: 'Seksi',
         accessor: 'seksi',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
+        show: true,
         filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Provider',
+        accessor: 'provider.name',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Invoice Bermaterai',
         accessor: 'invoiceBermaterai',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'BAST',
         accessor: 'bast',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Laporan Pelaksanaan Pekerjaan',
         accessor: 'laporanPelaksanaanPekerjaan',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Evaluasi Brismart',
         accessor: 'evaluasiBrismart',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Surat Konfirmasi Pemanggilan (LOP)',
         accessor: 'suratKonfirmasiPemanggilan',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Copy SPK / PKS',
         accessor: 'copySPKPKS',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Surat Pemesanan',
         accessor: 'suratPemesanan',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Faktur Pajak Bagi Wapu / Surat Bebas Pajak (PRD)',
         accessor: 'prd',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Copy NPWP bagi provide no PKP',
         accessor: 'copyNPWPbagiprovidernonPKP',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Daftar Hadir (Brismart)',
         accessor: 'daftarHadir',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya',
         accessor: 'biaya',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -294,6 +198,7 @@ class JasaPendidikan extends Component {
       {
         Header: 'Lampiran',
         accessor: 'lampiran',
+        show: true,
         filterable: false,
         Cell: (row) => {
           if (row.value && row.value.length > 0) {
@@ -310,12 +215,94 @@ class JasaPendidikan extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+    ]
+
+    this.setState({
+      optProvider,
+      columns,
+    })
+  }
+
+  doRefresh = () => {
+    const { fetchQueryProps, modalForm } = this.props
+    modalForm.hide()
+    fetchQueryProps.refresh()
+  }
+
+  handleSaveChanges = (values) => {
+    const { id } = values
+    const { createFIPayment, updateFIPayment } = this.props
+    if (!invalidValues.includes(id)) {
+      const { provider } = values
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
+      updateFIPayment(values, id, this.doRefresh)
+    } else {
+      createFIPayment(values, this.doRefresh)
+    }
+  }
+
+  handleDelete = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { deleteFIPayment } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          deleteFIPayment(id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Huff',
+            text: 'Hampir saja kamu kehilangan data ini',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
+    const { optProvider, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 200,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -340,7 +327,6 @@ class JasaPendidikan extends Component {
         ),
       },
     ]
-
     const pageName = 'Jasa Pendidikan'
     // const isIcon = { paddingRight: '7px' }
 
@@ -383,6 +369,7 @@ class JasaPendidikan extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -396,9 +383,15 @@ class JasaPendidikan extends Component {
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -422,7 +415,7 @@ class JasaPendidikan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -459,6 +452,22 @@ class JasaPendidikan extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pendidikan"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          options={optProvider}
+                          isRequired
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -572,8 +581,6 @@ class JasaPendidikan extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

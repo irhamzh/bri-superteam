@@ -135,6 +135,16 @@ const getYearOptions = (option = 5) => {
   return options
 }
 
+const formatCurrencyIDR = (value) => {
+  if (value && Number(value)) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+    }).format(value)
+  }
+  return null
+}
+
 export {
   userData,
   formDataFilterByKeys,
@@ -146,4 +156,5 @@ export {
   checkFilePreview,
   invalidValues,
   getYearOptions,
+  formatCurrencyIDR,
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -28,8 +29,10 @@ import {
   CfInputDate,
   CfInputMultiFile,
   CfSelect,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate, formatCurrencyIDR } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -44,6 +47,12 @@ const { ExcelSheet } = ReactExport.ExcelFile
 const { ExcelColumn } = ReactExport.ExcelFile
 
 class TagihanServiceKendaraan extends Component {
+  state = {
+    optKendaraan: [],
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
     seksi: 'General Affair',
     typePayment: 'Tagihan Service Kendaraan',
@@ -53,64 +62,29 @@ class TagihanServiceKendaraan extends Component {
     notaPembukuan: false,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
       // typePendidikan: 'Non Pendidikan',
       seksi: 'General Affair',
       typePayment: 'Tagihan Service Kendaraan',
     })
-  }
 
-  doRefresh = () => {
-    const { fetchQueryProps, modalForm } = this.props
-    modalForm.hide()
-    fetchQueryProps.refresh()
-  }
+    const resDataKendaraan = await Service.getKendaraan()
+    const dataKendaraan = resDataKendaraan.data.data
+    const optKendaraan = dataKendaraan.map((row) => ({
+      label: `${row.platNomor}-${row.merk}-${row.color}`,
+      value: row.id,
+    }))
 
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createFIPayment, updateFIPayment } = this.props
-    if (!invalidValues.includes(id)) {
-      updateFIPayment(values, id, this.doRefresh)
-    } else {
-      createFIPayment(values, this.doRefresh)
-    }
-  }
-
-  handleDelete = (e, state) => {
-    e.preventDefault()
-
-    const { id } = state
-    const { deleteFIPayment } = this.props
-
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          console.log('delete object', id)
-          deleteFIPayment(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
-  }
-
-  render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
-    const { tableProps } = fetchQueryProps
-    const { data } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
         Header: 'Tanggal',
         accessor: 'tanggal',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
@@ -118,73 +92,67 @@ class TagihanServiceKendaraan extends Component {
       {
         Header: 'Seksi',
         accessor: 'seksi',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Pembayaran',
         accessor: 'namaPembayaran',
+        show: true,
         filterable: false,
+        headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Kendaraan',
+        width: 200,
+        accessor: 'vehicle',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>
+            {row.value ? `${row.value.platNomor} - ${row.value.merk} - ${row.value.color}` : ''}
+          </div>
+        ),
       },
       {
         Header: 'Invoice Bermaterai',
         accessor: 'invoiceBermaterai',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Faktur Pajak',
         accessor: 'fakturPajak',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Nota Pembukuan',
         accessor: 'notaPembukuan',
+        show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (props) =>
-          props.value ? (
-            <div className="text-center">
-              <i className="icon-check text-success" style={{ fontSize: '25px' }} />
-            </div>
-          ) : (
-            <div className="text-center">
-              <i className="icon-close text-danger" style={{ fontSize: '25px' }} />
-            </div>
-          ),
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
       },
       {
         Header: 'Biaya',
         accessor: 'biaya',
+        show: true,
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
 
       {
         Header: 'Lampiran',
         accessor: 'lampiran',
+        show: true,
         filterable: false,
         Cell: (row) => {
           if (row.value && row.value.length > 0) {
@@ -201,12 +169,95 @@ class TagihanServiceKendaraan extends Component {
       {
         Header: 'Keterangan',
         accessor: 'information',
+        show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+    ]
+
+    this.setState({
+      optKendaraan,
+      columns,
+    })
+  }
+
+  doRefresh = () => {
+    const { fetchQueryProps, modalForm } = this.props
+    modalForm.hide()
+    fetchQueryProps.refresh()
+  }
+
+  handleSaveChanges = (values) => {
+    const { id } = values
+    const { createFIPayment, updateFIPayment } = this.props
+    if (!invalidValues.includes(id)) {
+      const { vehicle } = values
+      if (vehicle && Object.keys(vehicle).length > 0) {
+        values.vehicle = vehicle.id || vehicle
+      }
+      updateFIPayment(values, id, this.doRefresh)
+    } else {
+      createFIPayment(values, this.doRefresh)
+    }
+  }
+
+  handleDelete = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { deleteFIPayment } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          deleteFIPayment(id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Huff',
+            text: 'Hampir saja kamu kehilangan data ini',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optKendaraan, isShow, columns } = this.state
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 200,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -231,7 +282,6 @@ class TagihanServiceKendaraan extends Component {
         ),
       },
     ]
-
     const pageName = 'Tagihan Service Kendaraan'
     // const isIcon = { paddingRight: '7px' }
 
@@ -274,6 +324,7 @@ class TagihanServiceKendaraan extends Component {
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
@@ -309,16 +360,25 @@ class TagihanServiceKendaraan extends Component {
                             label="Nota Pembukuan"
                             value={(col) => (col.notaPembukuan ? '✓' : '❌')}
                           />
-                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn
+                            label="Biaya"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                           <ExcelColumn label="Keterangan" value={(col) => col.information} />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -342,7 +402,7 @@ class TagihanServiceKendaraan extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -379,6 +439,25 @@ class TagihanServiceKendaraan extends Component {
                           isRequired
                           placeholder="Masukkan Nama Pembayaran"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Kendaraan"
+                          options={optKendaraan}
+                          isRequired
+                          name="vehicle"
+                          placeholder="Pilih atau Cari Kendaraan"
+                          defaultValue={
+                            values.vehicle
+                              ? {
+                                  value: values.vehicle.id,
+                                  label: `${values.vehicle.platNomor}-${values.vehicle.merk}-${values.vehicle.color}`,
+                                }
+                              : null
+                          }
+                          component={CfSelect}
                         />
                       </FormGroup>
 
@@ -440,8 +519,6 @@ class TagihanServiceKendaraan extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

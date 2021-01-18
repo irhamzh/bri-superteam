@@ -9,6 +9,7 @@ import {
   checkFilePreview,
   invalidValues,
   getYearOptions,
+  formatCurrencyIDR,
 } from './Common'
 
 import {
@@ -40,4 +41,5 @@ export {
   formatYear,
   formatTime,
   getYearOptions,
+  formatCurrencyIDR,
 }

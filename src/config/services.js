@@ -2448,6 +2448,27 @@ class Service {
 
     return axios.post(`fa-anggaran-investations/excel`, formData)
   }
+
+  static getFXAnggaran(params) {
+    if (!params) params = ''
+    return axios.get(`fx-budgets${params}`)
+  }
+
+  static getFXAnggaranById(id) {
+    return axios.get(`fx-budgets/${id}`)
+  }
+
+  static createFXAnggaran(values) {
+    return axios.post('fx-budgets', values)
+  }
+
+  static updateFXAnggaran(values, id) {
+    return axios.put(`fx-budgets/${id}`, values)
+  }
+
+  static deleteFXAnggaran(id) {
+    return axios.delete(`fx-budgets/${id}`)
+  }
 }
 
 export default Service

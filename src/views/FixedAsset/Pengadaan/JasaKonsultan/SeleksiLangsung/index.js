@@ -687,8 +687,6 @@ class SeleksiLangsung extends Component {
                           />
                         </Col>
                       </Row>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

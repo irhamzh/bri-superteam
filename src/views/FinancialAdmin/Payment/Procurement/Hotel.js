@@ -30,7 +30,7 @@ import {
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -252,9 +252,9 @@ class Hotel extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
-      const { hotelName } = values
-      if (hotelName && Object.keys(hotelName).length > 0) {
-        values.hotelName = hotelName.id || hotelName
+      const { hotel } = values
+      if (hotel && Object.keys(hotel).length > 0) {
+        values.hotel = hotel.id || hotel
       }
       updateFIPayment(values, id, this.doRefresh)
     } else {
@@ -320,7 +320,7 @@ class Hotel extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { optHotel, isShow, columns } = this.state
     const tableCols = [
@@ -486,7 +486,7 @@ class Hotel extends Component {
                           label="Nama Hotel"
                           options={optHotel}
                           isRequired
-                          name="hotelName"
+                          name="hotel"
                           placeholder="Pilih atau Cari Hotel"
                           defaultValue={
                             values.hotelName
@@ -610,8 +610,6 @@ class Hotel extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

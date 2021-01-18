@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -108,11 +109,12 @@ class WaterMeter extends Component {
     const { createEngineerBasementWM, updateEngineerBasementWM } = this.props
     if (!invalidValues.includes(id)) {
       if (waterMeter && Object.keys(waterMeter).length > 0) {
-        // eslint-disable-next-line no-param-reassign
         values.waterMeter = waterMeter.id || waterMeter
       }
+      values.penggunaan = values.meterAkhir - values.meterAwal
       updateEngineerBasementWM(values, id, this.doRefresh)
     } else {
+      values.penggunaan = values.meterAkhir - values.meterAwal
       createEngineerBasementWM(values, this.doRefresh)
     }
   }
@@ -371,11 +373,11 @@ class WaterMeter extends Component {
                           name="penggunaan"
                           isRequired
                           placeholder="Masukkan Penggunaan"
+                          value={values.meterAkhir - values.meterAwal || 0}
+                          disabled
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

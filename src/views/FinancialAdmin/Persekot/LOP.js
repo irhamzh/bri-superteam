@@ -23,7 +23,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../config/services'
 import { CfInput, CfInputDate, ListCheckboxShow } from '../../../components'
-import { AlertMessage, ErrorMessage, invalidValues, formatDate } from '../../../helpers'
+import { AlertMessage, invalidValues, formatDate } from '../../../helpers'
 import { createPersekot, updatePersekot, deletePersekot } from '../../../modules/persekot/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -153,7 +153,7 @@ class LOP extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { isShow, columns } = this.state
@@ -336,8 +336,6 @@ class LOP extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

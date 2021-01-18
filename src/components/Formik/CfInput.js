@@ -29,7 +29,7 @@ const CfInput = ({
         &nbsp;
         {isRequired && requireLabel()}
       </Label>
-      <Input {...field} {...props} onChange={(e) => handleChangeInput(e)} />
+      <Input {...field} {...props} onChange={(e) => handleChangeInput(e)} autocomplete="off" />
       <ErrorView name={field.name} />
     </>
   )

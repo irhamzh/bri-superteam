@@ -22,7 +22,7 @@ import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfSelect, CfInputRadio } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
+import { AlertMessage, invalidValues } from '../../../../helpers'
 import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -108,7 +108,7 @@ class PegawaiTetap extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, modalForm } = this.props
+    const { isLoading, auth, className, modalForm } = this.props
     // const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -246,7 +246,7 @@ class PegawaiTetap extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Form Data</ModalHeader>
                     <ModalBody>
@@ -315,8 +315,6 @@ class PegawaiTetap extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -353,7 +351,7 @@ class PegawaiTetap extends Component {
 PegawaiTetap.propTypes = {
   auth: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool,
-  message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
+  // message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   createRole: PropTypes.func.isRequired,
   updateRole: PropTypes.func.isRequired,

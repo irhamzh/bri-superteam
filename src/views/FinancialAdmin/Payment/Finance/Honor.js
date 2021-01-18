@@ -32,13 +32,7 @@ import {
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
-import {
-  AlertMessage,
-  ErrorMessage,
-  invalidValues,
-  formatDate,
-  formatCurrencyIDR,
-} from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate, formatCurrencyIDR } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -98,7 +92,7 @@ class Honor extends Component {
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        accessor: 'namaSertifikasi',
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
@@ -235,7 +229,7 @@ class Honor extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optProvider, isShow, columns } = this.state
@@ -414,9 +408,9 @@ class Honor extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Pendidikan"
+                          label="Nama Sertifikasi"
                           type="text"
-                          name="namaPendidikan"
+                          name="namaSertifikasi"
                           isRequired
                           placeholder="Masukkan Nama"
                           component={CfInput}
@@ -489,8 +483,6 @@ class Honor extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

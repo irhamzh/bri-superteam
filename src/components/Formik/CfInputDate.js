@@ -18,7 +18,12 @@ const DateCustomInput = ({ classGroup, classIcon, value, onClick, ...props }) =>
         <i className={classIcon} />
       </InputGroupText>
     </InputGroupAddon>
-    <Input {...props} value={value ? formatDate(value) : undefined} onClick={onClick} />
+    <Input
+      {...props}
+      value={value ? formatDate(value) : undefined}
+      onClick={onClick}
+      autocomplete="off"
+    />
   </InputGroup>
 )
 

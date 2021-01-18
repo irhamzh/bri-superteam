@@ -20,7 +20,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { AlertMessage, ErrorMessage, userData } from '../../../../helpers'
+import { AlertMessage, userData } from '../../../../helpers'
 import { approveAsset, penghapusbukuanAsset, deleteAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -158,7 +158,7 @@ class Penghapusbukuan extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
@@ -302,7 +302,7 @@ class Penghapusbukuan extends Component {
                 {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>{ErrorMessage(message)}</ModalBody>
+                    <ModalBody />
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
                         Cancel

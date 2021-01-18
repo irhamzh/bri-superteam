@@ -605,8 +605,6 @@ class KegiatanLain extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

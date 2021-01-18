@@ -441,8 +441,6 @@ class PewangiRuangan extends Component {
                           />
                         </FormGroup>
                       </div>
-
-                      {/* {ErrorMessage(message)} */}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

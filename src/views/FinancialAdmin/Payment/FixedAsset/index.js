@@ -31,13 +31,7 @@ import {
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
-import {
-  AlertMessage,
-  ErrorMessage,
-  invalidValues,
-  formatDate,
-  formatCurrencyIDR,
-} from '../../../../helpers'
+import { AlertMessage, invalidValues, formatDate, formatCurrencyIDR } from '../../../../helpers'
 import {
   createFIPayment,
   updateFIPayment,
@@ -241,7 +235,7 @@ class FixedAssetFinancialAdmin extends Component {
   }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { isShow, columns } = this.state
@@ -514,8 +508,6 @@ class FixedAssetFinancialAdmin extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

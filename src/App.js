@@ -17,14 +17,15 @@ const Page404 = React.lazy(() => import('./views/Pages/Page404'))
 const Page500 = React.lazy(() => import('./views/Pages/Page500'))
 
 const App = () => {
-  ;(function checkToken() {
-    setInterval(async () => {
-      const resVerify = await Service.verifyToken()
-      if (resVerify.status === 401) {
-        jwtVerify()
-      }
-    }, 1000 * 60 * 5)
-  })()
+  // -> aku komen dulu mas DEd
+  // ;(function checkToken() {
+  //   setInterval(async () => {
+  //     const resVerify = await Service.verifyToken()
+  //     if (resVerify.status === 401) {
+  //       jwtVerify()
+  //     }
+  //   }, 1000 * 60 * 5)
+  // })()
   return (
     <HashRouter>
       <React.Suspense fallback={loading()}>

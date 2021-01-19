@@ -27,6 +27,7 @@ export const signIn = (credentials) => async (dispatch) => {
     const res = await Service.signIn(credentials)
 
     localStorage.setItem('token', res.data.token)
+    localStorage.setItem('refreshToken', res.data.refreshTokenJWT)
     // localStorage.setItem('uid', res.data.uid)
     // localStorage.setItem('rid', res.data.rid)
 
@@ -144,6 +145,7 @@ export const signOut = () => async (dispatch) => {
   try {
     // await Service.logout()
     localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
 
     dispatch({ type: UNAUTHENTICATED })
 

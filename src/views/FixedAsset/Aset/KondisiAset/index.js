@@ -32,6 +32,7 @@ class KondisiAset extends Component {
   state = {
     kondisiAsetId: '',
     optKondisiAset: [
+      { label: 'All', value: '' },
       { label: 'Belum Ditentukan', value: 'Belum Ditentukan' },
       { label: 'Baik', value: 'Baik' },
       { label: 'Buruk', value: 'Buruk' },

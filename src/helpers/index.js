@@ -20,6 +20,7 @@ import {
   formatMonth,
   formatYear,
   formatTime,
+  formatMonthYear,
 } from './Date'
 
 export {
@@ -42,4 +43,5 @@ export {
   formatTime,
   getYearOptions,
   formatCurrencyIDR,
+  formatMonthYear,
 }

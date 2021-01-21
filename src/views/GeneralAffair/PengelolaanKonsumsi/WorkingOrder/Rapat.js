@@ -73,14 +73,14 @@ class Rapat extends Component {
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
-      {
-        Header: 'Kode Pelatihan',
-        accessor: 'kodePelatihan',
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
+      // {
+      //   Header: 'Kode Pelatihan',
+      //   accessor: 'kodePelatihan',
+      //   show: true,
+      //   filterable: false,
+      //   headerClassName: 'wordwrap',
+      //   Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      // },
       {
         Header: 'Tanggal Terima',
         accessor: 'tanggalTerima',
@@ -313,16 +313,16 @@ class Rapat extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Kode Pelatihan"
-                          type="number"
+                          type="text"
                           name="kodePelatihan"
                           isRequired
                           placeholder="Masukkan kode Pelatihan"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field

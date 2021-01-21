@@ -32,6 +32,7 @@ import {
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 import { createAssetSchema } from '../../../../validations/mvAsset'
+import templateAsset from '../../../../assets/template/Asset.xlsx'
 
 class DaftarAset extends Component {
   initialValues = {}
@@ -291,15 +292,26 @@ class DaftarAset extends Component {
                         />
                       </FormGroup> */}
                       {modalForm.prop.upload && (
-                        <FormGroup>
-                          <Field
-                            label="File Excel"
-                            name="excel"
-                            isRequired
-                            accept=".xlsx, .xls, .csv"
-                            component={CfInputFile}
-                          />
-                        </FormGroup>
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="File Excel"
+                              name="excel"
+                              isRequired
+                              accept=".xlsx, .xls, .csv"
+                              component={CfInputFile}
+                            />
+                          </FormGroup>
+
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template import Asset:
+                              <a href={templateAsset} target="_blank" rel="noreferrer">
+                                Template Asset
+                              </a>
+                            </p>
+                          </div>
+                        </>
                       )}
                       {!modalForm.prop.upload && (
                         <>

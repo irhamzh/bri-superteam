@@ -23,7 +23,7 @@ export const createGAInternship = (formData, refresh) => async (dispatch) => {
     dispatch({ type: CREATE_INTERNSHIP_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Created'
-    paramsResponse.text = res.data.message
+    paramsResponse.text = 'Berhasil create data'
     AlertMessage.success(paramsResponse).then(() => {
       if (refresh) {
         refresh()
@@ -54,7 +54,7 @@ export const updateGAInternship = (formData, id, refresh) => async (dispatch) =>
     dispatch({ type: UPDATE_INTERNSHIP_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'
-    paramsResponse.text = res.data.message
+    paramsResponse.text = 'Berhasil update data'
     AlertMessage.success(paramsResponse).then(() => {
       if (refresh) {
         refresh()

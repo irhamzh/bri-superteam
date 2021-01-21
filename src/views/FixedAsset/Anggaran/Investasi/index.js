@@ -468,8 +468,9 @@ class InvestasiAnggaran extends Component {
                 <ReactTable
                   filterable
                   columns={tableCols}
-                  defaultPageSize={10}
+                  defaultPageSize={1}
                   className="-highlight"
+                  pageSize={data[0]?.detail.length}
                   {...tableProps}
                   data={data[0]?.detail}
                 />

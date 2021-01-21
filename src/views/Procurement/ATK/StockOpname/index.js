@@ -102,7 +102,7 @@ class StockOpname extends Component {
         headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
-          const listBarang = barang.map((row) => <div>{`${row.name}`}</div>)
+          const listBarang = barang.map((row) => <div>{`${row.nama}`}</div>)
           return listBarang
         },
       },
@@ -453,7 +453,7 @@ class StockOpname extends Component {
                                           { label: 'Lain lain', value: 'Lain lain' },
                                         ]}
                                         isRequired
-                                        name={`barang[${index}].name`}
+                                        name={`barang[${index}].nama`}
                                         placeholder="Pilih atau Nama Barang"
                                         component={CfSelect}
                                       />

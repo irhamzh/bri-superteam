@@ -113,7 +113,7 @@ class Bintang3 extends Component {
         filterable: false,
         Cell: (props) => {
           const { facilities } = props.original
-          return facilities.map((row) => <div>{`${row.name}`}</div>)
+          return facilities.map((row) => <div>{`${row.nama}`}</div>)
         },
       },
 
@@ -466,7 +466,7 @@ class Bintang3 extends Component {
                                           { value: 'Lain-lain', label: 'Lain-lain' },
                                         ]}
                                         isRequired
-                                        name={`facilities[${index}].name`}
+                                        name={`facilities[${index}].nama`}
                                         placeholder="Pilih atau Cari"
                                         component={CfSelect}
                                       />

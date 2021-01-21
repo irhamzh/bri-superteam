@@ -133,7 +133,7 @@ class KonsumsiSosialisasi extends Component {
         headerClassName: 'wordwrap',
         Cell: (props) => {
           const { menu } = props.original
-          const listMenu = menu.map((row) => <div>{`${row.name}`}</div>)
+          const listMenu = menu.map((row) => <div>{`${row.nama}`}</div>)
           return listMenu
         },
       },
@@ -483,7 +483,7 @@ class KonsumsiSosialisasi extends Component {
                                       <Field
                                         label="Nama Menu"
                                         type="text"
-                                        name={`menu[${index}].name`}
+                                        name={`menu[${index}].nama`}
                                         isRequired
                                         placeholder="Masukkan Nama Menu"
                                         component={CfInput}

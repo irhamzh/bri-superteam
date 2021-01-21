@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { AlertMessage, formatDate, userData } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, userData } from '../../../../helpers'
 import {
   createPersekot,
   updatePersekot,
@@ -176,7 +176,7 @@ class PenihilanPersekot extends Component {
         Header: 'Nominal Biaya',
         accessor: 'costNominal',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Status',
@@ -190,7 +190,11 @@ class PenihilanPersekot extends Component {
 
     const user = userData()
     const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
-    if (user && allowedRole.includes(user.role?.name.toLowerCase())) {
+    if (
+      user &&
+      (allowedRole.includes(user.role?.name.toLowerCase()) ||
+        user.role?.name.includes('Supervisor'))
+    ) {
       columns.push({
         Header: 'Aksi',
         width: 200,

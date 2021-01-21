@@ -18,25 +18,26 @@ const Page404 = React.lazy(() => import('./views/Pages/Page404'))
 const Page500 = React.lazy(() => import('./views/Pages/Page500'))
 
 const App = () => {
-  ;(async function checkToken() {
-    await setInterval(async () => {
-      try {
-        await Service.verifyToken()
-      } catch (error) {
-        if (error.message.includes('401') && !window.location.href.includes('/login')) {
-          AlertMessage.custom({
-            title: 'Session Expired',
-            text: 'Sesi anda telah selesai, mohon login kembali',
-            icon: 'error',
-          }).then((result) => {
-            if (result.value) {
-              jwtVerify()
-            }
-          })
-        }
-      }
-    }, 1000 * 10)
-  })()
+  // ;(async function checkToken() {
+  //   await setInterval(async () => {
+  //     try {
+  //       await Service.verifyToken()
+  //     } catch (error) {
+  //       if (error.message.includes('401') && !window.location.href.includes('/login')) {
+  //         AlertMessage.custom({
+  //           title: 'Session Expired',
+  //           text: 'Sesi anda telah selesai, mohon login kembali',
+  //           icon: 'error',
+  //         }).then((result) => {
+  //           if (result.value) {
+  //             jwtVerify()
+  //           }
+  //         })
+  //       }
+  //     }
+  //   }, 1000 * 10)
+  // })()
+
   return (
     <HashRouter>
       <React.Suspense fallback={loading()}>

@@ -1,28 +1,31 @@
-/* eslint-disable no-param-reassign */
-import axios from 'axios'
-// import { signOut } from '../modules/auth/actions'
-// import { UNAUTHENTICATED } from '../modules/auth/types'
-import { API_URL } from './apiConfig'
-// import configStore from './configStore'
+// // /* eslint-disable no-param-reassign */
+// import axios from 'axios'
+// // // import { signOut } from '../modules/auth/actions'
+// // // import { UNAUTHENTICATED } from '../modules/auth/types'
+// import { API_URL } from './apiConfig'
+// // // import configStore from './configStore'
 
-axios.defaults.baseURL = `${API_URL}`
-axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
-// axios.interceptors.response.use(
-//   (response) => {
-//     return response
-//   },
-//   (error) => {
-//     if (error.response?.status === 401 && !window.location.href.includes('/login')) {
-//       window.location = '/'
-//     }
+// axios.defaults.baseURL = `${API_URL}`
+// axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
+// // // axios.interceptors.response.use(
+// // //   (response) => {
+// // //     return response
+// //   },
+// //   (error) => {
+// //     if (error.response?.status === 401 && !window.location.href.includes('/login')) {
+// //       window.location = '/'
+// //     }
 
-//     return Promise.reject(error)
-//   }
-// )
+// //     return Promise.reject(error)
+// //   }
+// // )
+import axios from '../helpers/AxiosInterceptor'
+import { DefaultXios } from '../config/axiosConfig'
+
 class Service {
   // Authentication
   static signIn(values) {
-    return axios.post('/users/login', values)
+    return DefaultXios.post('/users/login', values)
     // const { email, password } = values
     // return firebase.auth().signInWithEmailAndPassword(email, password)
   }

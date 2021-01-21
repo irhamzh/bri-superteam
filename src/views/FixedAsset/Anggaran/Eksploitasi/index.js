@@ -494,7 +494,7 @@ class EksploitasiAnggaran extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Input Data</ModalHeader>
                     <ModalBody>
@@ -522,6 +522,7 @@ class EksploitasiAnggaran extends Component {
                           ]}
                           isRequired
                           name="type"
+                          isDisabled={!!values.id}
                           placeholder="Pilih atau Cari type"
                           component={CfSelect}
                         />
@@ -564,56 +565,59 @@ class EksploitasiAnggaran extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
+                      {values.type === 'Penggunaan' && (
+                        <>
+                          <Row>
+                            <Col>
+                              <FormGroup>
+                                <Field
+                                  label="Tanggal Pembukuan"
+                                  name="tanggalPembukuan"
+                                  classIcon="fa fa-calendar"
+                                  blockLabel
+                                  placeholder="Pilih Tanggal"
+                                  component={CfInputDate}
+                                />
+                              </FormGroup>
+                            </Col>
+                            <Col>
+                              <FormGroup>
+                                <Field
+                                  label="Tanggal Pelimpahan"
+                                  name="tanggalPelimpahan"
+                                  classIcon="fa fa-calendar"
+                                  blockLabel
+                                  placeholder="Pilih Tanggal"
+                                  component={CfInputDate}
+                                />
+                              </FormGroup>
+                            </Col>
+                          </Row>
 
-                      <Row>
-                        <Col>
                           <FormGroup>
                             <Field
-                              label="Tanggal Pembukuan"
-                              name="tanggalPembukuan"
-                              classIcon="fa fa-calendar"
-                              blockLabel
-                              placeholder="Pilih Tanggal"
-                              component={CfInputDate}
+                              label="Keperluan"
+                              type="text"
+                              name="keperluan"
+                              placeholder="Masukkan Keperluan"
+                              component={CfInput}
                             />
                           </FormGroup>
-                        </Col>
-                        <Col>
+
                           <FormGroup>
                             <Field
-                              label="Tanggal Pelimpahan"
-                              name="tanggalPelimpahan"
-                              classIcon="fa fa-calendar"
-                              blockLabel
-                              placeholder="Pilih Tanggal"
-                              component={CfInputDate}
+                              label="Pelimpahan"
+                              options={[
+                                { value: 'Done', label: 'Done' },
+                                { value: 'Not Yet', label: 'Not Yet' },
+                              ]}
+                              name="pelimpahan"
+                              placeholder="Pilih atau Cari pelimpahan"
+                              component={CfSelect}
                             />
                           </FormGroup>
-                        </Col>
-                      </Row>
-
-                      <FormGroup>
-                        <Field
-                          label="Keperluan"
-                          type="text"
-                          name="keperluan"
-                          placeholder="Masukkan Keperluan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Pelimpahan"
-                          options={[
-                            { value: 'Done', label: 'Done' },
-                            { value: 'Not Yet', label: 'Not Yet' },
-                          ]}
-                          name="pelimpahan"
-                          placeholder="Pilih atau Cari pelimpahan"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                        </>
+                      )}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -182,7 +182,7 @@ class AnggaranRapat extends Component {
     )
   }
 
-  handleDelete = (e, state) => {
+  handleDelete = (e, state, idClient) => {
     e.preventDefault()
 
     const { id } = state
@@ -191,7 +191,7 @@ class AnggaranRapat extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deleteGAAnggaran(id, this.doRefresh)
+          deleteGAAnggaran({ id: idClient }, id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -296,6 +296,7 @@ class AnggaranRapat extends Component {
         Header: 'Aksi',
         width: 150,
         show: true,
+        accessor: `id`,
         filterable: false,
         Cell: (props) => (
           <>
@@ -320,7 +321,7 @@ class AnggaranRapat extends Component {
             &nbsp; | &nbsp;
             <Button
               color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
+              onClick={(e) => this.handleDelete(e, data[0], props.value)}
               className="mr-1"
               title="Delete"
             >
@@ -526,6 +527,7 @@ class AnggaranRapat extends Component {
                           ]}
                           isRequired
                           name="type"
+                          isDisabled={!!values.id}
                           placeholder="Pilih atau Cari type"
                           component={CfSelect}
                         />
@@ -676,7 +678,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   createGAAnggaran: (formData, refresh) => dispatch(createGAAnggaran(formData, refresh)),
   updateGAAnggaran: (formData, id, refresh) => dispatch(updateGAAnggaran(formData, id, refresh)),
-  deleteGAAnggaran: (id, refresh) => dispatch(deleteGAAnggaran(id, refresh)),
+  deleteGAAnggaran: (formData, id, refresh) => dispatch(deleteGAAnggaran(formData, id, refresh)),
 })
 
 export default connect(

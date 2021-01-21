@@ -20,7 +20,7 @@
 // //   }
 // // )
 import axios from '../helpers/AxiosInterceptor'
-import { DefaultXios } from '../config/axiosConfig'
+import { DefaultXios } from './axiosConfig'
 
 class Service {
   // Authentication
@@ -2155,8 +2155,8 @@ class Service {
     return axios.put(`ga-budgets/${id}`, values)
   }
 
-  static deleteGAAnggaran(id) {
-    return axios.delete(`ga-budgets/${id}`)
+  static deleteGAAnggaran(values, id) {
+    return axios.post(`ga-budgets/penggunaan/delete/${id}`, values)
   }
 
   // Dashboard

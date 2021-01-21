@@ -74,14 +74,14 @@ export const updateGAAnggaran = (formData, id, refresh) => async (dispatch) => {
   }
 }
 
-export const deleteGAAnggaran = (id, refresh) => async (dispatch) => {
+export const deleteGAAnggaran = (formData, id, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
     dispatch({ type: DELETE_GENERAL_AFFAIR_ANGGARAN_LOADING, isLoading: true })
     // Call API
-    const res = await Service.deleteGAAnggaran(id)
+    const res = await Service.deleteGAAnggaran(formData, id)
     dispatch({ type: DELETE_GENERAL_AFFAIR_ANGGARAN_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'

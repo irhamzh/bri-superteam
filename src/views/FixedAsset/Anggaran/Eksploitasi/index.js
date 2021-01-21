@@ -179,16 +179,16 @@ class EksploitasiAnggaran extends Component {
     )
   }
 
-  handleDelete = (e, state) => {
+  handleDelete = (e, state, idClient) => {
     e.preventDefault()
 
     const { id } = state
     const { deleteFXAnggaran } = this.props
-
+    console.log(state, 'states')
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deleteFXAnggaran(id, this.doRefresh)
+          deleteFXAnggaran({ id: idClient }, id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -292,6 +292,7 @@ class EksploitasiAnggaran extends Component {
       {
         Header: 'Aksi',
         width: 150,
+        accessor: `id`,
         show: true,
         filterable: false,
         Cell: (props) => (
@@ -317,7 +318,7 @@ class EksploitasiAnggaran extends Component {
             &nbsp; | &nbsp;
             <Button
               color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
+              onClick={(e) => this.handleDelete(e, data[0], props.value)}
               className="mr-1"
               title="Delete"
             >
@@ -672,7 +673,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   createFXAnggaran: (formData, refresh) => dispatch(createFXAnggaran(formData, refresh)),
   updateFXAnggaran: (formData, id, refresh) => dispatch(updateFXAnggaran(formData, id, refresh)),
-  deleteFXAnggaran: (id, refresh) => dispatch(deleteFXAnggaran(id, refresh)),
+  deleteFXAnggaran: (formData, id, refresh) => dispatch(deleteFXAnggaran(formData, id, refresh)),
 })
 
 export default connect(

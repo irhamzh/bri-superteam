@@ -2469,8 +2469,8 @@ class Service {
     return axios.put(`fx-budgets/${id}`, values)
   }
 
-  static deleteFXAnggaran(id) {
-    return axios.delete(`fx-budgets/${id}`)
+  static deleteFXAnggaran(values, id) {
+    return axios.post(`fx-budgets/penggunaan/delete/${id}`, values)
   }
 }
 

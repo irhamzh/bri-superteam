@@ -74,14 +74,15 @@ export const updateFXAnggaran = (formData, id, refresh) => async (dispatch) => {
   }
 }
 
-export const deleteFXAnggaran = (id, refresh) => async (dispatch) => {
+export const deleteFXAnggaran = (formData, id, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
     dispatch({ type: DELETE_FIXED_ASSET_ANGGARAN_LOADING, isLoading: true })
     // Call API
-    const res = await Service.deleteFXAnggaran(id)
+    console.log(formData, id, 'redux')
+    const res = await Service.deleteFXAnggaran(formData, id)
     dispatch({ type: DELETE_FIXED_ASSET_ANGGARAN_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'

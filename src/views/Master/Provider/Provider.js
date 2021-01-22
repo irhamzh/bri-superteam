@@ -63,6 +63,11 @@ function Provider(props) {
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {
+      Header: 'PIC',
+      accessor: 'pic',
+      Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+    },
+    {
       Header: 'Contact',
       accessor: 'contact',
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,

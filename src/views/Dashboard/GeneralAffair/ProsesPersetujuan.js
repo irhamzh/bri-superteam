@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDate, invalidValues, queryStringToJSON } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -28,11 +28,33 @@ class ProsesPersetujuan extends Component {
   initialValues = {}
 
   async componentDidMount() {
+    const { location } = this.props
+    const query = queryStringToJSON(location.search)
+    const { date, monthYear } = query
     const { fetchQueryProps } = this.props
-    fetchQueryProps.setFilteredByObject({
-      division: 'General Affair',
-      in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
-    })
+
+    if (date) {
+      fetchQueryProps.setFilteredByObject({
+        division: 'General Affair',
+        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        atDate$createdAt: date,
+        'month-year$createdAt': '',
+      })
+    } else if (monthYear) {
+      fetchQueryProps.setFilteredByObject({
+        division: 'General Affair',
+        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        atDate$createdAt: '',
+        'month-year$createdAt': monthYear,
+      })
+    } else {
+      fetchQueryProps.setFilteredByObject({
+        division: 'General Affair',
+        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        atDate$createdAt: '',
+        'month-year$createdAt': '',
+      })
+    }
   }
 
   doRefresh = () => {
@@ -250,6 +272,7 @@ ProsesPersetujuan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
+  location: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   createAsset: PropTypes.func.isRequired,
   updateAsset: PropTypes.func.isRequired,
   deleteAsset: PropTypes.func.isRequired,

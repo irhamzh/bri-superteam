@@ -8,7 +8,13 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
+import {
+  AlertMessage,
+  formatDate,
+  getYearOptions,
+  invalidValues,
+  queryStringToJSON,
+} from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -22,10 +28,30 @@ class ApprovedSelesai extends Component {
   initialValues = {}
 
   componentDidMount() {
+    const { location } = this.props
+    const query = queryStringToJSON(location.search)
+    const { date, monthYear } = query
     const { fetchQueryProps } = this.props
-    fetchQueryProps.setFilteredByObject({
-      status: 'Approved oleh Kabag',
-    })
+
+    if (date) {
+      fetchQueryProps.setFilteredByObject({
+        status: 'Approved oleh Kabag',
+        atDate$createdAt: date,
+        'month-year$createdAt': '',
+      })
+    } else if (monthYear) {
+      fetchQueryProps.setFilteredByObject({
+        status: 'Approved oleh Kabag',
+        atDate$createdAt: '',
+        'month-year$createdAt': monthYear,
+      })
+    } else {
+      fetchQueryProps.setFilteredByObject({
+        status: 'Approved oleh Kabag',
+        atDate$createdAt: '',
+        'month-year$createdAt': '',
+      })
+    }
   }
 
   doRefresh = () => {
@@ -411,13 +437,7 @@ class ApprovedSelesai extends Component {
                             <Select
                               isClearable
                               placeholder="Pilih tahun..."
-                              options={[
-                                { value: 2018, label: '2018' },
-                                { value: 2019, label: '2019' },
-                                { value: 2020, label: '2020' },
-                                { value: 2021, label: '2021' },
-                                { value: 2022, label: '2022' },
-                              ]}
+                              options={getYearOptions()}
                               name="tahun"
                               className=""
                               onChange={(e) => this.setState({ tahun: e?.value })}
@@ -457,6 +477,7 @@ ApprovedSelesai.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
+  location: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   fetchQueryProps: WithTableFetchQueryProp,
   createAsset: PropTypes.func.isRequired,
   updateAsset: PropTypes.func.isRequired,

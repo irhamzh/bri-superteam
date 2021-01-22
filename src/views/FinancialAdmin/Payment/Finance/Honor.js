@@ -48,7 +48,7 @@ const { ExcelColumn } = ReactExport.ExcelFile
 
 class Honor extends Component {
   state = {
-    optProvider: [],
+    // optProvider: [],
     isShow: false,
     columns: [],
   }
@@ -67,9 +67,9 @@ class Honor extends Component {
       typePayment: 'Honor',
     })
 
-    const resDataProvider = await Service.getProvider()
-    const dataProvider = resDataProvider.data.data
-    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+    // const resDataProvider = await Service.getProvider()
+    // const dataProvider = resDataProvider.data.data
+    // const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -98,14 +98,14 @@ class Honor extends Component {
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
+      // {
+      //   Header: 'Nama Provider',
+      //   accessor: 'provider.name',
+      //   show: true,
+      //   filterable: false,
+      //   headerClassName: 'wordwrap',
+      //   Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      // },
       {
         Header: 'Surat Perintah Bayar',
         accessor: 'suratPerintahBayar',
@@ -157,7 +157,7 @@ class Honor extends Component {
     ]
 
     this.setState({
-      optProvider,
+      // optProvider,
       columns,
     })
   }
@@ -232,7 +232,7 @@ class Honor extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optProvider, isShow, columns } = this.state
+    const { isShow, columns } = this.state
     const tableCols = [
       ...columns,
       {
@@ -377,7 +377,7 @@ class Honor extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -417,7 +417,7 @@ class Honor extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Nama Provider"
                           options={optProvider}
@@ -431,7 +431,7 @@ class Honor extends Component {
                           }
                           component={CfSelect}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <div style={{ marginLeft: '20px' }}>
                         <FormGroup>

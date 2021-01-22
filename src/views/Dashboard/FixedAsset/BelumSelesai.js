@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom'
 import Select from 'react-select'
 import Service from '../../../config/services'
 // import { CfInput, CfSelect } from '../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDate, invalidValues, queryStringToJSON } from '../../../helpers'
 import { createAsset, updateAsset, deleteAsset } from '../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../HOC/withToggle'
@@ -30,10 +30,30 @@ class BelumSelesai extends Component {
   initialValues = {}
 
   componentDidMount() {
+    const { location } = this.props
+    const query = queryStringToJSON(location.search)
+    const { date, monthYear } = query
     const { fetchQueryProps } = this.props
-    fetchQueryProps.setFilteredByObject({
-      status: 'Approved oleh Kabag',
-    })
+
+    if (date) {
+      fetchQueryProps.setFilteredByObject({
+        status: 'Approved oleh Kabag',
+        atDate$createdAt: date,
+        'month-year$createdAt': '',
+      })
+    } else if (monthYear) {
+      fetchQueryProps.setFilteredByObject({
+        status: 'Approved oleh Kabag',
+        atDate$createdAt: '',
+        'month-year$createdAt': monthYear,
+      })
+    } else {
+      fetchQueryProps.setFilteredByObject({
+        status: 'Approved oleh Kabag',
+        atDate$createdAt: '',
+        'month-year$createdAt': '',
+      })
+    }
   }
 
   doRefresh = () => {
@@ -407,6 +427,7 @@ BelumSelesai.propTypes = {
   updateAsset: PropTypes.func.isRequired,
   deleteAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
+  location: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   modalForm: WithToggleProps,
 }
 

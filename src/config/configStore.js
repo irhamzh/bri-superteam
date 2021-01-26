@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { createStore, applyMiddleware } from 'redux'
 import reduxThunk from 'redux-thunk'
 import rootReducer from '../modules'
@@ -11,10 +12,11 @@ async function jwtVerify() {
   configStore.dispatch({ type: VERIFYING })
 
   try {
-    // await Service.verifyToken()
+    await Service.verifyToken()
     configStore.dispatch({ type: AUTHENTICATED })
   } catch (e) {
     localStorage.removeItem('token')
+    localStorage.removeItem('refreshTokenJWT')
     localStorage.removeItem('uid')
     localStorage.removeItem('rid')
     configStore.dispatch({ type: UNAUTHENTICATED })
@@ -23,4 +25,4 @@ async function jwtVerify() {
 
 jwtVerify()
 
-export default configStore
+export { configStore, jwtVerify }

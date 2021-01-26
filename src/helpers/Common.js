@@ -9,13 +9,13 @@ const userData = () => {
   let User = ''
 
   if (token) {
-    let getToken = ''
-    const splitToken = token.split(' ')
-    if (splitToken.length === 2) {
-      ;[, getToken] = splitToken
-    }
+    // let getToken = ''
+    // const splitToken = token.split(' ')
+    // if (splitToken.length === 2) {
+    //   ;[, getToken] = splitToken
+    // }
 
-    User = jwt.decode(getToken)
+    User = jwt.decode(token)
   }
   return User
 }
@@ -121,6 +121,42 @@ const requireLabel = () => (
   </span>
 )
 
+const getYearOptions = (option = 5) => {
+  const options = []
+  const thisYear = new Date().getFullYear()
+  for (let i = option; i > 0; i -= 1) {
+    options.push({ value: thisYear - i, label: thisYear - i })
+  }
+
+  for (let i = 0; i < option; i += 1) {
+    options.push({ value: thisYear + i, label: thisYear + i })
+  }
+
+  return options
+}
+
+const formatCurrencyIDR = (value) => {
+  if (value && Number(value)) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+    }).format(value)
+  }
+  return null
+}
+
+function queryStringToJSON(query) {
+  const pairs = query.slice(1).split('&')
+
+  const result = {}
+  pairs.forEach((pair) => {
+    const itemPair = pair.split('=')
+    result[itemPair[0]] = decodeURIComponent(itemPair[1] || '')
+  })
+
+  return JSON.parse(JSON.stringify(result))
+}
+
 export {
   userData,
   formDataFilterByKeys,
@@ -131,4 +167,7 @@ export {
   badgeTypeDokumen,
   checkFilePreview,
   invalidValues,
+  getYearOptions,
+  formatCurrencyIDR,
+  queryStringToJSON,
 }

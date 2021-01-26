@@ -1,7 +1,10 @@
 import React from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { HashRouter, Route, Switch } from 'react-router-dom'
 // import { renderRoutes } from 'react-router-config';
 import './App.scss'
+// import { jwtVerify } from './config/configStore'
+// import Service from './config/services'
+// import { AlertMessage } from './helpers'
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>
 
@@ -15,8 +18,28 @@ const Page404 = React.lazy(() => import('./views/Pages/Page404'))
 const Page500 = React.lazy(() => import('./views/Pages/Page500'))
 
 const App = () => {
+  // ;(async function checkToken() {
+  //   await setInterval(async () => {
+  //     try {
+  //       await Service.verifyToken()
+  //     } catch (error) {
+  //       if (error.message.includes('401') && !window.location.href.includes('/login')) {
+  //         AlertMessage.custom({
+  //           title: 'Session Expired',
+  //           text: 'Sesi anda telah selesai, mohon login kembali',
+  //           icon: 'error',
+  //         }).then((result) => {
+  //           if (result.value) {
+  //             jwtVerify()
+  //           }
+  //         })
+  //       }
+  //     }
+  //   }, 1000 * 10)
+  // })()
+
   return (
-    <BrowserRouter>
+    <HashRouter>
       <React.Suspense fallback={loading()}>
         <Switch>
           <Route exact path="/login" name="Login Page" render={(props) => <Login {...props} />} />
@@ -31,7 +54,7 @@ const App = () => {
           <Route path="/" name="Home" render={(props) => <DefaultLayout {...props} />} />
         </Switch>
       </React.Suspense>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 

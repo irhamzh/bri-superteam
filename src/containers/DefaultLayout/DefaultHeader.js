@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import {
-  Badge,
+  // Badge,
   UncontrolledDropdown,
   DropdownItem,
   DropdownMenu,
@@ -11,21 +11,27 @@ import {
 } from 'reactstrap'
 import PropTypes from 'prop-types'
 import { AppNavbarBrand, AppSidebarToggler } from '@coreui/react'
-import logo from '../../assets/img/brand/logo.svg'
-import sygnet from '../../assets/img/brand/sygnet.svg'
+import { connect } from 'react-redux'
+import logo from '../../assets/img/brand/bri-logo.png'
+// import sygnet from '../../assets/img/brand/sygnet.svg'
 import withToggle, { WithToggleProps } from '../../HOC/withToggle'
 import ModalForm from './ModalForm/ModalForm'
+import { signOut } from '../../modules/auth/actions'
+import { userData } from '../../helpers'
 
 function DefaultHeader(props) {
   // eslint-disable-next-line
   const { modalForm, isLoading, signOut, className, children, ...attributes } = props
 
+  const user = userData()
+  const username = user?.name
+
   return (
     <>
       <AppSidebarToggler className="d-lg-none" display="md" mobile />
       <AppNavbarBrand
-        full={{ src: logo, width: 89, height: 25, alt: 'BRI Corpu' }}
-        minimized={{ src: sygnet, width: 30, height: 30, alt: 'BRI Corpu' }}
+        full={{ src: logo, width: 'auto', height: 50, alt: 'BRI Corpu' }}
+        minimized={{ src: logo, width: 30, height: 30, alt: 'BRI Corpu' }}
       />
       <AppSidebarToggler className="d-md-down-none" display="lg" />
 
@@ -44,18 +50,19 @@ function DefaultHeader(props) {
       */}
 
       <Nav className="ml-auto" navbar>
-        <NavItem className="d-md-down-none">
+        {/* <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">
             <i className="icon-bell" />
             <Badge pill color="danger">
               5
             </Badge>
           </NavLink>
-        </NavItem>
+        </NavItem> */}
 
         <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">
-            Hallo, Admin
+            Halo,
+            {username}
           </NavLink>
         </NavItem>
 
@@ -71,10 +78,10 @@ function DefaultHeader(props) {
             <DropdownItem header tag="div" className="text-center">
               <strong>Account</strong>
             </DropdownItem>
-            <DropdownItem onClick={modalForm.toggle}>
+            {/* <DropdownItem onClick={modalForm.toggle}>
               <i className="fa fa-user" />
               &nbsp; Change Password
-            </DropdownItem>
+            </DropdownItem> */}
             <DropdownItem onClick={signOut}>
               <i className="fa fa-lock" />
               &nbsp; Logout
@@ -96,8 +103,12 @@ DefaultHeader.propTypes = {
   modalForm: WithToggleProps,
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  signOut: () => dispatch(signOut()),
+})
+
 export default withToggle({
-  Component: DefaultHeader,
+  Component: connect(null, mapDispatchToProps)(DefaultHeader),
   toggles: {
     modalForm: false,
   },

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,22 +20,93 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPersediaan,
+  updatePersediaan,
+  deletePersediaan,
+} from '../../../../modules/persediaan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class Aktivitas extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optJenisBarang: [],
+    isShow: false,
+    columns: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    // const { fetchQueryProps } = this.props
+
+    const resDataJenisBarang = await Service.getJenisBarang()
+    const dataJenisBarang = resDataJenisBarang.data.data
+    const optJenisBarang = dataJenisBarang.map((row) => ({ label: row.name, value: row.id }))
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggal',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Jenis Barang',
+        accessor: 'jenisBarang.name',
+        filterable: false,
+        show: true,
+      },
+      {
+        Header: 'Nama Barang',
+        accessor: 'name',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Stok Awal',
+        accessor: 'stokAwal',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Penambahan',
+        accessor: 'penambahan',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Pengurangan',
+        accessor: 'pengurangan',
+        show: true,
+        filterable: false,
+      },
+      {
+        Header: 'Stok Akhir',
+        accessor: 'stokAkhir',
+        show: true,
+        filterable: false,
+      },
+    ]
+
+    this.setState({
+      optJenisBarang,
+      columns,
+    })
   }
 
   doRefresh = () => {
@@ -44,12 +116,16 @@ class Aktivitas extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, jenisBarang } = values
+    const { createPersediaan, updatePersediaan } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      if (jenisBarang && Object.keys(jenisBarang).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.jenisBarang = jenisBarang.id || jenisBarang
+      }
+      updatePersediaan(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPersediaan(values, this.doRefresh)
     }
   }
 
@@ -57,13 +133,12 @@ class Aktivitas extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePersediaan } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePersediaan(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -77,52 +152,53 @@ class Aktivitas extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  handleInputJenisBarang = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisBarang(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optJenisBarang, isShow, columns } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
-      },
-      {
-        Header: 'Jenis Barang',
-        accessor: 'jenisBarang',
-        filterable: true,
-      },
-      {
-        Header: 'Nama Barang',
-        accessor: 'namaBarang',
-        filterable: false,
-      },
-      {
-        Header: 'Stok Awal',
-        accessor: 'stokAwal',
-        filterable: false,
-      },
-      {
-        Header: 'Penambahan',
-        accessor: 'penambahan',
-        filterable: false,
-      },
-      {
-        Header: 'Pengurangan',
-        accessor: 'pengurangan',
-        filterable: false,
-      },
-      {
-        Header: 'Stok Akhir',
-        accessor: 'stokAkhir',
-        filterable: false,
-      },
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -136,17 +212,19 @@ class Aktivitas extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
       },
     ]
+
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const pageName = 'Aktivitas Persediaan'
     // const isIcon = { paddingRight: '7px' }
@@ -157,11 +235,15 @@ class Aktivitas extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -187,22 +269,47 @@ class Aktivitas extends Component {
                         color="secondary"
                         namaPengadaan
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn
+                            label="Jenis Barang"
+                            value={(col) => col.jenisBarang?.name}
+                          />
+                          <ExcelColumn label="Nama Barang" value="name" />
+                          <ExcelColumn label="Stok Awal" value="stokAwal" />
+                          <ExcelColumn label="Penambahan" value="penambahan" />
+                          <ExcelColumn label="Pengurangan" value="pengurangan" />
+                          <ExcelColumn label="Stok Akhir" value="stokAkhir" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
-                  filterable
-                  columns={columns}
+                  filterable={false}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -218,7 +325,7 @@ class Aktivitas extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={roleSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -226,9 +333,9 @@ class Aktivitas extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Data Aktivitas</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
@@ -246,11 +353,19 @@ class Aktivitas extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis Barang"
-                          options={[{ value: 'Jenis Barang', label: 'Jenis Barang' }]}
-                          isRequired
+                          cacheOptions
+                          options={optJenisBarang}
+                          defaultOptions
+                          loadOptions={this.handleInputJenisBarang}
                           name="jenisBarang"
-                          placeholder="Pilih atau Cari Jenis Barang"
-                          component={CfSelect}
+                          isRequired
+                          placeholder="Pilih atau cari Jenis Barang"
+                          defaultValue={
+                            values.jenisBarang
+                              ? { value: values.jenisBarang.id, label: values.jenisBarang.name }
+                              : null
+                          }
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -258,7 +373,7 @@ class Aktivitas extends Component {
                         <Field
                           label="Nama Barang"
                           type="text"
-                          name="namaBarang"
+                          name="name"
                           isRequired
                           placeholder="Masukkan Nama Barang"
                           component={CfInput}
@@ -304,12 +419,16 @@ class Aktivitas extends Component {
                           type="number"
                           name="stokAkhir"
                           isRequired
+                          disabled
+                          value={
+                            Number(values.stokAwal) +
+                            Number(values.penambahan) -
+                            Number(values.pengurangan)
+                          }
                           placeholder="Masukkan Stok Akhir"
                           component={CfInput}
                         />
                       </FormGroup>
-
-                      {ErrorMessage(message)}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -348,23 +467,23 @@ Aktivitas.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPersediaan: PropTypes.func.isRequired,
+  updatePersediaan: PropTypes.func.isRequired,
+  deletePersediaan: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.persediaan.isLoading,
+  message: state.persediaan.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPersediaan: (formData, refresh) => dispatch(createPersediaan(formData, refresh)),
+  updatePersediaan: (formData, id, refresh) => dispatch(updatePersediaan(formData, id, refresh)),
+  deletePersediaan: (id, refresh) => dispatch(deletePersediaan(id, refresh)),
 })
 
 export default connect(
@@ -372,7 +491,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPersediaan(p),
     Component: withToggle({
       Component: Aktivitas,
       toggles: {

@@ -19,22 +19,36 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfAsyncSelect, CfInput } from '../../../../components'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
+import {
+  createPurchaseOrder,
+  updatePurchaseOrder,
+  deletePurchaseOrder,
+} from '../../../../modules/purchaseOrder/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
 class PurchaseOrder extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  state = {
+    optPengadaan: [],
+    optProvider: [],
+    dataProvider: [],
+  }
+
+  initialValues = {}
+
+  async componentDidMount() {
+    const resDataPengadaan = await Service.getAllPengadaan()
+    const dataPengadaan = resDataPengadaan.data.data
+    const optPengadaan = dataPengadaan.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+
+    const resDataProvider = await Service.getProvider()
+    const dataProvider = resDataProvider.data.data
+    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    this.setState({ optPengadaan, optProvider, dataProvider })
   }
 
   doRefresh = () => {
@@ -45,11 +59,20 @@ class PurchaseOrder extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createPurchaseOrder, updatePurchaseOrder } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { provider, pengadaan } = values
+      if (provider && Object.keys(provider).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.provider = provider.id || provider
+      }
+      if (pengadaan && Object.keys(pengadaan).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.pengadaan = pengadaan.id || pengadaan
+      }
+      updatePurchaseOrder(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createPurchaseOrder(values, this.doRefresh)
     }
   }
 
@@ -57,13 +80,12 @@ class PurchaseOrder extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deletePurchaseOrder } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deletePurchaseOrder(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -77,48 +99,86 @@ class PurchaseOrder extends Component {
       })
   }
 
-  render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
-    const { tableProps } = fetchQueryProps
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+  handleInputPengadaan = async (value) => {
+    const filtered = [{ id: 'namaPengadaan', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getAllPengadaan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+    })
+    return option
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
+    const { optPengadaan, optProvider, dataProvider } = this.state
+
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Tanggal',
         width: 100,
         filterable: false,
-        accessor: 'tanggal',
+        accessor: 'createdAt',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
       },
       {
         Header: 'Nama Provider',
-        accessor: 'namaProvider',
-        filterable: true,
+        accessor: 'provider.name',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
 
       {
         Header: 'Alamat',
         filterable: false,
-        accessor: 'alamat',
+        accessor: 'provider.address',
       },
       {
         Header: 'Kontak',
-        accessor: 'kontak',
+        accessor: 'provider.contact',
       },
       {
         Header: 'Nama Pengadaan',
-        accessor: 'namaPengadaan',
-        filterable: true,
+        accessor: 'pengadaan.namaPengadaan',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Jumlah Barang',
-        accessor: 'jumlahBarang',
-        filterable: true,
+        accessor: 'jumlah',
+        filterable: false,
+        headerClassName: 'wordwrap',
       },
       {
         Header: 'Harga Barang',
-        accessor: 'hargaBarang',
-        filterable: true,
+        accessor: 'hargaSatuan',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
+      },
+      {
+        Header: 'Total Harga',
+        accessor: 'totalHarga',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Aksi',
@@ -136,12 +196,12 @@ class PurchaseOrder extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
@@ -157,11 +217,15 @@ class PurchaseOrder extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -181,7 +245,7 @@ class PurchaseOrder extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
@@ -198,7 +262,7 @@ class PurchaseOrder extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -206,29 +270,83 @@ class PurchaseOrder extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Purchase Order</ModalHeader>
                     <ModalBody>
+                      {/* <FormGroup>
+                        <Field
+                          label="Nama Pengadaan"
+                          options={optPengadaan}
+                          isRequired
+                          name="pengadaan"
+                          placeholder="Pilih atau Cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
+                          component={CfSelect}
+                        />
+                      </FormGroup> */}
+
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
-                          options={[{ value: 'Purchase Order', label: 'Purchase Order' }]}
+                          cacheOptions
+                          options={optPengadaan}
+                          defaultOptions
+                          loadOptions={this.handleInputPengadaan}
+                          name="pengadaan"
                           isRequired
-                          name="namaPengadaan"
-                          placeholder="Pilih atau Cari Nama Pengadaan"
-                          component={CfSelect}
+                          placeholder="Pilih atau cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
+
+                      {/* <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          options={optProvider}
+                          isRequired
+                          name="provider"
+                          placeholder="Pilih atau Cari Nama Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfSelect}
+                        />
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          type="text"
-                          name="namaProvider"
+                          cacheOptions
+                          options={optProvider}
+                          defaultOptions
+                          loadOptions={this.handleInputProvider}
+                          name="provider"
                           isRequired
-                          placeholder="Masukkan nama provider"
-                          component={CfInput}
+                          placeholder="Pilih atau cari Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -236,20 +354,32 @@ class PurchaseOrder extends Component {
                         <Field
                           label="Alamat Provider"
                           type="text"
-                          name="alamatdProvider"
+                          name="address"
                           isRequired
-                          placeholder="Masukkan alamat provider"
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.address
+                          }
+                          placeholder="Masukkan Alamat Provider"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
-                          label="Kontak"
+                          label="No. Kontak Provider"
                           type="text"
-                          name="kontakProvider"
+                          name="contact"
                           isRequired
-                          placeholder="Masukkan No. Kontak provider"
+                          disabled
+                          value={
+                            dataProvider.find(
+                              (obj) => obj.id === values.provider || obj.id === values.provider?.id
+                            )?.contact
+                          }
+                          placeholder="Masukkan No. Kontak Provider"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -267,16 +397,25 @@ class PurchaseOrder extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Harga"
+                          label="Harga Satuan"
                           type="text"
-                          name="harga"
+                          name="hargaSatuan"
                           isRequired
                           placeholder="Masukkan harga"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      <FormGroup>
+                        <Field
+                          label="Total Harga"
+                          type="text"
+                          name="totalHarga"
+                          isRequired
+                          placeholder="Masukkan Total Harga"
+                          component={CfInput}
+                        />
+                      </FormGroup>
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -295,7 +434,7 @@ class PurchaseOrder extends Component {
                             &nbsp;Loading...
                           </>
                         ) : (
-                          'Save Changes'
+                          'Submit'
                         )}
                       </Button>
                     </ModalFooter>
@@ -315,23 +454,24 @@ PurchaseOrder.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPurchaseOrder: PropTypes.func.isRequired,
+  updatePurchaseOrder: PropTypes.func.isRequired,
+  deletePurchaseOrder: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.purchaseOrder.isLoading,
+  message: state.purchaseOrder.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPurchaseOrder: (formData, refresh) => dispatch(createPurchaseOrder(formData, refresh)),
+  updatePurchaseOrder: (formData, id, refresh) =>
+    dispatch(updatePurchaseOrder(formData, id, refresh)),
+  deletePurchaseOrder: (id, refresh) => dispatch(deletePurchaseOrder(id, refresh)),
 })
 
 export default connect(
@@ -339,7 +479,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPurchaseOrder(p),
     Component: withToggle({
       Component: PurchaseOrder,
       toggles: {

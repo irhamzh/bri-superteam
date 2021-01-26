@@ -61,11 +61,11 @@ const CfInputFile = ({
       {filePreview && fileUploadPreview(filePreview, fileType, fileSize)}
 
       <>
-        {!invalidValues.includes(field.value) ? (
+        {/* {!invalidValues.includes(field.value) ? (
           <div>{checkFilePreview(`${API_FILE}${field.value}`)}</div>
         ) : (
           <div className="btn btn-secondary disabled">Tidak ada File</div>
-        )}
+        )} */}
       </>
     </>
   )

@@ -1,41 +1,27 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Col,
-  Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  FormGroup,
-} from 'reactstrap'
+import { Button, Card, CardBody, CardHeader, Col, Row } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  createPersediaan,
+  updatePersediaan,
+  deletePersediaan,
+} from '../../../../modules/persediaan/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class Rekapitulasi extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
-  }
+  initialValues = {}
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
@@ -43,61 +29,41 @@ class Rekapitulasi extends Component {
     fetchQueryProps.refresh()
   }
 
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
-    if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
-    } else {
-      createRole(values, this.doRefresh)
-    }
-  }
-
-  handleDelete = (e, state) => {
-    e.preventDefault()
-
-    const { id } = state
-    const { deleteRole } = this.props
-
-    AlertMessage.warning()
-      .then((result) => {
-        if (result.value) {
-          // console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
-        } else {
-          const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
-          }
-          AlertMessage.info(paramsResponse)
-        }
-      })
-      .catch((err) => {
-        AlertMessage.error(err) // Internal Server Error
-      })
-  }
+  // handleSaveChanges = (values) => {
+  //   const { id } = values
+  //   const { createRole, updateRole } = this.props
+  //   if (!invalidValues.includes(id)) {
+  //     updateRole(values, id, this.doRefresh)
+  //   } else {
+  //     createRole(values, this.doRefresh)
+  //   }
+  // }
 
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { auth, fetchQueryProps } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
         Header: 'Jenis Barang',
-        accessor: 'jenisBarang',
+        accessor: 'jenisBarang.name',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Barang',
-        accessor: 'namaBarang',
+        accessor: 'name',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Posisi Terakhir Stok',
         accessor: 'stokAkhir',
         filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]
 
@@ -111,13 +77,13 @@ class Rekapitulasi extends Component {
         <Row>
           <Col xs="12">
             <Card style={{ borderRadius: '20px' }}>
-              <CardHeader style={{ backgroundColor: '#1F479C', borderRadius: '20px 20px 0px 0px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
                     <Button
                       color="default"
                       className="mr-1"
-                      style={{ color: '#F1F1F1', fontSize: '1.3rem' }}
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
                     >
                       {pageName}
                     </Button>
@@ -128,13 +94,27 @@ class Rekapitulasi extends Component {
                 <Row>
                   <Col sm="12">
                     <div style={{ textAlign: 'right' }}>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn
+                            label="Jenis Barang"
+                            value={(col) => col.jenisBarang?.name}
+                          />
+                          <ExcelColumn label="Nama Barang" value="name" />
+                          <ExcelColumn label="Posisi Terakhir Stok" value="stokAkhir" />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
@@ -147,76 +127,6 @@ class Rekapitulasi extends Component {
                 />
               </CardBody>
             </Card>
-
-            <Modal
-              isOpen={modalForm.isOpen}
-              toggle={modalForm.toggle}
-              backdrop="static"
-              className={className}
-            >
-              <Formik
-                initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
-                onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    this.handleSaveChanges(values)
-                    actions.setSubmitting(false)
-                  }, 1000)
-                }}
-              >
-                {({ isSubmitting }) => (
-                  <Form>
-                    <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Kode Aset"
-                          type="text"
-                          name="kode"
-                          isRequired
-                          placeholder="Masukkan kode aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button type="button" color="secondary" onClick={modalForm.hide}>
-                        Cancel
-                      </Button>
-                      &nbsp;
-                      <Button
-                        type="submit"
-                        color="primary"
-                        className="px-4"
-                        disabled={isSubmitting || isLoading}
-                      >
-                        {isSubmitting || isLoading ? (
-                          <>
-                            <Spinner size="sm" color="light" />
-                            &nbsp;Loading...
-                          </>
-                        ) : (
-                          'Submit'
-                        )}
-                      </Button>
-                    </ModalFooter>
-                  </Form>
-                )}
-              </Formik>
-            </Modal>
           </Col>
         </Row>
       </div>
@@ -229,9 +139,9 @@ Rekapitulasi.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createPersediaan: PropTypes.func.isRequired,
+  updatePersediaan: PropTypes.func.isRequired,
+  deletePersediaan: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -243,9 +153,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createPersediaan: (formData, refresh) => dispatch(createPersediaan(formData, refresh)),
+  updatePersediaan: (formData, id, refresh) => dispatch(updatePersediaan(formData, id, refresh)),
+  deletePersediaan: (id, refresh) => dispatch(deletePersediaan(id, refresh)),
 })
 
 export default connect(
@@ -253,7 +163,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getPersediaan(p),
     Component: withToggle({
       Component: Rekapitulasi,
       toggles: {

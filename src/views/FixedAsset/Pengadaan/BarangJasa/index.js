@@ -3,11 +3,11 @@ import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap
 import classnames from 'classnames'
 import Swakelola from './Swakelola'
 import PembelianLangsung from './PembelianLangsung'
-import PenunjukanLangsung from './Penunjukan Langsung'
+import PenunjukanLangsung from './PenunjukanLangsung'
 import PemilihanLangsung from './PemilihanLangsung'
 import Lelang from './Lelang'
 
-const BarangJasa = (props) => {
+const BarangJasa = () => {
   const [activeTab, setActiveTab] = useState('1')
 
   const toggle = (tab) => {
@@ -69,35 +69,35 @@ const BarangJasa = (props) => {
         </NavItem>
       </Nav>
       <TabContent activeTab={activeTab}>
-        <TabPane tabId="1" style={{ height: '100%' }}>
+        <TabPane tabId="1">
           <Row>
             <Col sm="12">
               <Swakelola />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="2" style={{ height: '100vh' }}>
+        <TabPane tabId="2">
           <Row>
             <Col sm="12">
               <PembelianLangsung />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="3" style={{ height: '100vh' }}>
+        <TabPane tabId="3">
           <Row>
             <Col sm="12">
               <PenunjukanLangsung />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="4" style={{ height: '100vh' }}>
+        <TabPane tabId="4">
           <Row>
             <Col sm="12">
               <PemilihanLangsung />
             </Col>
           </Row>
         </TabPane>
-        <TabPane tabId="5" style={{ height: '100vh' }}>
+        <TabPane tabId="5">
           <Row>
             <Col sm="12">
               <Lelang />

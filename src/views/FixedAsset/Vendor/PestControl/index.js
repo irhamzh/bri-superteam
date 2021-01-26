@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,22 +20,163 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
+import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import {
+  CfAsyncSelect,
+  CfInputCheckbox,
+  CfInputDate,
+  IconSuccessOrFailed,
+  ListCheckboxShow,
+} from '../../../../components'
+import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { createVendor, updateVendor, deleteVendor } from '../../../../modules/vendor/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 
 class PestControl extends Component {
+  state = {
+    optRekanan: [],
+    isShow: false,
+    columns: [],
+  }
+
   initialValues = {
-    nama: '',
-    id: '',
+    typeMonitoring: 'Pest Control',
+    toilet: false,
+    musholla: false,
+    lobbyLounge: false,
+    rMeeting: false,
+    rKelas: false,
+    rKerja: false,
+    koridor: false,
+    tanggaDarurat: false,
+    rSampah: false,
+    rShaft: false,
+    parkirMotor: false,
+    halaman: false,
+  }
+
+  async componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typeMonitoring: 'Pest Control',
+    })
+    const resDataRekanan = await Service.getPartner()
+    const dataRekanan = resDataRekanan.data.data
+    const optRekanan = dataRekanan.map((row) => ({ label: row.name, value: row.id }))
+
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
+
+    const columns = [
+      {
+        Header: 'Tanggal',
+        width: 100,
+        accessor: 'tanggal',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
+      },
+      {
+        Header: 'Toilet',
+        accessor: 'toilet',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Musholla',
+        accessor: 'musholla',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Lobby Lounge',
+        accessor: 'lobbyLounge',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'R. Meeting',
+        accessor: 'ruangMeeting',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'R. Kelas',
+        accessor: 'ruangKelas',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'R. Kerja',
+        accessor: 'ruangKerja',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Koridor',
+        accessor: 'corridor',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Tangga Darurat',
+        accessor: 'tanggaDarurat',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Tempat Sampah',
+        accessor: 'ruangSampah',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Shaft',
+        accessor: 'ruangShaft',
+        filterable: false,
+        show: true,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Parkir Motor',
+        accessor: 'parkirMotor',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Halaman',
+        accessor: 'halaman',
+        show: true,
+        filterable: false,
+        Cell: (row) => <IconSuccessOrFailed value={row.value} />,
+      },
+      {
+        Header: 'Rekanan',
+        accessor: 'partner.name',
+        filterable: false,
+        show: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+    ]
+
+    this.setState({ optRekanan, columns })
   }
 
   doRefresh = () => {
@@ -45,11 +187,16 @@ class PestControl extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createRole, updateRole } = this.props
+    const { createVendor, updateVendor } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      const { partner } = values
+      if (partner && Object.keys(partner).length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        values.partner = partner.id || partner
+      }
+      updateVendor(values, id, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createVendor(values, this.doRefresh)
     }
   }
 
@@ -57,13 +204,12 @@ class PestControl extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteVendor } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteVendor(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -77,82 +223,53 @@ class PestControl extends Component {
       })
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
+  handleInputPartner = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getPartner(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
+    const { optRekanan, isShow, columns } = this.state
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
-      {
-        Header: 'Tanggal',
-        width: 100,
-        filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
-      },
-      {
-        Header: 'Toilet',
-        accessor: 'toilet',
-        filterable: true,
-      },
-      {
-        Header: 'Musholla',
-        accessor: 'musholla',
-        filterable: false,
-      },
-      {
-        Header: 'Lobby Lounge',
-        accessor: 'lobbyLounge',
-        filterable: false,
-      },
-      {
-        Header: 'R. Meeting',
-        accessor: 'R.Meeting',
-        filterable: false,
-      },
-      {
-        Header: 'R. Kelas',
-        accessor: 'R.Kelas',
-        filterable: false,
-      },
-      {
-        Header: 'R. Kerja',
-        accessor: 'R.Kerja',
-        filterable: false,
-      },
-      {
-        Header: 'Koridor',
-        accessor: 'koridor',
-        filterable: false,
-      },
-      {
-        Header: 'Tangga Darurat',
-        accessor: 'TanggaDarurat',
-        filterable: false,
-      },
-      {
-        Header: 'R. Sampah',
-        accessor: 'R.Sampah',
-        filterable: false,
-      },
-      {
-        Header: 'R. Shaft',
-        accessor: 'R.Shaft',
-        filterable: false,
-      },
-      {
-        Header: 'Parkir Motor',
-        accessor: 'ParkirMotor',
-        filterable: false,
-      },
-      {
-        Header: 'Halaman',
-        accessor: 'halaman',
-        filterable: false,
-      },
+    const tableCols = [
+      ...columns,
       {
         Header: 'Aksi',
         width: 150,
+        show: true,
         filterable: false,
         Cell: (props) => (
           <>
@@ -166,20 +283,21 @@ class PestControl extends Component {
             </Button>
             &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
+              <i className="fa fa-trash" />
             </Button>
           </>
         ),
       },
     ]
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
-    const pageName = 'PestControl'
-    const isIcon = { paddingRight: '7px' }
+    const pageName = 'Pest Control'
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -187,11 +305,15 @@ class PestControl extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -210,29 +332,91 @@ class PestControl extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="6">Rekanan: PT. ABC (bisa diedit)</Col>
-                  <Col sm="6">
+                  <Col sm="12">
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data} name={pageName}>
+                          <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
+                          <ExcelColumn label="Toilet" value={(col) => (col.toilet ? '✓' : '❌')} />
+                          <ExcelColumn
+                            label="Musholla"
+                            value={(col) => (col.musholla ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Lobby Lounge"
+                            value={(col) => (col.lobbyLounge ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ruang Meeting"
+                            value={(col) => (col.ruangMeeting ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ruang Kelas"
+                            value={(col) => (col.ruangKelas ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Ruang Kerja"
+                            value={(col) => (col.ruangKerja ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Corridor"
+                            value={(col) => (col.corridor ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tangga Darurat"
+                            value={(col) => (col.tanggaDarurat ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Tempat Sampah"
+                            value={(col) => (col.ruangSampah ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Shaft"
+                            value={(col) => (col.ruangShaft ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Parkir Motor"
+                            value={(col) => (col.parkirMotor ? '✓' : '❌')}
+                          />
+                          <ExcelColumn
+                            label="Halaman"
+                            value={(col) => (col.halaman ? '✓' : '❌')}
+                          />
+                          <ExcelColumn label="Rekanan" value={(col) => col.partner?.name} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -248,7 +432,7 @@ class PestControl extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -256,35 +440,121 @@ class PestControl extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Form Role</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>Form Pest Control</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Nama Role"
-                          type="text"
-                          name="nama"
-                          isRequired
-                          placeholder="Masukkan nama role"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Tanggal Kadaluarsa"
-                          name="tanggalKadaluarsa"
+                          label="Tanggal"
+                          name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
                           minDate={new Date()}
                           isRequired
-                          placeholder="Tanggal Kadaluarsa"
+                          placeholder="Tanggal"
                           component={CfInputDate}
                         />
                       </FormGroup>
 
-                      {ErrorMessage(message)}
+                      <FormGroup>
+                        <Field
+                          label="Rekanan"
+                          cacheOptions
+                          options={optRekanan}
+                          defaultOptions
+                          loadOptions={this.handleInputPartner}
+                          name="partner"
+                          isRequired
+                          placeholder="Pilih atau cari Rekanan"
+                          defaultValue={
+                            values.partner
+                              ? { value: values.partner.id, label: values.partner.name }
+                              : null
+                          }
+                          component={CfAsyncSelect}
+                        />
+                      </FormGroup>
+
+                      <b>Monitoring</b>
+                      <br />
+                      <div style={{ marginLeft: '40px' }}>
+                        <FormGroup>
+                          <Field label="Toilet" name="toilet" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Musholla" name="musholla" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Lobby Lounge"
+                            name="lobbyLounge"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Meeting"
+                            name="ruangMeeting"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Kelas"
+                            name="ruangKelas"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Ruang Kerja"
+                            name="ruangKerja"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Corridor" name="corridor" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Tangga Darurat"
+                            name="tanggaDarurat"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Tempat Sampah"
+                            name="ruangSampah"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Shaft" name="ruangShaft" component={CfInputCheckbox} />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field
+                            label="Parkir Motor"
+                            name="parkirMotor"
+                            component={CfInputCheckbox}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Field label="Halaman" name="halaman" component={CfInputCheckbox} />
+                        </FormGroup>
+                      </div>
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -323,23 +593,23 @@ PestControl.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createVendor: PropTypes.func.isRequired,
+  updateVendor: PropTypes.func.isRequired,
+  deleteVendor: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.vendor.isLoading,
+  message: state.vendor.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createVendor: (formData, refresh) => dispatch(createVendor(formData, refresh)),
+  updateVendor: (formData, id, refresh) => dispatch(updateVendor(formData, id, refresh)),
+  deleteVendor: (id, refresh) => dispatch(deleteVendor(id, refresh)),
 })
 
 export default connect(
@@ -347,7 +617,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getVendor(p),
     Component: withToggle({
       Component: PestControl,
       toggles: {

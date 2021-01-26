@@ -11,50 +11,44 @@ import {
   ModalFooter,
   ModalHeader,
   Spinner,
-  FormGroup,
 } from 'reactstrap'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
-import Select from 'react-select'
+import { Formik, Form } from 'formik'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
-import { CfInput } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { AlertMessage, userData } from '../../../../helpers'
+import { approveAsset, penghapusbukuanAsset, deleteAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
-
 class Penghapusbukuan extends Component {
-  state = {}
+  state = {
+    assetIds: [],
+  }
 
-  initialValues = {
-    nama: '',
-    id: '',
+  initialValues = {}
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      in$status: [
+        'Approved oleh Supervisor I',
+        'Diajukan Penihilan',
+        'Approved oleh Supervisor II',
+        'Approved oleh Wakabag',
+        'Approved oleh Kabag',
+      ],
+    })
   }
 
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
     modalForm.hide()
     fetchQueryProps.refresh()
-  }
-
-  handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
-    if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
-    } else {
-      createRole(values, this.doRefresh)
-    }
   }
 
   handleChangeSelect = (name, value) => {
@@ -72,13 +66,13 @@ class Penghapusbukuan extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteAsset } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteAsset(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -92,37 +86,157 @@ class Penghapusbukuan extends Component {
       })
   }
 
+  handleApprove = (e, state) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { approveAsset } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approveAsset(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  handlePenghapusbukuan = (e) => {
+    e.preventDefault()
+
+    const { assetIds } = this.state
+    const { penghapusbukuanAsset } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          penghapusbukuanAsset({ assetIds }, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Penghapusbukuan Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  isSelected = (id) => {
+    const { assetIds } = this.state
+    return assetIds.includes(id)
+  }
+
+  onCheckboxChange = (id) => {
+    const { assetIds } = this.state
+
+    const selected = [...assetIds]
+    const keyIndex = selected.indexOf(id)
+    if (keyIndex > -1) {
+      selected.splice(keyIndex, 1)
+    } else {
+      selected.push(id)
+    }
+
+    this.setState({ assetIds: selected })
+  }
+
   render() {
-    const { optKondisiAset, kondisiAsetId } = this.state
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
     const columns = [
       {
-        Header: '',
+        Header: 'Checked',
+        width: 100,
+        accessor: 'id',
         filterable: false,
-        Cell: (props) => (
+        Cell: (row) => (
           <span>
-            <Checkbox />
+            <Checkbox
+              color="primary"
+              checked={this.isSelected(row.value)}
+              onChange={() => this.onCheckboxChange(row.value)}
+            />
           </span>
         ),
       },
       {
         Header: 'Kode',
+        accessor: 'id',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Aset',
-        accessor: 'nama',
-        filterable: true,
+        accessor: 'name',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]
 
+    const user = userData()
+    const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    if (
+      user &&
+      (allowedRole.includes(user.role?.name.toLowerCase()) ||
+        user.role?.name.includes('Supervisor'))
+    ) {
+      columns.push({
+        Header: 'Aksi',
+        width: 200,
+        accessor: 'id',
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      })
+    }
+
     const pageName = 'Penghapusbukuan Aset'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -130,11 +244,15 @@ class Penghapusbukuan extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -146,7 +264,7 @@ class Penghapusbukuan extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={(e) => this.handlePenghapusbukuan(e)}
                         className="mr-1"
                       >
                         Submit
@@ -156,7 +274,7 @@ class Penghapusbukuan extends Component {
                 </Row>
                 <br />
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
@@ -173,7 +291,7 @@ class Penghapusbukuan extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                // validationSchema={roleSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -184,31 +302,7 @@ class Penghapusbukuan extends Component {
                 {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
-                    <ModalBody>
-                      <FormGroup>
-                        <Field
-                          label="Kode Aset"
-                          type="text"
-                          name="kode"
-                          isRequired
-                          placeholder="Masukkan kode aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      {ErrorMessage(message)}
-                    </ModalBody>
+                    <ModalBody />
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
                         Cancel
@@ -246,23 +340,23 @@ Penghapusbukuan.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  penghapusbukuanAsset: PropTypes.func.isRequired,
+  approveAsset: PropTypes.func.isRequired,
+  deleteAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
+  isLoading: state.asset.isLoading,
+  message: state.asset.message,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  penghapusbukuanAsset: (formData, refresh) => dispatch(penghapusbukuanAsset(formData, refresh)),
+  approveAsset: (formData, id, refresh) => dispatch(approveAsset(formData, id, refresh)),
+  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
 })
 
 export default connect(
@@ -270,7 +364,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getAsset(p),
     Component: withToggle({
       Component: Penghapusbukuan,
       toggles: {

@@ -9,3 +9,13 @@
 @import '~simple-line-icons/css/simple-line-icons.css';
 // Import Main styles for this application
 @import './scss/style.scss';
+
+.wordwrap {
+  white-space: pre-line !important;
+  word-wrap: break-word;
+}
+
+.cardHeaderBackground {
+  background-color: '#1F479C' !important; 
+  border-radius: '20px 20px 0px 0px' !important;
+}

@@ -42,8 +42,6 @@ Persediaan.propTypes = {
 
 const mapStateToProps = (state) => ({
   auth: state.auth.authenticated,
-  isLoading: state.role.isLoading,
-  message: state.role.message,
 })
 
 export default connect(mapStateToProps)(Persediaan)

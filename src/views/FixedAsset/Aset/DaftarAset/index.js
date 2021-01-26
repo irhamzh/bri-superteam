@@ -19,22 +19,29 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
 import Service from '../../../../config/services'
-import { CfInput } from '../../../../components'
-import { AlertMessage, ErrorMessage, invalidValues } from '../../../../helpers'
-import { createRole, updateRole, deleteRole } from '../../../../modules/master/role/actions'
+import { CfInput, CfInputFile } from '../../../../components'
+import { AlertMessage, invalidValues, userData } from '../../../../helpers'
+import {
+  createAsset,
+  updateAsset,
+  deleteAsset,
+  uploadAsset,
+  approveAsset,
+} from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
-
-const roleSchema = Yup.object().shape({
-  nama: Yup.string().required('nama role belum diisi'),
-})
+import { createAssetSchema } from '../../../../validations/mvAsset'
+import templateAsset from '../../../../assets/template/Asset.xlsx'
 
 class DaftarAset extends Component {
-  initialValues = {
-    nama: '',
-    id: '',
+  initialValues = {}
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      status: 'Unapproved',
+    })
   }
 
   doRefresh = () => {
@@ -44,12 +51,14 @@ class DaftarAset extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id } = values
-    const { createRole, updateRole } = this.props
+    const { id, excel } = values
+    const { createAsset, updateAsset, uploadAsset } = this.props
     if (!invalidValues.includes(id)) {
-      updateRole(values, id, this.doRefresh)
+      updateAsset(values, id, this.doRefresh)
+    } else if (excel) {
+      uploadAsset(values, this.doRefresh)
     } else {
-      createRole(values, this.doRefresh)
+      createAsset(values, this.doRefresh)
     }
   }
 
@@ -57,13 +66,13 @@ class DaftarAset extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deleteRole } = this.props
+    const { deleteAsset } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
           console.log('delete object', id)
-          deleteRole(id, this.doRefresh)
+          deleteAsset(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -77,25 +86,67 @@ class DaftarAset extends Component {
       })
   }
 
-  render() {
-    const { message, isLoading, auth, className, fetchQueryProps, modalForm } = this.props
-    const { tableProps } = fetchQueryProps
+  handleApprove = (e, state) => {
+    e.preventDefault()
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
+    const { id } = state
+    const { approveAsset } = this.props
+    const message = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah approve, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, Approve!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(message)
+      .then((result) => {
+        if (result.value) {
+          approveAsset(state, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Notice!',
+            text: 'Proses Approval Dibatalkan',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
+  }
+
+  render() {
+    const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
+    const { tableProps } = fetchQueryProps
 
     const columns = [
       {
         Header: 'Kode',
+        accessor: 'id',
         filterable: false,
-        Cell: (props) => <span>{numbData(props)}</span>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Aset',
-        accessor: 'nama',
-        filterable: true,
+        accessor: 'name',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Aksi',
+        Header: 'Keterangan',
+        accessor: 'information',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
+        filterable: false,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Edit',
+        width: 60,
         filterable: false,
         Cell: (props) => (
           <>
@@ -107,22 +158,58 @@ class DaftarAset extends Component {
             >
               <i className="fa fa-pencil" />
             </Button>
-            &nbsp; | &nbsp;
+            {/* &nbsp; | &nbsp;
             <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
               className="mr-1"
-              title="Edit"
+              title="Delete"
             >
-              <i className="fa fa-pencil" />
-            </Button>
+              <i className="fa fa-trash" />
+            </Button> */}
           </>
         ),
       },
     ]
 
+    const user = userData()
+    const allowedRole = ['admin', 'supervisor']
+    if (
+      user &&
+      (allowedRole.includes(user.role?.name.toLowerCase()) ||
+        user.role?.name.includes('Supervisor'))
+    ) {
+      columns.push({
+        Header: 'Approval',
+        width: 200,
+        accessor: 'id',
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={(e) => this.handleApprove(e, props.original)}
+              className="mr-1"
+              title="Approve"
+            >
+              Approve
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              Deny
+            </Button>
+          </>
+        ),
+      })
+    }
+
     const pageName = 'Daftar Aset'
-    const isIcon = { paddingRight: '7px' }
+    // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
 
@@ -130,11 +217,15 @@ class DaftarAset extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Card>
-              <CardHeader>
+            <Card style={{ borderRadius: '20px' }}>
+              <CardHeader style={{ backgroundColor: 'white', borderRadius: '20px 20px 0px 0px' }}>
                 <Row>
                   <Col sm="6">
-                    <Button color="default" className="mr-1">
+                    <Button
+                      color="default"
+                      className="mr-1"
+                      style={{ color: '#2D69AF', fontSize: '1.1rem' }}
+                    >
                       {pageName}
                     </Button>
                   </Col>
@@ -142,7 +233,7 @@ class DaftarAset extends Component {
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: true })}
                         className="mr-3"
                       >
                         Import Data Aset
@@ -150,7 +241,7 @@ class DaftarAset extends Component {
 
                       <Button
                         color="primary"
-                        onClick={() => modalForm.show({ data: this.initialValues })}
+                        onClick={() => modalForm.show({ data: this.initialValues, upload: false })}
                         className="mr-1"
                       >
                         Input Data Aset
@@ -161,7 +252,7 @@ class DaftarAset extends Component {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  filterable
+                  filterable={false}
                   columns={columns}
                   defaultPageSize={10}
                   className="-highlight"
@@ -178,7 +269,7 @@ class DaftarAset extends Component {
             >
               <Formik
                 initialValues={modalForm.prop.data}
-                validationSchema={roleSchema}
+                validationSchema={modalForm.prop.upload ? null : createAssetSchema}
                 onSubmit={(values, actions) => {
                   setTimeout(() => {
                     this.handleSaveChanges(values)
@@ -190,29 +281,63 @@ class DaftarAset extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Data Aset</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Kode Aset"
                           type="text"
-                          name="kode"
+                          name="code"
                           isRequired
                           placeholder="Masukkan kode aset"
                           component={CfInput}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
+                      {modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="File Excel"
+                              name="excel"
+                              isRequired
+                              accept=".xlsx, .xls, .csv"
+                              component={CfInputFile}
+                            />
+                          </FormGroup>
 
-                      <FormGroup>
-                        <Field
-                          label="Nama Aset"
-                          type="text"
-                          name="name"
-                          isRequired
-                          placeholder="Masukkan nama aset"
-                          component={CfInput}
-                        />
-                      </FormGroup>
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template import Asset:
+                              <a href={templateAsset} target="_blank" rel="noreferrer">
+                                Template Asset
+                              </a>
+                            </p>
+                          </div>
+                        </>
+                      )}
+                      {!modalForm.prop.upload && (
+                        <>
+                          <FormGroup>
+                            <Field
+                              label="Nama Aset"
+                              type="text"
+                              name="name"
+                              isRequired
+                              placeholder="Masukkan nama aset"
+                              component={CfInput}
+                            />
+                          </FormGroup>
 
-                      {ErrorMessage(message)}
+                          <FormGroup>
+                            <Field
+                              label="Keterangan"
+                              type="text"
+                              name="information"
+                              isRequired
+                              placeholder="Masukkan Keterangan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -251,9 +376,11 @@ DaftarAset.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createRole: PropTypes.func.isRequired,
-  updateRole: PropTypes.func.isRequired,
-  deleteRole: PropTypes.func.isRequired,
+  createAsset: PropTypes.func.isRequired,
+  updateAsset: PropTypes.func.isRequired,
+  deleteAsset: PropTypes.func.isRequired,
+  uploadAsset: PropTypes.func.isRequired,
+  approveAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -265,9 +392,11 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createRole: (formData, refresh) => dispatch(createRole(formData, refresh)),
-  updateRole: (formData, id, refresh) => dispatch(updateRole(formData, id, refresh)),
-  deleteRole: (id, refresh) => dispatch(deleteRole(id, refresh)),
+  createAsset: (formData, refresh) => dispatch(createAsset(formData, refresh)),
+  updateAsset: (formData, id, refresh) => dispatch(updateAsset(formData, id, refresh)),
+  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  uploadAsset: (formData, refresh) => dispatch(uploadAsset(formData, refresh)),
+  approveAsset: (formData, id, refresh) => dispatch(approveAsset(formData, id, refresh)),
 })
 
 export default connect(
@@ -275,7 +404,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getRoles(p),
+    API: (p) => Service.getAsset(p),
     Component: withToggle({
       Component: DaftarAset,
       toggles: {

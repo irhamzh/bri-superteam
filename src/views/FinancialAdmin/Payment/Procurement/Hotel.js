@@ -22,6 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -319,6 +320,21 @@ class Hotel extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputHotel = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getHotel(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -484,16 +500,19 @@ class Hotel extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Hotel"
+                          cacheOptions
                           options={optHotel}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputHotel}
                           name="hotel"
-                          placeholder="Pilih atau Cari Hotel"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.hotelName
                               ? { value: values.hotelName.id, label: values.hotelName.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

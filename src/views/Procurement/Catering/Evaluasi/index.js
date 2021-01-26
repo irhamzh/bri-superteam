@@ -23,7 +23,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import { CfAsyncSelect, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPREvaluasiCatering,
@@ -48,7 +48,7 @@ class Internal extends Component {
   initialValues = {}
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataCatering = await Service.getCatering()
     const dataCatering = resDataCatering.data.data
@@ -66,8 +66,8 @@ class Internal extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -117,33 +117,6 @@ class Internal extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -223,11 +196,69 @@ class Internal extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputCatering = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getCatering(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputWorkingOrder = async (value) => {
+    const filtered = [
+      { id: 'kodeWrokingOrder', value: `${value}` },
+      { id: 'division', value: 'Procurement' },
+    ]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getWorkingOrder(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.kodeWorkingOrder, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optCatering, optWorkingOrder, isShow, columns } = this.state
+
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -316,7 +347,7 @@ class Internal extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -360,10 +391,13 @@ class Internal extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
+                          cacheOptions
                           options={optWorkingOrder}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputWorkingOrder}
                           name="workingOrder"
-                          placeholder="Pilih atau Cari Working Order"
+                          isRequired
+                          placeholder="Pilih atau cari Working Order"
                           defaultValue={
                             values.workingOrder
                               ? {
@@ -372,17 +406,20 @@ class Internal extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Nama Catering"
+                          cacheOptions
                           options={optCatering}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputCatering}
                           name="catering"
-                          placeholder="Pilih atau Cari Catering"
+                          isRequired
+                          placeholder="Pilih atau cari Catering"
                           defaultValue={
                             values.catering
                               ? {
@@ -391,7 +428,7 @@ class Internal extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

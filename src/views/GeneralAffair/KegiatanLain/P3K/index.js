@@ -23,7 +23,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createAktivitasFirstAid,
@@ -189,6 +189,36 @@ class P3K extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputJenisObat = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisObat(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
+  handleInputArea = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getArea(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -352,10 +382,13 @@ class P3K extends Component {
                       <FormGroup>
                         <Field
                           label="Area"
+                          cacheOptions
                           options={optArea}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputArea}
                           name="area"
-                          placeholder="Pilih atau Cari Area"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.area
                               ? {
@@ -364,17 +397,20 @@ class P3K extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Jenis Obat"
+                          cacheOptions
                           options={optJenisObat}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputJenisObat}
                           name="medicineType"
-                          placeholder="Pilih atau Cari"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.medicineType
                               ? {
@@ -383,7 +419,7 @@ class P3K extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

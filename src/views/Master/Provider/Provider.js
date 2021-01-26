@@ -55,21 +55,25 @@ function Provider(props) {
     {
       Header: 'Nama Provider',
       accessor: 'name',
+      filterable: true,
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {
       Header: 'Alamat',
       accessor: 'address',
+      filterable: true,
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {
       Header: 'PIC',
       accessor: 'pic',
+      filterable: true,
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {
       Header: 'Contact',
       accessor: 'contact',
+      filterable: true,
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
     {

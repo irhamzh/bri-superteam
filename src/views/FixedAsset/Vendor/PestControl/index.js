@@ -23,9 +23,9 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInputCheckbox,
   CfInputDate,
-  CfSelect,
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
@@ -246,6 +246,18 @@ class PestControl extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputPartner = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getPartner(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -448,16 +460,19 @@ class PestControl extends Component {
                       <FormGroup>
                         <Field
                           label="Rekanan"
+                          cacheOptions
                           options={optRekanan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputPartner}
                           name="partner"
-                          placeholder="Pilih atau Cari Rekanan"
+                          isRequired
+                          placeholder="Pilih atau cari Rekanan"
                           defaultValue={
                             values.partner
                               ? { value: values.partner.id, label: values.partner.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

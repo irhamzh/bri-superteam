@@ -22,6 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -257,6 +258,21 @@ class Catering extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputCatering = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getCatering(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -422,10 +438,13 @@ class Catering extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Catering"
+                          cacheOptions
                           options={optCatering}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputCatering}
                           name="catering"
-                          placeholder="Pilih atau Cari Catering"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.catering
                               ? {
@@ -434,7 +453,7 @@ class Catering extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

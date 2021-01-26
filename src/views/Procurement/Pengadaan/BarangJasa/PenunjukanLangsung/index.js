@@ -24,6 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -72,8 +73,8 @@ class PenunjukanLangsung extends Component {
     const dataPendidikan = resDataPendidikan.data.data
     const optPendidikan = dataPendidikan.map((row) => ({ label: row.name, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -231,33 +232,6 @@ class PenunjukanLangsung extends Component {
         show: true,
         filterable: false,
       },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
-      },
     ]
 
     this.setState({
@@ -337,11 +311,66 @@ class PenunjukanLangsung extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputPendidikan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getPendidikan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optProvider, dataProvider, optPendidikan, isShow, columns } = this.state
+
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -477,7 +506,7 @@ class PenunjukanLangsung extends Component {
                 />
                 <ReactTable
                   filterable={false}
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -633,16 +662,19 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Nama Provider"
+                            cacheOptions
                             options={optProvider}
-                            isRequired
+                            defaultOptions
+                            loadOptions={this.handleInputProvider}
                             name="provider"
-                            placeholder="Pilih atau Cari Nama Provider"
+                            isRequired
+                            placeholder="Pilih atau cari Provider"
                             defaultValue={
                               values.provider
                                 ? { value: values.provider.id, label: values.provider.name }
                                 : null
                             }
-                            component={CfSelect}
+                            component={CfAsyncSelect}
                           />
                         </FormGroup>
 
@@ -685,10 +717,13 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Nama Pendidikan"
+                            cacheOptions
                             options={optPendidikan}
-                            isRequired
+                            defaultOptions
+                            loadOptions={this.handleInputPendidikan}
                             name="namaPendidikan"
-                            placeholder="Pilih atau Cari Nama Pendidikan"
+                            isRequired
+                            placeholder="Pilih atau cari Nama Pendidikan"
                             defaultValue={
                               values.namaPendidikan
                                 ? {
@@ -697,7 +732,7 @@ class PenunjukanLangsung extends Component {
                                   }
                                 : null
                             }
-                            component={CfSelect}
+                            component={CfAsyncSelect}
                           />
                         </FormGroup>
 

@@ -24,7 +24,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRKlasifikasiAtk,
@@ -51,7 +57,7 @@ class Klasifikasi extends Component {
   }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
@@ -69,8 +75,8 @@ class Klasifikasi extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -126,33 +132,6 @@ class Klasifikasi extends Component {
           const listBiaya = barang.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
         },
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -232,11 +211,69 @@ class Klasifikasi extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputWorkingOrder = async (value) => {
+    const filtered = [
+      { id: 'kodeWorkingOrder', value: `${value}` },
+      { id: 'division', value: 'Procurement' },
+    ]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getWorkingOrder(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.kodeWorkingOrder, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optProvider, optWorkingOrder, isShow, columns } = this.state
+
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -324,7 +361,7 @@ class Klasifikasi extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -369,10 +406,13 @@ class Klasifikasi extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
+                          cacheOptions
                           options={optWorkingOrder}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputWorkingOrder}
                           name="workingOrder"
-                          placeholder="Pilih atau Cari Working Order"
+                          isRequired
+                          placeholder="Pilih atau cari Working Order"
                           defaultValue={
                             values.workingOrder
                               ? {
@@ -381,7 +421,7 @@ class Klasifikasi extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -415,10 +455,13 @@ class Klasifikasi extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Vendor"
+                              cacheOptions
                               options={optProvider}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputProvider}
                               name="provider"
-                              placeholder="Pilih atau Cari Vendor"
+                              isRequired
+                              placeholder="Pilih atau cari Vendor"
                               defaultValue={
                                 values.provider
                                   ? {
@@ -427,7 +470,7 @@ class Klasifikasi extends Component {
                                     }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>

@@ -26,9 +26,9 @@ import Service from '../../../../config/services'
 import {
   CfInput,
   CfInputDate,
-  CfSelect,
   CfInputRadio,
   ListCheckboxShow,
+  CfAsyncSelect,
 } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
@@ -190,6 +190,18 @@ class APS extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputUker = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getUker(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -354,14 +366,22 @@ class APS extends Component {
                       <FormGroup>
                         <Field
                           label="Uker"
+                          cacheOptions
                           options={optUker}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputUker}
                           name="uker"
-                          placeholder="Pilih atau Cari Uker"
+                          isRequired
+                          placeholder="Pilih atau cari Uker"
                           defaultValue={
-                            values.uker ? { value: values.uker.id, label: values.uker.name } : null
+                            values.uker
+                              ? {
+                                  value: values.uker.id,
+                                  label: values.uker.name,
+                                }
+                              : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

@@ -23,10 +23,10 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputDate,
   CfInputRadio,
-  CfSelect,
   ListCheckboxShow,
 } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
@@ -209,6 +209,30 @@ class Plumbing extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputPompa = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getPompa(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputUnitPompa = async (value) => {
+    const filtered = [{ id: 'nameUnit', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getUnitPompa(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.nameUnit, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -384,30 +408,36 @@ class Plumbing extends Component {
                       <FormGroup>
                         <Field
                           label="Pompa"
+                          cacheOptions
                           options={optPompa}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputPompa}
                           name="pump"
-                          placeholder="Pilih atau Cari Pompa"
+                          isRequired
+                          placeholder="Pilih atau cari Pompa"
                           defaultValue={
                             values.pump ? { value: values.pump.id, label: values.pump.name } : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Unit"
+                          cacheOptions
                           options={optUnitPompa}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputUnitPompa}
                           name="unit"
-                          placeholder="Pilih atau Cari Unit"
+                          isRequired
+                          placeholder="Pilih atau cari Unit"
                           defaultValue={
                             values.unit
                               ? { value: values.unit.id, label: values.unit.nameUnit }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

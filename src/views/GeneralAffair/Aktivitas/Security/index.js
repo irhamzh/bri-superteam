@@ -23,7 +23,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInputDate, CfInputFile, CfSelect, ListCheckboxShow } from '../../../../components'
+import { CfAsyncSelect, CfInputDate, CfInputFile, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createAktivitasSecurity,
@@ -156,6 +156,21 @@ class SecurityLayout extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputCheckpoint = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getCheckpoint(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
   }
 
   render() {
@@ -318,10 +333,13 @@ class SecurityLayout extends Component {
                       <FormGroup>
                         <Field
                           label="Checkpoint"
+                          cacheOptions
                           options={optCheckpoint}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputCheckpoint}
                           name="checkpoint"
-                          placeholder="Pilih atau Cari Checkpoint"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.checkpoint
                               ? {
@@ -330,7 +348,7 @@ class SecurityLayout extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

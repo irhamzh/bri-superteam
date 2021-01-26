@@ -24,6 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -282,6 +283,18 @@ class PenunjukanLangsung extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -604,6 +617,24 @@ class PenunjukanLangsung extends Component {
                               : null
                           }
                           component={CfSelect}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          cacheOptions
+                          options={optProvider}
+                          defaultOptions
+                          loadOptions={this.handleInputProvider}
+                          name="provider"
+                          placeholder="Pilih atau cari Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

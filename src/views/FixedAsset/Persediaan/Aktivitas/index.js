@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPersediaan,
@@ -173,6 +173,18 @@ class Aktivitas extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputJenisBarang = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisBarang(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -341,16 +353,19 @@ class Aktivitas extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis Barang"
+                          cacheOptions
                           options={optJenisBarang}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputJenisBarang}
                           name="jenisBarang"
-                          placeholder="Pilih atau Cari Jenis Barang"
+                          isRequired
+                          placeholder="Pilih atau cari Jenis Barang"
                           defaultValue={
                             values.jenisBarang
                               ? { value: values.jenisBarang.id, label: values.jenisBarang.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

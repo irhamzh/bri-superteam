@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
-import { CfInput, CfSelect } from '../../../../components'
+import { CfAsyncSelect, CfInput } from '../../../../components'
 import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createPeralatanIT,
@@ -107,6 +107,30 @@ class PersonalComputer extends Component {
       .catch((err) => {
         AlertMessage.error(err) // Internal Server Error
       })
+  }
+
+  handleInputJenisPc = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisPC(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputRuangan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getRoom(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -268,16 +292,19 @@ class PersonalComputer extends Component {
                       <FormGroup>
                         <Field
                           label="Jenis PC"
+                          cacheOptions
                           options={optJenisPC}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputJenisPc}
                           name="jenisPc"
-                          placeholder="Pilih atau Cari Jenis PC"
+                          isRequired
+                          placeholder="Pilih atau cari Jenis PC"
                           defaultValue={
                             values.jenisPc
                               ? { value: values.jenisPc.id, label: values.jenisPc.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -350,16 +377,19 @@ class PersonalComputer extends Component {
                       <FormGroup>
                         <Field
                           label="Ruangan"
+                          cacheOptions
                           options={optRuangan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputRuangan}
                           name="ruangan"
-                          placeholder="Pilih atau Cari Ruangan"
+                          isRequired
+                          placeholder="Pilih atau cari Ruangan"
                           defaultValue={
                             values.ruangan
                               ? { value: values.ruangan.id, label: values.ruangan.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

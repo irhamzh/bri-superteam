@@ -23,10 +23,10 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputDate,
   CfInputRadio,
-  CfSelect,
   ListCheckboxShow,
 } from '../../../../../components'
 import { AlertMessage, invalidValues } from '../../../../../helpers'
@@ -276,6 +276,42 @@ class Ruangan extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputJenisGedung = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisGedung(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputJenisRuangan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisRuangan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputRuangan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getRoom(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -456,10 +492,13 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Jenis Gedung"
+                              cacheOptions
                               options={optJenisGedung}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputJenisGedung}
                               name="buildingType"
-                              placeholder="Pilih atau Cari Jenis Gedung"
+                              isRequired
+                              placeholder="Pilih atau cari Jenis Gedung"
                               defaultValue={
                                 values.buildingType
                                   ? {
@@ -468,7 +507,7 @@ class Ruangan extends Component {
                                     }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>
@@ -477,16 +516,19 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Jenis Ruangan"
+                              cacheOptions
                               options={optJenisRuangan}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputJenisRuangan}
                               name="roomType"
-                              placeholder="Pilih atau Cari Jenis Ruangan"
+                              isRequired
+                              placeholder="Pilih atau cari Jenis Ruangan"
                               defaultValue={
                                 values.roomType
                                   ? { value: values.roomType.id, label: values.roomType.name }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>
@@ -495,16 +537,19 @@ class Ruangan extends Component {
                           <FormGroup>
                             <Field
                               label="Ruangan"
+                              cacheOptions
                               options={optRuangan}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputRuangan}
                               name="ruangan"
-                              placeholder="Pilih atau Cari Ruangan"
+                              isRequired
+                              placeholder="Pilih atau cari Ruangan"
                               defaultValue={
                                 values.ruangan
                                   ? { value: values.ruangan.id, label: values.ruangan.name }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>

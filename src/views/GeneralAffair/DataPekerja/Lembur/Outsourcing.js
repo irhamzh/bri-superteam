@@ -24,10 +24,10 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
-  CfSelect,
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
@@ -234,6 +234,18 @@ class Outsourcing extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputUker = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getUker(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -422,14 +434,22 @@ class Outsourcing extends Component {
                       <FormGroup>
                         <Field
                           label="Uker"
+                          cacheOptions
                           options={optUker}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputUker}
                           name="uker"
-                          placeholder="Pilih atau Cari Uker"
+                          isRequired
+                          placeholder="Pilih atau cari Uker"
                           defaultValue={
-                            values.uker ? { value: values.uker.id, label: values.uker.name } : null
+                            values.uker
+                              ? {
+                                  value: values.uker.id,
+                                  label: values.uker.name,
+                                }
+                              : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

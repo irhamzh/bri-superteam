@@ -25,9 +25,9 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInputCheckbox,
   CfInputDate,
-  CfSelect,
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
@@ -216,6 +216,21 @@ class KelengkapanKendaraan extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputKendaraan = async (value) => {
+    const filtered = [{ id: 'merk', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getKendaraan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: `${row.platNomor}-${row.merk}-${row.color}`,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -400,10 +415,13 @@ class KelengkapanKendaraan extends Component {
                       <FormGroup>
                         <Field
                           label="Kendaraan"
+                          cacheOptions
                           options={optKendaraan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputKendaraan}
                           name="vehicle"
-                          placeholder="Pilih atau Cari Kendaraan"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.vehicle
                               ? {
@@ -412,7 +430,7 @@ class KelengkapanKendaraan extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

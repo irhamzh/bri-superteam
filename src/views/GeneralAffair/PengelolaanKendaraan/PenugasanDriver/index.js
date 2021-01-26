@@ -25,7 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import ReactStars from 'react-rating-stars-component'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPenugasanDriver,
@@ -182,6 +182,21 @@ class PenugasanDriver extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputKendaraan = async (value) => {
+    const filtered = [{ id: 'merk', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getKendaraan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: `${row.platNomor}-${row.merk}-${row.color}`,
+        value: row.id,
+      }))
+    })
+    return option
   }
 
   render() {
@@ -369,10 +384,13 @@ class PenugasanDriver extends Component {
                       <FormGroup>
                         <Field
                           label="Kendaraan"
+                          cacheOptions
                           options={optKendaraan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputKendaraan}
                           name="vehicle"
-                          placeholder="Pilih atau Cari"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.vehicle
                               ? {
@@ -381,7 +399,7 @@ class PenugasanDriver extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

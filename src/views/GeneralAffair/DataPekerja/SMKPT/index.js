@@ -369,7 +369,7 @@ class SMKPT extends Component {
                           placeholder="Pilih Tanggal"
                           showMonthYearPicker
                           showFullMonthYearPicker
-                          dateFormat="MM/yyyy"
+                          // dateFormat="MM/yyyy"
                           component={CfInputDate}
                         />
                       </FormGroup>

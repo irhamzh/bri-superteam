@@ -25,6 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -217,6 +218,18 @@ class PembelianLangsung extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -483,7 +496,7 @@ class PembelianLangsung extends Component {
 
                       {values.pihakKetiga && (
                         <>
-                          <FormGroup>
+                          {/* <FormGroup>
                             <Field
                               label="Nama Provider"
                               options={optProvider}
@@ -497,6 +510,24 @@ class PembelianLangsung extends Component {
                               }
                               component={CfSelect}
                             />
+                          </FormGroup> */}
+
+                          <FormGroup>
+                            <Field
+                              label="Nama Provider"
+                              cacheOptions
+                              options={optProvider}
+                              defaultOptions
+                              loadOptions={this.handleInputProvider}
+                              name="provider"
+                              placeholder="Pilih atau cari Provider"
+                              defaultValue={
+                                values.provider
+                                  ? { value: values.provider.id, label: values.provider.name }
+                                  : null
+                              }
+                              component={CfAsyncSelect}
+                            />
                           </FormGroup>
 
                           <FormGroup>
@@ -504,7 +535,6 @@ class PembelianLangsung extends Component {
                               label="Alamat Provider"
                               type="text"
                               name="address"
-                              isRequired
                               disabled
                               value={
                                 dataProvider.find(
@@ -522,7 +552,6 @@ class PembelianLangsung extends Component {
                               label="No. Kontak Provider"
                               type="text"
                               name="contact"
-                              isRequired
                               disabled
                               value={
                                 dataProvider.find(

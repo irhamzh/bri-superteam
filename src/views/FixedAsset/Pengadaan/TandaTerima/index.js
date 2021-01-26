@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
-import { CfInput, CfSelect } from '../../../../components'
+import { CfAsyncSelect, CfInput } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createTandaTerima,
@@ -97,6 +97,30 @@ class TandaTerima extends Component {
       .catch((err) => {
         AlertMessage.error(err) // Internal Server Error
       })
+  }
+
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputPengadaan = async (value) => {
+    const filtered = [{ id: 'namaPengadaan', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getAllPengadaan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -241,7 +265,7 @@ class TandaTerima extends Component {
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tanda Terima Barang</ModalHeader>
                     <ModalBody>
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Nama Pengadaan"
                           options={optPengadaan}
@@ -258,9 +282,31 @@ class TandaTerima extends Component {
                           }
                           component={CfSelect}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
+                        <Field
+                          label="Nama Pengadaan"
+                          cacheOptions
+                          options={optPengadaan}
+                          defaultOptions
+                          loadOptions={this.handleInputPengadaan}
+                          name="pengadaan"
+                          isRequired
+                          placeholder="Pilih atau cari Nama Pengadaan"
+                          defaultValue={
+                            values.pengadaan
+                              ? {
+                                  value: values.pengadaan.id,
+                                  label: values.pengadaan.namaPengadaan,
+                                }
+                              : null
+                          }
+                          component={CfAsyncSelect}
+                        />
+                      </FormGroup>
+
+                      {/* <FormGroup>
                         <Field
                           label="Nama Provider"
                           options={optProvider}
@@ -273,6 +319,25 @@ class TandaTerima extends Component {
                               : null
                           }
                           component={CfSelect}
+                        />
+                      </FormGroup> */}
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Provider"
+                          cacheOptions
+                          options={optProvider}
+                          defaultOptions
+                          loadOptions={this.handleInputProvider}
+                          name="provider"
+                          isRequired
+                          placeholder="Pilih atau cari Provider"
+                          defaultValue={
+                            values.provider
+                              ? { value: values.provider.id, label: values.provider.name }
+                              : null
+                          }
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

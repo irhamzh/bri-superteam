@@ -145,6 +145,18 @@ const formatCurrencyIDR = (value) => {
   return null
 }
 
+function queryStringToJSON(query) {
+  const pairs = query.slice(1).split('&')
+
+  const result = {}
+  pairs.forEach((pair) => {
+    const itemPair = pair.split('=')
+    result[itemPair[0]] = decodeURIComponent(itemPair[1] || '')
+  })
+
+  return JSON.parse(JSON.stringify(result))
+}
+
 export {
   userData,
   formDataFilterByKeys,
@@ -157,4 +169,5 @@ export {
   invalidValues,
   getYearOptions,
   formatCurrencyIDR,
+  queryStringToJSON,
 }

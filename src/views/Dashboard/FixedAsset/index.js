@@ -5,26 +5,44 @@ import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import Service from '../../../config/services'
-import { AlertMessage, invalidValues } from '../../../helpers'
+import { AlertMessage, formatDateSystem, getYearOptions, invalidValues } from '../../../helpers'
 
-const FixedAsset = (props) => {
+const FixedAsset = () => {
+  const [dataDashboardToday, setDataDashboardToday] = useState({})
   const [dataDashboard, setDataDashboard] = useState({})
   const [tahun, setTahun] = useState(null)
   const [bulan, setBulan] = useState(null)
-
-  console.log(props, 'props')
+  const [monthYear, setMonthYear] = useState('')
+  const today = formatDateSystem(new Date())
 
   useEffect(() => {
     ;(async function getDataDashboard() {
       try {
+        Swal.showLoading()
         const resData = await Service.getDashboardFixedAsset()
         const { data } = resData.data
         setDataDashboard(data)
+
+        const filteredDate = [{ id: 'atDate$createdAt', value: `${today}` }]
+        const filterString = JSON.stringify(filteredDate)
+        const params = `?filtered=${filterString}`
+        const paramsEncoded = encodeURI(params)
+        const resDataToday = await Service.getDashboardFixedAsset(paramsEncoded)
+        Swal.close()
+        setDataDashboardToday(resDataToday.data?.data)
       } catch (error) {
         AlertMessage.error(error)
       }
     })()
   }, [])
+
+  let {
+    totalApprovedKabag: totalApprovedKabagToday,
+    totalApprovedWakabag: totalApprovedWakabagToday,
+    totalBelumBerjalan: totalBelumBerjalanToday,
+    totalProsesPersetujuan: totalProsesPersetujuanToday,
+    totalSelesai: totalSelesaiToday,
+  } = dataDashboardToday
 
   let {
     totalApprovedKabag,
@@ -40,11 +58,33 @@ const FixedAsset = (props) => {
   if (!totalProsesPersetujuan) totalProsesPersetujuan = 0
   if (!totalSelesai) totalSelesai = 0
 
+  if (!totalApprovedKabagToday) totalApprovedKabagToday = 0
+  if (!totalApprovedWakabagToday) totalApprovedWakabagToday = 0
+  if (!totalBelumBerjalanToday) totalBelumBerjalanToday = 0
+  if (!totalProsesPersetujuanToday) totalProsesPersetujuanToday = 0
+  if (!totalSelesaiToday) totalSelesaiToday = 0
+
   const data = {
     labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],
     datasets: [
       {
         data: [totalBelumBerjalan, totalProsesPersetujuan, totalApprovedKabag, totalSelesai],
+        backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
+      },
+    ],
+  }
+
+  const dataToday = {
+    labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],
+    datasets: [
+      {
+        data: [
+          totalBelumBerjalanToday,
+          totalProsesPersetujuanToday,
+          totalApprovedKabagToday,
+          totalSelesaiToday,
+        ],
         backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
         hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
       },
@@ -80,6 +120,7 @@ const FixedAsset = (props) => {
     }
 
     try {
+      setMonthYear(`${tahun}-${bulan}`)
       const filteredDate = [{ id: 'month-year$createdAt', value: `${tahun}-${bulan}` }]
       const filterString = JSON.stringify(filteredDate)
       const params = `?filtered=${filterString}`
@@ -97,6 +138,164 @@ const FixedAsset = (props) => {
   return (
     <Row>
       <Col>
+        <Card>
+          <CardBody>
+            <Row>
+              <Col>
+                <h4 className="text-primary text-center">Data Fixed Asset Hari Ini</h4>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs="12" sm="12" md="12" lg="12">
+                <div className="chart-wrapper" style={{ marginTop: `${40}px` }}>
+                  {/* {pie.labels.length == 0 && (
+                    <div className="alert alert-secondary text-center"> Data belum tersedia </div>
+                  )} */}
+
+                  <Pie height={80} data={dataToday} />
+                </div>
+              </Col>
+            </Row>
+
+            <div
+              style={{
+                marginTop: '30px',
+
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'baseline',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Link
+                to={`/dashboard/fixed-asset/belum-berjalan?date=${today}`}
+                style={{ textDecoration: 'none' }}
+              >
+                <Card style={{ backgroundColor: '#FF6384', padding: '20px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <i
+                        className="icon-social-dropbox"
+                        style={{ fontSize: '30px', color: 'white', marginRight: '30px' }}
+                      />
+                    </div>
+                    <div>
+                      <h4>
+                        Belum
+                        <br />
+                        Berjalan
+                      </h4>
+                      <span style={{ color: 'white', fontSize: '30px' }}>
+                        {totalBelumBerjalanToday}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link
+                to={`/dashboard/fixed-asset/proses-persetujuan?date=${today}`}
+                style={{ textDecoration: 'none' }}
+              >
+                <Card style={{ backgroundColor: '#00FA9A', padding: '20px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <i
+                        className="icon-paper-clip"
+                        style={{ fontSize: '30px', color: 'white', marginRight: '30px' }}
+                      />
+                    </div>
+                    <div>
+                      <h4>
+                        Proses
+                        <br />
+                        Persetujuan
+                      </h4>
+                      <span style={{ color: 'white', fontSize: '30px' }}>
+                        {totalProsesPersetujuanToday}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link
+                to={`/dashboard/fixed-asset/belum-selesai?date=${today}`}
+                style={{ textDecoration: 'none' }}
+              >
+                <Card style={{ backgroundColor: '#FFCE56', padding: '20px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <i
+                        className="icon-pin"
+                        style={{ fontSize: '30px', color: 'white', marginRight: '30px' }}
+                      />
+                    </div>
+                    <div>
+                      <h4>
+                        Belum
+                        <br />
+                        Selesai
+                      </h4>
+                      <span style={{ color: 'white', fontSize: '30px' }}>
+                        {totalApprovedKabagToday}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link
+                to={`/dashboard/fixed-asset/selesai?date=${today}`}
+                style={{ textDecoration: 'none' }}
+              >
+                <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <i
+                        className="icon-badge"
+                        style={{ fontSize: '30px', color: 'white', marginRight: '30px' }}
+                      />
+                    </div>
+                    <div>
+                      <h4>
+                        Selesai
+                        <br />
+                        <br />
+                      </h4>
+                      <span style={{ color: 'white', fontSize: '30px' }}>{totalSelesaiToday}</span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            </div>
+          </CardBody>
+        </Card>
+
         <Card>
           <CardBody>
             <Row>
@@ -132,13 +331,7 @@ const FixedAsset = (props) => {
                         <Select
                           isClearable
                           placeholder="Pilih tahun..."
-                          options={[
-                            { value: 2018, label: '2018' },
-                            { value: 2019, label: '2019' },
-                            { value: 2020, label: '2020' },
-                            { value: 2021, label: '2021' },
-                            { value: 2022, label: '2022' },
-                          ]}
+                          options={getYearOptions()}
                           name="tahun"
                           className=""
                           onChange={(e) => setTahun(e?.value)}
@@ -178,7 +371,12 @@ const FixedAsset = (props) => {
                 flexWrap: 'wrap',
               }}
             >
-              <Link to="/dashboard/fixed-asset/belum-berjalan" style={{ textDecoration: 'none' }}>
+              <Link
+                to={`/dashboard/fixed-asset/belum-berjalan${
+                  monthYear ? `?monthYear=${monthYear}` : ''
+                }`}
+                style={{ textDecoration: 'none' }}
+              >
                 <Card style={{ backgroundColor: '#FF6384', padding: '20px' }}>
                   <div
                     style={{
@@ -206,7 +404,9 @@ const FixedAsset = (props) => {
               </Link>
 
               <Link
-                to="/dashboard/fixed-asset/proses-persetujuan"
+                to={`/dashboard/fixed-asset/proses-persetujuan${
+                  monthYear ? `?monthYear=${monthYear}` : ''
+                }`}
                 style={{ textDecoration: 'none' }}
               >
                 <Card style={{ backgroundColor: '#00FA9A', padding: '20px' }}>
@@ -237,7 +437,12 @@ const FixedAsset = (props) => {
                 </Card>
               </Link>
 
-              <Link to="/dashboard/fixed-asset/belum-selesai" style={{ textDecoration: 'none' }}>
+              <Link
+                to={`/dashboard/fixed-asset/belum-selesai${
+                  monthYear ? `?monthYear=${monthYear}` : ''
+                }`}
+                style={{ textDecoration: 'none' }}
+              >
                 <Card style={{ backgroundColor: '#FFCE56', padding: '20px' }}>
                   <div
                     style={{
@@ -264,7 +469,10 @@ const FixedAsset = (props) => {
                 </Card>
               </Link>
 
-              <Link to="/dashboard/fixed-asset/selesai" style={{ textDecoration: 'none' }}>
+              <Link
+                to={`"/dashboard/fixed-asset/selesai${monthYear ? `?monthYear=${monthYear}` : ''}`}
+                style={{ textDecoration: 'none' }}
+              >
                 <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>
                   <div
                     style={{
@@ -332,7 +540,9 @@ const FixedAsset = (props) => {
               }}
             >
               <Link
-                to="/dashboard/fixed-asset/approved-proses-persetujuan"
+                to={`/dashboard/fixed-asset/approved-proses-persetujuan${
+                  monthYear ? `?monthYear=${monthYear}` : ''
+                }`}
                 style={{ textDecoration: 'none' }}
               >
                 <Card style={{ backgroundColor: '#00FA9A', padding: '20px' }}>
@@ -363,7 +573,12 @@ const FixedAsset = (props) => {
                 </Card>
               </Link>
 
-              <Link to="/dashboard/fixed-asset/approved-selesai" style={{ textDecoration: 'none' }}>
+              <Link
+                to={`/dashboard/fixed-asset/approved-selesai${
+                  monthYear ? `?monthYear=${monthYear}` : ''
+                }`}
+                style={{ textDecoration: 'none' }}
+              >
                 <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>
                   <div
                     style={{

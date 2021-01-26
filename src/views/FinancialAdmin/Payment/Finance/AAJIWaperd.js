@@ -24,6 +24,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -219,6 +220,21 @@ class AAJIWaperd extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -407,16 +423,19 @@ class AAJIWaperd extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
+                          cacheOptions
                           options={optProvider}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputProvider}
                           name="provider"
-                          placeholder="Pilih atau Cari Nama Provider"
+                          isRequired
+                          placeholder="Pilih atau cari"
                           defaultValue={
                             values.provider
                               ? { value: values.provider.id, label: values.provider.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

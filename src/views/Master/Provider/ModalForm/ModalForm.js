@@ -69,6 +69,17 @@ function ModalForm(props) {
 
                 <FormGroup>
                   <Field
+                    label="PIC Provider"
+                    type="text"
+                    name="pic"
+                    isRequired
+                    placeholder="Masukkan PIC"
+                    component={CfInput}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <Field
                     label="Contact Provider"
                     type="text"
                     name="contact"

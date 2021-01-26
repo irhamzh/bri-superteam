@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
-import { CfInput, CfSelect } from '../../../../components'
+import { CfAsyncSelect, CfInput, CfSelect } from '../../../../components'
 import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createEvaluasiSupplier,
@@ -101,6 +101,30 @@ class EvaluasiSupplier extends Component {
       .catch((err) => {
         AlertMessage.error(err) // Internal Server Error
       })
+  }
+
+  handleInputProvider = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getProvider(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputPengadaan = async (value) => {
+    const filtered = [{ id: 'namaPengadaan', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getAllPengadaan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.namaPengadaan, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -240,10 +264,13 @@ class EvaluasiSupplier extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Pengadaan"
+                          cacheOptions
                           options={optPengadaan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputPengadaan}
                           name="pengadaan"
-                          placeholder="Pilih atau Cari Nama Pengadaan"
+                          isRequired
+                          placeholder="Pilih atau cari Nama Pengadaan"
                           defaultValue={
                             values.pengadaan
                               ? {
@@ -252,23 +279,26 @@ class EvaluasiSupplier extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Nama Provider"
+                          cacheOptions
                           options={optProvider}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputProvider}
                           name="provider"
-                          placeholder="Pilih atau Cari Nama Provider"
+                          isRequired
+                          placeholder="Pilih atau cari Provider"
                           defaultValue={
                             values.provider
                               ? { value: values.provider.id, label: values.provider.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

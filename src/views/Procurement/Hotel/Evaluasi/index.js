@@ -23,7 +23,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPREvaluasiHotel,
@@ -47,14 +53,14 @@ class Internal extends Component {
   initialValues = {}
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataHotel = await Service.getHotel()
     const dataHotel = resDataHotel.data.data
     const optHotel = dataHotel.map((row) => ({ label: row.name, value: row.id }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -90,33 +96,6 @@ class Internal extends Component {
         accessor: 'remark',
         show: true,
         filterable: false,
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -192,11 +171,54 @@ class Internal extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputHotel = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getHotel(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optHotel, isShow, columns } = this.state
+
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -280,7 +302,7 @@ class Internal extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -324,16 +346,19 @@ class Internal extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Hotel"
+                          cacheOptions
                           options={optHotel}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputHotel}
                           name="hotelName"
-                          placeholder="Pilih atau Cari Hotel"
+                          isRequired
+                          placeholder="Pilih atau cari Hotel"
                           defaultValue={
                             values.hotelName
                               ? { value: values.hotelName.id, label: values.hotelName.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

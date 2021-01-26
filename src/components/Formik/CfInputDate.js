@@ -6,21 +6,40 @@ import { Input, Label, InputGroup, InputGroupAddon, InputGroupText } from 'react
 import moment from 'moment'
 import 'moment/locale/id'
 import { id } from 'date-fns/locale'
-import { formatDate, requireLabel } from '../../helpers'
+import { formatDate, formatMonthYear, requireLabel } from '../../helpers'
 import ErrorView from './ErrorView'
 
 moment.locale('id')
 
-const DateCustomInput = ({ classGroup, classIcon, value, onClick, ...props }) => (
+const checkFormatDate = (date, showMonthYearPicker = false) => {
+  if (date && showMonthYearPicker) {
+    return formatMonthYear(date)
+  }
+  if (date && !showMonthYearPicker) {
+    return formatDate(date)
+  }
+
+  return date
+}
+
+const DateCustomInput = ({
+  classGroup,
+  classIcon,
+  value,
+  onClick,
+  showMonthYearPicker,
+  ...props
+}) => (
   <InputGroup className={classGroup}>
     <InputGroupAddon addonType="prepend">
       <InputGroupText>
         <i className={classIcon} />
       </InputGroupText>
     </InputGroupAddon>
+
     <Input
       {...props}
-      value={value ? formatDate(value) : undefined}
+      value={value ? checkFormatDate(value, showMonthYearPicker) : value}
       onClick={onClick}
       autocomplete="off"
     />
@@ -69,6 +88,7 @@ const CfInputDate = ({
 
 CfInputDate.propTypes = {
   blockLabel: PropTypes.bool,
+  showMonthYearPicker: PropTypes.bool,
   styleLabel: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool,
@@ -121,6 +141,7 @@ CfInputDate.propTypes = {
 }
 
 DateCustomInput.propTypes = {
+  showMonthYearPicker: PropTypes.bool,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool,

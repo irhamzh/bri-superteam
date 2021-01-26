@@ -48,7 +48,7 @@ const { ExcelColumn } = ReactExport.ExcelFile
 
 class PembayaranLainnya extends Component {
   state = {
-    optProvider: [],
+    // optProvider: [],
     isShow: false,
     columns: [],
   }
@@ -67,9 +67,9 @@ class PembayaranLainnya extends Component {
       typePayment: 'Pembayaran Lainnya',
     })
 
-    const resDataProvider = await Service.getProvider()
-    const dataProvider = resDataProvider.data.data
-    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+    // const resDataProvider = await Service.getProvider()
+    // const dataProvider = resDataProvider.data.data
+    // const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -91,20 +91,21 @@ class PembayaranLainnya extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Sertifikasi',
-        accessor: 'namaSertifikasi',
-        show: true,
-        filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
+        Header: 'Nama Pembayaran',
+        accessor: 'namaPembayaran',
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
+      // {
+      //   Header: 'Nama Provider',
+      //   accessor: 'provider.name',
+      //   show: true,
+      //   filterable: false,
+      //   headerClassName: 'wordwrap',
+      //   Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      // },
       {
         Header: 'Invoice Bermaterai',
         accessor: 'invoiceBermaterai',
@@ -156,7 +157,7 @@ class PembayaranLainnya extends Component {
     ]
 
     this.setState({
-      optProvider,
+      // optProvider,
       columns,
     })
   }
@@ -231,7 +232,7 @@ class PembayaranLainnya extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optProvider, isShow, columns } = this.state
+    const { isShow, columns } = this.state
     const tableCols = [
       ...columns,
       {
@@ -375,7 +376,7 @@ class PembayaranLainnya extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -406,16 +407,16 @@ class PembayaranLainnya extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Sertifikasi"
+                          label="Nama Pembayaran"
                           type="text"
-                          name="namaSertifikasi"
+                          name="namaPembayaran"
                           isRequired
                           placeholder="Masukkan Nama Pembayaran"
                           component={CfInput}
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Nama Provider"
                           options={optProvider}
@@ -429,7 +430,7 @@ class PembayaranLainnya extends Component {
                           }
                           component={CfSelect}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <div style={{ marginLeft: '20px' }}>
                         <FormGroup>

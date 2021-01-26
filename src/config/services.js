@@ -20,7 +20,7 @@
 // //   }
 // // )
 import axios from '../helpers/AxiosInterceptor'
-import { DefaultXios } from '../config/axiosConfig'
+import { DefaultXios } from './axiosConfig'
 
 class Service {
   // Authentication
@@ -2155,8 +2155,8 @@ class Service {
     return axios.put(`ga-budgets/${id}`, values)
   }
 
-  static deleteGAAnggaran(id) {
-    return axios.delete(`ga-budgets/${id}`)
+  static deleteGAAnggaran(values, id) {
+    return axios.post(`ga-budgets/penggunaan/delete/${id}`, values)
   }
 
   // Dashboard
@@ -2450,6 +2450,27 @@ class Service {
     }
 
     return axios.post(`fa-anggaran-investations/excel`, formData)
+  }
+
+  static getFXAnggaran(params) {
+    if (!params) params = ''
+    return axios.get(`fx-budgets${params}`)
+  }
+
+  static getFXAnggaranById(id) {
+    return axios.get(`fx-budgets/${id}`)
+  }
+
+  static createFXAnggaran(values) {
+    return axios.post('fx-budgets', values)
+  }
+
+  static updateFXAnggaran(values, id) {
+    return axios.put(`fx-budgets/${id}`, values)
+  }
+
+  static deleteFXAnggaran(values, id) {
+    return axios.post(`fx-budgets/penggunaan/delete/${id}`, values)
   }
 }
 

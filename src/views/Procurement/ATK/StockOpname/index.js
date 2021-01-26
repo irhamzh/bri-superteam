@@ -24,7 +24,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPRStokOpnameAtk,
@@ -51,7 +57,7 @@ class StockOpname extends Component {
   }
 
   async componentDidMount() {
-    const { fetchQueryProps } = this.props
+    // const { fetchQueryProps } = this.props
 
     const resDataPendidikan = await Service.getPendidikan()
     const dataPendidikan = resDataPendidikan.data.data
@@ -69,8 +75,8 @@ class StockOpname extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -102,7 +108,7 @@ class StockOpname extends Component {
         headerClassName: 'wordwrap',
         Cell: (props) => {
           const { barang } = props.original
-          const listBarang = barang.map((row) => <div>{`${row.name}`}</div>)
+          const listBarang = barang.map((row) => <div>{`${row.nama}`}</div>)
           return listBarang
         },
       },
@@ -153,33 +159,6 @@ class StockOpname extends Component {
           const listStockAkhir = barang.map((row) => <div>{`${row.stockAkhir}`}</div>)
           return listStockAkhir
         },
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -259,11 +238,69 @@ class StockOpname extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputPendidikan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getPendidikan(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputWorkingOrder = async (value) => {
+    const filtered = [
+      { id: 'kodeWorkingOrder', value: `${value}` },
+      { id: 'division', value: 'Procurement' },
+    ]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getWorkingOrder(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.kodeWorkingOrder, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optPendidikan, optWorkingOrder, isShow, columns } = this.state
+
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -352,7 +389,7 @@ class StockOpname extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -397,10 +434,13 @@ class StockOpname extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
+                          cacheOptions
                           options={optWorkingOrder}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputWorkingOrder}
                           name="workingOrder"
-                          placeholder="Pilih atau Cari Working Order"
+                          isRequired
+                          placeholder="Pilih atau cari Working Order"
                           defaultValue={
                             values.workingOrder
                               ? {
@@ -409,17 +449,20 @@ class StockOpname extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Nama Pendidikan"
+                          cacheOptions
                           options={optPendidikan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputPendidikan}
                           name="education"
-                          placeholder="Pilih atau Cari Nama Pendidikan"
+                          isRequired
+                          placeholder="Pilih atau cari Nama Pendidikan"
                           defaultValue={
                             values.education
                               ? {
@@ -428,7 +471,7 @@ class StockOpname extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -453,7 +496,7 @@ class StockOpname extends Component {
                                           { label: 'Lain lain', value: 'Lain lain' },
                                         ]}
                                         isRequired
-                                        name={`barang[${index}].name`}
+                                        name={`barang[${index}].nama`}
                                         placeholder="Pilih atau Nama Barang"
                                         component={CfSelect}
                                       />

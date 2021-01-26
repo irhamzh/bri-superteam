@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
-import { CfInput, CfInputRadio, CfSelect } from '../../../../components'
+import { CfAsyncSelect, CfInput, CfInputRadio, CfSelect } from '../../../../components'
 import { AlertMessage, invalidValues } from '../../../../helpers'
 import {
   createPGPeralatanIT,
@@ -106,6 +106,30 @@ class PeralatanJaringan extends Component {
       .catch((err) => {
         AlertMessage.error(err) // Internal Server Error
       })
+  }
+
+  handleInputLantai = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getLantai(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputRuangan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getRoom(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -239,32 +263,38 @@ class PeralatanJaringan extends Component {
                       <FormGroup>
                         <Field
                           label="Lantai"
+                          cacheOptions
                           options={optLantai}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputLantai}
                           name="floor"
-                          placeholder="Pilih atau Cari Lantai"
+                          isRequired
+                          placeholder="Pilih atau cari Lantai"
                           defaultValue={
                             values.floor
                               ? { value: values.floor.id, label: values.floor.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Ruangan"
+                          cacheOptions
                           options={optRuangan}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputRuangan}
                           name="ruangan"
-                          placeholder="Pilih atau Cari Ruangan"
+                          isRequired
+                          placeholder="Pilih atau cari Ruangan"
                           defaultValue={
                             values.ruangan
                               ? { value: values.ruangan.id, label: values.ruangan.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

@@ -48,7 +48,7 @@ const { ExcelColumn } = ReactExport.ExcelFile
 
 class UangSaku extends Component {
   state = {
-    optProvider: [],
+    // optProvider: [],
     isShow: false,
     columns: [],
   }
@@ -67,9 +67,9 @@ class UangSaku extends Component {
       typePayment: 'Salary Creaditing',
     })
 
-    const resDataProvider = await Service.getProvider()
-    const dataProvider = resDataProvider.data.data
-    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+    // const resDataProvider = await Service.getProvider()
+    // const dataProvider = resDataProvider.data.data
+    // const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -97,14 +97,14 @@ class UangSaku extends Component {
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
-      {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
-      },
+      // {
+      //   Header: 'Nama Provider',
+      //   accessor: 'provider.name',
+      //   show: true,
+      //   filterable: false,
+      //   headerClassName: 'wordwrap',
+      //   Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      // },
       {
         Header: 'Surat Perintah Bayar',
         accessor: 'suratPerintahBayar',
@@ -156,7 +156,7 @@ class UangSaku extends Component {
     ]
 
     this.setState({
-      optProvider,
+      // optProvider,
       columns,
     })
   }
@@ -231,7 +231,7 @@ class UangSaku extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optProvider, isShow, columns } = this.state
+    const { isShow, columns } = this.state
     const tableCols = [
       ...columns,
       {
@@ -375,7 +375,7 @@ class UangSaku extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -415,7 +415,7 @@ class UangSaku extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Nama Provider"
                           options={optProvider}
@@ -429,7 +429,7 @@ class UangSaku extends Component {
                           }
                           component={CfSelect}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <div style={{ marginLeft: '20px' }}>
                         <FormGroup>

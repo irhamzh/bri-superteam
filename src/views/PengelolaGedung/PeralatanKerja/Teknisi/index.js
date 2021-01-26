@@ -56,6 +56,7 @@ class Teknisi extends Component {
     pelindungPernafasan: false,
     pelindungBadan: false,
     pelindungKaki: false,
+    pelindungTangan: false,
   }
 
   componentDidMount() {

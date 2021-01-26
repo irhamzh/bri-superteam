@@ -24,10 +24,10 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputDate,
   CfInputRadio,
-  CfSelect,
   ListCheckboxShow,
 } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
@@ -356,6 +356,30 @@ class ME extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputLantai = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getLantai(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputJenisGedung = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getJenisGedung(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -532,10 +556,13 @@ class ME extends Component {
                           <FormGroup>
                             <Field
                               label="Jenis Gedung"
+                              cacheOptions
                               options={optJenisGedung}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputJenisGedung}
                               name="buildingType"
-                              placeholder="Pilih atau Cari Jenis Gedung"
+                              isRequired
+                              placeholder="Pilih atau cari Jenis Gedung"
                               defaultValue={
                                 values.buildingType
                                   ? {
@@ -544,7 +571,7 @@ class ME extends Component {
                                     }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>
@@ -552,16 +579,19 @@ class ME extends Component {
                           <FormGroup>
                             <Field
                               label="Lantai"
+                              cacheOptions
                               options={optLantai}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputLantai}
                               name="floor"
-                              placeholder="Pilih atau Cari Lantai"
+                              isRequired
+                              placeholder="Pilih atau cari Lantai"
                               defaultValue={
                                 values.floor
                                   ? { value: values.floor.id, label: values.floor.name }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>

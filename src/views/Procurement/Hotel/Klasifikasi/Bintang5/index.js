@@ -24,7 +24,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createPRKlasifikasiHotel,
@@ -74,8 +80,8 @@ class Bintang5 extends Component {
       value: row.id,
     }))
 
-    const { tableProps } = fetchQueryProps
-    const { modalForm } = tableProps
+    // const { tableProps } = fetchQueryProps
+    // const { modalForm } = tableProps
 
     const columns = [
       {
@@ -113,7 +119,7 @@ class Bintang5 extends Component {
         filterable: false,
         Cell: (props) => {
           const { facilities } = props.original
-          return facilities.map((row) => <div>{`${row.name}`}</div>)
+          return facilities.map((row) => <div>{`${row.nama}`}</div>)
         },
       },
 
@@ -126,33 +132,6 @@ class Bintang5 extends Component {
           const { facilities } = props.original
           return facilities.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
         },
-      },
-      {
-        Header: 'Aksi',
-        width: 150,
-        show: true,
-        filterable: false,
-        Cell: (props) => (
-          <>
-            <Button
-              color="success"
-              onClick={() => modalForm.show({ data: props.original })}
-              className="mr-1"
-              title="Edit"
-            >
-              <i className="fa fa-pencil" />
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              <i className="fa fa-trash" />
-            </Button>
-          </>
-        ),
       },
     ]
 
@@ -232,11 +211,69 @@ class Bintang5 extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputHotel = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getHotel(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputWorkingOrder = async (value) => {
+    const filtered = [
+      { id: 'kodeWorkingOrder', value: `${value}` },
+      { id: 'division', value: 'Procurement' },
+    ]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getWorkingOrder(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.kodeWorkingOrder, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
     const { optWorkingOrder, optHotel, isShow, columns } = this.state
+
+    const tableCols = [
+      ...columns,
+      {
+        Header: 'Aksi',
+        width: 150,
+        show: true,
+        filterable: false,
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() => modalForm.show({ data: props.original })}
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, props.original)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
+      },
+    ]
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
@@ -330,7 +367,7 @@ class Bintang5 extends Component {
                 />
                 <ReactTable
                   filterable
-                  columns={columns}
+                  columns={tableCols}
                   defaultPageSize={10}
                   className="-highlight"
                   {...tableProps}
@@ -374,10 +411,13 @@ class Bintang5 extends Component {
                       <FormGroup>
                         <Field
                           label="Working Order"
+                          cacheOptions
                           options={optWorkingOrder}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputWorkingOrder}
                           name="workingOrder"
-                          placeholder="Pilih atau Cari Working Order"
+                          isRequired
+                          placeholder="Pilih atau cari Working Order"
                           defaultValue={
                             values.workingOrder
                               ? {
@@ -386,7 +426,7 @@ class Bintang5 extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -419,16 +459,19 @@ class Bintang5 extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Hotel"
+                              cacheOptions
                               options={optHotel}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputHotel}
                               name="hotelName"
-                              placeholder="Pilih atau Cari"
+                              isRequired
+                              placeholder="Pilih atau cari Hotel"
                               defaultValue={
                                 values.hotelName
                                   ? { value: values.hotelName.id, label: values.hotelName.name }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>
@@ -465,7 +508,7 @@ class Bintang5 extends Component {
                                           { value: 'Lain-lain', label: 'Lain-lain' },
                                         ]}
                                         isRequired
-                                        name={`facilities[${index}].name`}
+                                        name={`facilities[${index}].nama`}
                                         placeholder="Pilih atau Cari"
                                         component={CfSelect}
                                       />

@@ -23,7 +23,13 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues, userData } from '../../../../helpers'
+import {
+  AlertMessage,
+  formatCurrencyIDR,
+  formatDate,
+  invalidValues,
+  userData,
+} from '../../../../helpers'
 import {
   createPersekot,
   updatePersekot,
@@ -79,7 +85,7 @@ class InputPersekot extends Component {
         accessor: 'costNominal',
         show: true,
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
         Header: 'Status',

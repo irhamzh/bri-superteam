@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../../components'
+import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../../helpers'
 import {
   createEngineerBasementAC,
@@ -189,6 +189,42 @@ class AC extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputGedung = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getGedung(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputLantai = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getLantai(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputCompressor = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getCompressor(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -359,59 +395,57 @@ class AC extends Component {
                       <FormGroup>
                         <Field
                           label="Gedung"
+                          cacheOptions
                           options={optGedung}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputGedung}
                           name="building"
-                          placeholder="Pilih atau Cari Gedung"
+                          isRequired
+                          placeholder="Pilih atau cari Gedung"
                           defaultValue={
                             values.building
                               ? { value: values.building.id, label: values.building.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Field
                           label="Lantai"
+                          cacheOptions
                           options={optLantai}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputLantai}
                           name="floor"
-                          placeholder="Pilih atau Cari Lantai"
+                          isRequired
+                          placeholder="Pilih atau cari Lantai"
                           defaultValue={
                             values.floor
                               ? { value: values.floor.id, label: values.floor.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
-
-                      {/* <FormGroup>
-                        <Field
-                          label="Nama Vendor"
-                          options={[{ value: 'Vendor A', label: 'Vendor A' }]}
-                          isRequired
-                          name="Vendor.nama"
-                          placeholder="Pilih atau Cari Nama Vendor"
-                          component={CfSelect}
-                        />
-                      </FormGroup> */}
 
                       <FormGroup>
                         <Field
                           label="Compressor"
+                          cacheOptions
                           options={optCompressor}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputCompressor}
                           name="compressor"
-                          placeholder="Pilih atau Cari Compressor"
+                          isRequired
+                          placeholder="Pilih atau cari Compressor"
                           defaultValue={
                             values.compressor
                               ? { value: values.compressor.id, label: values.compressor.name }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 

@@ -316,7 +316,7 @@ class Sosialisasi extends Component {
                       <FormGroup>
                         <Field
                           label="Kode Pelatihan"
-                          type="number"
+                          type="text"
                           name="kodePelatihan"
                           isRequired
                           placeholder="Masukkan kode Pelatihan"

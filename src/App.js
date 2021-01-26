@@ -2,8 +2,9 @@ import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 // import { renderRoutes } from 'react-router-config';
 import './App.scss'
-import { jwtVerify } from './config/configStore'
-import Service from './config/services'
+// import { jwtVerify } from './config/configStore'
+// import Service from './config/services'
+// import { AlertMessage } from './helpers'
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>
 
@@ -17,15 +18,26 @@ const Page404 = React.lazy(() => import('./views/Pages/Page404'))
 const Page500 = React.lazy(() => import('./views/Pages/Page500'))
 
 const App = () => {
-  // -> aku komen dulu mas DEd
-  // ;(function checkToken() {
-  //   setInterval(async () => {
-  //     const resVerify = await Service.verifyToken()
-  //     if (resVerify.status === 401) {
-  //       jwtVerify()
+  // ;(async function checkToken() {
+  //   await setInterval(async () => {
+  //     try {
+  //       await Service.verifyToken()
+  //     } catch (error) {
+  //       if (error.message.includes('401') && !window.location.href.includes('/login')) {
+  //         AlertMessage.custom({
+  //           title: 'Session Expired',
+  //           text: 'Sesi anda telah selesai, mohon login kembali',
+  //           icon: 'error',
+  //         }).then((result) => {
+  //           if (result.value) {
+  //             jwtVerify()
+  //           }
+  //         })
+  //       }
   //     }
-  //   }, 1000 * 60 * 5)
+  //   }, 1000 * 10)
   // })()
+
   return (
     <HashRouter>
       <React.Suspense fallback={loading()}>

@@ -1,26 +1,26 @@
 import Service from '../../../config/services'
 import { AlertMessage } from '../../../helpers'
 import {
-  CREATE_GENERAL_AFFAIR_ANGGARAN_LOADING,
-  CREATE_GENERAL_AFFAIR_ANGGARAN_SUCCESS,
-  CREATE_GENERAL_AFFAIR_ANGGARAN_ERROR,
-  UPDATE_GENERAL_AFFAIR_ANGGARAN_LOADING,
-  UPDATE_GENERAL_AFFAIR_ANGGARAN_SUCCESS,
-  UPDATE_GENERAL_AFFAIR_ANGGARAN_ERROR,
-  DELETE_GENERAL_AFFAIR_ANGGARAN_LOADING,
-  DELETE_GENERAL_AFFAIR_ANGGARAN_SUCCESS,
-  DELETE_GENERAL_AFFAIR_ANGGARAN_ERROR,
+  CREATE_FIXED_ASSET_ANGGARAN_LOADING,
+  CREATE_FIXED_ASSET_ANGGARAN_SUCCESS,
+  CREATE_FIXED_ASSET_ANGGARAN_ERROR,
+  UPDATE_FIXED_ASSET_ANGGARAN_LOADING,
+  UPDATE_FIXED_ASSET_ANGGARAN_SUCCESS,
+  UPDATE_FIXED_ASSET_ANGGARAN_ERROR,
+  DELETE_FIXED_ASSET_ANGGARAN_LOADING,
+  DELETE_FIXED_ASSET_ANGGARAN_SUCCESS,
+  DELETE_FIXED_ASSET_ANGGARAN_ERROR,
 } from './types'
 
-export const createGAAnggaran = (formData, refresh) => async (dispatch) => {
+export const createFXAnggaran = (formData, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: CREATE_GENERAL_AFFAIR_ANGGARAN_LOADING, isLoading: true })
+    dispatch({ type: CREATE_FIXED_ASSET_ANGGARAN_LOADING, isLoading: true })
     // Call API
-    const res = await Service.createGAAnggaran(formData)
-    dispatch({ type: CREATE_GENERAL_AFFAIR_ANGGARAN_SUCCESS, isLoading: false })
+    const res = await Service.createFXAnggaran(formData)
+    dispatch({ type: CREATE_FIXED_ASSET_ANGGARAN_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Created'
     paramsResponse.text = res.data.message
@@ -35,7 +35,7 @@ export const createGAAnggaran = (formData, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: CREATE_GENERAL_AFFAIR_ANGGARAN_ERROR,
+      type: CREATE_FIXED_ASSET_ANGGARAN_ERROR,
       payload: ObjError,
       isLoading: false,
     })
@@ -43,15 +43,15 @@ export const createGAAnggaran = (formData, refresh) => async (dispatch) => {
   }
 }
 
-export const updateGAAnggaran = (formData, id, refresh) => async (dispatch) => {
+export const updateFXAnggaran = (formData, id, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: UPDATE_GENERAL_AFFAIR_ANGGARAN_LOADING, isLoading: true })
+    dispatch({ type: UPDATE_FIXED_ASSET_ANGGARAN_LOADING, isLoading: true })
     // Call API
-    const res = await Service.updateGAAnggaran(formData, id)
-    dispatch({ type: UPDATE_GENERAL_AFFAIR_ANGGARAN_SUCCESS, isLoading: false })
+    const res = await Service.updateFXAnggaran(formData, id)
+    dispatch({ type: UPDATE_FIXED_ASSET_ANGGARAN_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'
     paramsResponse.text = res.data.message
@@ -66,7 +66,7 @@ export const updateGAAnggaran = (formData, id, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: UPDATE_GENERAL_AFFAIR_ANGGARAN_ERROR,
+      type: UPDATE_FIXED_ASSET_ANGGARAN_ERROR,
       payload: ObjError,
       isLoading: false,
     })
@@ -74,15 +74,16 @@ export const updateGAAnggaran = (formData, id, refresh) => async (dispatch) => {
   }
 }
 
-export const deleteGAAnggaran = (formData, id, refresh) => async (dispatch) => {
+export const deleteFXAnggaran = (formData, id, refresh) => async (dispatch) => {
   let ObjError = ''
   const paramsResponse = {}
 
   try {
-    dispatch({ type: DELETE_GENERAL_AFFAIR_ANGGARAN_LOADING, isLoading: true })
+    dispatch({ type: DELETE_FIXED_ASSET_ANGGARAN_LOADING, isLoading: true })
     // Call API
-    const res = await Service.deleteGAAnggaran(formData, id)
-    dispatch({ type: DELETE_GENERAL_AFFAIR_ANGGARAN_SUCCESS, isLoading: false })
+    console.log(formData, id, 'redux')
+    const res = await Service.deleteFXAnggaran(formData, id)
+    dispatch({ type: DELETE_FIXED_ASSET_ANGGARAN_SUCCESS, isLoading: false })
 
     paramsResponse.title = 'Success'
     paramsResponse.text = res.data.message
@@ -97,7 +98,7 @@ export const deleteGAAnggaran = (formData, id, refresh) => async (dispatch) => {
     ObjError = err.response && err.response.data.message
 
     dispatch({
-      type: DELETE_GENERAL_AFFAIR_ANGGARAN_ERROR,
+      type: DELETE_FIXED_ASSET_ANGGARAN_ERROR,
       payload: ObjError,
       isLoading: false,
     })

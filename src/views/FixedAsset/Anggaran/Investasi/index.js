@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
   Button,
@@ -19,18 +21,35 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
+import ReactExport from 'react-export-excel'
 import Select from 'react-select'
 import Service from '../../../../config/services'
-import { CfInputDate, CfInputFile } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
-import { uploadAnggaranInvestasi } from '../../../../modules/anggaran/investasi/actions'
+import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import {
+  AlertMessage,
+  formatCurrencyIDR,
+  formatDate,
+  getYearOptions,
+  invalidValues,
+} from '../../../../helpers'
+import {
+  createFXAnggaran,
+  updateFXAnggaran,
+  deleteFXAnggaran,
+} from '../../../../modules/anggaran/fx/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
+// Export
+const { ExcelFile } = ReactExport
+const { ExcelSheet } = ReactExport.ExcelFile
+const { ExcelColumn } = ReactExport.ExcelFile
 class InvestasiAnggaran extends Component {
   state = {
     tahun: null,
     bulan: null,
+    isShow: false,
+    columns: [],
     optBulan: [
       { label: 'Januari', value: '1' },
       { label: 'Februari', value: '2' },
@@ -45,25 +64,91 @@ class InvestasiAnggaran extends Component {
       { label: 'November', value: '11' },
       { label: 'Desember', value: '12' },
     ],
-    optTahun: [
-      { label: '2015', value: '2015' },
-      { label: '2016', value: '2016' },
-      { label: '2017', value: '2017' },
-      { label: '2018', value: '2018' },
-      { label: '2019', value: '2019' },
-      { label: '2020', value: '2020' },
-      { label: '2021', value: '2021' },
-      { label: '2022', value: '2022' },
-      { label: '2023', value: '2023' },
-      { label: '2024', value: '2024' },
-      { label: '2025', value: '2025' },
-      { label: '2026', value: '2026' },
-    ],
+    optTahun: getYearOptions(),
   }
 
   initialValues = {
-    nama: '',
-    id: '',
+    categoryAnggaran: 'Investasi',
+  }
+
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    const thisYear = new Date().getFullYear()
+    const thisMonth = new Date().getMonth() + 1
+    fetchQueryProps.setFilteredByObject({
+      categoryAnggaran: 'Investasi',
+      year: thisYear,
+      month: thisMonth,
+    })
+
+    const columns = [
+      {
+        Header: 'Tipe Anggaran',
+        accessor: `type`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Nilai',
+        accessor: `nilai`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatCurrencyIDR(props.value)}</p>,
+      },
+      {
+        Header: 'Tanggal Pembukuan',
+        accessor: `tanggalPembukuan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (
+          <p style={{ textAlign: 'center' }}>
+            {props.value ? formatDate(props.value) : props.value}
+          </p>
+        ),
+      },
+      {
+        Header: 'Keperluan',
+        accessor: `keperluan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Pelimpahan',
+        accessor: `pelimpahan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+      {
+        Header: 'Tanggal Pelimpahan',
+        accessor: `tanggalPelimpahan`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => (
+          <p style={{ textAlign: 'center' }}>
+            {props.value ? formatDate(props.value) : props.value}
+          </p>
+        ),
+      },
+      {
+        Header: 'Status',
+        accessor: `status`,
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
+      },
+    ]
+
+    this.setState({ columns })
   }
 
   doRefresh = () => {
@@ -73,9 +158,13 @@ class InvestasiAnggaran extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { uploadAnggaranInvestasi } = this.props
-
-    uploadAnggaranInvestasi(values, this.doRefresh)
+    const { parent } = values
+    const { createFXAnggaran, updateFXAnggaran } = this.props
+    if (!invalidValues.includes(parent)) {
+      updateFXAnggaran(values, parent, this.doRefresh)
+    } else {
+      createFXAnggaran(values, this.doRefresh)
+    }
   }
 
   handleChangeSelect = (name, value) => {
@@ -87,6 +176,29 @@ class InvestasiAnggaran extends Component {
         this.doRefresh()
       }
     )
+  }
+
+  handleDelete = (e, state, idClient) => {
+    e.preventDefault()
+
+    const { id } = state
+    const { deleteFXAnggaran } = this.props
+
+    AlertMessage.warning()
+      .then((result) => {
+        if (result.value) {
+          deleteFXAnggaran({ id: idClient }, id, this.doRefresh)
+        } else {
+          const paramsResponse = {
+            title: 'Huff',
+            text: 'Hampir saja kamu kehilangan data ini',
+          }
+          AlertMessage.info(paramsResponse)
+        }
+      })
+      .catch((err) => {
+        AlertMessage.error(err) // Internal Server Error
+      })
   }
 
   filterData = async (e) => {
@@ -113,606 +225,106 @@ class InvestasiAnggaran extends Component {
     }
   }
 
+  toggleShow = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isShow: !prevState.isShow,
+      }
+    })
+  }
+
+  handleShowCheckbox = (e, data) => {
+    const { columns } = this.state
+
+    const selected = [...columns]
+    const keyIndex = columns.indexOf(data)
+    if (e.target.checked) {
+      selected[keyIndex].show = true
+    } else {
+      selected[keyIndex].show = false
+    }
+
+    this.setState({ columns: selected })
+  }
+
   render() {
-    const { optBulan, optTahun } = this.state
+    const { optBulan, optTahun, isShow, columns } = this.state
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
+    const { data } = tableProps
 
-    const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
-
-    const columns = [
+    const tableCols = [
       {
         Header: 'No.',
         width: 50,
         // accessor: `none`,
+        show: true,
         filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{numbData(props)}</p>,
+        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.index + 1}</p>,
       },
       {
-        Header: 'Tanggal',
-        accessor: `tanggal`,
+        Header: 'Bulan',
+        accessor: `month`,
+        show: true,
         filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{formatDate(props.value)}</p>,
-      },
-      {
-        Header: 'Kode',
-        accessor: `kode`,
-        filterable: false,
-        Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
-      },
-      {
-        Header: 'Deskripsi',
-        accessor: `deskripsi`,
-        filterable: false,
-        width: 200,
         headerClassName: 'wordwrap',
-        Cell: (props) => <p className="wordwrap">{props.value}</p>,
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.month}</p>,
       },
       {
-        Header: 'BRI CORPU',
+        Header: 'Tahun',
+        accessor: `year`,
+        show: true,
         filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'briCorpuBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'briCorpuBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'briCorpuBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'briCorpuBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'briCorpuBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'briCorpuBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'briCorpuSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'briCorpu',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.year}</p>,
       },
-
       {
-        Header: 'Campus Medan',
+        Header: 'Kategori Anggaran',
+        accessor: `categoryAnggaran`,
+        show: true,
         filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusMedanBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusMedanBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusMedanBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusMedanBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusMedanBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusMedanBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusMedanSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusMedan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
+        headerClassName: 'wordwrap',
+        Cell: () => <p style={{ textAlign: 'center' }}>{data[0]?.categoryAnggaran}</p>,
       },
-
+      ...columns,
       {
-        Header: 'Campus Padang',
+        Header: 'Aksi',
+        width: 150,
+        accessor: `id`,
+        show: true,
         filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusPadangBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusPadangBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusPadangBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusPadangBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusPadangBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusPadangBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusPadangSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusPadang',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
-      },
-
-      {
-        Header: 'Campus Jakarta',
-        filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusJakartaSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusJakarta',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
-      },
-
-      {
-        Header: 'Campus Bandung',
-        filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusBandungBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusBandungBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusBandungBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusBandungBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusBandungBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusBandungBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusBandungSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusBandung',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
-      },
-
-      {
-        Header: 'Campus Yogyakarta',
-        filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusYogyakartaSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusYogyakarta',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
-      },
-
-      {
-        Header: 'Campus Surabaya',
-        filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusSurabayaSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusSurabaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
-      },
-
-      {
-        Header: 'Campus Makassar',
-        filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'campusMakassarSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'campusMakassar',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
-      },
-
-      {
-        Header: 'Total Campus',
-        filterable: false,
-        columns: [
-          {
-            Header: 'Breakdown Anggaran Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'totalCampusBreakdownAnggaranBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Jumlah (Rp)',
-            filterable: false,
-            accessor: 'totalCampusBreakdownAnggaranJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Breakdown Anggaran Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'totalCampusBreakdownAnggaranTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Biaya Satuan (Rp)',
-            filterable: false,
-            accessor: 'totalCampusBreakdownRealisasiBiayaSatuan',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Jumlah (Rp)',
-            filterable: false,
-            accessor: 'totalCampusBreakdownRealisasiJumlah',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Realisasi Total Biaya (Rp)',
-            filterable: false,
-            accessor: 'totalCampusBreakdownRealisasiTotalBiaya',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: 'Sisa Anggaran (Rp)',
-            filterable: false,
-            accessor: 'totalCampusSisaAnggaran',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-          {
-            Header: '%',
-            filterable: false,
-            accessor: 'totalCampus',
-            headerClassName: 'wordwrap',
-            Cell: (row) => <p style={{ textAlign: 'center' }}>{row.value}</p>,
-          },
-        ],
+        Cell: (props) => (
+          <>
+            <Button
+              color="success"
+              onClick={() =>
+                modalForm.show({
+                  data: {
+                    ...props.original,
+                    year: data[0]?.year,
+                    month: data[0]?.month,
+                    categoryAnggaran: data[0]?.categoryAnggaran,
+                    parent: data[0]?.id,
+                  },
+                })
+              }
+              className="mr-1"
+              title="Edit"
+            >
+              <i className="fa fa-pencil" />
+            </Button>
+            &nbsp; | &nbsp;
+            <Button
+              color="danger"
+              onClick={(e) => this.handleDelete(e, data[0], props.value)}
+              className="mr-1"
+              title="Delete"
+            >
+              <i className="fa fa-trash" />
+            </Button>
+          </>
+        ),
       },
     ]
 
@@ -745,7 +357,7 @@ class InvestasiAnggaran extends Component {
                         className="mr-1"
                       >
                         <i className="fa fa-plus" style={isIcon} />
-                        &nbsp;Upload
+                        &nbsp;Input Data
                       </Button>
                     </div>
                   </Col>
@@ -789,44 +401,79 @@ class InvestasiAnggaran extends Component {
                     </div>
                   </Col>
 
-                  {/* <Col sm="2">
-                    <Select
-                      // isClearable
-                      onChange={(v) => this.handleChangeSelect('tahun', v)}
-                      options={optTahun}
-                      value={tahun}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      placeholder="Tahun"
-                    />
-                  </Col> */}
-
                   <Col>
                     <div style={{ textAlign: 'right' }}>
                       <Button
                         className="mr-3 mb-2 px-4"
                         color="secondary"
                         style={{ borderRadius: '20px' }}
+                        onClick={this.toggleShow}
                       >
                         Show
                       </Button>
-                      <Button
-                        className="mr-1 mb-2 px-4"
-                        color="secondary"
-                        style={{ borderRadius: '20px' }}
+
+                      <ExcelFile
+                        filename={pageName}
+                        element={
+                          <Button
+                            className="mr-1 mb-2 px-4"
+                            color="secondary"
+                            style={{ borderRadius: '20px' }}
+                          >
+                            Export
+                          </Button>
+                        }
                       >
-                        Export
-                      </Button>
+                        <ExcelSheet data={data[0]?.detail} name={pageName}>
+                          <ExcelColumn label="Bulan" value={() => data[0]?.month} />
+                          <ExcelColumn label="Tahun" value={() => data[0]?.year} />
+                          <ExcelColumn
+                            label="Kategori Anggaran"
+                            value={() => data[0]?.categoryAnggaran}
+                          />
+                          <ExcelColumn label="Tipe Anggaran" value={(col) => col.type} />
+                          <ExcelColumn
+                            label="Nilai"
+                            value={(col) => formatCurrencyIDR(col.nilai)}
+                          />
+                          <ExcelColumn
+                            label="Tanggal Pembukuan"
+                            value={(col) =>
+                              col.tanggalPembukuan
+                                ? formatDate(col.tanggalPembukuan)
+                                : col.tanggalPembukuan
+                            }
+                          />
+                          <ExcelColumn label="Keperluan" value={(col) => col.keperluan} />
+                          <ExcelColumn label="Pelimpahan" value={(col) => col.pelimpahan} />
+                          <ExcelColumn
+                            label="Tanggal Pelimpahan"
+                            value={(col) =>
+                              col.tanggalPelimpahan
+                                ? formatDate(col.tanggalPelimpahan)
+                                : col.tanggalPelimpahan
+                            }
+                          />
+                          <ExcelColumn label="Status" value={(col) => col.status} />
+                        </ExcelSheet>
+                      </ExcelFile>
                     </div>
                   </Col>
                 </Row>
-                <br />
+                {/* Card Show */}
+                <ListCheckboxShow
+                  data={columns}
+                  isShow={isShow}
+                  handleShowCheckbox={this.handleShowCheckbox}
+                />
                 <ReactTable
                   filterable
-                  columns={columns}
-                  defaultPageSize={10}
+                  columns={tableCols}
+                  defaultPageSize={1}
                   className="-highlight"
+                  pageSize={data[0]?.detail.length}
                   {...tableProps}
+                  data={data[0]?.detail}
                 />
               </CardBody>
             </Card>
@@ -847,29 +494,131 @@ class InvestasiAnggaran extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
                     <ModalBody>
                       <FormGroup>
                         <Field
-                          label="Bulan/Tahun"
-                          name="tanggal"
-                          classIcon="fa fa-calendar"
-                          blockLabel
-                          // minDate={new Date()}
+                          label="Kategori Anggaran"
+                          options={[
+                            { value: 'Eksploitasi', label: 'Eksploitasi' },
+                            { value: 'Investasi', label: 'Investasi' },
+                          ]}
                           isRequired
-                          placeholder="Pilih Tanggal"
-                          showMonthYearPicker
-                          showFullMonthYearPicker
-                          dateFormat="MM/yyyy"
-                          component={CfInputDate}
+                          isDisabled
+                          name="categoryAnggaran"
+                          placeholder="Pilih atau Cari Kategori"
+                          component={CfSelect}
                         />
                       </FormGroup>
 
                       <FormGroup>
-                        <Field label="File Excel" name="excel" isRequired component={CfInputFile} />
+                        <Field
+                          label="Tipe Anggaran"
+                          options={[
+                            { value: 'Breakdown', label: 'Breakdown' },
+                            { value: 'Penggunaan', label: 'Penggunaan' },
+                          ]}
+                          isRequired
+                          name="type"
+                          isDisabled={!!values.id}
+                          placeholder="Pilih atau Cari type"
+                          component={CfSelect}
+                        />
                       </FormGroup>
+
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Bulan"
+                              options={optBulan}
+                              isRequired
+                              name="month"
+                              placeholder="Pilih atau Cari bulan"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <Field
+                              label="Tahun"
+                              options={getYearOptions()}
+                              isRequired
+                              name="year"
+                              placeholder="Pilih atau Cari tahun"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <FormGroup>
+                        <Field
+                          label="Nilai"
+                          type="number"
+                          name="nilai"
+                          isRequired
+                          placeholder="Masukkan Nilai"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      {values.type === 'Penggunaan' && (
+                        <>
+                          <Row>
+                            <Col>
+                              <FormGroup>
+                                <Field
+                                  label="Tanggal Pembukuan"
+                                  name="tanggalPembukuan"
+                                  classIcon="fa fa-calendar"
+                                  blockLabel
+                                  placeholder="Pilih Tanggal"
+                                  component={CfInputDate}
+                                />
+                              </FormGroup>
+                            </Col>
+                            <Col>
+                              <FormGroup>
+                                <Field
+                                  label="Tanggal Pelimpahan"
+                                  name="tanggalPelimpahan"
+                                  classIcon="fa fa-calendar"
+                                  blockLabel
+                                  placeholder="Pilih Tanggal"
+                                  component={CfInputDate}
+                                />
+                              </FormGroup>
+                            </Col>
+                          </Row>
+
+                          <FormGroup>
+                            <Field
+                              label="Keperluan"
+                              type="text"
+                              name="keperluan"
+                              placeholder="Masukkan Keperluan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Pelimpahan"
+                              options={[
+                                { value: 'Done', label: 'Done' },
+                                { value: 'Not Yet', label: 'Not Yet' },
+                              ]}
+                              name="pelimpahan"
+                              placeholder="Pilih atau Cari pelimpahan"
+                              component={CfSelect}
+                            />
+                          </FormGroup>
+                        </>
+                      )}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -908,7 +657,9 @@ InvestasiAnggaran.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  uploadAnggaranInvestasi: PropTypes.func.isRequired,
+  createFXAnggaran: PropTypes.func.isRequired,
+  updateFXAnggaran: PropTypes.func.isRequired,
+  deleteFXAnggaran: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -920,8 +671,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  uploadAnggaranInvestasi: (formData, refresh) =>
-    dispatch(uploadAnggaranInvestasi(formData, refresh)),
+  createFXAnggaran: (formData, refresh) => dispatch(createFXAnggaran(formData, refresh)),
+  updateFXAnggaran: (formData, id, refresh) => dispatch(updateFXAnggaran(formData, id, refresh)),
+  deleteFXAnggaran: (formData, id, refresh) => dispatch(deleteFXAnggaran(formData, id, refresh)),
 })
 
 export default connect(
@@ -929,7 +681,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getAnggaranInvestasi(p),
+    API: (p) => Service.getFXAnggaran(p),
     Component: withToggle({
       Component: InvestasiAnggaran,
       toggles: {

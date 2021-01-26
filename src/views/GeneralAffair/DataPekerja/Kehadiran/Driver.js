@@ -370,9 +370,6 @@ class Driver extends Component {
                               // minDate={new Date()}
                               isRequired
                               placeholder="Pilih Tanggal"
-                              showMonthYearPicker
-                              showFullMonthYearPicker
-                              dateFormat="MM/yyyy"
                               component={CfInputDate}
                             />
                           </FormGroup>

@@ -182,7 +182,7 @@ class AnggaranRapat extends Component {
     )
   }
 
-  handleDelete = (e, state) => {
+  handleDelete = (e, state, idClient) => {
     e.preventDefault()
 
     const { id } = state
@@ -191,7 +191,7 @@ class AnggaranRapat extends Component {
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deleteGAAnggaran(id, this.doRefresh)
+          deleteGAAnggaran({ id: idClient }, id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -296,6 +296,7 @@ class AnggaranRapat extends Component {
         Header: 'Aksi',
         width: 150,
         show: true,
+        accessor: `id`,
         filterable: false,
         Cell: (props) => (
           <>
@@ -320,7 +321,7 @@ class AnggaranRapat extends Component {
             &nbsp; | &nbsp;
             <Button
               color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
+              onClick={(e) => this.handleDelete(e, data[0], props.value)}
               className="mr-1"
               title="Delete"
             >
@@ -471,8 +472,10 @@ class AnggaranRapat extends Component {
                 <ReactTable
                   filterable
                   columns={tableCols}
-                  defaultPageSize={10}
+                  defaultPageSize={1}
                   className="-highlight"
+                  noDataText="Input Bulan dan Tahun"
+                  pageSize={data[0]?.detail.length}
                   {...tableProps}
                   data={data[0]?.detail}
                 />
@@ -495,7 +498,7 @@ class AnggaranRapat extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Anggaran Rapat</ModalHeader>
                     <ModalBody>
@@ -524,6 +527,7 @@ class AnggaranRapat extends Component {
                           ]}
                           isRequired
                           name="type"
+                          isDisabled={!!values.id}
                           placeholder="Pilih atau Cari type"
                           component={CfSelect}
                         />
@@ -567,55 +571,59 @@ class AnggaranRapat extends Component {
                         />
                       </FormGroup>
 
-                      <Row>
-                        <Col>
+                      {values.type === 'Penggunaan' && (
+                        <>
+                          <Row>
+                            <Col>
+                              <FormGroup>
+                                <Field
+                                  label="Tanggal Pembukuan"
+                                  name="tanggalPembukuan"
+                                  classIcon="fa fa-calendar"
+                                  blockLabel
+                                  placeholder="Pilih Tanggal"
+                                  component={CfInputDate}
+                                />
+                              </FormGroup>
+                            </Col>
+                            <Col>
+                              <FormGroup>
+                                <Field
+                                  label="Tanggal Pelimpahan"
+                                  name="tanggalPelimpahan"
+                                  classIcon="fa fa-calendar"
+                                  blockLabel
+                                  placeholder="Pilih Tanggal"
+                                  component={CfInputDate}
+                                />
+                              </FormGroup>
+                            </Col>
+                          </Row>
+
                           <FormGroup>
                             <Field
-                              label="Tanggal Pembukuan"
-                              name="tanggalPembukuan"
-                              classIcon="fa fa-calendar"
-                              blockLabel
-                              placeholder="Pilih Tanggal"
-                              component={CfInputDate}
+                              label="Keperluan"
+                              type="text"
+                              name="keperluan"
+                              placeholder="Masukkan Keperluan"
+                              component={CfInput}
                             />
                           </FormGroup>
-                        </Col>
-                        <Col>
+
                           <FormGroup>
                             <Field
-                              label="Tanggal Pelimpahan"
-                              name="tanggalPelimpahan"
-                              classIcon="fa fa-calendar"
-                              blockLabel
-                              placeholder="Pilih Tanggal"
-                              component={CfInputDate}
+                              label="Pelimpahan"
+                              options={[
+                                { value: 'Done', label: 'Done' },
+                                { value: 'Not Yet', label: 'Not Yet' },
+                              ]}
+                              name="pelimpahan"
+                              placeholder="Pilih atau Cari pelimpahan"
+                              component={CfSelect}
                             />
                           </FormGroup>
-                        </Col>
-                      </Row>
-
-                      <FormGroup>
-                        <Field
-                          label="Keperluan"
-                          type="text"
-                          name="keperluan"
-                          placeholder="Masukkan Keperluan"
-                          component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Pelimpahan"
-                          options={[
-                            { value: 'Done', label: 'Done' },
-                            { value: 'Not Yet', label: 'Not Yet' },
-                          ]}
-                          name="pelimpahan"
-                          placeholder="Pilih atau Cari pelimpahan"
-                          component={CfSelect}
-                        />
-                      </FormGroup>
+                        </>
+                      )}
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
@@ -670,7 +678,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   createGAAnggaran: (formData, refresh) => dispatch(createGAAnggaran(formData, refresh)),
   updateGAAnggaran: (formData, id, refresh) => dispatch(updateGAAnggaran(formData, id, refresh)),
-  deleteGAAnggaran: (id, refresh) => dispatch(deleteGAAnggaran(id, refresh)),
+  deleteGAAnggaran: (formData, id, refresh) => dispatch(deleteGAAnggaran(formData, id, refresh)),
 })
 
 export default connect(

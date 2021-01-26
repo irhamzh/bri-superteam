@@ -24,7 +24,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPengelolaanKonsumsi,
@@ -133,7 +139,7 @@ class KonsumsiSosialisasi extends Component {
         headerClassName: 'wordwrap',
         Cell: (props) => {
           const { menu } = props.original
-          const listMenu = menu.map((row) => <div>{`${row.name}`}</div>)
+          const listMenu = menu.map((row) => <div>{`${row.nama}`}</div>)
           return listMenu
         },
       },
@@ -225,6 +231,34 @@ class KonsumsiSosialisasi extends Component {
     }
 
     this.setState({ columns: selected })
+  }
+
+  handleInputCatering = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getCatering(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
+  handleInputWorkingOrder = async (value) => {
+    const filtered = [
+      { id: 'kodeWorkingOrder', value: `${value}` },
+      { id: 'division', value: 'General Affair' },
+      { id: 'typeKegiatan', value: 'Sosialisasi' },
+    ]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getWorkingOrder(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.kodeWorkingOrder, value: row.id }))
+    })
+    return option
   }
 
   render() {
@@ -408,10 +442,13 @@ class KonsumsiSosialisasi extends Component {
                       <FormGroup>
                         <Field
                           label="No. Working Order"
+                          cacheOptions
                           options={optWorkingOrder}
-                          isRequired
+                          defaultOptions
+                          loadOptions={this.handleInputWorkingOrder}
                           name="workingOrder"
-                          placeholder="Pilih atau Cari"
+                          isRequired
+                          placeholder="Pilih atau cari Working Order"
                           defaultValue={
                             values.workingOrder
                               ? {
@@ -420,7 +457,7 @@ class KonsumsiSosialisasi extends Component {
                                 }
                               : null
                           }
-                          component={CfSelect}
+                          component={CfAsyncSelect}
                         />
                       </FormGroup>
 
@@ -453,10 +490,13 @@ class KonsumsiSosialisasi extends Component {
                           <FormGroup>
                             <Field
                               label="Nama Catering"
+                              cacheOptions
                               options={optCatering}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputCatering}
                               name="catering"
-                              placeholder="Pilih atau Cari Catering"
+                              isRequired
+                              placeholder="Pilih atau cari Catering"
                               defaultValue={
                                 values.catering
                                   ? {
@@ -465,7 +505,7 @@ class KonsumsiSosialisasi extends Component {
                                     }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>
@@ -483,7 +523,7 @@ class KonsumsiSosialisasi extends Component {
                                       <Field
                                         label="Nama Menu"
                                         type="text"
-                                        name={`menu[${index}].name`}
+                                        name={`menu[${index}].nama`}
                                         isRequired
                                         placeholder="Masukkan Nama Menu"
                                         component={CfInput}

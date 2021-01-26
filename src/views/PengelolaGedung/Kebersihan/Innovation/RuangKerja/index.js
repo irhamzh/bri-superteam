@@ -23,10 +23,10 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
-  CfSelect,
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../../components'
@@ -223,6 +223,18 @@ class RuangKerja extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputRuangan = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getRoom(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({ label: row.name, value: row.id }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
@@ -404,16 +416,19 @@ class RuangKerja extends Component {
                           <FormGroup>
                             <Field
                               label="Ruangan"
+                              cacheOptions
                               options={optRuangan}
-                              isRequired
+                              defaultOptions
+                              loadOptions={this.handleInputRuangan}
                               name="ruangan"
-                              placeholder="Pilih atau Cari Ruangan"
+                              isRequired
+                              placeholder="Pilih atau cari Ruangan"
                               defaultValue={
                                 values.ruangan
                                   ? { value: values.ruangan.id, label: values.ruangan.name }
                                   : null
                               }
-                              component={CfSelect}
+                              component={CfAsyncSelect}
                             />
                           </FormGroup>
                         </Col>

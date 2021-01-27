@@ -389,7 +389,7 @@ class RekreasiSiswa extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah Siswa"
-                          type="text"
+                          type="number"
                           name="jumlahSiswa"
                           isRequired
                           placeholder="Masukkan Jumlah Siswa"

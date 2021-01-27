@@ -357,7 +357,7 @@ class InputPersekot extends Component {
                       <FormGroup>
                         <Field
                           label="Nominal Biaya"
-                          type="text"
+                          type="number"
                           name="costNominal"
                           isRequired
                           placeholder="Masukkan Nominal Biaya"

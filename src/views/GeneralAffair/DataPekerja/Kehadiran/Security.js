@@ -388,7 +388,7 @@ class Security extends Component {
                           <FormGroup>
                             <Field
                               label="Jumlah Hadir"
-                              type="text"
+                              type="number"
                               name="jumlahHadir"
                               isRequired
                               placeholder="Masukkan Jumlah Hadir"
@@ -399,7 +399,7 @@ class Security extends Component {
                           <FormGroup>
                             <Field
                               label="Jumlah Tidak Hadir"
-                              type="text"
+                              type="number"
                               name="jumlahTidakHadir"
                               isRequired
                               placeholder="Masukkan Jumlah Tidak Hadir"
@@ -410,7 +410,7 @@ class Security extends Component {
                           <FormGroup>
                             <Field
                               label="Jumlah Cuti"
-                              type="text"
+                              type="number"
                               name="jumlahCuti"
                               isRequired
                               placeholder="Masukkan Jumlah Cuti"

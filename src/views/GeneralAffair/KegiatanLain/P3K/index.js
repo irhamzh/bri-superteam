@@ -426,7 +426,7 @@ class P3K extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah"
-                          type="text"
+                          type="number"
                           name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah"

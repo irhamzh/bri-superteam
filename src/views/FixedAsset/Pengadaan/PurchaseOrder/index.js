@@ -387,7 +387,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah"
-                          type="text"
+                          type="number"
                           name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah PO"
@@ -398,7 +398,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Harga Satuan"
-                          type="text"
+                          type="number"
                           name="hargaSatuan"
                           isRequired
                           placeholder="Masukkan harga"
@@ -409,7 +409,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Total Harga"
-                          type="text"
+                          type="number"
                           name="totalHarga"
                           isRequired
                           placeholder="Masukkan Total Harga"

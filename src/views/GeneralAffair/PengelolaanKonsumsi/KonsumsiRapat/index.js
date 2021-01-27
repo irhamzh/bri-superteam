@@ -533,7 +533,7 @@ class KonsumsiRapat extends Component {
                                     <FormGroup>
                                       <Field
                                         label="Biaya"
-                                        type="text"
+                                        type="number"
                                         name={`menu[${index}].price`}
                                         isRequired
                                         placeholder="Masukkan biaya"

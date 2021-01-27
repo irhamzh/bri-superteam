@@ -500,7 +500,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah Barang"
-                          type="text"
+                          type="number"
                           name="jumlahBarang"
                           isRequired
                           placeholder="Masukkan Jumlah Barang"
@@ -511,7 +511,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Harga Barang"
-                          type="text"
+                          type="number"
                           name="hargaBarang"
                           isRequired
                           placeholder="Masukkan Harga Barang"

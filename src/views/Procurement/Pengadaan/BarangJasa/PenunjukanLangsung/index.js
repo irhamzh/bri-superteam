@@ -739,7 +739,7 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Jumlah Peserta"
-                            type="text"
+                            type="number"
                             name="jumlahPeserta"
                             isRequired
                             placeholder="Masukkan Jumlah Peserta"
@@ -761,7 +761,7 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Jumlah Biaya"
-                            type="text"
+                            type="number"
                             name="jumlahBiaya"
                             isRequired
                             placeholder="Masukkan Jumlah Biaya"

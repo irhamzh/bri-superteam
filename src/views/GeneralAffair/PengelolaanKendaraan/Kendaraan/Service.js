@@ -382,7 +382,7 @@ class ServiceKendaraan extends Component {
                       <FormGroup>
                         <Field
                           label="Biaya"
-                          type="text"
+                          type="number"
                           name="biaya"
                           isRequired
                           placeholder="Masukkan Biaya"

@@ -612,22 +612,6 @@ class PenunjukanLangsung extends Component {
                       <FormGroup>
                         <Field
                           label="Nama Provider"
-                          options={optProvider}
-                          isRequired
-                          name="provider"
-                          placeholder="Pilih atau Cari Nama Provider"
-                          defaultValue={
-                            values.provider
-                              ? { value: values.provider.id, label: values.provider.name }
-                              : null
-                          }
-                          component={CfSelect}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Provider"
                           cacheOptions
                           options={optProvider}
                           defaultOptions

@@ -378,7 +378,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah"
-                          type="text"
+                          type="number"
                           name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah"

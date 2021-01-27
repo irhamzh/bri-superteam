@@ -94,13 +94,13 @@ class ME extends Component {
         Header: 'Jenis Gedung',
         accessor: 'buildingType.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Lantai',
         accessor: 'floor.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Smoke Detector',

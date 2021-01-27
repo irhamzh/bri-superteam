@@ -62,7 +62,7 @@ class DriverLayout extends Component {
         Header: 'Tujuan',
         accessor: 'tujuan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

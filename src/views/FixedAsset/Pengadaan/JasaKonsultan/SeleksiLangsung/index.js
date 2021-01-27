@@ -89,7 +89,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -177,7 +177,7 @@ class SeleksiLangsung extends Component {
       {
         Header: 'No. SPK',
         accessor: 'nomorSPK',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,

@@ -80,19 +80,19 @@ class AC extends Component {
         Header: 'Gedung',
         accessor: 'building.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Lantai',
         accessor: 'floor.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Compressor',
         accessor: 'compressor.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Ampere R',

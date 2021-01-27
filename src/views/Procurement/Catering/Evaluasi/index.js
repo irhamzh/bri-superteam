@@ -81,7 +81,7 @@ class Internal extends Component {
       {
         Header: 'No. Working Order',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -90,7 +90,7 @@ class Internal extends Component {
         Header: 'Nama Catering',
         accessor: 'catering.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

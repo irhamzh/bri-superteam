@@ -90,21 +90,21 @@ class Ruangan extends Component {
       {
         Header: 'Gedung',
         accessor: 'buildingType.name',
-        filterable: false,
+        filterable: true,
         show: true,
       },
       {
         Header: 'Jenis Ruangan',
         accessor: 'roomType.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Plafond',

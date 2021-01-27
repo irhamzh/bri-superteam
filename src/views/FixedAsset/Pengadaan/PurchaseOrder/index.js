@@ -141,7 +141,7 @@ class PurchaseOrder extends Component {
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
 
@@ -157,7 +157,7 @@ class PurchaseOrder extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

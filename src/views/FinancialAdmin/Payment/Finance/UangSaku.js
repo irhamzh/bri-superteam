@@ -87,14 +87,14 @@ class UangSaku extends Component {
         Header: 'Seksi',
         accessor: 'seksi',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama Sertifikasi',
         accessor: 'namaSertifikasi',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       // {

@@ -129,7 +129,7 @@ class DaftarAset extends Component {
       {
         Header: 'Nama Aset',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

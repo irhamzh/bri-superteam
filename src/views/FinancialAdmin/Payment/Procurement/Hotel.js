@@ -95,7 +95,7 @@ class Hotel extends Component {
       {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -104,7 +104,7 @@ class Hotel extends Component {
         Header: 'Nama Hotel',
         accessor: 'hotelName.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

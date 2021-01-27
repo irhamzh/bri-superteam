@@ -75,14 +75,14 @@ class Internal extends Component {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Hotel',
         accessor: 'hotelName.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
 
       {

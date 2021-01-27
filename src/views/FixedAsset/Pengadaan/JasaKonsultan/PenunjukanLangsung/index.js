@@ -88,7 +88,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -151,7 +151,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Tanggal SPK',
         accessor: 'tanggalSPK',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatDate(row.value)}</div>,
@@ -159,7 +159,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'No. SPK',
         accessor: 'nomorSPK',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,

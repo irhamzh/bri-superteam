@@ -206,13 +206,13 @@ class PenihilanPAUK extends Component {
       {
         Header: 'Seksi',
         accessor: 'seksi',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Nama PAUK',
         accessor: 'namaPAUK',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

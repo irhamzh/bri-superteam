@@ -94,7 +94,7 @@ class PemilihanLangsung extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -155,14 +155,14 @@ class PemilihanLangsung extends Component {
         Header: 'Nomor SPK',
         accessor: 'nomorSPK',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

@@ -170,7 +170,7 @@ class PestControl extends Component {
       {
         Header: 'Rekanan',
         accessor: 'partner.name',
-        filterable: false,
+        filterable: true,
         show: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

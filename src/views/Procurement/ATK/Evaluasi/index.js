@@ -73,13 +73,13 @@ class Internal extends Component {
         Header: 'Nama Vendor',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Performance',
         accessor: 'performance',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Remark',

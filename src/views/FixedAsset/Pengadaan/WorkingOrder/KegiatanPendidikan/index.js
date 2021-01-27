@@ -63,7 +63,7 @@ class KegiatanPendidikan extends Component {
       {
         Header: 'Kode Working Order',
         accessor: 'kodeWorkingOrder',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -71,7 +71,7 @@ class KegiatanPendidikan extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'namaKegiatan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -79,7 +79,7 @@ class KegiatanPendidikan extends Component {
       {
         Header: 'Kode Pelatihan',
         accessor: 'kodePelatihan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,

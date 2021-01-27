@@ -87,7 +87,7 @@ class Lelang extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -183,11 +183,15 @@ class Lelang extends Component {
           {
             Header: 'Nomor SPK',
             accessor: 'nomorSPK',
+            filterable: true,
+
             headerClassName: 'wordwrap',
           },
           {
             Header: 'Nama Provider',
             accessor: 'provider.name',
+            filterable: true,
+
             headerClassName: 'wordwrap',
           },
           {

@@ -76,7 +76,7 @@ class ReimburseKendaraan extends Component {
         Header: 'Nama Pekerja',
         accessor: 'name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

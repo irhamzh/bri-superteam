@@ -122,7 +122,7 @@ function Lokasi(props) {
             </CardHeader>
             <CardBody>
               <ReactTable
-                filterable={false}
+                filterable
                 columns={columns}
                 defaultPageSize={10}
                 className="-highlight"

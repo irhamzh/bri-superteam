@@ -77,7 +77,7 @@ class InputPersekot extends Component {
         accessor: 'name',
         align: 'center',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

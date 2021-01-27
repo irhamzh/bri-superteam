@@ -96,13 +96,13 @@ class Bintang5 extends Component {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'No. Surat Pesanan',
         accessor: 'noSuratPesanan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

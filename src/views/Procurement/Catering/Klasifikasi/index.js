@@ -85,14 +85,14 @@ class Klasifikasi extends Component {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
         show: true,
-        filterable: false,
+        filterable: true,
       },
 
       {
         Header: 'Nomor Surat',
         accessor: 'noSuratPesanan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -105,7 +105,7 @@ class Klasifikasi extends Component {
         Header: 'Nama Catering',
         accessor: 'catering.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

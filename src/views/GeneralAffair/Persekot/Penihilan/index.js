@@ -169,7 +169,7 @@ class PenihilanPersekot extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

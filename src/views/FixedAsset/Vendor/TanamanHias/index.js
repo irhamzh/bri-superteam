@@ -128,7 +128,7 @@ class TanamanHias extends Component {
         Header: 'Rekanan',
         accessor: 'partner.name',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]

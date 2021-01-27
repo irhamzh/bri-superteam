@@ -100,13 +100,13 @@ class UploadData extends Component {
       {
         Header: 'Nama',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'NIP',
         accessor: 'nip',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

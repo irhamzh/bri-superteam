@@ -67,7 +67,7 @@ class Outsourcing extends Component {
         Header: 'Nama',
         accessor: 'name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

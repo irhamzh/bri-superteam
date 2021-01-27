@@ -62,14 +62,14 @@ class Outsourcing extends Component {
         Header: 'Nama',
         accessor: `name`,
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
       },
       {
         Header: 'PN',
         accessor: `pn`,
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
       },
       {

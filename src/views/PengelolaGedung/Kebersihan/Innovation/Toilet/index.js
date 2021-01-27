@@ -91,7 +91,7 @@ class Toilet extends Component {
         Header: 'Lokasi',
         accessor: 'location.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Wastafel',

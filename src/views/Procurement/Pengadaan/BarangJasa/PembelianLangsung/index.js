@@ -57,6 +57,10 @@ class PembelianLangsung extends Component {
 
   initialValues = {
     typePengadaan: 'Pembelian Langsung',
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: false,
+    anggaranBiaya: false,
+    suratPemesanan: false,
   }
 
   async componentDidMount() {

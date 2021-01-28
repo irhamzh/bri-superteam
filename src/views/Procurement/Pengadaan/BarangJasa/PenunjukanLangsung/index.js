@@ -58,6 +58,13 @@ class PenunjukanLangsung extends Component {
 
   initialValues = {
     typePengadaan: 'Penunjukan Langsung',
+    izinPrinsipPengadaan: false,
+    tor: false,
+    proposalPenawaran: false,
+    undangan: false,
+    klarifikasiNegosiasi: false,
+    izinHasilPengadaan: false,
+    suratPemesanan: false,
   }
 
   async componentDidMount() {

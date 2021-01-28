@@ -56,7 +56,16 @@ class PemilihanLangsung extends Component {
     columns: [],
   }
 
-  initialValues = { typePengadaan: 'Pemilihan Langsung' }
+  initialValues = {
+    typePengadaan: 'Pemilihan Langsung',
+    izinPrinsipPengadaan: false,
+    tor: false,
+    proposalPenawaran: false,
+    undangan: false,
+    klarifikasiNegosiasi: false,
+    izinHasilPengadaan: false,
+    suratPemesanan: false,
+  }
 
   async componentDidMount() {
     const { fetchQueryProps } = this.props

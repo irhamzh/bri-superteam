@@ -63,7 +63,7 @@ class TagihanRohani extends Component {
     fetchQueryProps.setFilteredByObject({
       // typePendidikan: 'Non Pendidikan',
       seksi: 'General Affair',
-      typePayment: 'Tagihan Biaya Rohani, Humas, Representasi, dan Rapat',
+      typePayment: 'Tagihan Biaya Rohani Humas Representasi dan Rapat',
     })
 
     // const { tableProps } = fetchQueryProps

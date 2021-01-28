@@ -64,6 +64,10 @@ class Teknisi extends Component {
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      typePeralatanKerja: 'peralatan teknis',
+    })
 
     const columns = [
       {

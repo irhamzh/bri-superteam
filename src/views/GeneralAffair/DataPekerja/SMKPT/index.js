@@ -32,6 +32,7 @@ import {
 } from '../../../../modules/generalAffair/dataPekerja/smkpt/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import templateSMKPT from '../../../../assets/template/SMKPT.xlsx'
 
 // Export
 const { ExcelFile } = ReactExport
@@ -377,6 +378,15 @@ class SMKPT extends Component {
                       <FormGroup>
                         <Field label="File Excel" name="excel" isRequired component={CfInputFile} />
                       </FormGroup>
+
+                      <div style={{ marginTop: '50px' }}>
+                        <p>
+                          Download Template:
+                          <a href={templateSMKPT} target="_blank" rel="noreferrer">
+                            File Template
+                          </a>
+                        </p>
+                      </div>
                     </ModalBody>
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>

@@ -87,7 +87,9 @@ class InputPersekot extends Component {
         align: 'center',
         show: true,
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'Unapproved' ? '' : row.value}</div>
+        ),
       },
     ]
 

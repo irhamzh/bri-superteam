@@ -142,7 +142,9 @@ class DaftarAset extends Component {
         Header: 'Status',
         accessor: 'status',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'Unapproved' ? '' : row.value}</div>
+        ),
       },
       {
         Header: 'Edit',

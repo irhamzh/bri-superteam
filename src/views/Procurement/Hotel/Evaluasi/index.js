@@ -32,9 +32,9 @@ import {
 } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
-  createPREvaluasiHotel,
-  updatePREvaluasiHotel,
-  deletePREvaluasiHotel,
+  createPRHotel,
+  updatePRHotel,
+  deletePRHotel,
 } from '../../../../modules/procurement/hotel/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -73,16 +73,23 @@ class Internal extends Component {
       },
       {
         Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        accessor: 'workingOrder.namaKegiatan',
         show: true,
         filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Hotel',
-        accessor: 'hotelName.name',
+        accessor: 'hotel.name',
         show: true,
         filterable: true,
+      },
+      {
+        Header: 'No. Surat Pesanan',
+        accessor: 'noSuratPesanan',
+        filterable: true,
+        show: true,
+        headerClassName: 'wordwrap',
       },
 
       {
@@ -113,15 +120,16 @@ class Internal extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createPREvaluasiHotel, updatePREvaluasiHotel } = this.props
+    const { createPRHotel, updatePRHotel } = this.props
     if (!invalidValues.includes(id)) {
-      const { hotelName } = values
-      if (hotelName && Object.keys(hotelName).length > 0) {
-        values.hotelName = hotelName.id || hotelName
+      const { hotel, workingOrder } = values
+      if (hotel && Object.keys(hotel).length > 0) {
+        values.hotel = hotel.id || hotel
+        values.workingOrder = workingOrder.id || workingOrder
       }
-      updatePREvaluasiHotel(values, id, this.doRefresh)
+      updatePRHotel(values, id, this.doRefresh)
     } else {
-      createPREvaluasiHotel(values, this.doRefresh)
+      createPRHotel(values, this.doRefresh)
     }
   }
 
@@ -129,12 +137,12 @@ class Internal extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deletePREvaluasiHotel } = this.props
+    const { deletePRHotel } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deletePREvaluasiHotel(id, this.doRefresh)
+          deletePRHotel(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -244,17 +252,15 @@ class Internal extends Component {
                     </Button>
                   </Col>
                   <Col sm="6">
-                    <div style={{ textAlign: 'right' }}>
+                    {/* <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        {/* <i className="fa fa-plus" style={isIcon} /> */}
-                        {/* &nbsp; */}
                         Tambah Data
                       </Button>
-                    </div>
+                    </div> */}
                   </Col>
                 </Row>
               </CardHeader>
@@ -287,6 +293,7 @@ class Internal extends Component {
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
                           <ExcelColumn label="Nama Pendidikan" value="namaPendidikan" />
                           <ExcelColumn label="Nama Hotel" value={(col) => col.hotelName?.name} />
+                          <ExcelColumn label="No. Surat Pesanan" value="noSuratPesanan" />
                           <ExcelColumn label="Performance" value={(col) => col.performance} />
                           <ExcelColumn label="Remark" value={(col) => col.remark} />
                         </ExcelSheet>
@@ -350,12 +357,12 @@ class Internal extends Component {
                           options={optHotel}
                           defaultOptions
                           loadOptions={this.handleInputHotel}
-                          name="hotelName"
+                          name="hotel"
                           isRequired
                           placeholder="Pilih atau cari Hotel"
                           defaultValue={
-                            values.hotelName
-                              ? { value: values.hotelName.id, label: values.hotelName.name }
+                            values.hotel
+                              ? { value: values.hotel.id, label: values.hotel.name }
                               : null
                           }
                           component={CfAsyncSelect}
@@ -366,8 +373,9 @@ class Internal extends Component {
                         <Field
                           label="Nama Pendidikan"
                           type="text"
-                          name="namaPendidikan"
+                          name="workingOrder.namaKegiatan"
                           isRequired
+                          disabled
                           placeholder="Masukkan Nama Pendidikan"
                           component={CfInput}
                         />
@@ -437,9 +445,9 @@ Internal.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createPREvaluasiHotel: PropTypes.func.isRequired,
-  updatePREvaluasiHotel: PropTypes.func.isRequired,
-  deletePREvaluasiHotel: PropTypes.func.isRequired,
+  createPRHotel: PropTypes.func.isRequired,
+  updatePRHotel: PropTypes.func.isRequired,
+  deletePRHotel: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -451,10 +459,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPREvaluasiHotel: (formData, refresh) => dispatch(createPREvaluasiHotel(formData, refresh)),
-  updatePREvaluasiHotel: (formData, id, refresh) =>
-    dispatch(updatePREvaluasiHotel(formData, id, refresh)),
-  deletePREvaluasiHotel: (id, refresh) => dispatch(deletePREvaluasiHotel(id, refresh)),
+  createPRHotel: (formData, refresh) => dispatch(createPRHotel(formData, refresh)),
+  updatePRHotel: (formData, id, refresh) => dispatch(updatePRHotel(formData, id, refresh)),
+  deletePRHotel: (id, refresh) => dispatch(deletePRHotel(id, refresh)),
 })
 
 export default connect(
@@ -462,7 +469,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getPREvaluasiHotel(p),
+    API: (p) => Service.getPRHotel(p),
     Component: withToggle({
       Component: Internal,
       toggles: {

@@ -37,10 +37,8 @@ class Penghapusbukuan extends Component {
     fetchQueryProps.setFilteredByObject({
       in$status: [
         'Approved oleh Supervisor I',
-        'Diajukan Penihilan',
+        'Diajukan Penghapusbukuan',
         'Approved oleh Supervisor II',
-        'Approved oleh Wakabag',
-        'Approved oleh Kabag',
       ],
     })
   }
@@ -201,6 +199,15 @@ class Penghapusbukuan extends Component {
 
     const user = userData()
     const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    const showAction = (status) => {
+      const role = user.role?.name
+      if (role.includes('Supervisor') && status === 'Diajukan Penghapusbukuan') return true
+      if (role.includes('Kepala Bagian') && status === 'Approved oleh Supervisor II') return true
+      if (role.includes('Wakil Kepala Bagian') && status === 'Approved oleh Supervisor II')
+        return true
+
+      return false
+    }
     if (
       user &&
       (allowedRole.includes(user.role?.name.toLowerCase()) ||
@@ -213,23 +220,27 @@ class Penghapusbukuan extends Component {
         filterable: false,
         Cell: (props) => (
           <>
-            <Button
-              color="success"
-              onClick={(e) => this.handleApprove(e, props.original)}
-              className="mr-1"
-              title="Approve"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
+            {showAction(props.original?.status) && (
+              <>
+                <Button
+                  color="success"
+                  onClick={(e) => this.handleApprove(e, props.original)}
+                  className="mr-1"
+                  title="Approve"
+                >
+                  Approve
+                </Button>
+                &nbsp; | &nbsp;
+                <Button
+                  color="danger"
+                  onClick={(e) => this.handleDelete(e, props.original)}
+                  className="mr-1"
+                  title="Delete"
+                >
+                  Deny
+                </Button>
+              </>
+            )}
           </>
         ),
       })

@@ -1174,6 +1174,28 @@ class Service {
     return axios.delete(`pr-catering-clasifications/${id}`)
   }
 
+  // All Catering PR
+  static getPRCatering(params) {
+    if (!params) params = ''
+    return axios.get(`pr-catering${params}`)
+  }
+
+  static getPRCateringById(id) {
+    return axios.get(`pr-catering/${id}`)
+  }
+
+  static createPRCatering(values) {
+    return axios.post('pr-catering', values)
+  }
+
+  static updatePRCatering(values, id) {
+    return axios.put(`pr-catering/${id}`, values)
+  }
+
+  static deletePRCatering(id) {
+    return axios.delete(`pr-catering/${id}`)
+  }
+
   // ATK
   static getPREvaluasiAtk(params) {
     if (!params) params = ''
@@ -1215,6 +1237,28 @@ class Service {
 
   static deletePRKlasifikasiAtk(id) {
     return axios.delete(`pr-atk-clasifications/${id}`)
+  }
+
+  // All ATK
+  static getPRAtk(params) {
+    if (!params) params = ''
+    return axios.get(`pr-atk${params}`)
+  }
+
+  static getPRAtkById(id) {
+    return axios.get(`pr-atk/${id}`)
+  }
+
+  static createPRAtk(values) {
+    return axios.post('pr-atk', values)
+  }
+
+  static updatePRAtk(values, id) {
+    return axios.put(`pr-atk/${id}`, values)
+  }
+
+  static deletePRAtk(id) {
+    return axios.delete(`pr-atk/${id}`)
   }
 
   static getPRStokOpnameAtk(params) {
@@ -1279,6 +1323,29 @@ class Service {
 
   static deletePRKlasifikasiHotel(id) {
     return axios.delete(`pr-hotel-clasifications/${id}`)
+  }
+
+  // All hotel
+
+  static getPRHotel(params) {
+    if (!params) params = ''
+    return axios.get(`pr-hotel${params}`)
+  }
+
+  static getPRHotelById(id) {
+    return axios.get(`pr-hotel/${id}`)
+  }
+
+  static createPRHotel(values) {
+    return axios.post('pr-hotel', values)
+  }
+
+  static updatePRHotel(values, id) {
+    return axios.put(`pr-hotel/${id}`, values)
+  }
+
+  static deletePRHotel(id) {
+    return axios.delete(`pr-hotel/${id}`)
   }
 
   // Pengadaan

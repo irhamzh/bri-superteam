@@ -32,11 +32,7 @@ import {
   ListCheckboxShow,
 } from '../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
-import {
-  createPRKlasifikasiAtk,
-  updatePRKlasifikasiAtk,
-  deletePRKlasifikasiAtk,
-} from '../../../../modules/procurement/atk/actions'
+import { createPRAtk, updatePRAtk, deletePRAtk } from '../../../../modules/procurement/atk/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
@@ -53,7 +49,7 @@ class Klasifikasi extends Component {
   }
 
   initialValues = {
-    barang: [{ name: '', price: '' }],
+    barang: [{ name: '', price: '', qty: 0, other: '' }],
   }
 
   async componentDidMount() {
@@ -113,12 +109,14 @@ class Klasifikasi extends Component {
       },
       {
         Header: 'Nama Barang',
-        accessor: 'namaBarang',
+        accessor: 'barang',
         show: true,
         filterable: false,
         Cell: (props) => {
           const { barang } = props.original
-          const listBarang = barang.map((row) => <div>{`${row.nama}`}</div>)
+          const listBarang = barang.map((row) => (
+            <div>{`${row.nama === 'Lain lain' ? `${row.nama}: ${row.other}` : row.nama}`}</div>
+          ))
           return listBarang
         },
       },
@@ -131,6 +129,16 @@ class Klasifikasi extends Component {
           const { barang } = props.original
           const listBiaya = barang.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
+        },
+      },
+      {
+        Header: 'Quantity',
+        accessor: 'qty',
+        show: true,
+        filterable: false,
+        Cell: (props) => {
+          const { barang } = props.original
+          return barang.map((row) => <div>{`${row.qty || 0} `}</div>)
         },
       },
     ]
@@ -150,7 +158,7 @@ class Klasifikasi extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createPRKlasifikasiAtk, updatePRKlasifikasiAtk } = this.props
+    const { createPRAtk, updatePRAtk } = this.props
     if (!invalidValues.includes(id)) {
       const { workingOrder, provider } = values
       if (workingOrder && Object.keys(workingOrder).length > 0) {
@@ -159,9 +167,9 @@ class Klasifikasi extends Component {
       if (provider && Object.keys(provider).length > 0) {
         values.provider = provider.id || provider
       }
-      updatePRKlasifikasiAtk(values, id, this.doRefresh)
+      updatePRAtk(values, id, this.doRefresh)
     } else {
-      createPRKlasifikasiAtk(values, this.doRefresh)
+      createPRAtk(values, this.doRefresh)
     }
   }
 
@@ -169,12 +177,12 @@ class Klasifikasi extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deletePRKlasifikasiAtk } = this.props
+    const { deletePRAtk } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deletePRKlasifikasiAtk(id, this.doRefresh)
+          deletePRAtk(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -502,6 +510,19 @@ class Klasifikasi extends Component {
                                         component={CfSelect}
                                       />
                                     </FormGroup>
+
+                                    {values.barang[index].nama === 'Lain lain' && (
+                                      <FormGroup>
+                                        <Field
+                                          label="Lain-lain"
+                                          type="text"
+                                          name={`barang[${index}].other`}
+                                          isRequired
+                                          placeholder="Barang lainnya"
+                                          component={CfInput}
+                                        />
+                                      </FormGroup>
+                                    )}
                                   </Col>
 
                                   <Col>
@@ -512,6 +533,19 @@ class Klasifikasi extends Component {
                                         name={`barang[${index}].price`}
                                         isRequired
                                         placeholder="Masukkan biaya"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Quantity"
+                                        type="number"
+                                        name={`barang[${index}].qty`}
+                                        isRequired
+                                        placeholder="Masukkan jumlah"
                                         component={CfInput}
                                       />
                                     </FormGroup>
@@ -591,9 +625,9 @@ Klasifikasi.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createPRKlasifikasiAtk: PropTypes.func.isRequired,
-  updatePRKlasifikasiAtk: PropTypes.func.isRequired,
-  deletePRKlasifikasiAtk: PropTypes.func.isRequired,
+  createPRAtk: PropTypes.func.isRequired,
+  updatePRAtk: PropTypes.func.isRequired,
+  deletePRAtk: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -605,11 +639,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPRKlasifikasiAtk: (formData, refresh) =>
-    dispatch(createPRKlasifikasiAtk(formData, refresh)),
-  updatePRKlasifikasiAtk: (formData, id, refresh) =>
-    dispatch(updatePRKlasifikasiAtk(formData, id, refresh)),
-  deletePRKlasifikasiAtk: (id, refresh) => dispatch(deletePRKlasifikasiAtk(id, refresh)),
+  createPRAtk: (formData, refresh) => dispatch(createPRAtk(formData, refresh)),
+  updatePRAtk: (formData, id, refresh) => dispatch(updatePRAtk(formData, id, refresh)),
+  deletePRAtk: (id, refresh) => dispatch(deletePRAtk(id, refresh)),
 })
 
 export default connect(
@@ -617,7 +649,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getPRKlasifikasiAtk(p),
+    API: (p) => Service.getPRAtk(p),
     Component: withToggle({
       Component: Klasifikasi,
       toggles: {

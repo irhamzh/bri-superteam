@@ -41,6 +41,13 @@ class KondisiAset extends Component {
 
   initialValues = {}
 
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      status: 'Approved oleh Supervisor I',
+    })
+  }
+
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
     modalForm.hide()

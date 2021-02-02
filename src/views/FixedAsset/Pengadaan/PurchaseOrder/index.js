@@ -181,6 +181,13 @@ class PurchaseOrder extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
       {
+        Header: 'Keterangan',
+        accessor: 'information',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
         Header: 'Aksi',
         width: 150,
         filterable: false,
@@ -413,6 +420,17 @@ class PurchaseOrder extends Component {
                           name="totalHarga"
                           isRequired
                           placeholder="Masukkan Total Harga"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="information"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>

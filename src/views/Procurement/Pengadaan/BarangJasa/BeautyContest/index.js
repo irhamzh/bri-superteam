@@ -57,7 +57,7 @@ class PemilihanLangsung extends Component {
   }
 
   initialValues = {
-    typePengadaan: 'Pemilihan Langsung',
+    typePengadaan: 'Beauty Contest',
     izinPrinsipPengadaan: false,
     tor: false,
     proposalPenawaran: false,
@@ -70,7 +70,7 @@ class PemilihanLangsung extends Component {
   async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      typePengadaan: 'Pemilihan Langsung',
+      typePengadaan: 'Beauty Contest',
     })
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
@@ -371,7 +371,7 @@ class PemilihanLangsung extends Component {
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
-    const pageName = 'Pemilihan Langsung'
+    const pageName = 'Beauty Contest'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />

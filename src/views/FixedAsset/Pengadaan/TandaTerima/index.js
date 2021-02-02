@@ -172,6 +172,13 @@ class TandaTerima extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
+        Header: 'Keterangan',
+        accessor: 'information',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
         Header: 'Aksi',
         width: 150,
         filterable: false,
@@ -385,7 +392,19 @@ class TandaTerima extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="information"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
                     </ModalBody>
+
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
                         Cancel

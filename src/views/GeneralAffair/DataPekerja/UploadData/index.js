@@ -129,7 +129,7 @@ class UploadData extends Component {
       },
       {
         Header: 'Level Jabatan',
-        accessor: 'levelJabatan',
+        accessor: 'formasi.levelJabatan',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -341,8 +341,9 @@ class UploadData extends Component {
                             <Field
                               label="Level Jabatan"
                               type="text"
-                              name="levelJabatan"
+                              name="formasi.levelJabatan"
                               isRequired
+                              disabled
                               placeholder="Masukkan Level Jabatan"
                               component={CfInput}
                             />

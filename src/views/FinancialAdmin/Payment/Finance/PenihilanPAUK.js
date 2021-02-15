@@ -39,7 +39,7 @@ import {
 import {
   createFIPayment,
   updateFIPayment,
-  deleteFIPayment,
+  denyFIPayment,
   penihilanFIPayment,
   approveFIPayment,
 } from '../../../../modules/financialAdmin/payment/actions'
@@ -63,6 +63,12 @@ class PenihilanPAUK extends Component {
     fetchQueryProps.setFilteredByObject({
       seksi: 'Financial Admin',
       typePayment: 'Penihilan PAUK',
+      in$status: [
+        'Belum Berjalan',
+        'Approved oleh Supervisor I',
+        'Diajukan Penihilan',
+        'Approved oleh Supervisor II',
+      ],
     })
   }
 
@@ -82,16 +88,23 @@ class PenihilanPAUK extends Component {
     }
   }
 
-  handleDelete = (e, state) => {
+  handleDeny = (e, state) => {
     e.preventDefault()
 
     const { id } = state
-    const { deleteFIPayment } = this.props
+    const { denyFIPayment } = this.props
 
-    AlertMessage.warning()
+    const params = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah ditolak, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, tolak!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(params)
       .then((result) => {
         if (result.value) {
-          deleteFIPayment(id, this.doRefresh)
+          denyFIPayment(state, id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -261,10 +274,12 @@ class PenihilanPAUK extends Component {
       {
         Header: 'Status',
         width: 250,
-        accessor: 'status',
+        accessor: 'statusPenihilan',
         align: 'center',
         filterable: false,
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          <div style={{ textAlign: 'center' }}>{row.value === 'Unapproved' ? '' : row.value}</div>
+        ),
       },
       {
         Header: 'Aksi',
@@ -283,7 +298,7 @@ class PenihilanPAUK extends Component {
             {/* &nbsp; | &nbsp; */}
             {/* <Button
               color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
+              onClick={(e) => this.handleDeny(e, props.original)}
               className="mr-1"
               title="Delete"
             >
@@ -296,6 +311,16 @@ class PenihilanPAUK extends Component {
 
     const user = userData()
     const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    const showAction = (status) => {
+      const role = user.role?.name
+      if (role.includes('Supervisor') && status === 'Belum Berjalan') return true
+      if (role.includes('Supervisor') && status === 'Diajukan Penihilan') return true
+      if (role.includes('Kepala Bagian') && status === 'Approved oleh Supervisor II') return true
+      if (role.includes('Wakil Kepala Bagian') && status === 'Approved oleh Supervisor II')
+        return true
+
+      return false
+    }
     if (
       user &&
       (allowedRole.includes(user.role?.name.toLowerCase()) ||
@@ -308,23 +333,27 @@ class PenihilanPAUK extends Component {
         filterable: false,
         Cell: (props) => (
           <>
-            <Button
-              color="success"
-              onClick={(e) => this.handleApprove(e, props.original)}
-              className="mr-1"
-              title="Approve"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
+            {showAction(props.original?.status) && (
+              <>
+                <Button
+                  color="success"
+                  onClick={(e) => this.handleApprove(e, props.original)}
+                  className="mr-1"
+                  title="Approve"
+                >
+                  Approve
+                </Button>
+                &nbsp; | &nbsp;
+                <Button
+                  color="danger"
+                  onClick={(e) => this.handleDeny(e, props.original)}
+                  className="mr-1"
+                  title="Delete"
+                >
+                  Deny
+                </Button>
+              </>
+            )}
           </>
         ),
       })
@@ -531,7 +560,7 @@ PenihilanPAUK.propTypes = {
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   createFIPayment: PropTypes.func.isRequired,
   updateFIPayment: PropTypes.func.isRequired,
-  deleteFIPayment: PropTypes.func.isRequired,
+  denyFIPayment: PropTypes.func.isRequired,
   approveFIPayment: PropTypes.func.isRequired,
   penihilanFIPayment: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
@@ -547,7 +576,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   createFIPayment: (formData, refresh) => dispatch(createFIPayment(formData, refresh)),
   updateFIPayment: (formData, id, refresh) => dispatch(updateFIPayment(formData, id, refresh)),
-  deleteFIPayment: (id, refresh) => dispatch(deleteFIPayment(id, refresh)),
+  denyFIPayment: (formData, id, refresh) => dispatch(denyFIPayment(formData, id, refresh)),
   penihilanFIPayment: (formData, refresh) => dispatch(penihilanFIPayment(formData, refresh)),
   approveFIPayment: (formData, id, refresh) => dispatch(approveFIPayment(formData, id, refresh)),
 })

@@ -30,6 +30,7 @@ import {
 } from '../../../../modules/generalAffair/dataPekerja/pekerja/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import templateEmployee from '../../../../assets/template/Employee.xlsx'
 
 class UploadData extends Component {
   state = {}
@@ -277,6 +278,15 @@ class UploadData extends Component {
                               component={CfInputFile}
                             />
                           </FormGroup>
+
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template:
+                              <a href={templateEmployee} target="_blank" rel="noreferrer">
+                                File Template
+                              </a>
+                            </p>
+                          </div>
                         </>
                       )}
 

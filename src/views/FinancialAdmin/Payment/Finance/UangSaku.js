@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
@@ -20,10 +21,11 @@ import 'react-table/react-table.css'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
+import { Formik, Form, FieldArray, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
+  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -51,6 +53,7 @@ class UangSaku extends Component {
     // optProvider: [],
     isShow: false,
     columns: [],
+    optPajak: [],
   }
 
   initialValues = {
@@ -58,6 +61,7 @@ class UangSaku extends Component {
     typePayment: 'Salary Creaditing',
     suratPerintahBayar: false,
     cekLainnya: false,
+    pajak: [{ pajak: '', nominal: '' }],
   }
 
   async componentDidMount() {
@@ -70,6 +74,10 @@ class UangSaku extends Component {
     // const resDataProvider = await Service.getProvider()
     // const dataProvider = resDataProvider.data.data
     // const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+
+    const resDataPajak = await Service.getPajak()
+    const dataPajak = resDataPajak.data.data
+    const optPajak = dataPajak.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -91,8 +99,15 @@ class UangSaku extends Component {
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Sertifikasi',
-        accessor: 'namaSertifikasi',
+        Header: 'Nama Pendidikan',
+        accessor: 'namaPendidikan',
+        show: true,
+        filterable: true,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Nama Peserta',
+        accessor: 'namaPeserta',
         show: true,
         filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -130,6 +145,28 @@ class UangSaku extends Component {
       },
 
       {
+        Header: 'Pajak',
+        accessor: 'pajak',
+        show: true,
+        filterable: false,
+        Cell: (props) => {
+          const { pajak } = props.original
+          return pajak.map((row) => <div>{`${row.pajak?.name}`}</div>)
+        },
+      },
+
+      {
+        Header: 'Nominal',
+        accessor: 'nominal',
+        show: true,
+        filterable: false,
+        Cell: (props) => {
+          const { pajak } = props.original
+          return pajak.map((row) => <div>{`${formatCurrencyIDR(row.nominal)}`}</div>)
+        },
+      },
+
+      {
         Header: 'Lampiran',
         accessor: 'lampiran',
         show: true,
@@ -158,6 +195,7 @@ class UangSaku extends Component {
     this.setState({
       // optProvider,
       columns,
+      optPajak,
     })
   }
 
@@ -171,9 +209,15 @@ class UangSaku extends Component {
     const { id } = values
     const { createFIPayment, updateFIPayment } = this.props
     if (!invalidValues.includes(id)) {
-      const { provider } = values
+      const { provider, pajak } = values
       if (provider && Object.keys(provider).length > 0) {
         values.provider = provider.id || provider
+      }
+      if (pajak.length > 0) {
+        values.pajak = pajak.map((item) => ({
+          pajak: item.pajak.id || item.pajak,
+          nominal: item.nominal,
+        }))
       }
       updateFIPayment(values, id, this.doRefresh)
     } else {
@@ -227,11 +271,26 @@ class UangSaku extends Component {
     this.setState({ columns: selected })
   }
 
+  handleInputPajak = async (value) => {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getPajak(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { isShow, columns } = this.state
+    const { isShow, columns, optPajak } = this.state
     const tableCols = [
       ...columns,
       {
@@ -324,7 +383,11 @@ class UangSaku extends Component {
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
                           <ExcelColumn label="Seksi" value={(col) => col.seksi} />
-                          <ExcelColumn label="Nama Asuransi" value={(col) => col.namaAsuransi} />
+                          <ExcelColumn
+                            label="Nama Pendidikan"
+                            value={(col) => col.namaPendidikan}
+                          />
+                          <ExcelColumn label="Nama Peserta" value={(col) => col.namaPeserta} />
                           <ExcelColumn
                             label="Surat Perintah Bayar"
                             value={(col) => (col.suratPerintahBayar ? '✓' : '❌')}
@@ -375,7 +438,7 @@ class UangSaku extends Component {
                   }, 1000)
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -406,11 +469,22 @@ class UangSaku extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Sertifikasi"
+                          label="Nama Pendidikan"
                           type="text"
-                          name="namaSertifikasi"
+                          name="namaPendidikan"
                           isRequired
-                          placeholder="Masukkan Nama Asuransi"
+                          placeholder="Masukkan Nama"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Nama Peserta"
+                          type="text"
+                          name="namaPeserta"
+                          isRequired
+                          placeholder="Masukkan Nama"
                           component={CfInput}
                         />
                       </FormGroup>
@@ -470,6 +544,85 @@ class UangSaku extends Component {
                           component={CfInput}
                         />
                       </FormGroup>
+
+                      <FieldArray
+                        name="pajak"
+                        render={(arrayHelpers) => (
+                          <>
+                            {values.pajak && values.pajak.length > 0 ? (
+                              values.pajak.map((pajak, index) => (
+                                <Row form key={`key ${pajak.name}`}>
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Pajak"
+                                        cacheOptions
+                                        options={optPajak}
+                                        defaultOptions
+                                        loadOptions={this.handleInputPajak}
+                                        name={`pajak[${index}.pajak]`}
+                                        placeholder="Pilih atau cari"
+                                        defaultValue={
+                                          values.pajak
+                                            ? {
+                                                value: values.pajak[index].pajak.id,
+                                                label: values.pajak[index].pajak.name,
+                                              }
+                                            : null
+                                        }
+                                        component={CfAsyncSelect}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Nominal"
+                                        type="number"
+                                        name={`pajak[${index}].nominal`}
+                                        placeholder="Masukkan biaya"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  {values.pajak && values.pajak.length > 1 && (
+                                    <Col sm="2">
+                                      <FormGroup style={{ paddingTop: '50%' }}>
+                                        <Button
+                                          type="button"
+                                          color="danger"
+                                          onClick={() => arrayHelpers.remove(index)}
+                                          style={{ display: 'block' }}
+                                        >
+                                          <i className="fa fa-times" />
+                                        </Button>
+                                      </FormGroup>
+                                    </Col>
+                                  )}
+                                </Row>
+                              ))
+                            ) : (
+                              <>&nbsp;</>
+                            )}
+                            <div style={{ marginLeft: '90%' }}>
+                              <Button
+                                type="button"
+                                color="success"
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    pajak: '',
+                                    nominal: '',
+                                  })
+                                }
+                              >
+                                <i className="fa fa-plus" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      />
 
                       <FormGroup>
                         <Field

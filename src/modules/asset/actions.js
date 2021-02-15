@@ -206,3 +206,34 @@ export const approveAsset = (formData, id, refresh) => async (dispatch) => {
     AlertMessage.error(err)
   }
 }
+
+export const denyAsset = (formData, id, refresh) => async (dispatch) => {
+  let ObjError = ''
+  const paramsResponse = {}
+
+  try {
+    dispatch({ type: APPROVAL_ASSET_LOADING, isLoading: true })
+    // Call API
+    const res = await Service.denyAsset(formData, id)
+    dispatch({ type: APPROVAL_ASSET_SUCCESS, isLoading: false })
+
+    paramsResponse.title = 'Success'
+    paramsResponse.text = res.data.message
+    AlertMessage.success(paramsResponse).then(() => {
+      if (refresh) {
+        refresh()
+      } else {
+        window.location.reload()
+      }
+    })
+  } catch (err) {
+    ObjError = err.response && err.response.data.message
+
+    dispatch({
+      type: APPROVAL_ASSET_ERROR,
+      payload: ObjError,
+      isLoading: false,
+    })
+    AlertMessage.error(err)
+  }
+}

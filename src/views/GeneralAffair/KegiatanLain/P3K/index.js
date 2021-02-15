@@ -23,7 +23,13 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
   createAktivitasFirstAid,
@@ -54,9 +60,9 @@ class P3K extends Component {
     const dataJenisObat = resDataJenisObat.data.data
     const optJenisObat = dataJenisObat.map((row) => ({ label: row.name, value: row.id }))
 
-    const resDataArea = await Service.getArea()
-    const dataArea = resDataArea.data.data
-    const optArea = dataArea.map((row) => ({ label: row.name, value: row.id }))
+    // const resDataArea = await Service.getArea()
+    // const dataArea = resDataArea.data.data
+    // const optArea = dataArea.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -72,7 +78,7 @@ class P3K extends Component {
       },
       {
         Header: 'Area',
-        accessor: 'area.name',
+        accessor: 'area',
         show: true,
         filterable: true,
         headerClassName: 'wordwrap',
@@ -114,7 +120,7 @@ class P3K extends Component {
 
     this.setState({
       optJenisObat,
-      optArea,
+      // optArea,
       columns,
     })
   }
@@ -129,10 +135,10 @@ class P3K extends Component {
     const { id } = values
     const { createAktivitasFirstAid, updateAktivitasFirstAid } = this.props
     if (!invalidValues.includes(id)) {
-      const { area, medicineType } = values
-      if (area && Object.keys(area).length > 0) {
-        values.area = area.id || area
-      }
+      const { medicineType } = values
+      // if (area && Object.keys(area).length > 0) {
+      //   values.area = area.id || area
+      // }
       if (medicineType && Object.keys(medicineType).length > 0) {
         values.medicineType = medicineType.id || medicineType
       }
@@ -223,7 +229,7 @@ class P3K extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optJenisObat, optArea, isShow, columns } = this.state
+    const { optJenisObat, isShow, columns } = this.state
     const tableCols = [
       ...columns,
       {
@@ -317,7 +323,7 @@ class P3K extends Component {
                       >
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
-                          <ExcelColumn label="Area" value={(col) => col.area?.name} />
+                          <ExcelColumn label="Area" value={(col) => col.area} />
                           <ExcelColumn label="Jenis Obat" value={(col) => col.medicineType?.name} />
                           <ExcelColumn label="Jumlah" value={(col) => col.jumlah} />
                           <ExcelColumn
@@ -379,7 +385,7 @@ class P3K extends Component {
                         />
                       </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Area"
                           cacheOptions
@@ -398,6 +404,25 @@ class P3K extends Component {
                               : null
                           }
                           component={CfAsyncSelect}
+                        />
+                      </FormGroup> */}
+
+                      <FormGroup>
+                        <Field
+                          label="Area"
+                          options={[
+                            { value: 'Lantai 1', label: 'Lantai 1' },
+                            { value: 'Lantai 2', label: 'Lantai 2' },
+                            { value: 'Lantai 3', label: 'Lantai 3' },
+                            { value: 'Lantai 4', label: 'Lantai 4' },
+                            { value: 'Lantai 5', label: 'Lantai 5' },
+                            { value: 'Lantai 6', label: 'Lantai 6' },
+                          ]}
+                          isRequired
+                          name="area"
+                          isDisabled={!!values.id}
+                          placeholder="Pilih atau Cari"
+                          component={CfSelect}
                         />
                       </FormGroup>
 

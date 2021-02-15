@@ -62,7 +62,7 @@ export const signUp = (rowData) => async (dispatch) => {
     ObjError = err.error
 
     dispatch({ type: SIGNUP_ERROR, payload: ObjError, isLoading: false })
-    AlertMessage.custom({ title: 'Oops!', text: err.message, icon: 'error' })
+    AlertMessage.custom({ title: 'Oops!', text: 'Email atau password salah!', icon: 'error' })
   }
 }
 

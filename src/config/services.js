@@ -171,11 +171,31 @@ class Service {
   }
 
   static createPersekot(values) {
-    return axios.post('persekots', values)
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
+    }
+    return axios.post('persekots', formData)
   }
 
   static updatePersekot(values, id) {
-    return axios.put(`persekots/${id}`, values)
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
+    }
+    return axios.put(`persekots/${id}`, formData)
   }
 
   static deletePersekot(id) {
@@ -184,6 +204,10 @@ class Service {
 
   static approvePersekot(values, id) {
     return axios.put(`persekots/${id}/approve`, values)
+  }
+
+  static denyPersekot(values, id) {
+    return axios.put(`persekots/${id}/deny`, values)
   }
 
   static penihilanPersekot(values) {
@@ -227,6 +251,10 @@ class Service {
 
   static approveAsset(values, id) {
     return axios.put(`assets/penghapusbukuan/${id}/approve`, values)
+  }
+
+  static denyAsset(values, id) {
+    return axios.put(`assets/penghapusbukuan/${id}/deny`, values)
   }
 
   // Room
@@ -1565,6 +1593,28 @@ class Service {
     return axios.delete(`vehicles/${id}`)
   }
 
+  // Master Pajak
+  static getPajak(params) {
+    if (!params) params = ''
+    return axios.get(`taxes${params}`)
+  }
+
+  static getPajakById(id) {
+    return axios.get(`taxes/${id}`)
+  }
+
+  static createPajak(values) {
+    return axios.post('taxes', values)
+  }
+
+  static updatePajak(values, id) {
+    return axios.put(`taxes/${id}`, values)
+  }
+
+  static deletePajak(id) {
+    return axios.delete(`taxes/${id}`)
+  }
+
   // Master Uker
   static getUker(params) {
     if (!params) params = ''
@@ -2400,6 +2450,12 @@ class Service {
       if (name === 'lampiran' && values[name].length > 0) {
         values[name].forEach((item) => formData.append(name, item))
       }
+      if (name === 'pajak' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
+      }
+      if (name === 'invoiceData' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
+      }
     }
 
     return axios.post('fa-payments', formData)
@@ -2414,6 +2470,12 @@ class Service {
 
       if (name === 'lampiran' && values[name].length > 0) {
         values[name].forEach((item) => formData.append(name, item))
+      }
+      if (name === 'pajak' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
+      }
+      if (name === 'invoiceData' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
       }
     }
 
@@ -2430,6 +2492,10 @@ class Service {
 
   static approveFIPayment(values, id) {
     return axios.put(`fa-payments/penihilan/${id}/approve`, values)
+  }
+
+  static denyFIPayment(values, id) {
+    return axios.put(`fa-payments/penihilan/${id}/deny`, values)
   }
 
   // Financial Admin - Upload

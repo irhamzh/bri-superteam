@@ -14,7 +14,7 @@ const Pengadaan = (props) => {
   return (
     <div className="animated fadeIn">
       <Row>
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/fixed-asset/pengadaan/working-order" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -22,7 +22,7 @@ const Pengadaan = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
         <Col xs="8">
           <Link to="/fixed-asset/pengadaan/barang-jasa" style={{ textDecoration: 'none' }}>
@@ -34,7 +34,7 @@ const Pengadaan = (props) => {
           </Link>
         </Col>
 
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/fixed-asset/pengadaan/jasa-konsultan" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -42,7 +42,7 @@ const Pengadaan = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
         <Col xs="8">
           <Link to="/fixed-asset/pengadaan/purchase-order" style={{ textDecoration: 'none' }}>

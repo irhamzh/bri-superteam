@@ -23,6 +23,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
+import { TrainRounded } from '@material-ui/icons'
 import Service from '../../../../config/services'
 import {
   CfAsyncSelect,
@@ -91,13 +92,13 @@ class StockOpname extends Component {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
         show: true,
-        filterable: false,
+        filterable: TrainRounded,
       },
       {
         Header: 'Nama Pendidikan',
         accessor: 'education.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

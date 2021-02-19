@@ -29,7 +29,7 @@ import {
   IconSuccessOrFailed,
   ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAKendaraanLuar,
   updateGAKendaraanLuar,
@@ -76,7 +76,7 @@ class ReimburseKendaraan extends Component {
         Header: 'Nama Pekerja',
         accessor: 'name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -110,7 +110,7 @@ class ReimburseKendaraan extends Component {
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
     ]
 
@@ -291,7 +291,10 @@ class ReimburseKendaraan extends Component {
                             label="Proses Pembayaran"
                             value={(col) => (col.prosesPembayaran ? '✓' : '❌')}
                           />
-                          <ExcelColumn label="Biaya" value="biaya" />
+                          <ExcelColumn
+                            label="Biaya"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>

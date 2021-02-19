@@ -58,6 +58,13 @@ class PenunjukanLangsung extends Component {
 
   initialValues = {
     typePengadaan: 'Penunjukan Langsung',
+    izinPrinsipPengadaan: false,
+    tor: false,
+    proposalPenawaran: false,
+    undangan: false,
+    klarifikasiNegosiasi: false,
+    izinHasilPengadaan: false,
+    suratPemesanan: false,
   }
 
   async componentDidMount() {
@@ -106,7 +113,7 @@ class PenunjukanLangsung extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -168,14 +175,14 @@ class PenunjukanLangsung extends Component {
         Header: 'Nomor SPK',
         accessor: 'nomorSPK',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -739,7 +746,7 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Jumlah Peserta"
-                            type="text"
+                            type="number"
                             name="jumlahPeserta"
                             isRequired
                             placeholder="Masukkan Jumlah Peserta"
@@ -761,7 +768,7 @@ class PenunjukanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Jumlah Biaya"
-                            type="text"
+                            type="number"
                             name="jumlahBiaya"
                             isRequired
                             placeholder="Masukkan Jumlah Biaya"

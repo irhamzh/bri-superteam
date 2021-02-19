@@ -56,7 +56,7 @@ class Rekapitulasi extends Component {
       {
         Header: 'Nama Barang',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

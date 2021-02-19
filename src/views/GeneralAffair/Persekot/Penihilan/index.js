@@ -9,7 +9,7 @@ import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
 import { AlertMessage, formatCurrencyIDR, formatDate, userData } from '../../../../helpers'
 import {
-  deletePersekot,
+  denyPersekot,
   approvePersekot,
   penihilanPersekot,
 } from '../../../../modules/persekot/actions'
@@ -31,8 +31,6 @@ class PenihilanPersekot extends Component {
         'Approved oleh Supervisor I',
         'Diajukan Penihilan',
         'Approved oleh Supervisor II',
-        'Approved oleh Wakabag',
-        'Approved oleh Kabag',
       ],
     })
   }
@@ -43,16 +41,23 @@ class PenihilanPersekot extends Component {
     fetchQueryProps.refresh()
   }
 
-  handleDelete = (e, state) => {
+  handleDeny = (e, state) => {
     e.preventDefault()
 
     const { id } = state
-    const { deletePersekot } = this.props
+    const { denyPersekot } = this.props
 
-    AlertMessage.warning()
+    const params = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah ditolak, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, tolak!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(params)
       .then((result) => {
         if (result.value) {
-          deletePersekot(id, this.doRefresh)
+          denyPersekot(state, id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -169,7 +174,7 @@ class PenihilanPersekot extends Component {
       {
         Header: 'Nama Kegiatan',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -192,7 +197,15 @@ class PenihilanPersekot extends Component {
 
     const user = userData()
     const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    const showAction = (status) => {
+      const role = user.role?.name
+      if (role.includes('Supervisor') && status === 'Diajukan Penihilan') return true
+      if (role.includes('Kepala Bagian') && status === 'Approved oleh Supervisor II') return true
+      if (role.includes('Wakil Kepala Bagian') && status === 'Approved oleh Supervisor II')
+        return true
 
+      return false
+    }
     if (
       user &&
       (allowedRole.includes(user.role?.name.toLowerCase()) ||
@@ -205,23 +218,27 @@ class PenihilanPersekot extends Component {
         filterable: false,
         Cell: (props) => (
           <>
-            <Button
-              color="success"
-              onClick={(e) => this.handleApprove(e, props.original)}
-              className="mr-1"
-              title="Approve"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
+            {showAction(props.original?.status) && (
+              <>
+                <Button
+                  color="success"
+                  onClick={(e) => this.handleApprove(e, props.original)}
+                  className="mr-1"
+                  title="Approve"
+                >
+                  Approve
+                </Button>
+                &nbsp; | &nbsp;
+                <Button
+                  color="danger"
+                  onClick={(e) => this.handleDeny(e, props.original)}
+                  className="mr-1"
+                  title="Delete"
+                >
+                  Deny
+                </Button>
+              </>
+            )}
           </>
         ),
       })
@@ -283,7 +300,7 @@ PenihilanPersekot.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  deletePersekot: PropTypes.func.isRequired,
+  denyPersekot: PropTypes.func.isRequired,
   penihilanPersekot: PropTypes.func.isRequired,
   approvePersekot: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
@@ -297,7 +314,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  deletePersekot: (id, refresh) => dispatch(deletePersekot(id, refresh)),
+  denyPersekot: (formData, id, refresh) => dispatch(denyPersekot(formData, id, refresh)),
   approvePersekot: (formData, id, refresh) => dispatch(approvePersekot(formData, id, refresh)),
   penihilanPersekot: (formData, refresh) => dispatch(penihilanPersekot(formData, refresh)),
 })

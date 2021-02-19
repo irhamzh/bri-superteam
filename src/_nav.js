@@ -58,6 +58,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Payment',
+          url: '/fixed-asset/payment',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Pengelola Gedung',
           url: '/pengelola-gedung',
           icon: 'icon-layers',
@@ -148,6 +153,11 @@ export default {
           url: '/procurement/persekot',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Payment',
+          url: '/procurement/payment',
+          icon: 'fa fa-angle-double-right',
+        },
       ],
     },
     {
@@ -203,6 +213,11 @@ export default {
         {
           name: 'Persekot',
           url: '/general-affair/persekot',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Payment',
+          url: '/general-affair/payment',
           icon: 'fa fa-angle-double-right',
         },
       ],
@@ -312,6 +327,11 @@ export default {
         {
           name: 'Pompa',
           url: '/master/pompa',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Pajak',
+          url: '/master/pajak',
           icon: 'fa fa-angle-double-right',
         },
         {

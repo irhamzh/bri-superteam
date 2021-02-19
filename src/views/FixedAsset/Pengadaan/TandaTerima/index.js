@@ -141,7 +141,7 @@ class TandaTerima extends Component {
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -160,13 +160,20 @@ class TandaTerima extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Jumlah Barang',
         accessor: 'jumlah',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -378,14 +385,26 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah"
-                          type="text"
+                          type="number"
                           name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah"
                           component={CfInput}
                         />
                       </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="information"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
+                          component={CfInput}
+                        />
+                      </FormGroup>
                     </ModalBody>
+
                     <ModalFooter>
                       <Button type="button" color="secondary" onClick={modalForm.hide}>
                         Cancel

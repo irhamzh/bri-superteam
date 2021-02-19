@@ -89,7 +89,7 @@ class RuangPendidikan extends Component {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Plafond',

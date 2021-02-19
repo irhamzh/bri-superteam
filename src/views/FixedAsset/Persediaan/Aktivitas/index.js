@@ -75,7 +75,7 @@ class Aktivitas extends Component {
         Header: 'Nama Barang',
         accessor: 'name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Stok Awal',

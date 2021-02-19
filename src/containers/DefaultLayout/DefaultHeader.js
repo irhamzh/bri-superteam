@@ -62,17 +62,13 @@ function DefaultHeader(props) {
         <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link">
             Halo,
-            {username}
+            {` ${username}`}
           </NavLink>
         </NavItem>
 
         <UncontrolledDropdown nav direction="down">
           <DropdownToggle nav>
-            <img
-              src="../../assets/img/avatars/6.jpg"
-              className="img-avatar"
-              alt="admin@bootstrapmaster.com"
-            />
+            <img src="../../assets/img/avatars/user.png" className="img-avatar" alt="user" />
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem header tag="div" className="text-center">

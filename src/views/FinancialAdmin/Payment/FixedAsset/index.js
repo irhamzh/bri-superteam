@@ -92,7 +92,7 @@ class FixedAssetFinancialAdmin extends Component {
         Header: 'Kegiatan',
         accessor: 'kegiatan',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

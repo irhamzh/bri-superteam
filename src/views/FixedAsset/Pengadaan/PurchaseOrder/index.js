@@ -141,7 +141,7 @@ class PurchaseOrder extends Component {
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
 
@@ -157,7 +157,7 @@ class PurchaseOrder extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -179,6 +179,13 @@ class PurchaseOrder extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
+      },
+      {
+        Header: 'Keterangan',
+        accessor: 'information',
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Aksi',
@@ -387,7 +394,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah"
-                          type="text"
+                          type="number"
                           name="jumlah"
                           isRequired
                           placeholder="Masukkan Jumlah PO"
@@ -398,7 +405,7 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Harga Satuan"
-                          type="text"
+                          type="number"
                           name="hargaSatuan"
                           isRequired
                           placeholder="Masukkan harga"
@@ -409,10 +416,21 @@ class PurchaseOrder extends Component {
                       <FormGroup>
                         <Field
                           label="Total Harga"
-                          type="text"
+                          type="number"
                           name="totalHarga"
                           isRequired
                           placeholder="Masukkan Total Harga"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Keterangan"
+                          type="text"
+                          name="information"
+                          isRequired
+                          placeholder="Masukkan Keterangan"
                           component={CfInput}
                         />
                       </FormGroup>

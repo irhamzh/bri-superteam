@@ -56,12 +56,21 @@ class PemilihanLangsung extends Component {
     columns: [],
   }
 
-  initialValues = { typePengadaan: 'Pemilihan Langsung' }
+  initialValues = {
+    typePengadaan: 'Beauty Contest',
+    izinPrinsipPengadaan: false,
+    tor: false,
+    proposalPenawaran: false,
+    undangan: false,
+    klarifikasiNegosiasi: false,
+    izinHasilPengadaan: false,
+    suratPemesanan: false,
+  }
 
   async componentDidMount() {
     const { fetchQueryProps } = this.props
     fetchQueryProps.setFilteredByObject({
-      typePengadaan: 'Pemilihan Langsung',
+      typePengadaan: 'Beauty Contest',
     })
     const resDataProvider = await Service.getProvider()
     const dataProvider = resDataProvider.data.data
@@ -94,7 +103,7 @@ class PemilihanLangsung extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -155,14 +164,14 @@ class PemilihanLangsung extends Component {
         Header: 'Nomor SPK',
         accessor: 'nomorSPK',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -362,7 +371,7 @@ class PemilihanLangsung extends Component {
 
     // const numbData = (props) => tableProps.pageSize * tableProps.page + props.index + 1
 
-    const pageName = 'Pemilihan Langsung'
+    const pageName = 'Beauty Contest'
     // const isIcon = { paddingRight: '7px' }
 
     if (!auth) return <Redirect to="/login" />
@@ -708,7 +717,7 @@ class PemilihanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Jumlah Peserta"
-                            type="text"
+                            type="number"
                             name="jumlahPeserta"
                             isRequired
                             placeholder="Masukkan Jumlah Peserta"
@@ -730,7 +739,7 @@ class PemilihanLangsung extends Component {
                         <FormGroup>
                           <Field
                             label="Jumlah Biaya"
-                            type="text"
+                            type="number"
                             name="jumlahBiaya"
                             isRequired
                             placeholder="Masukkan Jumlah Biaya"

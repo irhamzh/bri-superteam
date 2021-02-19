@@ -32,6 +32,7 @@ import {
 } from '../../../../modules/generalAffair/dataPekerja/kehadiran/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import templateAttendance from '../../../../assets/template/Attendance.xlsx'
 
 const { ExcelFile } = ReactExport
 const { ExcelSheet } = ReactExport.ExcelFile
@@ -67,7 +68,7 @@ class Driver extends Component {
         Header: 'Nama',
         accessor: 'name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -356,6 +357,15 @@ class Driver extends Component {
                               component={CfInputFile}
                             />
                           </FormGroup>
+
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template:
+                              <a href={templateAttendance} target="_blank" rel="noreferrer">
+                                File Template
+                              </a>
+                            </p>
+                          </div>
                         </>
                       )}
 

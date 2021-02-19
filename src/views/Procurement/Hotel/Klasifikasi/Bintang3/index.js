@@ -33,9 +33,9 @@ import {
 } from '../../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../../helpers'
 import {
-  createPRKlasifikasiHotel,
-  updatePRKlasifikasiHotel,
-  deletePRKlasifikasiHotel,
+  createPRHotel,
+  updatePRHotel,
+  deletePRHotel,
 } from '../../../../../modules/procurement/hotel/actions'
 import withTableFetchQuery, {
   WithTableFetchQueryProp,
@@ -56,7 +56,7 @@ class Bintang3 extends Component {
 
   initialValues = {
     hotelClasification: 3,
-    facilities: [{ name: '', price: '' }],
+    facilities: [{ name: '', price: 0, jumlahPeserta: 0, other: '' }],
   }
 
   async componentDidMount() {
@@ -95,13 +95,13 @@ class Bintang3 extends Component {
       {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: false,
+        filterable: true,
         show: true,
       },
       {
         Header: 'No. Surat Pesanan',
         accessor: 'noSuratPesanan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
       },
@@ -119,7 +119,9 @@ class Bintang3 extends Component {
         filterable: false,
         Cell: (props) => {
           const { facilities } = props.original
-          return facilities.map((row) => <div>{`${row.nama}`}</div>)
+          return facilities.map((row) => (
+            <div>{`${row.nama === 'Lain-lain' ? `${row.nama}: ${row.other}` : row.nama}`}</div>
+          ))
         },
       },
 
@@ -131,6 +133,16 @@ class Bintang3 extends Component {
         Cell: (props) => {
           const { facilities } = props.original
           return facilities.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
+        },
+      },
+      {
+        Header: 'Jumlah Peserta',
+        accessor: 'jumlahPeserta',
+        show: true,
+        filterable: false,
+        Cell: (props) => {
+          const { facilities } = props.original
+          return facilities.map((row) => <div>{`${row.jumlahPeserta || 0} `}</div>)
         },
       },
     ]
@@ -150,18 +162,18 @@ class Bintang3 extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createPRKlasifikasiHotel, updatePRKlasifikasiHotel } = this.props
+    const { createPRHotel, updatePRHotel } = this.props
     if (!invalidValues.includes(id)) {
-      const { workingOrder, hotelName } = values
+      const { workingOrder, hotel } = values
       if (workingOrder && Object.keys(workingOrder).length > 0) {
         values.workingOrder = workingOrder.id || workingOrder
       }
-      if (hotelName && Object.keys(hotelName).length > 0) {
-        values.hotelName = hotelName.id || hotelName
+      if (hotel && Object.keys(hotel).length > 0) {
+        values.hotel = hotel.id || hotel
       }
-      updatePRKlasifikasiHotel(values, id, this.doRefresh)
+      updatePRHotel(values, id, this.doRefresh)
     } else {
-      createPRKlasifikasiHotel(values, this.doRefresh)
+      createPRHotel(values, this.doRefresh)
     }
   }
 
@@ -169,12 +181,12 @@ class Bintang3 extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deletePRKlasifikasiHotel } = this.props
+    const { deletePRHotel } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deletePRKlasifikasiHotel(id, this.doRefresh)
+          deletePRHotel(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -464,12 +476,12 @@ class Bintang3 extends Component {
                               options={optHotel}
                               defaultOptions
                               loadOptions={this.handleInputHotel}
-                              name="hotelName"
+                              name="hotel"
                               isRequired
                               placeholder="Pilih atau cari Hotel"
                               defaultValue={
-                                values.hotelName
-                                  ? { value: values.hotelName.id, label: values.hotelName.name }
+                                values.hotel
+                                  ? { value: values.hotel.id, label: values.hotel.name }
                                   : null
                               }
                               component={CfAsyncSelect}
@@ -514,6 +526,19 @@ class Bintang3 extends Component {
                                         component={CfSelect}
                                       />
                                     </FormGroup>
+
+                                    {values.facilities[index].nama === 'Lain-lain' && (
+                                      <FormGroup>
+                                        <Field
+                                          label="Lain-lain"
+                                          type="text"
+                                          name={`facilities[${index}].other`}
+                                          isRequired
+                                          placeholder="Fasilitas lainnya"
+                                          component={CfInput}
+                                        />
+                                      </FormGroup>
+                                    )}
                                   </Col>
 
                                   <Col>
@@ -524,6 +549,19 @@ class Bintang3 extends Component {
                                         name={`facilities[${index}].price`}
                                         isRequired
                                         placeholder="Masukkan biaya"
+                                        component={CfInput}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Jumlah Peserta"
+                                        type="number"
+                                        name={`facilities[${index}].jumlahPeserta`}
+                                        isRequired
+                                        placeholder="Masukkan jumlah"
                                         component={CfInput}
                                       />
                                     </FormGroup>
@@ -603,9 +641,9 @@ Bintang3.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createPRKlasifikasiHotel: PropTypes.func.isRequired,
-  updatePRKlasifikasiHotel: PropTypes.func.isRequired,
-  deletePRKlasifikasiHotel: PropTypes.func.isRequired,
+  createPRHotel: PropTypes.func.isRequired,
+  updatePRHotel: PropTypes.func.isRequired,
+  deletePRHotel: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -617,11 +655,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPRKlasifikasiHotel: (formData, refresh) =>
-    dispatch(createPRKlasifikasiHotel(formData, refresh)),
-  updatePRKlasifikasiHotel: (formData, id, refresh) =>
-    dispatch(updatePRKlasifikasiHotel(formData, id, refresh)),
-  deletePRKlasifikasiHotel: (id, refresh) => dispatch(deletePRKlasifikasiHotel(id, refresh)),
+  createPRHotel: (formData, refresh) => dispatch(createPRHotel(formData, refresh)),
+  updatePRHotel: (formData, id, refresh) => dispatch(updatePRHotel(formData, id, refresh)),
+  deletePRHotel: (id, refresh) => dispatch(deletePRHotel(id, refresh)),
 })
 
 export default connect(
@@ -629,7 +665,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getPRKlasifikasiHotel(p),
+    API: (p) => Service.getPRHotel(p),
     Component: withToggle({
       Component: Bintang3,
       toggles: {

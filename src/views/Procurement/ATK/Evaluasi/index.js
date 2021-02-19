@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react'
 import {
@@ -30,11 +31,7 @@ import {
   ListCheckboxShow,
 } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
-import {
-  createPREvaluasiAtk,
-  updatePREvaluasiAtk,
-  deletePREvaluasiAtk,
-} from '../../../../modules/procurement/atk/actions'
+import { createPRAtk, updatePRAtk, deletePRAtk } from '../../../../modules/procurement/atk/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
@@ -73,13 +70,19 @@ class Internal extends Component {
         Header: 'Nama Vendor',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
+      },
+      {
+        Header: 'Nomor Surat Pesanan',
+        accessor: 'noSuratPesanan',
+        show: true,
+        filterable: true,
       },
       {
         Header: 'Performance',
         accessor: 'performance',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Remark',
@@ -103,11 +106,18 @@ class Internal extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createPREvaluasiAtk, updatePREvaluasiAtk } = this.props
+    const { createPRAtk, updatePRAtk } = this.props
+    const { workingOrder, provider } = values
     if (!invalidValues.includes(id)) {
-      updatePREvaluasiAtk(values, id, this.doRefresh)
+      if (workingOrder && Object.keys(workingOrder).length > 0) {
+        values.workingOrder = workingOrder.id || workingOrder
+      }
+      if (provider && Object.keys(provider).length > 0) {
+        values.provider = provider.id || provider
+      }
+      updatePRAtk(values, id, this.doRefresh)
     } else {
-      createPREvaluasiAtk(values, this.doRefresh)
+      createPRAtk(values, this.doRefresh)
     }
   }
 
@@ -115,12 +125,12 @@ class Internal extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deletePREvaluasiAtk } = this.props
+    const { deletePRAtk } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deletePREvaluasiAtk(id, this.doRefresh)
+          deletePRAtk(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -230,17 +240,15 @@ class Internal extends Component {
                     </Button>
                   </Col>
                   <Col sm="6">
-                    <div style={{ textAlign: 'right' }}>
+                    {/* <div style={{ textAlign: 'right' }}>
                       <Button
                         color="primary"
                         onClick={() => modalForm.show({ data: this.initialValues })}
                         className="mr-1"
                       >
-                        {/* <i className="fa fa-plus" style={isIcon} /> */}
-                        {/* &nbsp; */}
                         Tambah Data
                       </Button>
-                    </div>
+                    </div> */}
                   </Col>
                 </Row>
               </CardHeader>
@@ -272,6 +280,7 @@ class Internal extends Component {
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
                           <ExcelColumn label="Nama Vendor" value={(col) => col.provider?.name} />
+                          <ExcelColumn label="Nomor Surat" value="noSuratPesanan" />
                           <ExcelColumn label="Performance" value="performance" />
                           <ExcelColumn label="Remark" value="remark" />
                         </ExcelSheet>
@@ -352,6 +361,17 @@ class Internal extends Component {
 
                       <FormGroup>
                         <Field
+                          label="Nomor Surat"
+                          type="text"
+                          name="noSuratPesanan"
+                          isRequired
+                          placeholder="Masukkan Nomor Surat"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
                           label="Performance"
                           options={[
                             { value: 1, label: '1' },
@@ -414,9 +434,9 @@ Internal.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createPREvaluasiAtk: PropTypes.func.isRequired,
-  updatePREvaluasiAtk: PropTypes.func.isRequired,
-  deletePREvaluasiAtk: PropTypes.func.isRequired,
+  createPRAtk: PropTypes.func.isRequired,
+  updatePRAtk: PropTypes.func.isRequired,
+  deletePRAtk: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -428,10 +448,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPREvaluasiAtk: (formData, refresh) => dispatch(createPREvaluasiAtk(formData, refresh)),
-  updatePREvaluasiAtk: (formData, id, refresh) =>
-    dispatch(updatePREvaluasiAtk(formData, id, refresh)),
-  deletePREvaluasiAtk: (id, refresh) => dispatch(deletePREvaluasiAtk(id, refresh)),
+  createPRAtk: (formData, refresh) => dispatch(createPRAtk(formData, refresh)),
+  updatePRAtk: (formData, id, refresh) => dispatch(updatePRAtk(formData, id, refresh)),
+  deletePRAtk: (id, refresh) => dispatch(deletePRAtk(id, refresh)),
 })
 
 export default connect(
@@ -439,7 +458,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getPREvaluasiAtk(p),
+    API: (p) => Service.getPRAtk(p),
     Component: withToggle({
       Component: Internal,
       toggles: {

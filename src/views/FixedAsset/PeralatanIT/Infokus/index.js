@@ -130,19 +130,19 @@ class Infokus extends Component {
       {
         Header: 'Merk',
         accessor: 'merk',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'Model',
         accessor: 'model',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
         Header: 'SN',
         accessor: 'sn',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Lamp Timer',
@@ -168,7 +168,7 @@ class Infokus extends Component {
       {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Kondisi',

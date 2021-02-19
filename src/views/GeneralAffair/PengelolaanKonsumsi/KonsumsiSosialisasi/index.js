@@ -31,7 +31,7 @@ import {
   CfSelect,
   ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPengelolaanKonsumsi,
   updatePengelolaanKonsumsi,
@@ -150,7 +150,7 @@ class KonsumsiSosialisasi extends Component {
         filterable: false,
         Cell: (props) => {
           const { menu } = props.original
-          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
+          const listBiaya = menu.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
         },
       },
@@ -535,7 +535,7 @@ class KonsumsiSosialisasi extends Component {
                                     <FormGroup>
                                       <Field
                                         label="Biaya"
-                                        type="text"
+                                        type="number"
                                         name={`menu[${index}].price`}
                                         isRequired
                                         placeholder="Masukkan biaya"

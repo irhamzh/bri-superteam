@@ -160,23 +160,23 @@ class PeralatanFisik extends Component {
       {
         Header: 'Lantai',
         accessor: 'floor.name',
-        filterable: false,
+        filterable: true,
       },
 
       {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Item',
         accessor: 'item.name',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Hekonismenya',
         accessor: 'hekonisme',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Keterangan',

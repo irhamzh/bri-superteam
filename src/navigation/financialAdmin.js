@@ -83,15 +83,15 @@ const financialAdmin = [
     component: PaymentFI,
   },
   {
-    path: '/financial-admin/payment/fixed-asset',
+    path: '/fixed-asset/payment',
     exact: true,
-    name: 'Fixed Asset',
+    name: 'Payment',
     component: PaymentFIFixedAsset,
   },
   {
-    path: '/financial-admin/payment/general-affair',
+    path: '/general-affair/payment',
     exact: true,
-    name: 'General Affair',
+    name: 'Payment',
     component: PaymentFIGeneralAffair,
   },
   {
@@ -101,9 +101,9 @@ const financialAdmin = [
     component: PaymentFIFinance,
   },
   {
-    path: '/financial-admin/payment/procurement',
+    path: '/procurement/payment',
     exact: true,
-    name: 'Procurement',
+    name: 'Payment',
     component: PaymentFIProcurement,
   },
 ]

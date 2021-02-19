@@ -25,7 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAPajakKendaraan,
   updateGAPajakKendaraan,
@@ -93,6 +93,7 @@ class PajakKendaran extends Component {
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
     ]
 
@@ -291,7 +292,10 @@ class PajakKendaran extends Component {
                             }
                           />
                           <ExcelColumn label="Jatuh Tempo" value={(col) => col.jatuhTempo} />
-                          <ExcelColumn label="Biaya" value={(col) => col.biaya} />
+                          <ExcelColumn
+                            label="Biaya"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>

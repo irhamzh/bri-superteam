@@ -32,6 +32,7 @@ import {
 } from '../../../../modules/generalAffair/dataPekerja/kehadiran/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import templateAttendance from '../../../../assets/template/Attendance.xlsx'
 
 const { ExcelFile } = ReactExport
 const { ExcelSheet } = ReactExport.ExcelFile
@@ -67,7 +68,7 @@ class Outsourcing extends Component {
         Header: 'Nama',
         accessor: 'name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -356,6 +357,15 @@ class Outsourcing extends Component {
                               component={CfInputFile}
                             />
                           </FormGroup>
+
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template:
+                              <a href={templateAttendance} target="_blank" rel="noreferrer">
+                                File Template
+                              </a>
+                            </p>
+                          </div>
                         </>
                       )}
 
@@ -388,7 +398,7 @@ class Outsourcing extends Component {
                           <FormGroup>
                             <Field
                               label="Jumlah Hadir"
-                              type="text"
+                              type="number"
                               name="jumlahHadir"
                               isRequired
                               placeholder="Masukkan Jumlah Hadir"
@@ -399,7 +409,7 @@ class Outsourcing extends Component {
                           <FormGroup>
                             <Field
                               label="Jumlah Tidak Hadir"
-                              type="text"
+                              type="number"
                               name="jumlahTidakHadir"
                               isRequired
                               placeholder="Masukkan Jumlah Tidak Hadir"
@@ -410,7 +420,7 @@ class Outsourcing extends Component {
                           <FormGroup>
                             <Field
                               label="Jumlah Cuti"
-                              type="text"
+                              type="number"
                               name="jumlahCuti"
                               isRequired
                               placeholder="Masukkan Jumlah Cuti"

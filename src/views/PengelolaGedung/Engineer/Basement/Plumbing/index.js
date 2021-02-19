@@ -85,13 +85,13 @@ class Plumbing extends Component {
         Header: 'Pompa',
         accessor: 'pump.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Unit',
         accessor: 'unit.nameUnit',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Voltase',

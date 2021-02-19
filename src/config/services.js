@@ -171,11 +171,31 @@ class Service {
   }
 
   static createPersekot(values) {
-    return axios.post('persekots', values)
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
+    }
+    return axios.post('persekots', formData)
   }
 
   static updatePersekot(values, id) {
-    return axios.put(`persekots/${id}`, values)
+    const formData = new FormData()
+    const keys = Object.keys(values)
+    for (let i = 0; i < keys.length; i += 1) {
+      const name = keys[i]
+      formData.append(name, values[name])
+
+      if (name === 'lampiran' && values[name].length > 0) {
+        values[name].forEach((item) => formData.append(name, item))
+      }
+    }
+    return axios.put(`persekots/${id}`, formData)
   }
 
   static deletePersekot(id) {
@@ -184,6 +204,10 @@ class Service {
 
   static approvePersekot(values, id) {
     return axios.put(`persekots/${id}/approve`, values)
+  }
+
+  static denyPersekot(values, id) {
+    return axios.put(`persekots/${id}/deny`, values)
   }
 
   static penihilanPersekot(values) {
@@ -227,6 +251,10 @@ class Service {
 
   static approveAsset(values, id) {
     return axios.put(`assets/penghapusbukuan/${id}/approve`, values)
+  }
+
+  static denyAsset(values, id) {
+    return axios.put(`assets/penghapusbukuan/${id}/deny`, values)
   }
 
   // Room
@@ -1174,6 +1202,28 @@ class Service {
     return axios.delete(`pr-catering-clasifications/${id}`)
   }
 
+  // All Catering PR
+  static getPRCatering(params) {
+    if (!params) params = ''
+    return axios.get(`pr-catering${params}`)
+  }
+
+  static getPRCateringById(id) {
+    return axios.get(`pr-catering/${id}`)
+  }
+
+  static createPRCatering(values) {
+    return axios.post('pr-catering', values)
+  }
+
+  static updatePRCatering(values, id) {
+    return axios.put(`pr-catering/${id}`, values)
+  }
+
+  static deletePRCatering(id) {
+    return axios.delete(`pr-catering/${id}`)
+  }
+
   // ATK
   static getPREvaluasiAtk(params) {
     if (!params) params = ''
@@ -1215,6 +1265,28 @@ class Service {
 
   static deletePRKlasifikasiAtk(id) {
     return axios.delete(`pr-atk-clasifications/${id}`)
+  }
+
+  // All ATK
+  static getPRAtk(params) {
+    if (!params) params = ''
+    return axios.get(`pr-atk${params}`)
+  }
+
+  static getPRAtkById(id) {
+    return axios.get(`pr-atk/${id}`)
+  }
+
+  static createPRAtk(values) {
+    return axios.post('pr-atk', values)
+  }
+
+  static updatePRAtk(values, id) {
+    return axios.put(`pr-atk/${id}`, values)
+  }
+
+  static deletePRAtk(id) {
+    return axios.delete(`pr-atk/${id}`)
   }
 
   static getPRStokOpnameAtk(params) {
@@ -1279,6 +1351,29 @@ class Service {
 
   static deletePRKlasifikasiHotel(id) {
     return axios.delete(`pr-hotel-clasifications/${id}`)
+  }
+
+  // All hotel
+
+  static getPRHotel(params) {
+    if (!params) params = ''
+    return axios.get(`pr-hotel${params}`)
+  }
+
+  static getPRHotelById(id) {
+    return axios.get(`pr-hotel/${id}`)
+  }
+
+  static createPRHotel(values) {
+    return axios.post('pr-hotel', values)
+  }
+
+  static updatePRHotel(values, id) {
+    return axios.put(`pr-hotel/${id}`, values)
+  }
+
+  static deletePRHotel(id) {
+    return axios.delete(`pr-hotel/${id}`)
   }
 
   // Pengadaan
@@ -1496,6 +1591,28 @@ class Service {
 
   static deleteKendaraan(id) {
     return axios.delete(`vehicles/${id}`)
+  }
+
+  // Master Pajak
+  static getPajak(params) {
+    if (!params) params = ''
+    return axios.get(`taxes${params}`)
+  }
+
+  static getPajakById(id) {
+    return axios.get(`taxes/${id}`)
+  }
+
+  static createPajak(values) {
+    return axios.post('taxes', values)
+  }
+
+  static updatePajak(values, id) {
+    return axios.put(`taxes/${id}`, values)
+  }
+
+  static deletePajak(id) {
+    return axios.delete(`taxes/${id}`)
   }
 
   // Master Uker
@@ -2333,6 +2450,12 @@ class Service {
       if (name === 'lampiran' && values[name].length > 0) {
         values[name].forEach((item) => formData.append(name, item))
       }
+      if (name === 'pajak' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
+      }
+      if (name === 'invoiceData' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
+      }
     }
 
     return axios.post('fa-payments', formData)
@@ -2347,6 +2470,12 @@ class Service {
 
       if (name === 'lampiran' && values[name].length > 0) {
         values[name].forEach((item) => formData.append(name, item))
+      }
+      if (name === 'pajak' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
+      }
+      if (name === 'invoiceData' && values[name].length > 0) {
+        formData.append(name, JSON.stringify(values[name]))
       }
     }
 
@@ -2363,6 +2492,10 @@ class Service {
 
   static approveFIPayment(values, id) {
     return axios.put(`fa-payments/penihilan/${id}/approve`, values)
+  }
+
+  static denyFIPayment(values, id) {
+    return axios.put(`fa-payments/penihilan/${id}/deny`, values)
   }
 
   // Financial Admin - Upload

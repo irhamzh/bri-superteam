@@ -25,7 +25,7 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createGAKirKendaraan,
   updateGAKirKendaraan,
@@ -86,6 +86,7 @@ class KIR extends Component {
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{formatCurrencyIDR(row.value)}</div>,
       },
     ]
 
@@ -283,7 +284,10 @@ class KIR extends Component {
                                 : ''
                             }
                           />
-                          <ExcelColumn label="Biaya KIR" value={(col) => col.biaya} />
+                          <ExcelColumn
+                            label="Biaya KIR"
+                            value={(col) => formatCurrencyIDR(col.biaya)}
+                          />
                         </ExcelSheet>
                       </ExcelFile>
                     </div>

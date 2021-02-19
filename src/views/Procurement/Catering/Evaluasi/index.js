@@ -26,9 +26,9 @@ import Service from '../../../../config/services'
 import { CfAsyncSelect, CfInputDate, CfSelect, ListCheckboxShow } from '../../../../components'
 import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
 import {
-  createPREvaluasiCatering,
-  updatePREvaluasiCatering,
-  deletePREvaluasiCatering,
+  createPRCatering,
+  updatePRCatering,
+  deletePRCatering,
 } from '../../../../modules/procurement/catering/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -81,16 +81,23 @@ class Internal extends Component {
       {
         Header: 'No. Working Order',
         accessor: 'workingOrder.kodeWorkingOrder',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
+        Header: 'Nomor Surat Pemesanan',
+        accessor: 'noSuratPesanan',
+        show: true,
+        filterable: true,
+        headerClassName: 'wordwrap',
+      },
+      {
         Header: 'Nama Catering',
         accessor: 'catering.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -135,7 +142,7 @@ class Internal extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createPREvaluasiCatering, updatePREvaluasiCatering } = this.props
+    const { createPRCatering, updatePRCatering } = this.props
     if (!invalidValues.includes(id)) {
       const { workingOrder, catering } = values
       if (workingOrder && Object.keys(workingOrder).length > 0) {
@@ -144,9 +151,9 @@ class Internal extends Component {
       if (catering && Object.keys(catering).length > 0) {
         values.catering = catering.id || catering
       }
-      updatePREvaluasiCatering(values, id, this.doRefresh)
+      updatePRCatering(values, id, this.doRefresh)
     } else {
-      createPREvaluasiCatering(values, this.doRefresh)
+      createPRCatering(values, this.doRefresh)
     }
   }
 
@@ -154,12 +161,12 @@ class Internal extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deletePREvaluasiCatering } = this.props
+    const { deletePRCatering } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deletePREvaluasiCatering(id, this.doRefresh)
+          deletePRCatering(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -330,7 +337,7 @@ class Internal extends Component {
                             value={(col) => col.workingOrder?.kodeWorkingOrder}
                           />
                           <ExcelColumn label="Nama Catering" value={(col) => col.catering?.name} />
-
+                          <ExcelColumn label="No. Surat Pesanan" value="noSuratPesanan" />
                           <ExcelColumn label="Evaluasi Sampel Makanan" value="sampleMakan" />
                           <ExcelColumn label="Evaluasi Penyajian di Restoran" value="penyajian" />
                           <ExcelColumn label="Performance" value="performance" />
@@ -436,8 +443,10 @@ class Internal extends Component {
                         <Field
                           label="Evaluasi Sampel Makanan"
                           options={[
-                            { value: 'Enak', label: 'Enak' },
-                            { value: 'Kurang Enak', label: 'Kurang Enak' },
+                            { value: 1, label: '1' },
+                            { value: 2, label: '2' },
+                            { value: 3, label: '3' },
+                            { value: 4, label: '4' },
                           ]}
                           isRequired
                           name="sampleMakan"
@@ -450,8 +459,10 @@ class Internal extends Component {
                         <Field
                           label="Evaluasi Penyajian di Restoran"
                           options={[
-                            { value: 'Baik', label: 'Baik' },
-                            { value: 'Tidak Baik', label: 'Tidak Baik' },
+                            { value: 1, label: '1' },
+                            { value: 2, label: '2' },
+                            { value: 3, label: '3' },
+                            { value: 4, label: '4' },
                           ]}
                           isRequired
                           name="penyajian"
@@ -464,8 +475,10 @@ class Internal extends Component {
                         <Field
                           label="Performance"
                           options={[
-                            { value: 'Puas', label: 'Puas' },
-                            { value: 'Tidak Puas', label: 'Tidak Puas' },
+                            { value: 1, label: '1' },
+                            { value: 2, label: '2' },
+                            { value: 3, label: '3' },
+                            { value: 4, label: '4' },
                           ]}
                           isRequired
                           name="performance"
@@ -511,9 +524,9 @@ Internal.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createPREvaluasiCatering: PropTypes.func.isRequired,
-  updatePREvaluasiCatering: PropTypes.func.isRequired,
-  deletePREvaluasiCatering: PropTypes.func.isRequired,
+  createPRCatering: PropTypes.func.isRequired,
+  updatePRCatering: PropTypes.func.isRequired,
+  deletePRCatering: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -525,11 +538,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPREvaluasiCatering: (formData, refresh) =>
-    dispatch(createPREvaluasiCatering(formData, refresh)),
-  updatePREvaluasiCatering: (formData, id, refresh) =>
-    dispatch(updatePREvaluasiCatering(formData, id, refresh)),
-  deletePREvaluasiCatering: (id, refresh) => dispatch(deletePREvaluasiCatering(id, refresh)),
+  createPRCatering: (formData, refresh) => dispatch(createPRCatering(formData, refresh)),
+  updatePRCatering: (formData, id, refresh) => dispatch(updatePRCatering(formData, id, refresh)),
+  deletePRCatering: (id, refresh) => dispatch(deletePRCatering(id, refresh)),
 })
 
 export default connect(
@@ -537,7 +548,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getPREvaluasiCatering(p),
+    API: (p) => Service.getPRCatering(p),
     Component: withToggle({
       Component: Internal,
       toggles: {

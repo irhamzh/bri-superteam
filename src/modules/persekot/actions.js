@@ -172,3 +172,34 @@ export const penihilanPersekot = (formData, refresh) => async (dispatch) => {
     AlertMessage.error(err)
   }
 }
+
+export const denyPersekot = (formData, id, refresh) => async (dispatch) => {
+  let ObjError = ''
+  const paramsResponse = {}
+
+  try {
+    dispatch({ type: APPROVE_PERSEKOT_LOADING, isLoading: true })
+    // Call API
+    const res = await Service.denyPersekot(formData, id)
+    dispatch({ type: APPROVE_PERSEKOT_SUCCESS, isLoading: false })
+
+    paramsResponse.title = 'Success'
+    paramsResponse.text = res.data.message
+    AlertMessage.success(paramsResponse).then(() => {
+      if (refresh) {
+        refresh()
+      } else {
+        window.location.reload()
+      }
+    })
+  } catch (err) {
+    ObjError = err.response && err.response.data.message
+
+    dispatch({
+      type: APPROVE_PERSEKOT_ERROR,
+      payload: ObjError,
+      isLoading: false,
+    })
+    AlertMessage.error(err)
+  }
+}

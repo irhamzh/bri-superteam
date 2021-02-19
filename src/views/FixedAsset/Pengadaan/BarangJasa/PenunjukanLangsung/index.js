@@ -87,7 +87,7 @@ class PenunjukanLangsung extends Component {
       {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
-        filterable: false,
+        filterable: true,
         show: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
@@ -152,15 +152,18 @@ class PenunjukanLangsung extends Component {
           {
             Header: 'Nomor SPK',
             accessor: 'nomorSPK',
+            filterable: true,
             headerClassName: 'wordwrap',
           },
           {
             Header: 'Nama Provider',
             accessor: 'provider.name',
+            filterable: true,
             headerClassName: 'wordwrap',
           },
           {
             Header: 'Alamat Provider',
+            filterable: true,
             accessor: 'provider.address',
             headerClassName: 'wordwrap',
           },
@@ -171,6 +174,7 @@ class PenunjukanLangsung extends Component {
           },
           {
             Header: 'Jenis Pekerjaan',
+            filterable: true,
             accessor: 'jenisPekerjaan',
             headerClassName: 'wordwrap',
           },
@@ -182,6 +186,7 @@ class PenunjukanLangsung extends Component {
           },
           {
             Header: 'Jenis Barang',
+            filterable: true,
             accessor: 'jenisBarang',
             headerClassName: 'wordwrap',
           },
@@ -601,22 +606,6 @@ class PenunjukanLangsung extends Component {
                           isRequired
                           placeholder="Masukkan Nomor SPK"
                           component={CfInput}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Field
-                          label="Nama Provider"
-                          options={optProvider}
-                          isRequired
-                          name="provider"
-                          placeholder="Pilih atau Cari Nama Provider"
-                          defaultValue={
-                            values.provider
-                              ? { value: values.provider.id, label: values.provider.name }
-                              : null
-                          }
-                          component={CfSelect}
                         />
                       </FormGroup>
 

@@ -124,7 +124,7 @@ class Pengobatan extends Component {
       {
         Header: 'Nama',
         accessor: 'nama',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {

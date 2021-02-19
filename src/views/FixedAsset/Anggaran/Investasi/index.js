@@ -51,18 +51,18 @@ class InvestasiAnggaran extends Component {
     isShow: false,
     columns: [],
     optBulan: [
-      { label: 'Januari', value: '1' },
-      { label: 'Februari', value: '2' },
-      { label: 'Maret', value: '3' },
-      { label: 'April', value: '4' },
-      { label: 'Mei', value: '5' },
-      { label: 'Juni', value: '6' },
-      { label: 'Juli', value: '7' },
-      { label: 'Agustus', value: '8' },
-      { label: 'September', value: '9' },
-      { label: 'Oktober', value: '10' },
-      { label: 'November', value: '11' },
-      { label: 'Desember', value: '12' },
+      { label: 'Januari', value: 1 },
+      { label: 'Februari', value: 2 },
+      { label: 'Maret', value: 3 },
+      { label: 'April', value: 4 },
+      { label: 'Mei', value: 5 },
+      { label: 'Juni', value: 6 },
+      { label: 'Juli', value: 7 },
+      { label: 'Agustus', value: 8 },
+      { label: 'September', value: 9 },
+      { label: 'Oktober', value: 10 },
+      { label: 'November', value: 11 },
+      { label: 'Desember', value: 12 },
     ],
     optTahun: getYearOptions(),
   }
@@ -216,7 +216,8 @@ class InvestasiAnggaran extends Component {
     try {
       const { fetchQueryProps } = this.props
       fetchQueryProps.setFilteredByObject({
-        'month-year$createdAt': `${tahun}-${bulan}`,
+        year: tahun,
+        month: bulan,
       })
 
       this.doRefresh()
@@ -253,6 +254,17 @@ class InvestasiAnggaran extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const sisaAnggaran = {
+      month: data[0]?.month,
+      year: data[0]?.year,
+      categoryAnggaran: data[0]?.categoryAnggaran,
+      type: 'Sisa Anggaran',
+      nilai: data[0]?.sisaAnggaran,
+    }
+    let allData = []
+    if (data[0] && data[0].detail) {
+      allData = [...data[0].detail, sisaAnggaran]
+    }
 
     const tableCols = [
       {
@@ -473,7 +485,7 @@ class InvestasiAnggaran extends Component {
                   className="-highlight"
                   pageSize={data[0]?.detail.length}
                   {...tableProps}
-                  data={data[0]?.detail}
+                  data={allData}
                 />
               </CardBody>
             </Card>

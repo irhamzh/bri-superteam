@@ -172,3 +172,34 @@ export const approveFIPayment = (formData, id, refresh) => async (dispatch) => {
     AlertMessage.error(err)
   }
 }
+
+export const denyFIPayment = (formData, id, refresh) => async (dispatch) => {
+  let ObjError = ''
+  const paramsResponse = {}
+
+  try {
+    dispatch({ type: APPROVAL_PAYMENT_LOADING, isLoading: true })
+    // Call API
+    const res = await Service.denyFIPayment(formData, id)
+    dispatch({ type: APPROVAL_PAYMENT_SUCCESS, isLoading: false })
+
+    paramsResponse.title = 'Success'
+    paramsResponse.text = res.data.message
+    AlertMessage.success(paramsResponse).then(() => {
+      if (refresh) {
+        refresh()
+      } else {
+        window.location.reload()
+      }
+    })
+  } catch (err) {
+    ObjError = err.response && err.response.data.message
+
+    dispatch({
+      type: APPROVAL_PAYMENT_ERROR,
+      payload: ObjError,
+      isLoading: false,
+    })
+    AlertMessage.error(err)
+  }
+}

@@ -24,12 +24,18 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field, FieldArray } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
-import { CfAsyncSelect, CfInput, CfInputDate, ListCheckboxShow } from '../../../../components'
+import {
+  CfAsyncSelect,
+  CfInput,
+  CfInputDate,
+  CfSelect,
+  ListCheckboxShow,
+} from '../../../../components'
 import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
-  createPRKlasifikasiCatering,
-  updatePRKlasifikasiCatering,
-  deletePRKlasifikasiCatering,
+  createPRCatering,
+  updatePRCatering,
+  deletePRCatering,
 } from '../../../../modules/procurement/catering/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
@@ -47,7 +53,7 @@ class Klasifikasi extends Component {
   }
 
   initialValues = {
-    menu: [{ name: '', price: '' }],
+    menu: [{ name: '', price: '', qty: 0 }],
   }
 
   async componentDidMount() {
@@ -85,14 +91,14 @@ class Klasifikasi extends Component {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
         show: true,
-        filterable: false,
+        filterable: true,
       },
 
       {
         Header: 'Nomor Surat',
         accessor: 'noSuratPesanan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -105,7 +111,7 @@ class Klasifikasi extends Component {
         Header: 'Nama Catering',
         accessor: 'catering.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -115,7 +121,9 @@ class Klasifikasi extends Component {
         filterable: false,
         Cell: (props) => {
           const { menu } = props.original
-          const listMenu = menu.map((row) => <div>{`${row.nama}`}</div>)
+          const listMenu = menu.map((row) => (
+            <div>{`${row.nama === 'Lain-lain' ? `${row.nama}: ${row.other}` : row.nama}`}</div>
+          ))
           return listMenu
         },
       },
@@ -128,6 +136,16 @@ class Klasifikasi extends Component {
           const { menu } = props.original
           const listBiaya = menu.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
+        },
+      },
+      {
+        Header: 'Quantity',
+        accessor: 'qty',
+        show: true,
+        filterable: false,
+        Cell: (props) => {
+          const { menu } = props.original
+          return menu.map((row) => <div>{`${row.qty || 0} `}</div>)
         },
       },
     ]
@@ -147,7 +165,7 @@ class Klasifikasi extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
-    const { createPRKlasifikasiCatering, updatePRKlasifikasiCatering } = this.props
+    const { createPRCatering, updatePRCatering } = this.props
     if (!invalidValues.includes(id)) {
       const { workingOrder, catering } = values
       if (workingOrder && Object.keys(workingOrder).length > 0) {
@@ -156,9 +174,9 @@ class Klasifikasi extends Component {
       if (catering && Object.keys(catering).length > 0) {
         values.catering = catering.id || catering
       }
-      updatePRKlasifikasiCatering(values, id, this.doRefresh)
+      updatePRCatering(values, id, this.doRefresh)
     } else {
-      createPRKlasifikasiCatering(values, this.doRefresh)
+      createPRCatering(values, this.doRefresh)
     }
   }
 
@@ -166,12 +184,12 @@ class Klasifikasi extends Component {
     e.preventDefault()
 
     const { id } = state
-    const { deletePRKlasifikasiCatering } = this.props
+    const { deletePRCatering } = this.props
 
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
-          deletePRKlasifikasiCatering(id, this.doRefresh)
+          deletePRCatering(id, this.doRefresh)
         } else {
           const paramsResponse = {
             title: 'Huff',
@@ -482,10 +500,54 @@ class Klasifikasi extends Component {
                                     <FormGroup>
                                       <Field
                                         label="Nama Menu"
-                                        type="text"
-                                        name={`menu[${index}].nama`}
+                                        options={[
+                                          { value: 'Snack Pagi', label: 'Snack Pagi' },
+                                          { value: 'Snack Sore', label: 'Snack Sore' },
+                                          {
+                                            value: 'Snack Malam',
+                                            label: 'Snack Malam',
+                                          },
+                                          {
+                                            value: 'Breakfast',
+                                            label: 'Breakfast',
+                                          },
+                                          {
+                                            value: 'Lunch',
+                                            label: 'Lunch',
+                                          },
+                                          { value: 'Dinner', label: 'Dinner' },
+                                          { value: 'Spesial', label: 'Spesial' },
+                                          { value: 'Lain-lain', label: 'Lain-lain' },
+                                        ]}
                                         isRequired
-                                        placeholder="Masukkan Nama Menu"
+                                        name={`menu[${index}].nama`}
+                                        placeholder="Pilih atau Cari"
+                                        component={CfSelect}
+                                      />
+                                    </FormGroup>
+
+                                    {values.menu[index].nama === 'Lain-lain' && (
+                                      <FormGroup>
+                                        <Field
+                                          label="Lain-lain"
+                                          type="text"
+                                          name={`menu[${index}].other`}
+                                          isRequired
+                                          placeholder="Menu lainnya"
+                                          component={CfInput}
+                                        />
+                                      </FormGroup>
+                                    )}
+                                  </Col>
+
+                                  <Col>
+                                    <FormGroup>
+                                      <Field
+                                        label="Biaya"
+                                        type="number"
+                                        name={`menu[${index}].price`}
+                                        isRequired
+                                        placeholder="Masukkan biaya"
                                         component={CfInput}
                                       />
                                     </FormGroup>
@@ -494,11 +556,11 @@ class Klasifikasi extends Component {
                                   <Col>
                                     <FormGroup>
                                       <Field
-                                        label="Biaya"
-                                        type="text"
-                                        name={`menu[${index}].price`}
+                                        label="Quantity"
+                                        type="number"
+                                        name={`menu[${index}].qty`}
                                         isRequired
-                                        placeholder="Masukkan biaya"
+                                        placeholder="Masukkan jumlah"
                                         component={CfInput}
                                       />
                                     </FormGroup>
@@ -578,9 +640,9 @@ Klasifikasi.propTypes = {
   isLoading: PropTypes.bool,
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
-  createPRKlasifikasiCatering: PropTypes.func.isRequired,
-  updatePRKlasifikasiCatering: PropTypes.func.isRequired,
-  deletePRKlasifikasiCatering: PropTypes.func.isRequired,
+  createPRCatering: PropTypes.func.isRequired,
+  updatePRCatering: PropTypes.func.isRequired,
+  deletePRCatering: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -592,11 +654,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPRKlasifikasiCatering: (formData, refresh) =>
-    dispatch(createPRKlasifikasiCatering(formData, refresh)),
-  updatePRKlasifikasiCatering: (formData, id, refresh) =>
-    dispatch(updatePRKlasifikasiCatering(formData, id, refresh)),
-  deletePRKlasifikasiCatering: (id, refresh) => dispatch(deletePRKlasifikasiCatering(id, refresh)),
+  createPRCatering: (formData, refresh) => dispatch(createPRCatering(formData, refresh)),
+  updatePRCatering: (formData, id, refresh) => dispatch(updatePRCatering(formData, id, refresh)),
+  deletePRCatering: (id, refresh) => dispatch(deletePRCatering(id, refresh)),
 })
 
 export default connect(
@@ -604,7 +664,7 @@ export default connect(
   mapDispatchToProps
 )(
   withTableFetchQuery({
-    API: (p) => Service.getPRKlasifikasiCatering(p),
+    API: (p) => Service.getPRCatering(p),
     Component: withToggle({
       Component: Klasifikasi,
       toggles: {

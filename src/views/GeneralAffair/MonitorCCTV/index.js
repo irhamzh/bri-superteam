@@ -77,15 +77,15 @@ class MonitorCCTV extends Component {
         headerClassName: 'wordwrap',
         columns: [
           {
-            Header: 'Gedung A - Lantai 1',
-            accessor: 'gedungAlantai1',
+            Header: 'Gedung Innovation',
+            accessor: 'innovationBuilding',
             filterable: false,
             headerClassName: 'wordwrap',
             Cell: (row) => <IconSuccessOrFailed value={row.value} />,
           },
           {
-            Header: 'Gedung A - Lantai 2',
-            accessor: 'gedungAlantai2',
+            Header: 'Smart Building',
+            accessor: 'smartBuilding',
             show: true,
             filterable: false,
             headerClassName: 'wordwrap',
@@ -285,12 +285,12 @@ class MonitorCCTV extends Component {
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
                           <ExcelColumn
-                            label="Gedung A - Lantai 1"
-                            value={(col) => (col.gedungAlantai1 ? '✓' : '❌')}
+                            label="Gedung Innovation"
+                            value={(col) => (col.innovationBuilding ? '✓' : '❌')}
                           />
                           <ExcelColumn
-                            label="Gedung A - Lantai 1"
-                            value={(col) => (col.gedungAlantai2 ? '✓' : '❌')}
+                            label="Smart Building"
+                            value={(col) => (col.smartBuilding ? '✓' : '❌')}
                           />
                           <ExcelColumn
                             label="CCTV Outdoor"
@@ -354,16 +354,16 @@ class MonitorCCTV extends Component {
                       <div style={{ marginLeft: '20px' }}>
                         <FormGroup>
                           <Field
-                            label="Gedung A - Lantai 1"
-                            name="gedungAlantai1"
+                            label="Gedung Innovation"
+                            name="innovationBuilding"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>
 
                         <FormGroup>
                           <Field
-                            label="Gedung A - Lantai 2"
-                            name="gedungAlantai2"
+                            label="Smart Building"
+                            name="smartBuilding"
                             component={CfInputCheckbox}
                           />
                         </FormGroup>

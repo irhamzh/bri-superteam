@@ -22,7 +22,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../config/services'
-import { CfInput, CfInputDate, ListCheckboxShow } from '../../../components'
+import { CfInput, CfInputDate, CfInputMultiFile, ListCheckboxShow } from '../../../components'
 import { AlertMessage, invalidValues, formatDate } from '../../../helpers'
 import { createPersekot, updatePersekot, deletePersekot } from '../../../modules/persekot/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../HOC/withTableFetchQuery'
@@ -76,6 +76,25 @@ class DLK extends Component {
         show: true,
         filterable: false,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+
+      {
+        Header: 'Lampiran',
+        accessor: 'lampiran',
+        show: true,
+        filterable: false,
+        Cell: (row) => {
+          if (row.value && row.value.length > 0) {
+            return row.value.map((item) => (
+              <div>
+                <a href={item} target="_blank" rel="noreferrer">
+                  Download
+                </a>
+              </div>
+            ))
+          }
+          return ''
+        },
       },
       {
         Header: 'Keterangan',
@@ -323,6 +342,17 @@ class DLK extends Component {
                           isRequired
                           placeholder="Masukkan nominal"
                           component={CfInput}
+                        />
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Field
+                          label="Lampiran"
+                          name="lampiran"
+                          isRequired
+                          accept="image/*,.pdf"
+                          multiple
+                          component={CfInputMultiFile}
                         />
                       </FormGroup>
 

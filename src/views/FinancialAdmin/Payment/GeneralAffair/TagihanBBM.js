@@ -90,7 +90,7 @@ class TagihanBBM extends Component {
         Header: 'Nama Pembayaran',
         accessor: 'namaPembayaran',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

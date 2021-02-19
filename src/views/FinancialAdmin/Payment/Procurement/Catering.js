@@ -92,7 +92,7 @@ class Catering extends Component {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

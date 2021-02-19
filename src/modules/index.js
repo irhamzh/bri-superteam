@@ -78,6 +78,7 @@ import penilaianOutsourcing from './generalAffair/dataPekerja/outsourcing/reduce
 import anggaranGeneralAffair from './generalAffair/anggaran/reducer'
 import uploadFinancialAdmin from './financialAdmin/uploads/reducer'
 import anggaranFixedAsset from './anggaran/fx/reducer'
+import pajak from './master/pajak/reducer'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -159,6 +160,7 @@ const rootReducer = combineReducers({
   anggaranGeneralAffair,
   uploadFinancialAdmin,
   anggaranFixedAsset,
+  pajak,
 })
 
 export default rootReducer

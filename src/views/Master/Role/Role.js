@@ -103,6 +103,7 @@ function Role(props) {
     {
       Header: 'Role',
       accessor: 'name',
+      filterable: true,
     },
     {
       Header: 'Fixed Asset',

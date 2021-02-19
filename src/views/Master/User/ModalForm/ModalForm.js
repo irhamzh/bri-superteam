@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Button, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Spinner } from 'reactstrap'
 import PropTypes from 'prop-types'
-import { CfInput, CfSelect } from '../../../../components'
+import { CfAsyncSelect, CfInput, CfSelect } from '../../../../components'
 import { invalidValues } from '../../../../helpers'
 import { WithToggleProps } from '../../../../HOC/withToggle'
 import { createUser, updateUser } from '../../../../modules/master/user/actions'
@@ -35,6 +35,21 @@ function ModalForm(props) {
     }
   }
 
+  async function handleInputRole(value) {
+    const filtered = [{ id: 'name', value: `${value}` }]
+    const filterString = JSON.stringify(filtered)
+    const params = `?filtered=${filterString}`
+    const paramsEncoded = encodeURI(params)
+    let option = []
+    await Service.getRoles(paramsEncoded).then((res) => {
+      option = res.data.data.map((row) => ({
+        label: row.name,
+        value: row.id,
+      }))
+    })
+    return option
+  }
+
   return (
     <>
       <Modal
@@ -53,7 +68,7 @@ function ModalForm(props) {
             }, 1000)
           }}
         >
-          {({ isSubmitting }) => (
+          {({ values, isSubmitting }) => (
             <Form>
               <ModalHeader toggle={modalForm.hide}>Form User</ModalHeader>
 
@@ -105,11 +120,17 @@ function ModalForm(props) {
                 <FormGroup>
                   <Field
                     label="Role"
+                    cacheOptions
                     options={optRoles}
-                    isRequired
+                    defaultOptions
+                    loadOptions={handleInputRole}
                     name="role"
-                    placeholder="Pilih atau Cari role"
-                    component={CfSelect}
+                    isRequired
+                    placeholder="Pilih atau cari"
+                    defaultValue={
+                      values.role ? { value: values.role.id, label: values.role.name } : null
+                    }
+                    component={CfAsyncSelect}
                   />
                 </FormGroup>
 

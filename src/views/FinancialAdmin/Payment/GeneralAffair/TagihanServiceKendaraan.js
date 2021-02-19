@@ -101,7 +101,7 @@ class TagihanServiceKendaraan extends Component {
         Header: 'Nama Pembayaran',
         accessor: 'namaPembayaran',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },

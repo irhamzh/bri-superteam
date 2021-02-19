@@ -31,7 +31,7 @@ import {
   CfSelect,
   ListCheckboxShow,
 } from '../../../../components'
-import { AlertMessage, formatDate, invalidValues } from '../../../../helpers'
+import { AlertMessage, formatCurrencyIDR, formatDate, invalidValues } from '../../../../helpers'
 import {
   createPengelolaanKonsumsi,
   updatePengelolaanKonsumsi,
@@ -100,35 +100,35 @@ class KonsumsiKegiatan extends Component {
         Header: 'Jenis',
         accessor: 'consumptionType',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'No. WO',
         accessor: 'workingOrder.kodeWorkingOrder',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nomor Surat',
         accessor: 'noSuratPesanan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Kebutuhan',
         accessor: 'kebutuhan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'Nama Catering',
         accessor: 'catering.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -150,7 +150,7 @@ class KonsumsiKegiatan extends Component {
         filterable: false,
         Cell: (props) => {
           const { menu } = props.original
-          const listBiaya = menu.map((row) => <div>{`${row.price}`}</div>)
+          const listBiaya = menu.map((row) => <div>{`${formatCurrencyIDR(row.price)}`}</div>)
           return listBiaya
         },
       },
@@ -535,7 +535,7 @@ class KonsumsiKegiatan extends Component {
                                     <FormGroup>
                                       <Field
                                         label="Biaya"
-                                        type="text"
+                                        type="number"
                                         name={`menu[${index}].price`}
                                         isRequired
                                         placeholder="Masukkan biaya"

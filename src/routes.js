@@ -91,6 +91,7 @@ const MasterKendaraan = React.lazy(() => import('./views/Master/Kendaraan'))
 const Uker = React.lazy(() => import('./views/Master/Uker'))
 const User = React.lazy(() => import('./views/Master/User'))
 const Formasi = React.lazy(() => import('./views/Master/Formasi'))
+const Pajak = React.lazy(() => import('./views/Master/Pajak'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -413,6 +414,11 @@ const routes = [
     path: '/master/formasi',
     name: 'Formasi',
     component: Formasi,
+  },
+  {
+    path: '/master/pajak',
+    name: 'Pajak',
+    component: Pajak,
   },
 ]
 

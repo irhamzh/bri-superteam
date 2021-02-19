@@ -24,7 +24,6 @@ import { Formik, Form, Field } from 'formik'
 import ReactExport from 'react-export-excel'
 import Service from '../../../../config/services'
 import {
-  CfAsyncSelect,
   CfInput,
   CfInputCheckbox,
   CfInputDate,
@@ -69,9 +68,9 @@ class TagihanS2 extends Component {
       typePayment: 'Tagihan S2 Luar dan Dalam Negeri',
     })
 
-    const resDataProvider = await Service.getProvider()
-    const dataProvider = resDataProvider.data.data
-    const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
+    // const resDataProvider = await Service.getProvider()
+    // const dataProvider = resDataProvider.data.data
+    // const optProvider = dataProvider.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -89,22 +88,22 @@ class TagihanS2 extends Component {
         Header: 'Seksi',
         accessor: 'seksi',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Pendidikan',
-        accessor: 'namaPendidikan',
+        Header: 'Jenis Biaya',
+        accessor: 'jenisBiaya',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
-        Header: 'Nama Provider',
-        accessor: 'provider.name',
+        Header: 'Nama Peserta',
+        accessor: 'namaPeserta',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -182,7 +181,6 @@ class TagihanS2 extends Component {
     ]
 
     this.setState({
-      optProvider,
       columns,
     })
   }
@@ -253,26 +251,26 @@ class TagihanS2 extends Component {
     this.setState({ columns: selected })
   }
 
-  handleInputProvider = async (value) => {
-    const filtered = [{ id: 'name', value: `${value}` }]
-    const filterString = JSON.stringify(filtered)
-    const params = `?filtered=${filterString}`
-    const paramsEncoded = encodeURI(params)
-    let option = []
-    await Service.getProvider(paramsEncoded).then((res) => {
-      option = res.data.data.map((row) => ({
-        label: row.name,
-        value: row.id,
-      }))
-    })
-    return option
-  }
+  // handleInputProvider = async (value) => {
+  //   const filtered = [{ id: 'name', value: `${value}` }]
+  //   const filterString = JSON.stringify(filtered)
+  //   const params = `?filtered=${filterString}`
+  //   const paramsEncoded = encodeURI(params)
+  //   let option = []
+  //   await Service.getProvider(paramsEncoded).then((res) => {
+  //     option = res.data.data.map((row) => ({
+  //       label: row.name,
+  //       value: row.id,
+  //     }))
+  //   })
+  //   return option
+  // }
 
   render() {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optProvider, isShow, columns } = this.state
+    const { isShow, columns } = this.state
     const tableCols = [
       ...columns,
       {
@@ -365,10 +363,8 @@ class TagihanS2 extends Component {
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
                           <ExcelColumn label="Seksi" value={(col) => col.seksi} />
-                          <ExcelColumn
-                            label="Nama Pembayaran"
-                            value={(col) => col.namaPembayaran}
-                          />
+                          <ExcelColumn label="Jenis Biaya" value={(col) => col.jenisBiaya} />
+                          <ExcelColumn label="Nama Peserta" value={(col) => col.namaPeserta} />
                           <ExcelColumn label="Periode / Bulan" value={(col) => col.periodeBulan} />
                           <ExcelColumn
                             label="Surat Perintah Bayar"
@@ -428,7 +424,7 @@ class TagihanS2 extends Component {
                   }, 1000)
                 }}
               >
-                {({ values, isSubmitting }) => (
+                {({ isSubmitting }) => (
                   <Form>
                     <ModalHeader toggle={modalForm.hide}>Tambah Data</ModalHeader>
                     <ModalBody>
@@ -459,16 +455,27 @@ class TagihanS2 extends Component {
 
                       <FormGroup>
                         <Field
-                          label="Nama Pendidikan"
+                          label="Jenis Biaya"
                           type="text"
-                          name="namaPendidikan"
+                          name="jenisBiaya"
                           isRequired
-                          placeholder="Masukkan Nama Pendidikan"
+                          placeholder="Masukkan Jenis Biaya"
                           component={CfInput}
                         />
                       </FormGroup>
 
                       <FormGroup>
+                        <Field
+                          label="Nama Peserta"
+                          type="text"
+                          name="namaPeserta"
+                          isRequired
+                          placeholder="Masukkan Nama Peserta"
+                          component={CfInput}
+                        />
+                      </FormGroup>
+
+                      {/* <FormGroup>
                         <Field
                           label="Nama Provider"
                           cacheOptions
@@ -485,7 +492,7 @@ class TagihanS2 extends Component {
                           }
                           component={CfAsyncSelect}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field

@@ -143,18 +143,18 @@ class PeralatanJaringan extends Component {
       {
         Header: 'Lantai',
         accessor: 'floor.name',
-        filterable: false,
+        filterable: true,
       },
 
       {
         Header: 'Ruangan',
         accessor: 'ruangan.name',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Item',
         accessor: 'item',
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Status',

@@ -11,7 +11,7 @@ const PaymentFinancialAdmin = (props) => {
   return (
     <div className="animated fadeIn">
       <Row>
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/financial-admin/payment/fixed-asset" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -19,9 +19,9 @@ const PaymentFinancialAdmin = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/financial-admin/payment/general-affair" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -29,7 +29,7 @@ const PaymentFinancialAdmin = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
 
         <Col xs="8">
           <Link to="/financial-admin/payment/finance" style={{ textDecoration: 'none' }}>
@@ -41,7 +41,7 @@ const PaymentFinancialAdmin = (props) => {
           </Link>
         </Col>
 
-        <Col xs="8">
+        {/* <Col xs="8">
           <Link to="/financial-admin/payment/procurement" style={{ textDecoration: 'none' }}>
             <Card className="" outline color="info">
               <CardBody>
@@ -49,7 +49,7 @@ const PaymentFinancialAdmin = (props) => {
               </CardBody>
             </Card>
           </Link>
-        </Col>
+        </Col> */}
       </Row>
     </div>
   )

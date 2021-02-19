@@ -21,7 +21,7 @@ import { Formik, Form } from 'formik'
 import { Checkbox } from '@material-ui/core'
 import Service from '../../../../config/services'
 import { AlertMessage, userData } from '../../../../helpers'
-import { approveAsset, penghapusbukuanAsset, deleteAsset } from '../../../../modules/asset/actions'
+import { approveAsset, penghapusbukuanAsset, denyAsset } from '../../../../modules/asset/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
 
@@ -37,10 +37,8 @@ class Penghapusbukuan extends Component {
     fetchQueryProps.setFilteredByObject({
       in$status: [
         'Approved oleh Supervisor I',
-        'Diajukan Penihilan',
+        'Diajukan Penghapusbukuan',
         'Approved oleh Supervisor II',
-        'Approved oleh Wakabag',
-        'Approved oleh Kabag',
       ],
     })
   }
@@ -62,21 +60,27 @@ class Penghapusbukuan extends Component {
     )
   }
 
-  handleDelete = (e, state) => {
+  handleDeny = (e, state) => {
     e.preventDefault()
 
     const { id } = state
-    const { deleteAsset } = this.props
+    const { denyAsset } = this.props
 
-    AlertMessage.warning()
+    const params = {
+      title: 'Apa kamu yakin?',
+      text: 'Setelah ditolak, Kamu tidak dapat memulihkan data ini!',
+      confirmButtonText: 'Ya, tolak!',
+      cancelButtonText: 'Kembali',
+    }
+
+    AlertMessage.warning(params)
       .then((result) => {
         if (result.value) {
-          console.log('delete object', id)
-          deleteAsset(id, this.doRefresh)
+          denyAsset(state, id, this.doRefresh)
         } else {
           const paramsResponse = {
-            title: 'Huff',
-            text: 'Hampir saja kamu kehilangan data ini',
+            title: 'Cancel',
+            text: 'Proses Deny dibatalkan',
           }
           AlertMessage.info(paramsResponse)
         }
@@ -188,7 +192,7 @@ class Penghapusbukuan extends Component {
       {
         Header: 'Nama Aset',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {
@@ -201,6 +205,15 @@ class Penghapusbukuan extends Component {
 
     const user = userData()
     const allowedRole = ['admin', 'supervisor', 'wakil kepala bagian', 'kepala bagian']
+    const showAction = (status) => {
+      const role = user.role?.name
+      if (role.includes('Supervisor') && status === 'Diajukan Penghapusbukuan') return true
+      if (role.includes('Kepala Bagian') && status === 'Approved oleh Supervisor II') return true
+      if (role.includes('Wakil Kepala Bagian') && status === 'Approved oleh Supervisor II')
+        return true
+
+      return false
+    }
     if (
       user &&
       (allowedRole.includes(user.role?.name.toLowerCase()) ||
@@ -213,23 +226,27 @@ class Penghapusbukuan extends Component {
         filterable: false,
         Cell: (props) => (
           <>
-            <Button
-              color="success"
-              onClick={(e) => this.handleApprove(e, props.original)}
-              className="mr-1"
-              title="Approve"
-            >
-              Approve
-            </Button>
-            &nbsp; | &nbsp;
-            <Button
-              color="danger"
-              onClick={(e) => this.handleDelete(e, props.original)}
-              className="mr-1"
-              title="Delete"
-            >
-              Deny
-            </Button>
+            {showAction(props.original?.status) && (
+              <>
+                <Button
+                  color="success"
+                  onClick={(e) => this.handleApprove(e, props.original)}
+                  className="mr-1"
+                  title="Approve"
+                >
+                  Approve
+                </Button>
+                &nbsp; | &nbsp;
+                <Button
+                  color="danger"
+                  onClick={(e) => this.handleDeny(e, props.original)}
+                  className="mr-1"
+                  title="Delete"
+                >
+                  Deny
+                </Button>
+              </>
+            )}
           </>
         ),
       })
@@ -342,7 +359,7 @@ Penghapusbukuan.propTypes = {
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   penghapusbukuanAsset: PropTypes.func.isRequired,
   approveAsset: PropTypes.func.isRequired,
-  deleteAsset: PropTypes.func.isRequired,
+  denyAsset: PropTypes.func.isRequired,
   fetchQueryProps: WithTableFetchQueryProp,
   modalForm: WithToggleProps,
 }
@@ -356,7 +373,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   penghapusbukuanAsset: (formData, refresh) => dispatch(penghapusbukuanAsset(formData, refresh)),
   approveAsset: (formData, id, refresh) => dispatch(approveAsset(formData, id, refresh)),
-  deleteAsset: (id, refresh) => dispatch(deleteAsset(id, refresh)),
+  denyAsset: (formData, id, refresh) => dispatch(denyAsset(formData, id, refresh)),
 })
 
 export default connect(

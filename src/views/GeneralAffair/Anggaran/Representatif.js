@@ -258,6 +258,18 @@ class AnggaranRepresentatif extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
+    const sisaAnggaran = {
+      month: data[0]?.month,
+      year: data[0]?.year,
+      categoryAnggaran: data[0]?.categoryAnggaran,
+      type: 'Sisa Anggaran',
+      nilai: data[0]?.sisaAnggaran,
+    }
+    let allData = []
+    if (data[0] && data[0].detail) {
+      allData = [...data[0].detail, sisaAnggaran]
+    }
+
     const tableCols = [
       {
         Header: 'No.',
@@ -478,7 +490,7 @@ class AnggaranRepresentatif extends Component {
                   noDataText="Input Bulan dan Tahun"
                   pageSize={data[0]?.detail.length}
                   {...tableProps}
-                  data={data[0]?.detail}
+                  data={allData}
                 />
               </CardBody>
             </Card>

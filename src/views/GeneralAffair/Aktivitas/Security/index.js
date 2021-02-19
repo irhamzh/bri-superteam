@@ -80,7 +80,17 @@ class SecurityLayout extends Component {
         filterable: false,
         headerClassName: 'wordwrap',
         Cell: (row) => (
-          <div style={{ textAlign: 'center' }}>{row.value ? 'Terupload' : 'Tidak Terupload'}</div>
+          <div style={{ textAlign: 'center' }}>
+            {row.value ? (
+              <div>
+                <a href={row.value} target="_blank" rel="noreferrer">
+                  Terupload
+                </a>
+              </div>
+            ) : (
+              'Tidak Terupload'
+            )}
+          </div>
         ),
       },
     ]

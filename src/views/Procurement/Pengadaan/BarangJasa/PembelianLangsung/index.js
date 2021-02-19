@@ -57,6 +57,10 @@ class PembelianLangsung extends Component {
 
   initialValues = {
     typePengadaan: 'Pembelian Langsung',
+    izinPrinsipPengadaan: false,
+    izinHasilPengadaan: false,
+    anggaranBiaya: false,
+    suratPemesanan: false,
   }
 
   async componentDidMount() {
@@ -99,7 +103,7 @@ class PembelianLangsung extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'namaPengadaan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -138,7 +142,7 @@ class PembelianLangsung extends Component {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Alamat Provider',

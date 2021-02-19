@@ -3,7 +3,7 @@ import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap
 import classnames from 'classnames'
 import PembelianLangsung from './PembelianLangsung'
 import PenunjukanLangsung from './PenunjukanLangsung'
-import PemilihanLangsung from './PemilihanLangsung'
+import BeautyContest from './BeautyContest'
 
 const BarangJasa = () => {
   const [activeTab, setActiveTab] = useState('1')
@@ -42,7 +42,7 @@ const BarangJasa = () => {
               toggle('3')
             }}
           >
-            Pemilihan Langsung
+            Beauty Contest
           </NavLink>
         </NavItem>
       </Nav>
@@ -64,7 +64,7 @@ const BarangJasa = () => {
         <TabPane tabId="3">
           <Row>
             <Col sm="12">
-              <PemilihanLangsung />
+              <BeautyContest />
             </Col>
           </Row>
         </TabPane>

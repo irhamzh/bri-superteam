@@ -85,7 +85,7 @@ class AkomodasiAsrama extends Component {
         Header: 'Nama Pendidikan',
         accessor: 'namaPendidikan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -93,7 +93,7 @@ class AkomodasiAsrama extends Component {
         Header: 'Periode',
         accessor: 'periode',
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

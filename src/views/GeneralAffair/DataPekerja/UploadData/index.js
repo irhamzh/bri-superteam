@@ -30,6 +30,7 @@ import {
 } from '../../../../modules/generalAffair/dataPekerja/pekerja/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import templateEmployee from '../../../../assets/template/Employee.xlsx'
 
 class UploadData extends Component {
   state = {}
@@ -100,13 +101,13 @@ class UploadData extends Component {
       {
         Header: 'Nama',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
         Header: 'NIP',
         accessor: 'nip',
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
       },
       {
@@ -129,7 +130,7 @@ class UploadData extends Component {
       },
       {
         Header: 'Level Jabatan',
-        accessor: 'levelJabatan',
+        accessor: 'formasi.levelJabatan',
         filterable: false,
         headerClassName: 'wordwrap',
       },
@@ -277,6 +278,15 @@ class UploadData extends Component {
                               component={CfInputFile}
                             />
                           </FormGroup>
+
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template:
+                              <a href={templateEmployee} target="_blank" rel="noreferrer">
+                                File Template
+                              </a>
+                            </p>
+                          </div>
                         </>
                       )}
 
@@ -341,8 +351,9 @@ class UploadData extends Component {
                             <Field
                               label="Level Jabatan"
                               type="text"
-                              name="levelJabatan"
+                              name="formasi.levelJabatan"
                               isRequired
+                              disabled
                               placeholder="Masukkan Level Jabatan"
                               component={CfInput}
                             />

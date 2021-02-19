@@ -34,6 +34,7 @@ import {
 } from '../../../../modules/generalAffair/dataPekerja/outsourcing/actions'
 import withTableFetchQuery, { WithTableFetchQueryProp } from '../../../../HOC/withTableFetchQuery'
 import withToggle, { WithToggleProps } from '../../../../HOC/withToggle'
+import templateOutsourcing from '../../../../assets/template/Outsourcing.xlsx'
 
 // Export
 const { ExcelFile } = ReactExport
@@ -62,14 +63,14 @@ class Outsourcing extends Component {
         Header: 'Nama',
         accessor: `name`,
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
       },
       {
         Header: 'PN',
         accessor: `pn`,
         show: true,
-        filterable: false,
+        filterable: true,
         Cell: (props) => <p style={{ textAlign: 'center' }}>{props.value}</p>,
       },
       {
@@ -384,6 +385,15 @@ class Outsourcing extends Component {
                               component={CfInputFile}
                             />
                           </FormGroup>
+
+                          <div style={{ marginTop: '50px' }}>
+                            <p>
+                              Download Template:
+                              <a href={templateOutsourcing} target="_blank" rel="noreferrer">
+                                File Template
+                              </a>
+                            </p>
+                          </div>
                         </>
                       )}
                     </ModalBody>

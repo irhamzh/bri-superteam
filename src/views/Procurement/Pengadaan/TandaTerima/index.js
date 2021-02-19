@@ -78,7 +78,7 @@ class TandaTerima extends Component {
         Header: 'Nama Pengadaan',
         accessor: 'pengadaan.namaPengadaan',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -86,7 +86,7 @@ class TandaTerima extends Component {
         Header: 'Nama Provider',
         accessor: 'provider.name',
         show: true,
-        filterable: false,
+        filterable: true,
         headerClassName: 'wordwrap',
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
@@ -500,7 +500,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Jumlah Barang"
-                          type="text"
+                          type="number"
                           name="jumlahBarang"
                           isRequired
                           placeholder="Masukkan Jumlah Barang"
@@ -511,7 +511,7 @@ class TandaTerima extends Component {
                       <FormGroup>
                         <Field
                           label="Harga Barang"
-                          type="text"
+                          type="number"
                           name="hargaBarang"
                           isRequired
                           placeholder="Masukkan Harga Barang"

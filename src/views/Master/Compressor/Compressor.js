@@ -53,7 +53,7 @@ function JenisBarang(props) {
       Cell: (row) => <div style={{ textAlign: 'center' }}>{numbData(row)}</div>,
     },
     {
-      Header: 'Nam Compressor',
+      Header: 'Nama Compressor',
       accessor: 'name',
       Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
     },
@@ -122,7 +122,7 @@ function JenisBarang(props) {
             </CardHeader>
             <CardBody>
               <ReactTable
-                filterable={false}
+                filterable
                 columns={columns}
                 defaultPageSize={10}
                 className="-highlight"

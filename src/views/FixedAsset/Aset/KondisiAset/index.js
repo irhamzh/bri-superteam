@@ -41,6 +41,13 @@ class KondisiAset extends Component {
 
   initialValues = {}
 
+  componentDidMount() {
+    const { fetchQueryProps } = this.props
+    fetchQueryProps.setFilteredByObject({
+      status: 'Approved oleh Supervisor I',
+    })
+  }
+
   doRefresh = () => {
     const { fetchQueryProps, modalForm } = this.props
     modalForm.hide()
@@ -113,7 +120,7 @@ class KondisiAset extends Component {
       {
         Header: 'Nama Aset',
         accessor: 'name',
-        filterable: false,
+        filterable: true,
         Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
       {

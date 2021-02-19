@@ -71,7 +71,7 @@ class WaterMeter extends Component {
         Header: 'Jenis',
         accessor: 'waterMeter.name',
         show: true,
-        filterable: false,
+        filterable: true,
       },
       {
         Header: 'Meter Awal',

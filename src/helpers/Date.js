@@ -4,7 +4,11 @@ import { id } from 'date-fns/locale'
 const timezoneIndonesia = { locale: id }
 
 const formatDate = (date) => {
-  return format(new Date(date), 'dd-MM-yyyy', timezoneIndonesia)
+  try {
+    return format(new Date(date), 'dd-MM-yyyy', timezoneIndonesia)
+  } catch (error) {
+    return date
+  }
 }
 
 const formatDateTime = (date) => {
@@ -16,7 +20,11 @@ const formatDateSystem = (date) => {
 }
 
 const formatDateTimeSystem = (date) => {
-  return format(new Date(date), 'yyyy-MM-dd HH:mm:ss', timezoneIndonesia)
+  try {
+    return format(new Date(date), 'yyyy-MM-dd HH:mm:ss', timezoneIndonesia)
+  } catch (error) {
+    return date
+  }
 }
 
 const formatMonth = (date) => {
@@ -32,7 +40,11 @@ const formatTime = (date) => {
 }
 
 const formatMonthYear = (date) => {
-  return format(new Date(date), 'MM-yyyy', timezoneIndonesia)
+  try {
+    return format(new Date(date), 'MM-yyyy', timezoneIndonesia)
+  } catch (error) {
+    return date
+  }
 }
 
 export {

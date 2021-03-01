@@ -33,14 +33,16 @@ export const signIn = (credentials) => async (dispatch) => {
 
     dispatch({ type: AUTHENTICATED, isLoading: false })
   } catch (err) {
-    const errMsg = err.message ? err.message : 'Internal Server Error'
+    const errMsg = err.message ? 'Email atau password salah!' : 'Internal Server Error'
 
     dispatch({
       type: AUTHENTICATION_ERROR,
       payload: errMsg,
       isLoading: false,
     })
-    AlertMessage.custom({ title: 'Oops!', text: err.message, icon: 'error' })
+    AlertMessage.custom({ title: 'Oops!', text: 'Email atau password salah!', icon: 'error' })
+
+    // AlertMessage.custom({ title: 'Oops!', text: err.message, icon: 'error' })
   }
 }
 

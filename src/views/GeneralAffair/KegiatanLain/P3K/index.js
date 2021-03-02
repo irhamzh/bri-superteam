@@ -378,7 +378,6 @@ class P3K extends Component {
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal"
                           component={CfInputDate}
@@ -465,7 +464,6 @@ class P3K extends Component {
                           name="expired"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal"
                           component={CfInputDate}

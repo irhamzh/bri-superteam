@@ -463,7 +463,6 @@ class KegiatanPendidikan extends Component {
                           name="tanggalTerima"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal Terima"
                           component={CfInputDate}
@@ -476,7 +475,6 @@ class KegiatanPendidikan extends Component {
                           name="tanggalRevisi"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal Revisi"
                           component={CfInputDate}
@@ -489,7 +487,6 @@ class KegiatanPendidikan extends Component {
                           name="tanggalKonfirmasi"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal Konfirmasi"
                           component={CfInputDate}

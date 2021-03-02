@@ -410,7 +410,6 @@ class Outsourcing extends Component {
                           name="month"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          // minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal"
                           showMonthYearPicker

@@ -450,7 +450,6 @@ class PestControl extends Component {
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal"
                           component={CfInputDate}

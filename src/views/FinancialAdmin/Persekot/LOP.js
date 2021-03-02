@@ -315,7 +315,6 @@ class LOP extends Component {
                           name="date"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal"
                           component={CfInputDate}

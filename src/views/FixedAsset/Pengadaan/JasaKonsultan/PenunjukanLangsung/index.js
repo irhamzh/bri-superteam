@@ -443,7 +443,6 @@ class PenunjukanLangsung extends Component {
                           name="tanggalPengadaan"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal Pengadaan"
                           component={CfInputDate}
@@ -532,7 +531,6 @@ class PenunjukanLangsung extends Component {
                           name="tanggalSPK"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal SPK"
                           component={CfInputDate}
@@ -659,7 +657,6 @@ class PenunjukanLangsung extends Component {
                             name="masaBerlaku"
                             classIcon="fa fa-calendar"
                             blockLabel
-                            minDate={new Date()}
                             isRequired
                             placeholder="Pilih Tanggal Masa Awal Berlaku"
                             component={CfInputDate}
@@ -672,7 +669,6 @@ class PenunjukanLangsung extends Component {
                             name="sampai"
                             classIcon="fa fa-calendar"
                             blockLabel
-                            minDate={new Date()}
                             isRequired
                             placeholder="Pilih Tanggal Masa Akhir Berlaku"
                             component={CfInputDate}

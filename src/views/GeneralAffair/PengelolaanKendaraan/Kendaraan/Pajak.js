@@ -343,7 +343,6 @@ class PajakKendaran extends Component {
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal"
                           component={CfInputDate}
@@ -378,7 +377,6 @@ class PajakKendaran extends Component {
                           name="jatuhTempo"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal Berakhir"
                           component={CfInputDate}

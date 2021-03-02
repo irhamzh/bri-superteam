@@ -547,7 +547,6 @@ class PenunjukanLangsung extends Component {
                           name="tanggalAwal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal Awal"
                           component={CfInputDate}
@@ -560,7 +559,6 @@ class PenunjukanLangsung extends Component {
                           name="tanggalAkhir"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal Akhir"
                           component={CfInputDate}

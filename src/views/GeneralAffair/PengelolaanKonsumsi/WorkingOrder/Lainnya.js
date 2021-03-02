@@ -330,7 +330,6 @@ class Lainnya extends Component {
                           name="tanggalTerima"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Tanggal Terima"
                           component={CfInputDate}

@@ -373,7 +373,6 @@ class PenugasanDriver extends Component {
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           disabled={!!modalForm.prop.evaluasi}
                           placeholder="Tanggal"

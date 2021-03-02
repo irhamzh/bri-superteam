@@ -416,7 +416,6 @@ class PembelianLangsung extends Component {
                           name="tanggalPengadaan"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal Pengadaan"
                           component={CfInputDate}

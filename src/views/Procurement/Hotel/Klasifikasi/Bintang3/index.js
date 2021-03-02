@@ -414,7 +414,6 @@ class Bintang3 extends Component {
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal"
                           component={CfInputDate}

@@ -343,7 +343,6 @@ class STP extends Component {
                           name="yearMonth"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          // minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal"
                           showMonthYearPicker

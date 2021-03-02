@@ -1053,7 +1053,6 @@ class ME extends Component {
                               name="expiredTabung"
                               classIcon="fa fa-calendar"
                               blockLabel
-                              minDate={new Date()}
                               isRequired
                               placeholder="Pilih Tanggal"
                               component={CfInputDate}

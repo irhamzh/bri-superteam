@@ -330,7 +330,6 @@ class Internal extends Component {
                           name="tanggal"
                           classIcon="fa fa-calendar"
                           blockLabel
-                          minDate={new Date()}
                           isRequired
                           placeholder="Pilih Tanggal"
                           component={CfInputDate}

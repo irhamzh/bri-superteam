@@ -78,7 +78,7 @@ function ModalForm(props) {
                   />
                 </FormGroup>
 
-                <FormGroup>
+                {/* <FormGroup>
                   <Field
                     label="Pemenuhan"
                     type="number"
@@ -87,7 +87,7 @@ function ModalForm(props) {
                     placeholder="Masukkan Pemenuhan"
                     component={CfInput}
                   />
-                </FormGroup>
+                </FormGroup> */}
               </ModalBody>
 
               <ModalFooter>

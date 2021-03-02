@@ -19,3 +19,15 @@
   background-color: '#1F479C' !important; 
   border-radius: '20px 20px 0px 0px' !important;
 }
+
+.swal2-html-container {
+  #boxError{
+    max-height: 300px;
+    overflow-y: scroll;
+
+    #text{
+      content: none;
+    }
+  }
+ 
+}

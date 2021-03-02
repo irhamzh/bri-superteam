@@ -8,7 +8,7 @@ const invalidValues = [undefined, null, '']
 class AlertMessage {
   // Success Response
   static success(params = {}) {
-    const { title, text } = params
+    const { title, text, html } = params
     const defaultMessage = {
       title: 'Success',
       text: 'Data berhasil ditambahkan!',
@@ -18,6 +18,7 @@ class AlertMessage {
       title: !invalidValues.includes(title) ? title : defaultMessage.title,
       text: !invalidValues.includes(text) ? text : defaultMessage.text,
       icon: 'success',
+      html,
       confirmButtonColor: '#20a8d8',
       allowOutsideClick: false,
       allowEscapeKey: false,

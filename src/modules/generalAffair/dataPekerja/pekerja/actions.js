@@ -120,6 +120,29 @@ export const uploadGAPekerja = (formData, refresh) => async (dispatch) => {
 
     paramsResponse.title = 'Uploaded'
     paramsResponse.text = res.data.message
+    const dataError = res.data?.data
+    if (dataError && dataError.length > 0) {
+      paramsResponse.html = `<div id=boxError><p id=text>${res.data.message}</p>
+        <p>List Kesalahan dalam data: </p>
+        <table>
+          <tr>
+            <td>No.</td>
+            <td>Nama/Row</td>
+            <td>Keterangan</td>
+          </tr>
+          ${dataError.map((item, index) => {
+            return `<tr>
+                <td>${index + 1}</td>
+                <td>${item.name || item.row}</td>
+                <td>${item.error}</td>
+              </tr>`
+          })}
+        </table>
+        </div>
+      `
+
+      paramsResponse.html.replace(',', '')
+    }
     AlertMessage.success(paramsResponse).then(() => {
       if (refresh) {
         refresh()

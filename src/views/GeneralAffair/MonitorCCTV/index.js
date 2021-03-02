@@ -50,9 +50,9 @@ class MonitorCCTV extends Component {
   }
 
   initialValues = {
-    cctvOutdor: false,
-    gedungAlantai1: false,
-    gedungAlantai2: false,
+    cctvOutdoor: false,
+    innovationBuilding: false,
+    smartBuilding: false,
   }
 
   componentDidMount() {

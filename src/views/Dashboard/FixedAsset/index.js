@@ -470,7 +470,7 @@ const FixedAsset = () => {
               </Link>
 
               <Link
-                to={`"/dashboard/fixed-asset/selesai${monthYear ? `?monthYear=${monthYear}` : ''}`}
+                to={`/dashboard/fixed-asset/selesai${monthYear ? `?monthYear=${monthYear}` : ''}`}
                 style={{ textDecoration: 'none' }}
               >
                 <Card style={{ backgroundColor: '#36A2EB', padding: '20px' }}>

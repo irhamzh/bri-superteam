@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 // // /* eslint-disable no-param-reassign */
 // import axios from 'axios'
 // // // import { signOut } from '../modules/auth/actions'
@@ -2322,13 +2323,17 @@ class Service {
     return axios.put(`/pengadaans/${id}/approve-process`, { id })
   }
 
-  static approveWabagFixedAsset(id) {
-    return axios.put(`/pengadaans/${id}/approve-wabag`, { id })
+  static approveSupervisorFixedAsset(id) {
+    return axios.put(`/pengadaans/${id}/approve-supervisor`, { id })
   }
 
-  static approveKabagFixedAsset(id) {
-    return axios.put(`/pengadaans/${id}/approve-kabag`, { id })
+  static approveKabagWabagFixedAsset(id) {
+    return axios.put(`/pengadaans/${id}/approve-kabag-wakabag`, { id })
   }
+
+  // static approveKabagFixedAsset(id) {
+  //   return axios.put(`/pengadaans/${id}/approve-kabag`, { id })
+  // }
 
   static approveFinishFixedAsset(id) {
     return axios.put(`/pengadaans/${id}/finish`, { id })
@@ -2339,12 +2344,12 @@ class Service {
     return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-process`)
   }
 
-  static approveWabagProcurement(id) {
-    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-wabag`)
+  static approveSupervisorProcurement(id) {
+    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-supervisor`)
   }
 
-  static approveKabagProcurement(id) {
-    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-kabag`)
+  static approveKabagWabagProcurement(id) {
+    return axios.put(`/pr-pengadaan-jasa-barangs/${id}/approve-kabag-wakabag`)
   }
 
   static approveFinishProcurement(id) {
@@ -2356,12 +2361,12 @@ class Service {
     return axios.put(`/working-orders/${id}/approve-process`)
   }
 
-  static approveWabagGeneralAffair(id) {
-    return axios.put(`/working-orders/${id}/approve-wabag`)
+  static approveSupervisorGeneralAffair(id) {
+    return axios.put(`/working-orders/${id}/approve-supervisor`)
   }
 
-  static approveKabagGeneralAffair(id) {
-    return axios.put(`/working-orders/${id}/approve-kabag`)
+  static approveKabagWabagGeneralAffair(id) {
+    return axios.put(`/working-orders/${id}/approve-kabag-wakabag`)
   }
 
   static approveFinishGeneralAffair(id) {
@@ -2373,12 +2378,12 @@ class Service {
     return axios.put(`/fa-payments/${id}/approve-process`)
   }
 
-  static approveWabagFinancialAdmin(id) {
-    return axios.put(`/fa-payments/${id}/approve-wabag`)
+  static approveSupervisorFinancialAdmin(id) {
+    return axios.put(`/fa-payments/${id}/approve-supervisor`)
   }
 
-  static approveKabagFinancialAdmin(id) {
-    return axios.put(`/fa-payments/${id}/approve-kabag`)
+  static approveKabagWabagFinancialAdmin(id) {
+    return axios.put(`/fa-payments/${id}/approve-kabag-wakabag`)
   }
 
   static approveFinishFinancialAdmin(id) {

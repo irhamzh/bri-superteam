@@ -36,21 +36,21 @@ class BelumSelesai extends Component {
     if (date) {
       fetchQueryProps.setFilteredByObject({
         division: 'General Affair',
-        status: 'Approved oleh Kabag',
+        in$status: ['Approved oleh Wakabag', 'Approved oleh Kabag'],
         atDate$createdAt: date,
         'month-year$createdAt': '',
       })
     } else if (monthYear) {
       fetchQueryProps.setFilteredByObject({
         division: 'General Affair',
-        status: 'Approved oleh Kabag',
+        in$status: ['Approved oleh Wakabag', 'Approved oleh Kabag'],
         atDate$createdAt: '',
         'month-year$createdAt': monthYear,
       })
     } else {
       fetchQueryProps.setFilteredByObject({
         division: 'General Affair',
-        status: 'Approved oleh Kabag',
+        in$status: ['Approved oleh Wakabag', 'Approved oleh Kabag'],
         atDate$createdAt: '',
         'month-year$createdAt': '',
       })

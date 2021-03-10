@@ -39,6 +39,7 @@ const FinancialAdmin = () => {
   let {
     totalApprovedKabag: totalApprovedKabagToday,
     totalApprovedWakabag: totalApprovedWakabagToday,
+    totalBelumSelesai: totalBelumSelesaiToday,
     totalBelumBerjalan: totalBelumBerjalanToday,
     totalProsesPersetujuan: totalProsesPersetujuanToday,
     totalSelesai: totalSelesaiToday,
@@ -48,6 +49,7 @@ const FinancialAdmin = () => {
     totalApprovedKabag,
     totalApprovedWakabag,
     totalBelumBerjalan,
+    totalBelumSelesai,
     totalProsesPersetujuan,
     totalSelesai,
   } = dataDashboard
@@ -55,12 +57,14 @@ const FinancialAdmin = () => {
   if (!totalApprovedKabag) totalApprovedKabag = 0
   if (!totalApprovedWakabag) totalApprovedWakabag = 0
   if (!totalBelumBerjalan) totalBelumBerjalan = 0
+  if (!totalBelumSelesai) totalBelumSelesai = 0
   if (!totalProsesPersetujuan) totalProsesPersetujuan = 0
   if (!totalSelesai) totalSelesai = 0
 
   if (!totalApprovedKabagToday) totalApprovedKabagToday = 0
   if (!totalApprovedWakabagToday) totalApprovedWakabagToday = 0
   if (!totalBelumBerjalanToday) totalBelumBerjalanToday = 0
+  if (!totalBelumSelesaiToday) totalBelumSelesaiToday = 0
   if (!totalProsesPersetujuanToday) totalProsesPersetujuanToday = 0
   if (!totalSelesaiToday) totalSelesaiToday = 0
 
@@ -68,7 +72,7 @@ const FinancialAdmin = () => {
     labels: ['Belum Berjalan', 'Proses Persetujuan', 'Belum Selesai', 'Selesai'],
     datasets: [
       {
-        data: [totalBelumBerjalan, totalProsesPersetujuan, totalApprovedKabag, totalSelesai],
+        data: [totalBelumBerjalan, totalProsesPersetujuan, totalBelumSelesai, totalSelesai],
         backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
         hoverBackgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
       },
@@ -82,7 +86,7 @@ const FinancialAdmin = () => {
         data: [
           totalBelumBerjalanToday,
           totalProsesPersetujuanToday,
-          totalApprovedKabagToday,
+          totalBelumSelesaiToday,
           totalSelesaiToday,
         ],
         backgroundColor: ['#FF6384', '#00FA9A', '#FFCE56', '#36A2EB'],
@@ -256,7 +260,7 @@ const FinancialAdmin = () => {
                         Selesai
                       </h4>
                       <span style={{ color: 'white', fontSize: '30px' }}>
-                        {totalApprovedKabagToday}
+                        {totalBelumSelesaiToday}
                       </span>
                     </div>
                   </div>
@@ -463,7 +467,7 @@ const FinancialAdmin = () => {
                         <br />
                         Selesai
                       </h3>
-                      <span style={{ color: 'white', fontSize: '30px' }}>{totalApprovedKabag}</span>
+                      <span style={{ color: 'white', fontSize: '30px' }}>{totalBelumSelesai}</span>
                     </div>
                   </div>
                 </Card>

@@ -42,7 +42,7 @@ class ProsesPersetujuan extends Component {
       })
     } else if (monthYear) {
       fetchQueryProps.setFilteredByObject({
-        in$status: ['Proses Persetujuan', 'Approved oleh Superviso'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: '',
         'month-year$createdAt': monthYear,
       })

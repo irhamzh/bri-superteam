@@ -36,21 +36,21 @@ class ProsesPersetujuan extends Component {
     if (date) {
       fetchQueryProps.setFilteredByObject({
         division: 'General Affair',
-        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: date,
         'month-year$createdAt': '',
       })
     } else if (monthYear) {
       fetchQueryProps.setFilteredByObject({
         division: 'General Affair',
-        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: '',
         'month-year$createdAt': monthYear,
       })
     } else {
       fetchQueryProps.setFilteredByObject({
         division: 'General Affair',
-        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: '',
         'month-year$createdAt': '',
       })
@@ -100,14 +100,14 @@ class ProsesPersetujuan extends Component {
       .then(async (result) => {
         if (result.value) {
           if (status === 'Proses Persetujuan') {
-            await Service.approveWabagGeneralAffair(id).then((res) => {
+            await Service.approveSupervisorGeneralAffair(id).then((res) => {
               if (res.data) {
                 AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
                 this.doRefresh()
               }
             })
           } else {
-            await Service.approveKabagGeneralAffair(id).then((res) => {
+            await Service.approveKabagWabagGeneralAffair(id).then((res) => {
               if (res.data) {
                 AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
                 this.doRefresh()

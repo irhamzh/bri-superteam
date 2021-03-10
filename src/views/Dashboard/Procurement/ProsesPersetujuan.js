@@ -35,19 +35,19 @@ class ProsesPersetujuan extends Component {
 
     if (date) {
       fetchQueryProps.setFilteredByObject({
-        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: date,
         'month-year$createdAt': '',
       })
     } else if (monthYear) {
       fetchQueryProps.setFilteredByObject({
-        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: '',
         'month-year$createdAt': monthYear,
       })
     } else {
       fetchQueryProps.setFilteredByObject({
-        in$status: ['Proses Persetujuan', 'Approved oleh Wakabag'],
+        in$status: ['Proses Persetujuan', 'Approved oleh Supervisor'],
         atDate$createdAt: '',
         'month-year$createdAt': '',
       })
@@ -97,14 +97,14 @@ class ProsesPersetujuan extends Component {
       .then(async (result) => {
         if (result.value) {
           if (status === 'Proses Persetujuan') {
-            await Service.approveWabagProcurement(id).then((res) => {
+            await Service.approveSupervisorProcurement(id).then((res) => {
               if (res.data) {
                 AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
                 this.doRefresh()
               }
             })
           } else {
-            await Service.approveKabagProcurement(id).then((res) => {
+            await Service.approveKabagWabagProcurement(id).then((res) => {
               if (res.data) {
                 AlertMessage.success('', 'Pengadaan Behasil Disetujui!')
                 this.doRefresh()

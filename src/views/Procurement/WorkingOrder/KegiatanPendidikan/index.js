@@ -152,7 +152,7 @@ class KegiatanPendidikan extends Component {
         ),
       },
       {
-        Header: 'Kebutuhan - Akomodasi',
+        Header: 'Kebutuhan - Lain-Lain',
         accessor: 'akomodasi',
         show: true,
         filterable: false,
@@ -374,7 +374,7 @@ class KegiatanPendidikan extends Component {
                             value={(col) => (col.hotel === 'yes' ? 'Ada' : 'Tidak Ada')}
                           />
                           <ExcelColumn
-                            label="Kebutuhan - Akomodasi"
+                            label="Kebutuhan - Lain-Lain"
                             value={(col) => (col.akomodasi === 'yes' ? 'Ada' : 'Tidak Ada')}
                           />
                           <ExcelColumn
@@ -542,7 +542,7 @@ class KegiatanPendidikan extends Component {
 
                       <Row>
                         <Col sm="6">
-                          <h6 className="pl-4">Akomodasi</h6>
+                          <h6 className="pl-4">Lain-Lain</h6>
                         </Col>
                         <Col>
                           <FormGroup>

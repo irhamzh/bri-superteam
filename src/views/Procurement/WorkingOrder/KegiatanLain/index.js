@@ -543,7 +543,7 @@ class KegiatanLain extends Component {
 
                       <Row>
                         <Col sm="6">
-                          <h6 className="pl-4">Akomodasi</h6>
+                          <h6 className="pl-4">Lain-Lain</h6>
                         </Col>
                         <Col>
                           <FormGroup>

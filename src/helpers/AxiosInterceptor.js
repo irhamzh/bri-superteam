@@ -11,7 +11,7 @@ BriXios.interceptors.request.use(
   (config) => {
     const token = localStorageService.getAccessToken()
     if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token
+      config.headers.Authorization = `Bearer ${token}`
     }
     // config.headers['Content-Type'] = 'application/json';
     return config
@@ -21,7 +21,7 @@ BriXios.interceptors.request.use(
   }
 )
 
-//Add a response interceptor
+// Add a response interceptor
 BriXios.interceptors.response.use(
   (response) => {
     return response
@@ -50,8 +50,7 @@ BriXios.interceptors.response.use(
         console.log(res, 'mabur')
         if (res?.status === 200) {
           localStorageService.setToken(res.data)
-          BriXios.defaults.headers.common['Authorization'] =
-            'Bearer ' + localStorageService.getAccessToken()
+          BriXios.defaults.headers.common.Authorization = `Bearer ${localStorageService.getAccessToken()}`
           return BriXios(originalRequest)
         }
       })

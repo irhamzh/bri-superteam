@@ -152,7 +152,7 @@ class KegiatanLain extends Component {
         ),
       },
       {
-        Header: 'Kebutuhan - Akomodasi',
+        Header: 'Kebutuhan - Lain-Lain',
         accessor: 'akomodasi',
         filterable: false,
         show: true,
@@ -374,7 +374,7 @@ class KegiatanLain extends Component {
                             value={(col) => (col.hotel === 'yes' ? 'Ada' : 'Tidak Ada')}
                           />
                           <ExcelColumn
-                            label="Kebutuhan - Akomodasi"
+                            label="Kebutuhan - Lain-Lain"
                             value={(col) => (col.akomodasi === 'yes' ? 'Ada' : 'Tidak Ada')}
                           />
                           <ExcelColumn

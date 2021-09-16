@@ -1,8 +1,7 @@
 const BASE_URL = {
-  production: 'https://asia-southeast2-geochat-252415.cloudfunctions.net/api',
-  staging: 'https://asia-southeast2-geochat-252415.cloudfunctions.net/api',
-  development: 'https://asia-southeast2-geochat-252415.cloudfunctions.net/api',
-  // development: 'http://localhost:5001/geochat-252415/asia-southeast2/api',
+  production: 'http://localhost:5001/geochat-252415/asia-southeast2/api',
+  staging: 'http://localhost:5001/bricorpu-5ee48/asia-southeast2/api',
+  development: 'http://localhost:5001/bricorpu-5ee48/asia-southeast2/api',
 }
 
 const ENV = process.env.REACT_APP_BUILD_ENV || 'development'

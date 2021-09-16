@@ -60,9 +60,9 @@ class P3K extends Component {
     const dataJenisObat = resDataJenisObat.data.data
     const optJenisObat = dataJenisObat.map((row) => ({ label: row.name, value: row.id }))
 
-    // const resDataArea = await Service.getArea()
-    // const dataArea = resDataArea.data.data
-    // const optArea = dataArea.map((row) => ({ label: row.name, value: row.id }))
+    const resDataArea = await Service.getArea()
+    const dataArea = resDataArea.data.data
+    const optArea = dataArea.map((row) => ({ label: row.name, value: row.id }))
 
     // const { tableProps } = fetchQueryProps
     // const { modalForm } = tableProps
@@ -78,7 +78,7 @@ class P3K extends Component {
       },
       {
         Header: 'Area',
-        accessor: 'area',
+        accessor: 'area.name',
         show: true,
         filterable: true,
         headerClassName: 'wordwrap',
@@ -120,7 +120,7 @@ class P3K extends Component {
 
     this.setState({
       optJenisObat,
-      // optArea,
+      optArea,
       columns,
     })
   }
@@ -135,10 +135,10 @@ class P3K extends Component {
     const { id } = values
     const { createAktivitasFirstAid, updateAktivitasFirstAid } = this.props
     if (!invalidValues.includes(id)) {
-      const { medicineType } = values
-      // if (area && Object.keys(area).length > 0) {
-      //   values.area = area.id || area
-      // }
+      const { area, medicineType } = values
+      if (area && Object.keys(area).length > 0) {
+        values.area = area.id || area
+      }
       if (medicineType && Object.keys(medicineType).length > 0) {
         values.medicineType = medicineType.id || medicineType
       }
@@ -229,7 +229,7 @@ class P3K extends Component {
     const { isLoading, auth, className, fetchQueryProps, modalForm } = this.props
     const { tableProps } = fetchQueryProps
     const { data } = tableProps
-    const { optJenisObat, isShow, columns } = this.state
+    const { optJenisObat, optArea, isShow, columns } = this.state
     const tableCols = [
       ...columns,
       {
@@ -323,7 +323,7 @@ class P3K extends Component {
                       >
                         <ExcelSheet data={data} name={pageName}>
                           <ExcelColumn label="Tanggal" value={(col) => formatDate(col.tanggal)} />
-                          <ExcelColumn label="Area" value={(col) => col.area} />
+                          <ExcelColumn label="Area" value={(col) => col.area?.name} />
                           <ExcelColumn label="Jenis Obat" value={(col) => col.medicineType?.name} />
                           <ExcelColumn label="Jumlah" value={(col) => col.jumlah} />
                           <ExcelColumn
@@ -384,7 +384,7 @@ class P3K extends Component {
                         />
                       </FormGroup>
 
-                      {/* <FormGroup>
+                      <FormGroup>
                         <Field
                           label="Area"
                           cacheOptions
@@ -404,9 +404,9 @@ class P3K extends Component {
                           }
                           component={CfAsyncSelect}
                         />
-                      </FormGroup> */}
+                      </FormGroup>
 
-                      <FormGroup>
+                      {/* <FormGroup>
                         <Field
                           label="Area"
                           options={[
@@ -423,7 +423,7 @@ class P3K extends Component {
                           placeholder="Pilih atau Cari"
                           component={CfSelect}
                         />
-                      </FormGroup>
+                      </FormGroup> */}
 
                       <FormGroup>
                         <Field

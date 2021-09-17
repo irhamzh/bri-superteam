@@ -68,16 +68,16 @@ class PeralatanFisik extends Component {
   }
 
   handleSaveChanges = (values) => {
-    const { id, floor, item, ruangan } = values
+    const { id, floor, itemFisik, ruangan } = values
     const { createPGPeralatanIT, updatePGPeralatanIT } = this.props
     if (!invalidValues.includes(id)) {
       if (floor && Object.keys(floor).length > 0) {
         // eslint-disable-next-line no-param-reassign
         values.floor = floor.id || floor
       }
-      if (item && Object.keys(item).length > 0) {
+      if (itemFisik && Object.keys(itemFisik).length > 0) {
         // eslint-disable-next-line no-param-reassign
-        values.item = item.id || item
+        values.itemFisik = itemFisik.id || itemFisik
       }
       if (ruangan && Object.keys(ruangan).length > 0) {
         // eslint-disable-next-line no-param-reassign
@@ -170,7 +170,7 @@ class PeralatanFisik extends Component {
       },
       {
         Header: 'Item',
-        accessor: 'item.name',
+        accessor: 'itemFisik.name',
         filterable: true,
       },
       {
@@ -322,11 +322,13 @@ class PeralatanFisik extends Component {
                           options={optItem}
                           defaultOptions
                           loadOptions={this.handleInputItem}
-                          name="item"
+                          name="itemFisik"
                           isRequired
                           placeholder="Pilih atau cari Item"
                           defaultValue={
-                            values.item ? { value: values.item.id, label: values.item.name } : null
+                            values.itemFisik
+                              ? { value: values.itemFisik.id, label: values.itemFisik.name }
+                              : null
                           }
                           component={CfAsyncSelect}
                         />

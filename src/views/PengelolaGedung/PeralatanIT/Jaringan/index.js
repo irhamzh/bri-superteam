@@ -153,7 +153,7 @@ class PeralatanJaringan extends Component {
       },
       {
         Header: 'Item',
-        accessor: 'item',
+        accessor: 'itemJaringan',
         filterable: true,
       },
       {
@@ -306,13 +306,12 @@ class PeralatanJaringan extends Component {
                             { value: 'Jaringan', label: 'Jaringan' },
                           ]}
                           isRequired
-                          name="item"
+                          name="itemJaringan"
                           placeholder="Pilih atau Cari item"
                           component={CfSelect}
                         />
                       </FormGroup>
-                      {console.log(values.item)}
-                      {values.item && (
+                      {values.itemJaringan && (
                         <Row>
                           <Col sm="3">
                             <h6>Status Item</h6>
@@ -320,9 +319,11 @@ class PeralatanJaringan extends Component {
                           <Col sm="4">
                             <FormGroup>
                               <Field
-                                label={values.item === 'Antivirus' ? 'Updated' : 'Connected'}
+                                label={
+                                  values.itemJaringan === 'Antivirus' ? 'Updated' : 'Connected'
+                                }
                                 name="status"
-                                id={values.item === 'Antivirus' ? 'Updated' : 'Connected'}
+                                id={values.itemJaringan === 'Antivirus' ? 'Updated' : 'Connected'}
                                 component={CfInputRadio}
                               />
                             </FormGroup>
@@ -330,9 +331,17 @@ class PeralatanJaringan extends Component {
                           <Col>
                             <FormGroup>
                               <Field
-                                label={values.item === 'Antivirus' ? 'Not Updated' : 'Disconnected'}
+                                label={
+                                  values.itemJaringan === 'Antivirus'
+                                    ? 'Not Updated'
+                                    : 'Disconnected'
+                                }
                                 name="status"
-                                id={values.item === 'Antivirus' ? 'Not Updated' : 'Disconnected'}
+                                id={
+                                  values.itemJaringan === 'Antivirus'
+                                    ? 'Not Updated'
+                                    : 'Disconnected'
+                                }
                                 component={CfInputRadio}
                               />
                             </FormGroup>

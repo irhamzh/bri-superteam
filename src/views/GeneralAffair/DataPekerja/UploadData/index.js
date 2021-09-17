@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
-import { CfInput, CfInputDate, CfInputFile } from '../../../../components'
+import { CfInput, CfInputDate, CfInputFile, CfInputRadio } from '../../../../components'
 import { AlertMessage } from '../../../../helpers'
 import {
   createGAPekerja,
@@ -262,7 +262,9 @@ class UploadData extends Component {
               >
                 {({ isSubmitting }) => (
                   <Form>
-                    <ModalHeader toggle={modalForm.hide}>Upload File</ModalHeader>
+                    <ModalHeader toggle={modalForm.hide}>
+                      {modalForm?.prop?.upload ? 'Uplaod Data Pekerja' : 'Edit File'}
+                    </ModalHeader>
                     <ModalBody>
                       {modalForm.prop.upload && (
                         <>
@@ -327,13 +329,27 @@ class UploadData extends Component {
 
                           <FormGroup>
                             <Field
-                              label="PERNR"
-                              type="text"
-                              name="pernr"
+                              label="Tanggal Lahir"
+                              name="dateOfBird"
+                              classIcon="fa fa-calendar"
+                              blockLabel
                               isRequired
-                              placeholder="Masukkan PERNR"
-                              component={CfInput}
+                              placeholder="Pilih Tanggal"
+                              // showMonthYearPicker
+                              // showFullMonthYearPicker
+                              // dateFormat="MM/yyyy"
+                              component={CfInputDate}
                             />
+                          </FormGroup>
+
+                          <h6>
+                            <b>Jenis Kelamin</b>
+                          </h6>
+                          <FormGroup style={{ paddingLeft: '20px' }}>
+                            <Field label="Laki-laki" name="sex" id="L" component={CfInputRadio} />
+                          </FormGroup>
+                          <FormGroup style={{ paddingLeft: '20px' }}>
+                            <Field label="Perempuan" name="sex" id="P" component={CfInputRadio} />
                           </FormGroup>
 
                           <FormGroup>
@@ -343,6 +359,16 @@ class UploadData extends Component {
                               name="age"
                               isRequired
                               placeholder="Masukkan Umur"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+                          <FormGroup>
+                            <Field
+                              label="PERNR"
+                              type="text"
+                              name="pernr"
+                              isRequired
+                              placeholder="Masukkan PERNR"
                               component={CfInput}
                             />
                           </FormGroup>
@@ -364,8 +390,20 @@ class UploadData extends Component {
                               type="text"
                               name="formasi.levelJabatan"
                               isRequired
-                              disabled
+                              // disabled
                               placeholder="Masukkan Level Jabatan"
+                              component={CfInput}
+                            />
+                          </FormGroup>
+
+                          <FormGroup>
+                            <Field
+                              label="Unit Kerja"
+                              type="text"
+                              name="formasi.unitKerja"
+                              isRequired
+                              // disabled
+                              placeholder="Masukkan Unit Kerja"
                               component={CfInput}
                             />
                           </FormGroup>

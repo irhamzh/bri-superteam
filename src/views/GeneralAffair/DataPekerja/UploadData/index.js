@@ -21,7 +21,7 @@ import { Redirect } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import Service from '../../../../config/services'
 import { CfInput, CfInputDate, CfInputFile, CfInputRadio } from '../../../../components'
-import { AlertMessage } from '../../../../helpers'
+import { AlertMessage, requireLabel } from '../../../../helpers'
 import {
   createGAPekerja,
   updateGAPekerja,
@@ -343,7 +343,10 @@ class UploadData extends Component {
                           </FormGroup>
 
                           <h6>
-                            <b>Jenis Kelamin</b>
+                            <b>
+                              Jenis Kelamin
+                              {requireLabel()}
+                            </b>
                           </h6>
                           <FormGroup style={{ paddingLeft: '20px' }}>
                             <Field label="Laki-laki" name="sex" id="L" component={CfInputRadio} />

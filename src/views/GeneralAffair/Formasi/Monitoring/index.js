@@ -34,6 +34,14 @@ class MonitoringFormasi extends Component {
         headerClassName: 'wordwrap',
       },
       {
+        Header: 'Unit Kerja',
+        accessor: 'unitKerja',
+        show: true,
+        filterable: false,
+        headerClassName: 'wordwrap',
+        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+      },
+      {
         Header: 'Formasi',
         accessor: 'formasi',
         show: true,
@@ -60,14 +68,6 @@ class MonitoringFormasi extends Component {
             {row.original?.formasi - row.original.pemenuhan}
           </div>
         ),
-      },
-      {
-        Header: 'Unit Kerja',
-        accessor: 'unitKerja',
-        show: true,
-        filterable: false,
-        headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
       },
     ]
 

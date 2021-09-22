@@ -142,14 +142,18 @@ export const uploadGAPekerja = (formData, refresh) => async (dispatch) => {
       `
 
       paramsResponse.html.replace(',', '')
+      paramsResponse.icon = 'error'
+      paramsResponse.title = 'Failed'
+      AlertMessage.success(paramsResponse)
+    } else {
+      AlertMessage.success(paramsResponse).then(() => {
+        if (refresh) {
+          refresh()
+        } else {
+          window.location.reload()
+        }
+      })
     }
-    AlertMessage.success(paramsResponse).then(() => {
-      if (refresh) {
-        refresh()
-      } else {
-        window.location.reload()
-      }
-    })
   } catch (err) {
     ObjError = err.response && err.response.data.message
 

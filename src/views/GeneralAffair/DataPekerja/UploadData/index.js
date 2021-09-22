@@ -254,11 +254,15 @@ class UploadData extends Component {
                 initialValues={modalForm.prop.data}
                 // validationSchema={}
                 onSubmit={(values, actions) => {
-                  const newData = {
-                    ...values,
-                    unitKerja: values.formasi.unitKerja,
-                    levelJabatan: values.formasi.levelJabatan,
+                  let newData = values
+                  if (!modalForm.prop.upload) {
+                    newData = {
+                      ...values,
+                      unitKerja: values.formasi.unitKerja,
+                      levelJabatan: values.formasi.levelJabatan,
+                    }
                   }
+
                   setTimeout(() => {
                     this.handleSaveChanges(newData)
                     actions.setSubmitting(false)

@@ -73,6 +73,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
+    "build:linux": "GENERATE_SOURCEMAP=false react-scripts build",
     "lint": "npx eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
     "build:staging": "GENERATE_SOURCEMAP=false REACT_APP_BUILD_ENV=staging react-scripts build",
     "build:staging-windows": "set \"GENERATE_SOURCEMAP=false\" && set \"REACT_APP_BUILD_ENV=staging\" && react-scripts build",

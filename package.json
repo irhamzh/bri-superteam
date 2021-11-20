@@ -60,7 +60,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^7.9.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
@@ -73,17 +72,17 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
+    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build && react-scripts --max_old_space_size=6128 build",
     "build:linux": "GENERATE_SOURCEMAP=false react-scripts build",
     "lint": "npx eslint '*/**/*.{js,jsx,ts,tsx}' --quiet --fix",
     "build:staging": "GENERATE_SOURCEMAP=false REACT_APP_BUILD_ENV=staging react-scripts build",
-    "build:staging-windows": "set \"GENERATE_SOURCEMAP=false\" && set \"REACT_APP_BUILD_ENV=staging\" && react-scripts build",
-    "build:production": "GENERATE_SOURCEMAP=false REACT_APP_BUILD_ENV=production react-scripts build",
-    "build:production-windows": "set \"GENERATE_SOURCEMAP=false\" && set \"REACT_APP_BUILD_ENV=production\" && react-scripts build",
+    "build:staging-windows": "set \"GENERATE_SOURCEMAP=false\" && set \"REACT_APP_BUILD_ENV=staging\" && react-scripts build && react-scripts --max_old_space_size=6128 build" ,
+    "build:production": "GENERATE_SOURCEMAP=false REACT_APP_BUILD_ENV=production react-scripts build && react-scripts --max_old_space_size=6128 build",
+    "build:production-windows": "set \"GENERATE_SOURCEMAP=false\" && set \"REACT_APP_BUILD_ENV=production\" && react-scripts build && react-scripts --max_old_space_size=6128 build",
     "deploy:staging": "npm run build:staging && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
     "deploy:staging-windows": "npm run build:staging-windows && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
     "deploy:production": "npm run lint && npm run build:production && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
-    "deploy:production-windows": "npm run build:production-windows && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
+    "deploy:production-windows":   "npm run build:production-windows && cp .htaccess build/ && scp -r build/ root@your_ip_ssh:/var/www/your_project/",
     "test": "react-scripts test",
     "test:cov": "npm test -- --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand",
@@ -112,5 +111,8 @@
   "engines": {
     "node": ">=8.10",
     "npm": ">=6"
+  },
+  "resolutions": {
+    "ansi-styles": "^3.2.0"
   }
 }

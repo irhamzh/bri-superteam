@@ -82,6 +82,8 @@ yarn run build
 - Github: [@masb0ymas](https://github.com/masb0ymas)
 - LinkedIn: [@aji-ajjha](https://www.linkedin.com/in/aji-ajjha-58a248b7/)
 
+👤 **irhamzh**
+
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/masb0ymas/boilerplate-core-ui-with-redux/issues). You can also take a look at the [contributing guide](https://github.com/masb0ymas/boilerplate-core-ui-with-redux/blob/master/CONTRIBUTING.md).

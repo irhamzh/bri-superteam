@@ -19,4 +19,4 @@ COPY . .
 
 RUN npm run build:production
 
-# CMD serve -s build
+CMD serve -s build

@@ -6,7 +6,10 @@ import { AUTHENTICATED, UNAUTHENTICATED, VERIFYING } from '../modules/auth/types
 import Service from './services'
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore)
-const configStore = createStoreWithMiddleware(rootReducer)
+const configStore = createStoreWithMiddleware(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 async function jwtVerify() {
   configStore.dispatch({ type: VERIFYING })

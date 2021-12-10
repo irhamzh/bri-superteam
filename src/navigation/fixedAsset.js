@@ -42,6 +42,9 @@ const InfokusFA = React.lazy(() => import('../views/FixedAsset/PeralatanIT/Infok
 const LaptopFA = React.lazy(() => import('../views/FixedAsset/PeralatanIT/Laptop'))
 const PCFA = React.lazy(() => import('../views/FixedAsset/PeralatanIT/PC'))
 
+const FADailyActivities = React.lazy(() => import('../views/FixedAsset/DailyActivities'))
+
+
 const fixedAsset = [
   // Fixed Asset
   {
@@ -254,6 +257,12 @@ const fixedAsset = [
     exact: true,
     name: 'PC',
     component: PCFA,
+  },
+  {
+    path: '/fixed-asset/daily-activities',
+    exact: true,
+    name: 'FA Daily Activities',
+    component: FADailyActivities,
   },
 ]
 

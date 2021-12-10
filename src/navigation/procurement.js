@@ -38,6 +38,8 @@ const PenihilanPersekotProcurement = React.lazy(() =>
   import('../views/Procurement/Persekot/Penihilan')
 )
 
+const PRDailyActivities = React.lazy(() => import('../views/Procurement/DailyActivities'))
+
 const procurement = [
   // Procurement / Working Order
   {
@@ -178,6 +180,12 @@ const procurement = [
     exact: true,
     name: 'Penihilan Persekot',
     component: PenihilanPersekotProcurement,
+  },
+  {
+    path: '/procurement/daily-activities',
+    exact: true,
+    name: 'PR Daily Activities',
+    component: PRDailyActivities,
   },
 ]
 

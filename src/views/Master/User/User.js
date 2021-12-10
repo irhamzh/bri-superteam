@@ -115,6 +115,9 @@ function User(props) {
         <Col xs="12">
           <Card>
             <CardHeader>
+              <div className="d-flex">
+                    Hello
+              </div>
               <Row>
                 <Col sm="6">
                   <Button color="default" className="mr-1">

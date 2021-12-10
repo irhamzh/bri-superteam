@@ -18,6 +18,9 @@ const PaymentFIGeneralAffair = React.lazy(() =>
 const PaymentFIFinance = React.lazy(() => import('../views/FinancialAdmin/Payment/Finance'))
 const PaymentFIProcurement = React.lazy(() => import('../views/FinancialAdmin/Payment/Procurement'))
 
+const FIDailyActivities = React.lazy(() => import('../views/FinancialAdmin/DailyActivities'))
+
+
 const financialAdmin = [
   // Financial Admin
   {
@@ -105,6 +108,12 @@ const financialAdmin = [
     exact: true,
     name: 'Payment',
     component: PaymentFIProcurement,
+  },
+  {
+    path: '/financial-admin/daily-activities',
+    exact: true,
+    name: 'FI Daily Activities',
+    component: FIDailyActivities,
   },
 ]
 

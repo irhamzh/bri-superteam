@@ -221,7 +221,7 @@ const routes = [
   {
     path: '/dashboard/general-affair/approved-proses-persetujuan',
     exact: true,
-    name: 'Approval oleh Wakabag (Proses Persetujuan)',
+    name: 'Approval oleh Wa kabag (Proses Persetujuan)',
     component: GAApprovedProsesPersetujuan,
   },
   {
@@ -274,6 +274,7 @@ const routes = [
     name: 'Approval oleh Kabag (Kegiatan Selesai)',
     component: FIApprovedSelesai,
   },
+
 
   // Fixed Asset
   ...fixedAsset,
@@ -420,6 +421,7 @@ const routes = [
     name: 'Pajak',
     component: Pajak,
   },
+
 ]
 
 export default routes

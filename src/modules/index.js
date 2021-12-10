@@ -80,6 +80,8 @@ import uploadFinancialAdmin from './financialAdmin/uploads/reducer'
 import anggaranFixedAsset from './anggaran/fx/reducer'
 import pajak from './master/pajak/reducer'
 
+import dailyActivitiesModules from './daily_activities/reducer'
+
 const rootReducer = combineReducers({
   auth: authReducer,
   role: roleReducer,
@@ -111,6 +113,7 @@ const rootReducer = combineReducers({
   engineer,
   gedung,
   compressor,
+  dailyActivitiesModules,
   pompa,
   unitPompa,
   jenisGedung,

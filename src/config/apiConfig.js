@@ -4,7 +4,8 @@ const BASE_URL = {
   development: 'http://localhost:5001/geochat-252415/asia-southeast2/api',
 }
 
-const ENV = process.env.REACT_APP_BUILD_ENV || 'development'
+const ENV = process.env.REACT_APP_BUILD_ENV || 'production'
+// const ENV = process.env.REACT_APP_BUILD_ENV || 'development'
 
 export const API_URL = `${BASE_URL[ENV]}/v1`
 export const API_FILE = BASE_URL[ENV]

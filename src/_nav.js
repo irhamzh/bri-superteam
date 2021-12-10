@@ -63,6 +63,11 @@ export default {
           icon: 'fa fa-angle-double-right',
         },
         {
+          name: 'Daily Activities',
+          url: '/fixed-asset/daily-activities',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
           name: 'Pengelola Gedung',
           url: '/pengelola-gedung',
           icon: 'icon-layers',
@@ -158,6 +163,11 @@ export default {
           url: '/procurement/payment',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Daily Activities',
+          url: '/procurement/daily-activities',
+          icon: 'fa fa-angle-double-right',
+        },
       ],
     },
     {
@@ -220,6 +230,11 @@ export default {
           url: '/general-affair/payment',
           icon: 'fa fa-angle-double-right',
         },
+        {
+          name: 'Daily Activities',
+          url: '/general-affair/daily-activities',
+          icon: 'fa fa-angle-double-right',
+        },
       ],
     },
     {
@@ -245,6 +260,11 @@ export default {
         {
           name: 'Upload',
           url: '/financial-admin/upload',
+          icon: 'fa fa-angle-double-right',
+        },
+        {
+          name: 'Daily Activities',
+          url: '/financial-admin/daily-activities',
           icon: 'fa fa-angle-double-right',
         },
       ],

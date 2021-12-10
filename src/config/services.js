@@ -2610,6 +2610,40 @@ class Service {
   static deleteFXAnggaran(values, id) {
     return axios.post(`fx-budgets/penggunaan/delete/${id}`, values)
   }
+
+
+  // Daily Activities - Fixed Assets
+  static getDailyActivities(params, dept) {
+    // ganti params???
+    if (!params) params = ''
+    console.log("params =" +  params)
+    console.log("dept =" +  dept)
+    return axios.get(`daily-activities${params}`)
+  }
+
+  static getDailyActivitiesById(id) {
+    console.log(id);
+    return axios.get(`daily-activities/${id}`)
+  }
+
+  static getDailyActivitiesByName(dept_name) {
+    console.log("dept_name = "+ dept_name);
+    return axios.get(`daily-activities/?dept=${dept_name}`)
+  }
+
+  static createDailyActivities(values) {
+    return axios.post('daily-activities', values)
+  }
+
+  static updateDailyActivities(values, id) {
+    return axios.put(`daily-activities/${id}`, values)
+  }
+
+  static deleteDailyActivities(id) {
+    return axios.delete(`daily-activities/${id}`)
+  }
+
+
 }
 
 export default Service

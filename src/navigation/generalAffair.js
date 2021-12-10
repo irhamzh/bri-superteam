@@ -68,6 +68,8 @@ const PersekotGA = React.lazy(() => import('../views/GeneralAffair/Persekot'))
 const InputPersekot = React.lazy(() => import('../views/GeneralAffair/Persekot/Input'))
 const PenihilanPersekot = React.lazy(() => import('../views/GeneralAffair/Persekot/Penihilan'))
 
+const GADailyActivities = React.lazy(() => import('../views/GeneralAffair/DailyActivities'))
+
 const generalAffair = [
   // General Affair
   {
@@ -306,6 +308,12 @@ const generalAffair = [
     exact: true,
     name: 'Penihilan Persekot',
     component: PenihilanPersekot,
+  },
+  {
+    path: '/general-affair/daily-activities',
+    exact: true,
+    name: 'GA Daily Activities',
+    component: GADailyActivities,
   },
 ]
 

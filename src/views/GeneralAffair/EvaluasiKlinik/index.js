@@ -64,7 +64,9 @@ class EvaluasiKlinik extends Component {
         show: true,
         filterable: false,
         headerClassName: 'wordwrap',
-        Cell: (row) => <div style={{ textAlign: 'center' }}>{row.value}</div>,
+        Cell: (row) => (
+          console.log(row.value),
+        <div style={{ textAlign: 'center' }}>{row.value}</div>),
       },
       {
         Header: 'Keterangan',
@@ -87,8 +89,12 @@ class EvaluasiKlinik extends Component {
 
   handleSaveChanges = (values) => {
     const { id } = values
+    const { information } = values
     const { createEvaluasiKlinik, updateEvaluasiKlinik } = this.props
     if (!invalidValues.includes(id)) {
+      console.log("id = " + id);
+      console.log("info = " + information);
+      console.log("values = " + values);
       updateEvaluasiKlinik(values, id, this.doRefresh)
     } else {
       createEvaluasiKlinik(values, this.doRefresh)
@@ -96,11 +102,10 @@ class EvaluasiKlinik extends Component {
   }
 
   handleDelete = (e, state) => {
-    e.preventDefault()
-
+    e.preventDefault()    
     const { id } = state
     const { deleteEvaluasiKlinik } = this.props
-
+    
     AlertMessage.warning()
       .then((result) => {
         if (result.value) {
@@ -397,3 +402,4 @@ export default connect(
     }),
   })
 )
+

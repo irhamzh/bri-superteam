@@ -1,0 +1,12 @@
+// created
+export const CREATE_DAILY_ACTIVITIES_LOADING = 'create_DAILY_ACTIVITIES_loading'
+export const CREATE_DAILY_ACTIVITIES_SUCCESS = 'create_DAILY_ACTIVITIES_success'
+export const CREATE_DAILY_ACTIVITIES_ERROR = 'create_DAILY_ACTIVITIES_error'
+// updated
+export const UPDATE_DAILY_ACTIVITIES_LOADING = 'update_DAILY_ACTIVITIES_loading'
+export const UPDATE_DAILY_ACTIVITIES_SUCCESS = 'update_DAILY_ACTIVITIES_success'
+export const UPDATE_DAILY_ACTIVITIES_ERROR = 'update_DAILY_ACTIVITIES_error'
+// deleted
+export const DELETE_DAILY_ACTIVITIES_LOADING = 'delete_DAILY_ACTIVITIES_loading'
+export const DELETE_DAILY_ACTIVITIES_SUCCESS = 'delete_DAILY_ACTIVITIES_success'
+export const DELETE_DAILY_ACTIVITIES_ERROR = 'delete_DAILY_ACTIVITIES_error'
